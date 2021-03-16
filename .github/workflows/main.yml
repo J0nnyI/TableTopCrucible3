@@ -20,7 +20,7 @@ jobs:
         
         - run: dotnet clean ${{ env.PROJECT_PATH }} --configuration Release && dotnet nuget locals all --clear
 
-        - run: dotnet restore ${{ env.PROJECT_PATH }}
+        - run: dotnet restore ${{ env.PROJECT_PATH }} -r win-x64
 
         - run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore -r win-x64
 
