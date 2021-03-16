@@ -18,7 +18,7 @@ jobs:
           with: 
             dotnet-version: 3.1.x
         
-        - run:  dotnet clean ${{ env.PROJECT_PATH }} --configuration Release && dotnet nuget locals all --clear
+        - run: dotnet clean ${{ env.PROJECT_PATH }} --configuration Release && dotnet nuget locals all --clear
 
         - run: dotnet restore ${{ env.PROJECT_PATH }}
 
@@ -26,8 +26,15 @@ jobs:
 
         - run: dotnet publish ${{ env.PROJECT_PATH }} -c Release --self-contained -r win-x64 -p:PublishSingleFile=true --no-build
 
-#   - uses: actions/create-release@v1
-#     env: 
-#       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#     with:
-#       tag_name: ${{ github.ref }}
+        - uses: actions/create-release@v1
+          id: create_release
+          env: 
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: ${{ github.ref }}
+            release_name: ${{ github.ref }}
+        - uses: csexton/release-asset-actions@v2
+          with: 
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            pattern: TableTopCrucible.App.WPF/bin/Release/netcoreapp3.1/publish/*.exe
+            release-url: ${{ steps.create_release.outputs.upload_url }}
