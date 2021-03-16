@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 
 using TableTopCrucible.App.DI;
+using TableTopCrucible.Core.WPF.Tabs.ViewModels;
 
 namespace TableTopCrucible.App.WPF
 {
@@ -22,8 +23,17 @@ namespace TableTopCrucible.App.WPF
         }
         protected override void OnStartup(StartupEventArgs e)
         {
-            var provider = DependencyBuilder.Get();
-            new MainWindow().Show();
+
+
+            this.Resources.MergedDictionaries.Add(Core.WPF.Helper.Factory.GetTemplateDictionary());
+            //var provider = DependencyBuilder.Get();
+
+            new Window()
+            {
+                Content = Core.DI.Factory.GenerateServiceProvider().GetRequiredService<ITabStripVM>()
+            }.Show();
+
+
 
         }
     }
