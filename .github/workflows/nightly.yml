@@ -1,13 +1,15 @@
 name: "deploy .NET Core Desktop"
 
 on:
-    push:
+    schedule: 
+    - cron: '0 2 * * *' #2AM UTC
 
 env:
     PROJECT_PATH: TableTopCrucible.App.WPF/TableTopCrucible.App.WPF.csproj
 
 jobs:
-    deploy: 
+    nightly: 
+        name: Deploy Nightly
         runs-on: windows-latest
         steps: 
         - uses: actions/checkout@v2
