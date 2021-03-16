@@ -9,7 +9,7 @@
   <Identity
     Name="8c4204d1-b9ba-4998-bf81-c10e6129e656"
     Publisher="CN=marce"
-    Version="1.0.0.0" />
+    Version="0.0.1.0" />
 
   <Properties>
     <DisplayName>TableTopCrucible.App.Package</DisplayName>

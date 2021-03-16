@@ -59,6 +59,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.App.DI", "
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "TableTopCrucible.App.Package", "TableTopCrucible.App.Package\TableTopCrucible.App.Package.wapproj", "{749DDFB6-1949-486A-A375-FE980A231AB5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{0B8C5D57-D557-4A37-87B9-87FED3044BF9}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet-desktop.yml = .github\workflows\dotnet-desktop.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
