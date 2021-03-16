@@ -7,10 +7,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using TableTopCrucible.Core.DI;
+using TableTopCrucible.Core.WPF.Tabs.Views;
+
 using TableTopCurcible.Core.BaseUtils;
 
 namespace TableTopCrucible.Core.WPF.Tabs.Models
 {
+    public interface ITabModel
+    {
+
+    }
     public class TabModel : DisposableReactiveObjectBase
     {
         public TabModel(string title, Func<object> viewModelFactory)

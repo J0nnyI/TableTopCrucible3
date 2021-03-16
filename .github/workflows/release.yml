@@ -3,7 +3,7 @@ name: "deploy .NET Core Desktop"
 on:
     push:
         tags:
-            - "TableTopCrucible3/v*"
+            - "TTC/v*"
 
 env:
     PROJECT_PATH: TableTopCrucible.App.WPF/TableTopCrucible.App.WPF.csproj

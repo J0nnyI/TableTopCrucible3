@@ -6,17 +6,24 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 
+using TableTopCrucible.Core.DI;
+using TableTopCrucible.Core.DI.Attributes;
+using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.Core.WPF.Tabs.Models;
+using TableTopCrucible.Core.WPF.Tabs.Views;
 
 using TableTopCurcible.Core.BaseUtils;
 
 namespace TableTopCrucible.Core.WPF.Tabs.ViewModels
 {
+    [Transient(typeof(TabStripVM))]
     public interface ITabStripVM
     {
         TabModel CurrentTab { get; }
         public IObservableList<TabModel> Tabs { get; }
     }
+
+    [ViewModel(typeof(TabStripV))]
     internal class TabStripVM : DisposableReactiveObjectBase, ITabStripVM
     {
         private readonly SourceList<TabModel> _tabs = new SourceList<TabModel>();
@@ -25,7 +32,10 @@ namespace TableTopCrucible.Core.WPF.Tabs.ViewModels
         public TabStripVM()
         {
             _tabs.DisposeWith(disposables);
-            _tabs.Connect().DisposeMany().TakeUntil(Destroy).Subscribe();
+            _tabs.Connect()
+                .DisposeMany()
+                .TakeUntil(Destroy)
+                .Subscribe();
         }
         public void SetCurrentTab(TabModel tab)
         {
