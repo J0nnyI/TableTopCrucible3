@@ -32,7 +32,10 @@ namespace TableTopCrucible.Core.WPF.Tabs.ViewModels
         public TabStripVM()
         {
             _tabs.DisposeWith(disposables);
-            _tabs.Connect().DisposeMany().TakeUntil(Destroy).Subscribe();
+            _tabs.Connect()
+                .DisposeMany()
+                .TakeUntil(Destroy)
+                .Subscribe();
         }
         public void SetCurrentTab(TabModel tab)
         {
