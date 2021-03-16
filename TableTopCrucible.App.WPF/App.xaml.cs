@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-using TableTopCrucible.App.DI;
 using TableTopCrucible.Core.WPF.Tabs.ViewModels;
 
 namespace TableTopCrucible.App.WPF
