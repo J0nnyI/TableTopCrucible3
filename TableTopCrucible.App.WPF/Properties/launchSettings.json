@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "TableTopCrucible.App.WPF": {
+      "commandName": "Project"
+    }
+  }
+}
