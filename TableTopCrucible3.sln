@@ -61,7 +61,7 @@ Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "TableTopCrucible.App.Packag
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{0B8C5D57-D557-4A37-87B9-87FED3044BF9}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\dotnet-desktop.yml = .github\workflows\dotnet-desktop.yml
+		.github\workflows\main.yml = .github\workflows\main.yml
 	EndProjectSection
 EndProject
 Global
