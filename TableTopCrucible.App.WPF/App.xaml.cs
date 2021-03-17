@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 
 using TableTopCrucible.App.WPF.ViewModels;
+using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.Core.WPF.Tabs.ViewModels;
 
 namespace TableTopCrucible.App.WPF
@@ -25,9 +26,9 @@ namespace TableTopCrucible.App.WPF
         {
 
 
-            this.Resources.MergedDictionaries.Add(Core.WPF.Helper.Factory.GetTemplateDictionary());
+            this.Resources.MergedDictionaries.Add(ViewModelAttribute.GetTemplateDictionary());
 
-            var provider = Core.DI.Factory.GenerateServiceProvider();
+            var provider = Core.DI.DiAttributeCollector.GenerateServiceProvider();
 
             new MainWindow()
             {

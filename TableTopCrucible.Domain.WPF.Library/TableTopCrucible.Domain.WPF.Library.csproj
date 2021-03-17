@@ -8,8 +8,11 @@
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="ViewModels\" />
-    <Folder Include="PageViewModels\" />
-    <Folder Include="Pages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.WPF.Helper\TableTopCrucible.Core.WPF.Helper.csproj" />
   </ItemGroup>
 
 </Project>

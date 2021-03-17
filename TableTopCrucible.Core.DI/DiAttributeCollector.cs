@@ -12,7 +12,7 @@ using TableTopCrucible.Core.Helper;
 
 namespace TableTopCrucible.Core.DI
 {
-    public static class Factory
+    public static class DiAttributeCollector
     {
         public static IServiceProvider GenerateServiceProvider()
         {
