@@ -28,7 +28,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.WPF.Helper\TableTopCrucible.Core.WPF.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Tabs\TableTopCrucible.Core.WPF.Tabs.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes\TableTopCrucible.Data.Library.Models.ValueTypes.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Domain.WPF.Library\TableTopCrucible.Domain.WPF.Library.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Settings\TableTopCrucible.DomainCore.WPF.Settings.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Toolbar\TableTopCrucible.DomainCore.WPF.Toolbar.csproj" />
+    <ProjectReference Include="..\TableTopCurcible.Core.BaseUtils\TableTopCurcible.Core.BaseUtils.csproj" />
+    <ProjectReference Include="..\TableTopCurcible.Data.Library.Models.IDs\TableTopCurcible.Data.Library.Models.IDs.csproj" />
+    <ProjectReference Include="..\TableTopCurcible.Data.Library.Models.Sources\TableTopCurcible.Data.Library.Models.Sources.csproj" />
+    <ProjectReference Include="..\TableTopCurcible.Data.Library.Models.ValueTypes.General\TableTopCurcible.Data.Library.Models.ValueTypes.General.csproj" />
+    <ProjectReference Include="..\TableTopCurcible.Data.Library.Models.Views\TableTopCurcible.Data.Library.Models.Views.csproj" />
+    <ProjectReference Include="..\TableTopCurcible.Data.Library.Services.Sources\TableTopCurcible.Data.Library.Services.Sources.csproj" />
+    <ProjectReference Include="..\TableTopCurcible.Data.Library.ValueTypes.IDs\TableTopCurcible.Data.Library.ValueTypes.IDs.csproj" />
   </ItemGroup>
   
 </Project>

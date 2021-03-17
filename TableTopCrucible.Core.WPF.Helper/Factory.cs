@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Markup;
 using System.Xml;
 
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
 
 namespace TableTopCrucible.Core.WPF.Helper
@@ -14,11 +15,14 @@ namespace TableTopCrucible.Core.WPF.Helper
         {
             var res = new ResourceDictionary();
 
-            var types = AppDomain
-                .CurrentDomain
-                .GetAssemblies()
+            var types = AssemblyHelper
+                .GetSolutionAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
-                .Select(viewModelType => new { viewModelType, viewType = (viewModelType.GetCustomAttributes(typeof(ViewModelAttribute), true).FirstOrDefault() as ViewModelAttribute)?.viewType })
+                .Select(viewModelType => new 
+                {
+                    viewModelType,
+                    (viewModelType.GetCustomAttributes(typeof(ViewModelAttribute), false).FirstOrDefault() as ViewModelAttribute)?.viewType
+                })
                 .Where(typeEx => typeEx.viewType != null);
 
             types.Select(typeEx => typeEx.viewModelType.Namespace)
