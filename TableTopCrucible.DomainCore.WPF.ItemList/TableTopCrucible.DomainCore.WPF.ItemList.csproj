@@ -8,7 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Helper\TableTopCrucible.Core.WPF.Helper.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.ItemList\TableTopCrucible.DomainCore.WPF.ItemList.csproj" />
+    <ProjectReference Include="..\TableTopcrucible.Data.Library.Services.Sources\TableTopCrucible.Data.Library.Services.Sources.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Services.Sources\TableTopCrucible.Data.Library.Services.Sources.csproj" />
   </ItemGroup>
-
 </Project>

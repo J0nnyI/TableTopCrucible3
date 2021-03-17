@@ -10,7 +10,7 @@ using System.Text;
 using TableTopCrucible.Core.DI;
 using TableTopCrucible.Core.WPF.Tabs.Views;
 
-using TableTopCurcible.Core.BaseUtils;
+using TableTopCrucible.Core.BaseUtils;
 
 namespace TableTopCrucible.Core.WPF.Tabs.Models
 {

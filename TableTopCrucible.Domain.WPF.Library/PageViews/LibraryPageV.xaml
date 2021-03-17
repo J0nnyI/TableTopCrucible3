@@ -8,7 +8,21 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LibraryPageV">
 
-    <Grid>
-        
+    <Grid Margin="4px">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Label>library page works</Label>
+        <ContentPresenter Content="{Binding ItemList}"
+                          Grid.Column="0"
+                          Grid.Row="0"/>
+        <GridSplitter Grid.Column="0"
+                      Grid.Row="0"
+                      HorizontalAlignment="Right"
+                      Width="4px"/>
+        <ContentPresenter Content="{Binding ItemViewer}"
+                          Grid.Column="1"
+                          Grid.Row="0"/>
     </Grid>
 </Page>

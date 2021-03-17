@@ -2,7 +2,7 @@
 using System;
 using System.Reactive.Subjects;
 
-using TableTopCurcible.Core.BaseUtils;
+using TableTopCrucible.Core.BaseUtils;
 
 namespace TableTopCrucible.Core.Jobs
 {

@@ -4,7 +4,7 @@ using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
-using TableTopCrucible.DomainCore.WPF.Settings.Views;
+using TableTopCrucible.DomainCore.WPF.Settings.PageViews;
 
 namespace TableTopCrucible.DomainCore.WPF.Settings.ViewModels
 {

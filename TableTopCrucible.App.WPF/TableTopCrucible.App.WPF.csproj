@@ -36,15 +36,16 @@
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Tabs\TableTopCrucible.Core.WPF.Tabs.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes\TableTopCrucible.Data.Library.Models.ValueTypes.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Domain.WPF.Library\TableTopCrucible.Domain.WPF.Library.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.ItemList\TableTopCrucible.DomainCore.WPF.ItemList.csproj" />
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Settings\TableTopCrucible.DomainCore.WPF.Settings.csproj" />
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Toolbar\TableTopCrucible.DomainCore.WPF.Toolbar.csproj" />
-    <ProjectReference Include="..\TableTopCurcible.Core.BaseUtils\TableTopCurcible.Core.BaseUtils.csproj" />
-    <ProjectReference Include="..\TableTopCurcible.Data.Library.Models.IDs\TableTopCurcible.Data.Library.Models.IDs.csproj" />
-    <ProjectReference Include="..\TableTopCurcible.Data.Library.Models.Sources\TableTopCurcible.Data.Library.Models.Sources.csproj" />
-    <ProjectReference Include="..\TableTopCurcible.Data.Library.Models.ValueTypes.General\TableTopCurcible.Data.Library.Models.ValueTypes.General.csproj" />
-    <ProjectReference Include="..\TableTopCurcible.Data.Library.Models.Views\TableTopCurcible.Data.Library.Models.Views.csproj" />
-    <ProjectReference Include="..\TableTopCurcible.Data.Library.Services.Sources\TableTopCurcible.Data.Library.Services.Sources.csproj" />
-    <ProjectReference Include="..\TableTopCurcible.Data.Library.ValueTypes.IDs\TableTopCurcible.Data.Library.ValueTypes.IDs.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.BaseUtils\TableTopCrucible.Core.BaseUtils.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.IDs\TableTopCrucible.Data.Library.Models.IDs.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.Sources\TableTopCrucible.Data.Library.Models.Sources.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes.General\TableTopCrucible.Data.Library.Models.ValueTypes.General.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.Views\TableTopCrucible.Data.Library.Models.Views.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Services.Sources\TableTopCrucible.Data.Library.Services.Sources.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.ValueTypes.IDs\TableTopCrucible.Data.Library.ValueTypes.IDs.csproj" />
   </ItemGroup>
   
 </Project>

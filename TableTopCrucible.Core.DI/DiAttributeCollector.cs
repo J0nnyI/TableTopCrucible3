@@ -17,25 +17,18 @@ namespace TableTopCrucible.Core.DI
         public static IServiceProvider GenerateServiceProvider()
         {
             ServiceCollection services = new ServiceCollection();
-            try
-            {
-                var assemblies = AssemblyHelper.GetSolutionAssemblies();
-                var types = assemblies
-                        .SelectMany(assembly => assembly.DefinedTypes);
+            var assemblies = AssemblyHelper.GetSolutionAssemblies();
+            var types = assemblies
+                    .SelectMany(assembly => assembly.DefinedTypes);
 
-                var transients = getCollectionForAttribute<TransientAttribute>(types, ServiceLifetime.Transient);
-                var singletons = getCollectionForAttribute<SingletonAttribute>(types, ServiceLifetime.Singleton);
-                var scoped = getCollectionForAttribute<ScopedAttribute>(types, ServiceLifetime.Scoped);
+            var transients = getCollectionForAttribute<TransientAttribute>(types, ServiceLifetime.Transient);
+            var singletons = getCollectionForAttribute<SingletonAttribute>(types, ServiceLifetime.Singleton);
+            var scoped = getCollectionForAttribute<ScopedAttribute>(types, ServiceLifetime.Scoped);
 
-                services.TryAddEnumerable(transients);
-                services.TryAddEnumerable(singletons);
-                services.TryAddEnumerable(scoped);
+            services.TryAddEnumerable(transients);
+            services.TryAddEnumerable(singletons);
+            services.TryAddEnumerable(scoped);
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
 
             return services.BuildServiceProvider();
         }

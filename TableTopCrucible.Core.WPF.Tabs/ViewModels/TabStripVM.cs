@@ -12,7 +12,7 @@ using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.Core.WPF.Tabs.Models;
 using TableTopCrucible.Core.WPF.Tabs.Views;
 
-using TableTopCurcible.Core.BaseUtils;
+using TableTopCrucible.Core.BaseUtils;
 
 namespace TableTopCrucible.Core.WPF.Tabs.ViewModels
 {
