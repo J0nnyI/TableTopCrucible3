@@ -2,22 +2,22 @@
 
 using TableTopCrucible.Core.Data;
 
-namespace TableTopCrucible.Domain.Models.ValueTypes.IDs
+namespace TableTopCrucible.Data.Library.Models.IDs
 {
     public struct ItemId : ITypedId
     {
         private Guid _guid;
         public ItemId(Guid guid)
-            => this._guid = guid;
+            => _guid = guid;
         public override bool Equals(object obj)
         {
             if (obj is ItemId id)
-                return this._guid == id._guid;
+                return _guid == id._guid;
             return false;
         }
 
-        public override int GetHashCode() => this._guid.GetHashCode();
-        public Guid ToGuid() => this._guid;
+        public override int GetHashCode() => _guid.GetHashCode();
+        public Guid ToGuid() => _guid;
         public static ItemId New() => (ItemId)Guid.NewGuid();
         public override string ToString() => _guid.ToString();
         public static bool operator ==(ItemId id1, ItemId id2)

@@ -40,7 +40,6 @@
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Settings\TableTopCrucible.DomainCore.WPF.Settings.csproj" />
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Toolbar\TableTopCrucible.DomainCore.WPF.Toolbar.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.BaseUtils\TableTopCrucible.Core.BaseUtils.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.IDs\TableTopCrucible.Data.Library.Models.IDs.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.Sources\TableTopCrucible.Data.Library.Models.Sources.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes.General\TableTopCrucible.Data.Library.Models.ValueTypes.General.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.Views\TableTopCrucible.Data.Library.Models.Views.csproj" />

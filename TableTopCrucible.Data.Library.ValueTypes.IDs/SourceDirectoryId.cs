@@ -2,7 +2,7 @@
 
 using TableTopCrucible.Core.Data;
 
-namespace TableTopCrucible.Data.Library.ValueTypes.IDs
+namespace TableTopCrucible.Data.Library.Models.IDs
 {
     public struct SourceDirectoryId : ITypedId
     {

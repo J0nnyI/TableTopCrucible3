@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 
 using TableTopCrucible.Core.Data;
-using TableTopCrucible.Domain.Models.ValueTypes;
-using TableTopCrucible.Domain.Models.ValueTypes.IDs;
-
+using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 
 namespace TableTopCrucible.Data.Models.Sources
@@ -14,7 +12,6 @@ namespace TableTopCrucible.Data.Models.Sources
         public ItemId Id { get; }
         public ItemName Name { get; }
         public IEnumerable<Tag> Tags { get; }
-        public Guid Identity { get; }
 
         public DateTime Created { get; }
         public DateTime LastChange { get; }
@@ -31,16 +28,11 @@ namespace TableTopCrucible.Data.Models.Sources
             Tags = tags ?? throw new ArgumentNullException(nameof(tags));
             Created = created;
             LastChange = lastChange ?? DateTime.Now;
-            Identity = Guid.NewGuid();
         }
 
         public override string ToString() => $"Tile {Id} ({Name})";
-        public override bool Equals(object obj) => obj is Item item && this == item;
-        public override int GetHashCode() => HashCode.Combine(Identity);
+        public override bool Equals(object obj) => obj is Item item && this.Id == item.Id && this.LastChange == item.LastChange;
+        public override int GetHashCode() => HashCode.Combine(LastChange, Id);
 
-        public static bool operator ==(Item itemA, Item itemB)
-            => itemA.Identity == itemB.Identity;
-        public static bool operator !=(Item itemA, Item itemB)
-            => itemA.Identity != itemB.Identity;
     }
 }
