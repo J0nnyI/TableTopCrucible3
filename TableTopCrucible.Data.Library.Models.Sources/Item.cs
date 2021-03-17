@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DynamicData;
+using DynamicData.Binding;
+
+using System;
 using System.Collections.Generic;
 
 using TableTopCrucible.Core.Data;
@@ -7,7 +10,7 @@ using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 
 namespace TableTopCrucible.Data.Models.Sources
 {
-    public struct Item : IEntity<ItemId>
+    public class Item : IEntity<ItemId>
     {
         public ItemId Id { get; }
         public ItemName Name { get; }
@@ -15,6 +18,8 @@ namespace TableTopCrucible.Data.Models.Sources
 
         public DateTime Created { get; }
         public DateTime LastChange { get; }
+
+        public ObservableCollectionExtended<ItemVersion> Versions { get; } = new ObservableCollectionExtended<ItemVersion>();
 
         public Item(ItemName name, IEnumerable<Tag> tags = null)
             : this((ItemId)Guid.NewGuid(), name, tags, DateTime.Now) { }

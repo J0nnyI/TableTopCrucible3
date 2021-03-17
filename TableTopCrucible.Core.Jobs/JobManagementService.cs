@@ -8,8 +8,11 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
 
+using TableTopCrucible.Core.DI.Attributes;
+
 namespace TableTopCrucible.Core.Jobs
 {
+    [Singleton(typeof(JobManagementService))]
     public interface IJobManagementService
     {
         IObservableList<IJobInfo> Jobs { get; }

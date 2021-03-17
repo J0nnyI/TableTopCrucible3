@@ -1,14 +1,12 @@
 ﻿using System;
 
 using TableTopCrucible.Core.Data;
+using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
-using TableTopCrucible.Domain.Models.ValueTypes;
-
-using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 namespace TableTopCrucible.Data.Models.Sources
 {
-    public struct FileData : IEntity<FileInfoId>
+    public struct FileData 
     {
         public FileData(
             FileData origin, Uri path, DateTime creationTime, FileHash? fileHash, DateTime lastWriteTime, SourceDirectoryId directorySetupId, long fileSize,
@@ -18,7 +16,7 @@ namespace TableTopCrucible.Data.Models.Sources
         public FileData(
             Uri path, DateTime creationTime, FileHash? fileHash, DateTime lastWriteTime, SourceDirectoryId directorySetupId, long fileSize,
             bool isAccessible)
-            : this(path, creationTime, fileHash, lastWriteTime, directorySetupId, fileSize, isAccessible, (FileInfoId)Guid.NewGuid(), DateTime.Now)
+            : this(path, creationTime, fileHash, lastWriteTime, directorySetupId, fileSize, isAccessible, FileDataId.New(), DateTime.Now)
         { }
         public FileData(
             Uri path,
@@ -28,7 +26,7 @@ namespace TableTopCrucible.Data.Models.Sources
             SourceDirectoryId directorySetupId,
             long fileSize,
             bool isAccessible,
-            FileInfoId id,
+            FileDataId id,
             DateTime created,
             DateTime? lastChange = null)
         {
@@ -60,7 +58,7 @@ namespace TableTopCrucible.Data.Models.Sources
         public long FileSize { get; }
         public Guid Identity { get; }
 
-        public FileInfoId Id { get; }
+        public FileDataId Id { get; }
         public DateTime Created { get; }
         public DateTime LastChange { get; }
 

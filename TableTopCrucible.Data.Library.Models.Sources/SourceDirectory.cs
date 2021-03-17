@@ -2,25 +2,25 @@
 using System.IO;
 
 using TableTopCrucible.Core.Data;
-
+using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
-using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 namespace TableTopCrucible.Data.Models.Sources
 {
     public struct SourceDirectory : IEntity<SourceDirectoryId>
     {
-        public Uri Path { get; }
+        public Uri Uri { get; }
+        public string Path => Uri.LocalPath;
         /// <summary>
         /// the path where thumbnails are stored
         /// </summary>
         public Uri ThumbnailUri { get; }
-        public Uri AbsoluteThumbnailUri => new Uri(Path.LocalPath + ThumbnailUri);
+        public Uri AbsoluteThumbnailUri => new Uri(Uri.LocalPath + ThumbnailUri);
         public DirectorySetupName Name { get; }
         public Description Description { get; }
 
         public bool IsValid
-            => Path != null && Directory.Exists(Path.LocalPath);
+            => Uri != null && Directory.Exists(Uri.LocalPath);
 
         public Guid Identity { get; }
 
@@ -38,7 +38,7 @@ namespace TableTopCrucible.Data.Models.Sources
 
         public SourceDirectory(Uri path, DirectorySetupName name, Description description, SourceDirectoryId id, DateTime created, DateTime? lastChange = null)
         {
-            Path = path;
+            Uri = path;
             Name = name;
             Description = description;
             ThumbnailUri = new Uri(@"\Thumbnails", UriKind.Relative);

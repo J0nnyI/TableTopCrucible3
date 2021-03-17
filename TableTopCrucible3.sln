@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.App.WPF", "TableTopCrucible.App.WPF\TableTopCrucible.App.WPF.csproj", "{4FDDD5DF-5435-4899-B55C-371572CA6BDF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1} = {AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Jobs", "TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj", "{878DC04C-D786-4B03-A88E-B778F9DB947B}"
 EndProject
@@ -71,6 +74,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.DomainCore.WPF.Toolbar", "TableTopCrucible.DomainCore.WPF.Toolbar\TableTopCrucible.DomainCore.WPF.Toolbar.csproj", "{BE190869-262E-43EA-937B-2ECA03CA7140}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.DomainCore.WPF.ItemList", "TableTopCrucible.DomainCore.WPF.ItemList\TableTopCrucible.DomainCore.WPF.ItemList.csproj", "{D60DEA63-524B-416A-A570-7F4D73A1381E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.DomainCore.FileIntegration", "TableTopCrucible.DomainCore.FileIntegration\TableTopCrucible.DomainCore.FileIntegration.csproj", "{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -446,6 +451,26 @@ Global
 		{D60DEA63-524B-416A-A570-7F4D73A1381E}.Release|x64.Build.0 = Release|Any CPU
 		{D60DEA63-524B-416A-A570-7F4D73A1381E}.Release|x86.ActiveCfg = Release|Any CPU
 		{D60DEA63-524B-416A-A570-7F4D73A1381E}.Release|x86.Build.0 = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|ARM.Build.0 = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|x64.Build.0 = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Debug|x86.Build.0 = Debug|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|ARM.ActiveCfg = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|ARM.Build.0 = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|ARM64.Build.0 = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|x64.ActiveCfg = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|x64.Build.0 = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|x86.ActiveCfg = Release|Any CPU
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -478,6 +503,7 @@ Global
 		{5CF8B886-0908-4092-97F3-3C21C661CCC6} = {D2146C9F-3409-4CFD-8687-0D5701B9B7AB}
 		{BE190869-262E-43EA-937B-2ECA03CA7140} = {3B7EDD73-6858-4676-B833-128971579D52}
 		{D60DEA63-524B-416A-A570-7F4D73A1381E} = {3B7EDD73-6858-4676-B833-128971579D52}
+		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1} = {E92F51B8-03F3-46B7-B133-0CEB9ECFF28F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {339A61EA-C5C5-4D0C-BBBD-073C2CCC4A53}

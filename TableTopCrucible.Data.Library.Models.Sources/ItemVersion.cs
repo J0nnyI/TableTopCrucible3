@@ -1,18 +1,15 @@
 ﻿using System;
 
 using TableTopCrucible.Core.Data;
+using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
-using TableTopCrucible.Domain.Models.ValueTypes;
-using TableTopCrucible.Domain.Models.ValueTypes.IDs;
-
-using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 namespace TableTopCrucible.Data.Models.Sources
 {
-    public struct FileItemLink : IEntity<FileItemLinkId>
+    public struct ItemVersion
     {
-        public FileItemLink(
-            FileItemLink origin,
+        public ItemVersion(
+            ItemVersion origin,
             ItemId itemId,
             FileDataHashKey fileKey,
             FileDataHashKey? thumbnailKey,
@@ -27,13 +24,13 @@ namespace TableTopCrucible.Data.Models.Sources
         { }
 
 
-        public FileItemLink(
+        public ItemVersion(
             ItemId itemId,
             FileDataHashKey fileKey,
             FileDataHashKey? thumbnailKey,
             Version version)
             : this(
-            (FileItemLinkId)Guid.NewGuid(),
+            (ItemVersionId)Guid.NewGuid(),
             itemId,
             fileKey,
             thumbnailKey,
@@ -42,8 +39,8 @@ namespace TableTopCrucible.Data.Models.Sources
         { }
 
 
-        public FileItemLink(
-            FileItemLinkId id,
+        public ItemVersion(
+            ItemVersionId id,
             ItemId itemId,
             FileDataHashKey fileKey,
             FileDataHashKey? thumbnailKey,
@@ -60,7 +57,7 @@ namespace TableTopCrucible.Data.Models.Sources
             LastChange = lastChange ?? DateTime.Now;
         }
 
-        public FileItemLinkId Id { get; }
+        public ItemVersionId Id { get; }
         public ItemId ItemId { get; }
 
         public FileDataHashKey FileKey { get; }
