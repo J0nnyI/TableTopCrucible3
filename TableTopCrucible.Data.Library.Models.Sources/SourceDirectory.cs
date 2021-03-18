@@ -9,18 +9,17 @@ namespace TableTopCrucible.Data.Models.Sources
 {
     public struct SourceDirectory : IEntity<SourceDirectoryId>
     {
-        public Uri Uri { get; }
-        public string Path => Uri.LocalPath;
+        public string Path { get; }
         /// <summary>
         /// the path where thumbnails are stored
         /// </summary>
-        public Uri ThumbnailUri { get; }
-        public Uri AbsoluteThumbnailUri => new Uri(Uri.LocalPath + ThumbnailUri);
+        public string ThumbnailSubDir { get; }
+        public string ThumbnailPath => System.IO.Path.Combine(Path, ThumbnailSubDir);
         public DirectorySetupName Name { get; }
         public Description Description { get; }
 
         public bool IsValid
-            => Uri != null && Directory.Exists(Uri.LocalPath);
+            => Directory.Exists(Path);
 
         public Guid Identity { get; }
 
@@ -29,19 +28,19 @@ namespace TableTopCrucible.Data.Models.Sources
         public DateTime LastChange { get; }
 
 
-        public SourceDirectory(Uri path, DirectorySetupName name, Description description)
+        public SourceDirectory(string path, DirectorySetupName name, Description description)
             : this(path, name, description, (SourceDirectoryId)Guid.NewGuid(), DateTime.Now)
         { }
-        public SourceDirectory(SourceDirectory origin, Uri path, DirectorySetupName name, Description description)
+        public SourceDirectory(SourceDirectory origin, string path, DirectorySetupName name, Description description)
             : this(path, name, description, origin.Id, origin.Created)
         { }
 
-        public SourceDirectory(Uri path, DirectorySetupName name, Description description, SourceDirectoryId id, DateTime created, DateTime? lastChange = null)
+        public SourceDirectory(string path, DirectorySetupName name, Description description, SourceDirectoryId id, DateTime created, DateTime? lastChange = null)
         {
-            Uri = path;
+            Path = path;
             Name = name;
             Description = description;
-            ThumbnailUri = new Uri(@"\Thumbnails", UriKind.Relative);
+            ThumbnailSubDir = @"\Thumbnails";
 
             Id = id;
             Identity = Guid.NewGuid();

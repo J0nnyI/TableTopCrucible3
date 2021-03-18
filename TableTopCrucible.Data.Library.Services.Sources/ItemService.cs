@@ -15,6 +15,8 @@ namespace TableTopCrucible.Data.Library.Services.Sources
     {
         void Edit(Action<ISourceUpdater<Item, ItemId>> updateAction);
         IObservableCache<Item, ItemId> GetCache();
+        void AddOrUpdate(Item item);
+        void AddOrUpdate(IEnumerable<Item> items);
     }
     internal class ItemService : IItemService
     {

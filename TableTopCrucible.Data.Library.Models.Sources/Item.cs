@@ -8,6 +8,8 @@ using TableTopCrucible.Core.Data;
 using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 
+using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
+
 namespace TableTopCrucible.Data.Models.Sources
 {
     public class Item : IEntity<ItemId>
@@ -21,18 +23,34 @@ namespace TableTopCrucible.Data.Models.Sources
 
         public ObservableCollectionExtended<ItemVersion> Versions { get; } = new ObservableCollectionExtended<ItemVersion>();
 
-        public Item(ItemName name, IEnumerable<Tag> tags = null)
-            : this((ItemId)Guid.NewGuid(), name, tags, DateTime.Now) { }
-        public Item(Item origin, ItemName name, IEnumerable<Tag> tags)
-            : this(origin.Id, name, tags, origin.Created) { }
+        public Item(
+            ItemName name,
+            IEnumerable<Tag> tags = null,
+            IEnumerable<ItemVersion> versions = null,
+            ItemId? id=null)
+            : this(id??(ItemId)Guid.NewGuid(), name, tags, versions, DateTime.Now) { }
+        public Item(
+            Item origin,
+            ItemName name,
+            IEnumerable<Tag> tags,
+            IEnumerable<ItemVersion> versions = null)
+            : this(origin.Id, name, tags, versions, origin.Created) { }
 
-        public Item(ItemId id, ItemName name, IEnumerable<Tag> tags, DateTime created, DateTime? lastChange = null)
+        public Item(
+            ItemId id,
+            ItemName name,
+            IEnumerable<Tag> tags,
+            IEnumerable<ItemVersion> versions,
+            DateTime created,
+            DateTime? lastChange = null)
         {
             Id = id;
             Name = name;
-            Tags = tags ?? throw new ArgumentNullException(nameof(tags));
+            Tags = tags ?? new Tag[0];
             Created = created;
             LastChange = lastChange ?? DateTime.Now;
+            if (versions != null)
+                this.Versions.AddRange(versions);
         }
 
         public override string ToString() => $"Tile {Id} ({Name})";

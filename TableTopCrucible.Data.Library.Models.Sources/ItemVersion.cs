@@ -1,41 +1,48 @@
-﻿using System;
+﻿using DynamicData.Binding;
+
+using System;
+using System.Collections.Generic;
 
 using TableTopCrucible.Core.Data;
 using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
 
+using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
+
 namespace TableTopCrucible.Data.Models.Sources
 {
-    public struct ItemVersion
+    public class ItemVersion
     {
         public ItemVersion(
             ItemVersion origin,
             ItemId itemId,
             FileDataHashKey fileKey,
-            FileDataHashKey? thumbnailKey,
-            Version version)
+            Version version,
+            IEnumerable<FileData> files = null)
             : this(
             origin.Id,
             itemId == default ? origin.ItemId : itemId,
             fileKey == default ? origin.FileKey : fileKey,
-            thumbnailKey == default ? origin.ThumbnailKey : thumbnailKey,
             version == default ? origin.Version : version,
-            DateTime.Now)
+            DateTime.Now,
+            null,
+            files)
         { }
 
 
         public ItemVersion(
             ItemId itemId,
             FileDataHashKey fileKey,
-            FileDataHashKey? thumbnailKey,
-            Version version)
+            Version version,
+            IEnumerable<FileData> files = null)
             : this(
             (ItemVersionId)Guid.NewGuid(),
             itemId,
             fileKey,
-            thumbnailKey,
             version,
-            DateTime.Now)
+            DateTime.Now,
+            null,
+            files)
         { }
 
 
@@ -43,28 +50,29 @@ namespace TableTopCrucible.Data.Models.Sources
             ItemVersionId id,
             ItemId itemId,
             FileDataHashKey fileKey,
-            FileDataHashKey? thumbnailKey,
             Version version,
             DateTime created,
-            DateTime? lastChange = null)
+            DateTime? lastChange = null,
+            IEnumerable<FileData> files = null)
         {
             Id = id;
             ItemId = itemId;
             FileKey = fileKey;
             Version = version;
             Created = created;
-            ThumbnailKey = thumbnailKey;
             LastChange = lastChange ?? DateTime.Now;
+            if (files != null)
+                this.Files.AddRange(files);
         }
 
         public ItemVersionId Id { get; }
         public ItemId ItemId { get; }
 
         public FileDataHashKey FileKey { get; }
-        public FileDataHashKey? ThumbnailKey { get; }
         public Version Version { get; }
 
         public DateTime Created { get; }
         public DateTime LastChange { get; }
+        public ObservableCollectionExtended<FileData> Files { get; } = new ObservableCollectionExtended<FileData>();
     }
 }

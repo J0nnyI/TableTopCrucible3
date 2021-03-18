@@ -14,10 +14,15 @@ namespace TableTopCrucible.Data.Library.Services.Sources
     public interface IFileSetupService
     {
         IObservableCache<SourceDirectory, SourceDirectoryId> Directories { get; }
+        void AddOrUpdateDirectory(SourceDirectory directory);
     }
-    public class FileSetupService:IFileSetupService
+    internal class FileSetupService:IFileSetupService
     {
         private SourceCache<SourceDirectory, SourceDirectoryId> _directories = new SourceCache<SourceDirectory, SourceDirectoryId>(dir=>dir.Id);
         public IObservableCache<SourceDirectory, SourceDirectoryId> Directories => _directories;
+        public void AddOrUpdateDirectory(SourceDirectory directory)
+        {
+            this._directories.AddOrUpdate(directory);
+        }
     }
 }

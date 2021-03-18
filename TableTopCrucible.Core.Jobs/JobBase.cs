@@ -47,7 +47,6 @@ namespace TableTopCrucible.Core.Jobs
 
     public interface IJobInfo<Tres> : IJobInfo
     {
-        IJobInfo<Tnew> Then<Tnew>(Action<IJobHandler<Tnew>> task);
         IJobInfo<Tnew> Then<Tnew>(Action<IJobHandler<Tnew>, Tres> task);
     }
     public interface ISingleJobInfo<Tres> : IJobInfo<Tres>

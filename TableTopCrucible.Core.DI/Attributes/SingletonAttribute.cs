@@ -11,7 +11,6 @@ namespace TableTopCrucible.Core.DI.Attributes
         {
             Implementation = implementation;
         }
-
         public Type Implementation { get; }
     }
 }

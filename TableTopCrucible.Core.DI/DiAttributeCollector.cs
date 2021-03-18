@@ -38,7 +38,7 @@ namespace TableTopCrucible.Core.DI
                 .Select(type => new
                 {
                     type,
-                    attribute = (T)type.GetCustomAttributes(typeof(T), true).FirstOrDefault()
+                    attribute = (T)type.GetCustomAttributes(typeof(T), false).FirstOrDefault()
                 })
                 .Where(typeEx => typeEx.attribute != null)
                 .Select(typeEx => new ServiceDescriptor(typeEx.type, typeEx.attribute.Implementation, lifetime));

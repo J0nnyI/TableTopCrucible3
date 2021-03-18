@@ -7,7 +7,11 @@ using TableTopCrucible.Core.DI;
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.Core.WPF.Tabs.ViewModels;
+using TableTopCrucible.Data.Library.Models.ValueTypes.General;
+using TableTopCrucible.Data.Library.Services.Sources;
+using TableTopCrucible.Data.Models.Sources;
 using TableTopCrucible.Domain.WPF.Library.PageViewModels;
+using TableTopCrucible.DomainCore.FileIntegration;
 using TableTopCrucible.DomainCore.WPF.Toolbar.ViewModels;
 
 namespace TableTopCrucible.App.WPF.ViewModels
@@ -19,12 +23,18 @@ namespace TableTopCrucible.App.WPF.ViewModels
     [ViewModel(typeof(MainPageV))]
     internal class MainPageVM : IMainPage
     {
-        public MainPageVM(IToolbar toolbar, ILibraryPage libraryPage)
+        public MainPageVM(
+            IToolbar toolbar,
+            ILibraryPage libraryPage,
+            IFileLoaderService fileLoaderService,
+            IFileSetupService fileSetupService)
         {
             Toolbar = toolbar;
             LibraryPage = libraryPage;
-        }
 
+            fileSetupService.AddOrUpdateDirectory(new SourceDirectory(@"D:\3d Demofiles", new DirectorySetupName("test 1"), new Description("demo files")));
+            fileLoaderService.StartSync();
+        }
         public IToolbar Toolbar { get; }
         public ILibraryPage LibraryPage { get; }
     }

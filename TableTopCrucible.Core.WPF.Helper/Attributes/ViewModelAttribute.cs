@@ -34,9 +34,6 @@ namespace TableTopCrucible.Core.WPF.Helper.Attributes
                 })
                 .Where(typeEx => typeEx.viewType != null);
 
-            types.Select(typeEx => typeEx.viewModelType.Namespace)
-                .Distinct();
-
             types.Select(typeEx => createTemplate(typeEx.viewModelType, typeEx.viewType))
                 .ToList()
                 .ForEach(template =>
