@@ -46,39 +46,6 @@ namespace TableTopCrucible.Data.Library.Models.ValueTypes
             using var hashAlgorithm = SHA512.Create();
             return Create(path, hashAlgorithm);
         }
-        /**
-         * each thread fires once
-         */
-        public static IObservable<T> CreateMany<T>(
-            IEnumerable<T> fileModels,
-            Func<T, string> pathReader,
-            Action<T, FileHash> hashWriter,
-            Func<int, IProgressionController> progressionGenerator,
-            int threadcount)
-        {
-            var prog = progressionGenerator(fileModels.Count());
-            return Observable.Return(fileModels)
-                .SelectMany(list =>
-                    list.SplitEvenly(threadcount)
-                        .Select(fileGroup =>
-                        {
-
-                            // start 1 observable/thread
-                            return Observable.Start(() =>
-                            {
-                                using var algorithm = SHA512.Create();
-                                using var sub = new ReplaySubject<T>();
-                                foreach (var fileModel in fileGroup)
-                                {
-                                    hashWriter(fileModel, Create(pathReader(fileModel), algorithm));
-                                    sub.OnNext(fileModel);
-                                    prog.CurrentProgress++;
-                                }
-                                return sub;
-                            }, RxApp.TaskpoolScheduler).Switch();
-                        })
-            .Merge())
-            .Replay();
-        }
+      
     }
 }

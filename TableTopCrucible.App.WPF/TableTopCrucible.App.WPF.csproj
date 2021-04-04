@@ -32,6 +32,7 @@
     <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.Jobs.WPF\TableTopCrucible.Core.Jobs.WPF.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Helper\TableTopCrucible.Core.WPF.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Tabs\TableTopCrucible.Core.WPF.Tabs.csproj" />

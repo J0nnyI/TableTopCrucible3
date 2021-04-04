@@ -5,6 +5,7 @@ using System.Text;
 using TableTopCrucible.App.WPF.Views;
 using TableTopCrucible.Core.DI;
 using TableTopCrucible.Core.DI.Attributes;
+using TableTopCrucible.Core.Jobs.WPF.ViewModels;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.Core.WPF.Tabs.ViewModels;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
@@ -27,15 +28,17 @@ namespace TableTopCrucible.App.WPF.ViewModels
             IToolbar toolbar,
             ILibraryPage libraryPage,
             IFileLoaderService fileLoaderService,
-            IFileSetupService fileSetupService)
+            IFileSetupService fileSetupService,
+            IJobOverview jobOverview)
         {
             Toolbar = toolbar;
             LibraryPage = libraryPage;
-
+            JobOverview = jobOverview;
             fileSetupService.AddOrUpdateDirectory(new SourceDirectory(@"D:\3d Demofiles", new DirectorySetupName("test 1"), new Description("demo files")));
             fileLoaderService.StartSync();
         }
         public IToolbar Toolbar { get; }
         public ILibraryPage LibraryPage { get; }
+        public IJobOverview JobOverview { get; }
     }
 }

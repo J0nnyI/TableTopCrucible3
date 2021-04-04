@@ -10,6 +10,8 @@
     <DockPanel>
         <ContentPresenter Content="{Binding Toolbar}"
                           DockPanel.Dock="Top"/>
+        <ContentPresenter Content="{Binding JobOverview}"
+                          DockPanel.Dock="Right"/>
         <Frame Content="{Binding LibraryPage}"/>
     </DockPanel>
 </Page>

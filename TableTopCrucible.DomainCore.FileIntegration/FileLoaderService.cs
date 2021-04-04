@@ -1,11 +1,17 @@
-﻿using System;
+﻿using ReactiveUI;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs;
+using TableTopCrucible.Core.Jobs.Enums;
+using TableTopCrucible.Core.Jobs.Managers;
+using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
@@ -16,7 +22,7 @@ using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
 
 namespace TableTopCrucible.DomainCore.FileIntegration
 {
-    [Singleton((typeof(FileLoaderService)))]
+    [Singleton(typeof(FileLoaderService))]
     public interface IFileLoaderService
     {
         void StartSync();
@@ -25,55 +31,103 @@ namespace TableTopCrucible.DomainCore.FileIntegration
     internal class FileLoaderService : IFileLoaderService
     {
         private readonly IItemService _itemService;
-        private readonly IJobManagementService _jobManagementService;
+        private readonly IJobService _jobManagementService;
         private readonly IFileSetupService _fileSetupService;
 
-
-        public FileLoaderService(IItemService itemService, IJobManagementService jobManagementService, IFileSetupService fileSetupService)
+        int threadCount = 3;
+        public FileLoaderService(IItemService itemService, IJobService jobManagementService, IFileSetupService fileSetupService)
         {
             _itemService = itemService;
             _jobManagementService = jobManagementService;
             _fileSetupService = fileSetupService;
         }
+        // todo: second input with hashed files
         public void StartSync()
         {
-            this._jobManagementService
-                .Start<IEnumerable<RawFileData>>(GetFilePathsForDirectory)
-                .Then<IEnumerable<RawFileData>>(hashFiles)
-                .Then<IEnumerable<Item>>(getItems)
-                .Then<object>(writeItems);
-        }
-        private void GetFilePathsForDirectory(IJobHandler<IEnumerable<RawFileData>> handler)
-        {
-            handler.Result.Subscribe(x =>
-            {
+            var job = this._jobManagementService.TrackJob();
+            job.Title = "File synchronization";
+            var changesetGenProg_4 = job.TrackProgression("Create Changesets", 1, 1);
+            var removeFileProg_5 = job.TrackProgression("Remove deleted files", 1, 1);
+            var changesetGenProg_6 = job.TrackProgression("Update changed files", 1, 1);
+            var addFilesProg_7 = job.TrackProgression("Add new files", 1, 1);
+            var addVersionsProg_8 = job.TrackProgression("create new versions", 1, 1);
+            var addNewItems_9 = job.TrackProgression("create new items", 1, 1);
 
-            });
-            var dirWithFiles = _fileSetupService
-            .Directories
-            .Items
-            .SelectMany(dir =>
-                Directory.GetFiles(dir.Path, "*", SearchOption.AllDirectories)
-                    .Select(file => new RawFileData(dir, file))
-            )
-            .Where(file => file.Type.IsIn(PathType.Image, PathType.Model));
-            handler.Complete(dirWithFiles);
+            var _1 = getFilePathsForDirectory(job.TrackProgression("Load files", 1, 1));
+            var _2 = hashFiles(_1, Enumerable.Range(1, threadCount)
+                    .Select(i => job.TrackProgression($"Hash untracked Files {i}", 1, 5/threadCount)))
+
+                .Subscribe(x=>
+                {
+                });
         }
-        private void hashFiles(IJobHandler<IEnumerable<RawFileData>> handler, IEnumerable<RawFileData> files)
+
+        private IObservable<IEnumerable<RawFileData>> getFilePathsForDirectory(IProgressionHandler progress)
         {
-            using var prog = handler.TrackProgression(files.Count(), "hashing files", "not started");
-            foreach (var file in files)
+            return Observable.Start(() =>
             {
-                prog.Details = file.Path;
-                prog.CurrentProgress++;
-                file.CreateHash();
-            }
-            prog.Details = "done";
-            handler.Complete(files);
+                progress.State = JobState.InProgress;
+                try
+                {
+                    var res = _fileSetupService
+                    .Directories
+                    .Items
+                    .SelectMany(dir =>
+                        Directory.GetFiles(dir.Path, "*", SearchOption.AllDirectories)
+                            .Select(file => new RawFileData(dir, file))
+                    )
+                    .Where(file => file.Type.IsIn(PathType.Image, PathType.Model));
+                    progress.State = JobState.Done;
+                    return res;
+                }
+                catch (Exception ex)
+                {
+                    progress.State = JobState.Failed;
+                    progress.Details = ex.ToString();
+                    throw ex;
+                }
+            }, RxApp.TaskpoolScheduler);
         }
-        private void getItems(IJobHandler<IEnumerable<Item>> handler, IEnumerable<RawFileData> files)
+        private IObservable<IEnumerable<RawFileData>> hashFiles(IObservable<IEnumerable<RawFileData>> fileChanges, IEnumerable<IProgressionHandler> progress)
         {
-            var res = files.Where(file => file.Type == PathType.Model)
+            return fileChanges
+                   .Select(files => files
+                       .SplitEvenly(progress.Count())
+                       .Select(fileGroup => Observable.Start(() =>
+                       { 
+                           var prog = progress.ElementAt(fileGroup.Key);
+                           prog.WhenAnyValue(x => x.Current).Subscribe(x =>
+                           {
+
+                           });
+                           prog.State = JobState.InProgress;
+                           try
+                           {
+                               prog.Target = fileGroup.Count();
+                               fileGroup.ToList().ForEach(file =>
+                               {
+                                   prog.Details = file.Path;
+                                   prog.Current++;
+                                   file.CreateHash();
+                               });
+                               prog.State = JobState.Done;
+                               return fileGroup;
+                           }
+                           catch (Exception ex)
+                           {
+                               prog.State = JobState.Failed;
+                               prog.Details = $"failed {ex}";
+                               throw ex;
+                           }
+                       }, RxApp.TaskpoolScheduler)
+                       )
+                       .CombineLatest(values => values.SelectMany(x => x))
+                   )
+                   .Switch();
+        }
+        private IEnumerable<Item> getItems(IJobHandler job, IEnumerable<RawFileData> files)
+        {
+            return files.Where(file => file.Type == PathType.Model)
                 .GroupBy(fileEx => fileEx.HashKey)
                 .Select(fileGroup =>
             {
@@ -89,12 +143,11 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                     ).AsArray(),
                     itemId);
             }).ToArray();
-            handler.Complete(res);
         }
-        private void writeItems(IJobHandler<object> handler, IEnumerable<Item> items)
+        private void writeItems(IJobHandler handler, IEnumerable<Item> items)
         {
             this._itemService.AddOrUpdate(items);
-            handler.Complete(null);
+
         }
 
         private struct RawFileData
