@@ -1,5 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+
+using Serilog;
+using Serilog.Events;
 
 using System;
 using System.Collections.Generic;
@@ -10,11 +14,13 @@ using System.Text;
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.Helper;
 
+using ILogger = Microsoft.Extensions.Logging.ILogger;
+
 namespace TableTopCrucible.Core.DI
 {
     public static class DiAttributeCollector
     {
-        public static IServiceProvider GenerateServiceProvider()
+        public static IServiceCollection GenerateServiceProvider()
         {
             ServiceCollection services = new ServiceCollection();
             var assemblies = AssemblyHelper.GetSolutionAssemblies();
@@ -29,8 +35,7 @@ namespace TableTopCrucible.Core.DI
             services.TryAddEnumerable(singletons);
             services.TryAddEnumerable(scoped);
 
-
-            return services.BuildServiceProvider();
+            return services;
         }
         private static IEnumerable<ServiceDescriptor> getCollectionForAttribute<T>(IEnumerable<Type> types, ServiceLifetime lifetime) where T : IServiceAttribute
         {

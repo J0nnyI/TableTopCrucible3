@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -29,14 +31,20 @@ namespace TableTopCrucible.App.WPF.ViewModels
             ILibraryPage libraryPage,
             IFileLoaderService fileLoaderService,
             IFileSetupService fileSetupService,
-            IJobOverview jobOverview)
+            IJobOverview jobOverview,
+            ILoggerFactory loggerFactory)
         {
+            this.logger = loggerFactory.CreateLogger<MainPageVM>();
             Toolbar = toolbar;
             LibraryPage = libraryPage;
             JobOverview = jobOverview;
             fileSetupService.AddOrUpdateDirectory(new SourceDirectory(@"D:\3d Demofiles", new DirectorySetupName("test 1"), new Description("demo files")));
             fileLoaderService.StartSync();
+            logger.LogDebug("initialized");
         }
+
+        private readonly ILogger<MainPageVM> logger;
+
         public IToolbar Toolbar { get; }
         public ILibraryPage LibraryPage { get; }
         public IJobOverview JobOverview { get; }
