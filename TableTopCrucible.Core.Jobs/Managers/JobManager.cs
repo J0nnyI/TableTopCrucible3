@@ -1,5 +1,7 @@
 ﻿using DynamicData;
 
+using Microsoft.Extensions.Logging;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -15,7 +17,7 @@ using TableTopCrucible.Core.Jobs.Enums;
 
 namespace TableTopCrucible.Core.Jobs.Managers
 {
-    class JobManager : IJobHandler
+    class JobManager : ReactiveObject, IJobHandler
     {
         ISourceList<IProgressionViewer> _progress { get; } = new SourceList<IProgressionViewer>();
         public IObservable<JobState> StateChanges { get; }
@@ -24,11 +26,16 @@ namespace TableTopCrucible.Core.Jobs.Managers
 
         [Reactive]
         public string Title { get; set; }
+
+        private readonly ILogger<JobManager> logger;
+
         public IProgressionViewer TotalProgress { get; }
 
-        public JobManager()
+        public JobManager(ILoggerFactory loggerFactory)
         {
-            this.TotalProgress = new DerivedProgressionManager(Progress);
+            logger = loggerFactory.CreateLogger<JobManager>();
+            logger.LogTrace("creating jobManager");
+            this.TotalProgress = new DerivedProgressionManager(Progress, loggerFactory);
 
             this.StateChanges = Progress
                 .Connect()
@@ -37,13 +44,12 @@ namespace TableTopCrucible.Core.Jobs.Managers
                 .Select(Observable.CombineLatest)
                 .Switch()
                 .Select(JobStateHelper.MergeStates);
+
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public IProgressionHandler TrackProgression(string details, int target, int weight)
+        public IProgressionHandler TrackProgression(string title, int target, int weight)
         {
-            var prog = new ProgressionManager(details, target, weight);
+            var prog = new ProgressionManager(title, target, weight);
             this._progress.Add(prog);
             return prog;
         }
@@ -52,7 +58,7 @@ namespace TableTopCrucible.Core.Jobs.Managers
     public interface IJobHandler : IJobViewer
     {
         new string Title { get; set; }
-        IProgressionHandler TrackProgression(string details, int target, int weight);
+        IProgressionHandler TrackProgression(string title, int target, int weight);
     }
 
     public interface IJobViewer : INotifyPropertyChanged

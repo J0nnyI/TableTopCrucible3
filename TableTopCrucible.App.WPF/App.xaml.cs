@@ -52,8 +52,8 @@ namespace TableTopCrucible.App.WPF
                  .WriteTo.Debug()
                  .WriteTo.File(
                     formatter: new CompactJsonFormatter(),
-                    path: logDir +"\\ttc-log.json",
-                    fileSizeLimitBytes: 100000,
+                    path: logDir +"\\ttc-log.clef",
+                    fileSizeLimitBytes: 10000000,
                     retainedFileCountLimit: 2,
                     rollingInterval: RollingInterval.Day,
                     rollOnFileSizeLimit: true);

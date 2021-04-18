@@ -54,24 +54,25 @@ namespace TableTopCrucible.DomainCore.FileIntegration
         public IObservable<Unit> StartSync()
         {
             var job = this._jobManagementService.TrackJob();
+
             job.Title = "File synchronization";
 
 
             var readFiles_1 = job.TrackProgression("Load files", 1, 1);
-            var hashFiles_2 = Enumerable.Range(0, threadCount).Select(i => job.TrackProgression($"Hash Files {i}", 1, 1));
-            var generateItems_3 = job.TrackProgression("Hash Files", 1, 1);
+            var hashFiles_2 = Enumerable.Range(0, threadCount).Select(i => job.TrackProgression($"Hash Files {i}", 1, 1)).ToArray();
+            var generateItems_3 = job.TrackProgression($"Generate Items", 1, 1);
             //var changesetGenProg_4 = job.TrackProgression("Create Changesets", 1, 1);
             //var removeFileProg_5 = job.TrackProgression("Remove deleted files", 1, 1);
             //var changesetGenProg_6 = job.TrackProgression("Update changed files", 1, 1);
             //var addFilesProg_7 = job.TrackProgression("Add new files", 1, 1);
-            //var addVersionsProg_8 = job.TrackProgression("create new versions", 1, 1);
+            //var addVersionsProg_8 = job.TrackProgression("create new versions", 1, 1); 
             //var addNewItems_9 = job.TrackProgression("create new items", 1, 1);
 
 
             logger.LogInformation("Sync Scheduled");
 
             var res = Observable.StartAsync(async () =>
-                    {
+                    { 
                         using var scope = logger.BeginScope(nameof(StartSync) + " - pre hash");
                         logger.LogInformation("Sync Started");
 
@@ -111,6 +112,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                     )
                     .Where(file => file.Type.IsIn(PathType.Image, PathType.Model));
                 progress.State = JobState.Done;
+                progress.Current++;
                 logger.LogTrace("found {0} files", res.Count());
                 return res;
             }
@@ -145,6 +147,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                         {
                             prog.Details = file.Path;
                             prog.Current++;
+                            Thread.Sleep(5000);
                             logger.LogTrace("hashing file {0}", file.Path);
                             file.CreateHash();
                         });
@@ -186,6 +189,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                             ).AsArray(),
                             itemId);
                     }).ToArray();
+                progress.Current++;
                 logger.LogInformation("created {0} items with a total of {1} Versions", res.Count(), res.SelectMany(item => item.Versions).Count());
                 return res;
 

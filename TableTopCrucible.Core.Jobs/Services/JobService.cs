@@ -1,5 +1,7 @@
 ﻿using DynamicData;
 
+using Microsoft.Extensions.Logging;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,12 +19,17 @@ namespace TableTopCrucible.Core.Jobs.Services
     }
     internal class JobService:IJobService
     {
+        private readonly ILoggerFactory _loggerFactory;
+
         public IObservableList<IJobViewer> Jobs => _jobs;
         private SourceList<IJobViewer> _jobs { get; } = new SourceList<IJobViewer>();
-
+        public JobService( ILoggerFactory loggerFactory)
+        {
+            _loggerFactory = loggerFactory;
+        }
         public IJobHandler TrackJob()
         {
-            var newJob = new JobManager();
+            var newJob = new JobManager(_loggerFactory);
             this._jobs.Add(newJob);
 
             return newJob;

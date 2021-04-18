@@ -1,5 +1,7 @@
 ﻿using DynamicData;
 
+using Microsoft.Extensions.Logging;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -44,6 +46,8 @@ namespace TableTopCrucible.Core.Jobs.Managers
 
     class DerivedProgressionManager : DisposableReactiveObjectBase, IProgressionViewer
     {
+        private readonly ILogger<DerivedProgressionManager> logger;
+
         [Reactive]
         public JobState State { get; private set; }
         [Reactive]
@@ -58,22 +62,24 @@ namespace TableTopCrucible.Core.Jobs.Managers
         /// Not supported in derived progressuib managers
         /// </summary>
         [Reactive]
-        public int Weight { get; private set; }
+        public int Weight { get; private set; } = 1;
         public int Resolution => 1000;
 
 
-        public DerivedProgressionManager(IObservableList<IProgressionViewer> subProgs)
+        public DerivedProgressionManager(IObservableList<IProgressionViewer> subProgs, ILoggerFactory loggerFactory)
         {
+            this.logger = loggerFactory.CreateLogger<DerivedProgressionManager>();
             subProgs
                 .Connect()
-                .Transform(prog => prog.WhenAnyValue(
+                .ToCollection()
+                .Select(progs => progs.Select(prog => prog.WhenAnyValue(
+                    vm => vm.Title,
                     vm => vm.State,
                     vm => vm.Target,
                     vm => vm.Current,
                     vm => vm.Details,
                     vm => vm.Weight,
-                    ProgressionSnapshot.Factory))
-                .ToCollection()
+                    ProgressionSnapshot.Factory)))
                 .Select(Observable.CombineLatest)
                 .Switch()
                 .Subscribe(progs =>
@@ -81,14 +87,21 @@ namespace TableTopCrucible.Core.Jobs.Managers
                     this.State = JobStateHelper.MergeStates(progs.Select(prog => prog.State));
                     Target = progs.Sum(prog => prog.Weight) * Resolution;
 
-                    Current = progs.Sum(prog => prog.Current / prog.Target * Weight * Resolution);
+                    Current = (int)progs.Sum(prog => (decimal)prog.Current / (decimal)prog.Target * Weight * Resolution);
 
                     var newDetails = progs.FirstOrDefault(x => x.State == JobState.InProgress).Details;
                     if (State.IsIn(JobState.ToDo, JobState.Done))
                         newDetails = string.Empty;
                     if (State == JobState.Failed)
+                    {
                         newDetails = $"Job Failed.{Environment.NewLine + progs.FirstOrDefault(x => x.State == JobState.Failed).Details}";
+                        logger.LogError("job failed: {0}", newDetails);
+                    }
                     Details = newDetails;
+                    logger.LogTrace("extra info:" + subProgs.Count + Environment.NewLine +
+                        string.Join(Environment.NewLine, progs.Select(prog => $" {prog.Title} | {prog.State} | {prog.Current}/{prog.Target} : {prog.Details}"))
+                        );
+                    logger.LogTrace("updating progress - {0}subs: {1}/{2} ({3}): {4}", progs.Count(), Current, Target, State, Details);
                 });
         }
     }
@@ -104,7 +117,7 @@ namespace TableTopCrucible.Core.Jobs.Managers
         }
 
         [Reactive]
-        public JobState State { get; set; }
+        public JobState State { get; set; } = JobState.ToDo;
         [Reactive]
         public int Target { get; set; }
         [Reactive]
