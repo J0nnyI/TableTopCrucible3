@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reactive.Subjects;
-using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;

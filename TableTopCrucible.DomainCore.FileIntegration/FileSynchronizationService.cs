@@ -2,8 +2,6 @@
 
 using ReactiveUI;
 
-using Serilog.Events;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +12,6 @@ using System.Threading;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.Jobs;
 using TableTopCrucible.Core.Jobs.Enums;
 using TableTopCrucible.Core.Jobs.Managers;
 using TableTopCrucible.Core.Jobs.Services;

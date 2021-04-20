@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 
-using TableTopCrucible.Core.Data;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
 

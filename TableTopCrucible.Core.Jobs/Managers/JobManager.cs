@@ -6,11 +6,9 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
 
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Enums;

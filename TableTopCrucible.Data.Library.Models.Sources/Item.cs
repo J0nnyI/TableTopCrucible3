@@ -1,14 +1,10 @@
-﻿using DynamicData;
-using DynamicData.Binding;
+﻿using DynamicData.Binding;
 
 using System;
 using System.Collections.Generic;
 
-using TableTopCrucible.Core.Data;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
-
-using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
 
 namespace TableTopCrucible.Data.Models.Sources
 {
@@ -27,8 +23,8 @@ namespace TableTopCrucible.Data.Models.Sources
             ItemName name,
             IEnumerable<Tag> tags = null,
             IEnumerable<ItemVersion> versions = null,
-            ItemId? id=null)
-            : this(id??ItemId.New(), name, tags, versions, DateTime.Now) { }
+            ItemId? id = null)
+            : this(id ?? ItemId.New(), name, tags, versions, DateTime.Now) { }
         public Item(
             Item origin,
             ItemName name,

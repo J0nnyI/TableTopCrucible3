@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics.Eventing.Reader;
 
-using TableTopCrucible.Core.Data;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
@@ -12,7 +10,7 @@ using PathType = TableTopCrucible.Core.Helper.PathType;
 
 namespace TableTopCrucible.Data.Models.Sources
 {
-    public class FileData 
+    public class FileData
     {
         public FileData(
             FileData origin, FilePath path, DateTime creationTime, FileHash fileHash, DateTime lastWriteTime, SourceDirectoryId directorySetupId, long fileSize)

@@ -1,20 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
-
-using Serilog;
-using Serilog.Events;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.Helper;
-
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace TableTopCrucible.Core.DI
 {

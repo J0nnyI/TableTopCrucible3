@@ -2,10 +2,6 @@
 
 using Microsoft.Extensions.Logging;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.Jobs.Managers;
 
@@ -17,13 +13,13 @@ namespace TableTopCrucible.Core.Jobs.Services
         IJobHandler TrackJob();
         IObservableList<IJobViewer> Jobs { get; }
     }
-    internal class JobService:IJobService
+    internal class JobService : IJobService
     {
         private readonly ILoggerFactory _loggerFactory;
 
         public IObservableList<IJobViewer> Jobs => _jobs;
         private SourceList<IJobViewer> _jobs { get; } = new SourceList<IJobViewer>();
-        public JobService( ILoggerFactory loggerFactory)
+        public JobService(ILoggerFactory loggerFactory)
         {
             _loggerFactory = loggerFactory;
         }

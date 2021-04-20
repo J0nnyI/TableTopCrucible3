@@ -6,21 +6,13 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
-using Serilog.Formatting.Json;
-using Serilog.Sinks.File;
 
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 using TableTopCrucible.App.WPF.ViewModels;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
-using TableTopCrucible.Core.WPF.Tabs.ViewModels;
 
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;
-using System.Text;
 
 namespace TableTopCrucible.Core.BaseUtils
 {

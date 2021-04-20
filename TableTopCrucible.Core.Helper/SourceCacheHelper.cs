@@ -1,10 +1,8 @@
 ﻿using DynamicData;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -22,11 +20,11 @@ namespace TableTopCrucible.Core.Helper
             <Tcache, Tobservable>
             (
             this IObservable<Tobservable> observable,
-            Func<Tcache,Tobservable, bool> filter
+            Func<Tcache, Tobservable, bool> filter
             )
         {
             return observable.Select(value =>
-                new Func<Tcache, bool>(item => filter(item,value))
+                new Func<Tcache, bool>(item => filter(item, value))
             );
         }
         public static IObservable<TObject> WatchValue<TObject, TKey>(this IObservable<IChangeSet<TObject, TKey>> source, IObservable<TKey> keyChanges)

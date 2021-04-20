@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Runtime.Serialization;
-using System.Text;
 
-using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
-
-using ValueOf;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Models
 {

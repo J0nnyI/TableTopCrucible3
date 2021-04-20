@@ -1,14 +1,8 @@
 ﻿using MaterialDesignThemes.Wpf;
 
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using TableTopCrucible.Core.DI;
-using TableTopCrucible.Core.WPF.Tabs.Views;
 
 using TableTopCrucible.Core.BaseUtils;
 

@@ -1,10 +1,7 @@
 ﻿using DynamicData.Kernel;
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Reactive.Linq;
-using System.Text;
 
 namespace TableTopCrucible.Core.Helper
 {

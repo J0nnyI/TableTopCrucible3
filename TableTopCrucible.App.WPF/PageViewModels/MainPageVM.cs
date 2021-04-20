@@ -1,15 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using TableTopCrucible.App.WPF.Views;
-using TableTopCrucible.Core.DI;
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.Jobs.WPF.ViewModels;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
-using TableTopCrucible.Core.WPF.Tabs.ViewModels;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.Services.Sources;
 using TableTopCrucible.Data.Models.Sources;
@@ -20,7 +14,8 @@ using TableTopCrucible.DomainCore.WPF.Toolbar.ViewModels;
 namespace TableTopCrucible.App.WPF.ViewModels
 {
     [Transient(typeof(MainPageVM))]
-    public interface IMainPage { 
+    public interface IMainPage
+    {
     }
 
     [ViewModel(typeof(MainPageV))]

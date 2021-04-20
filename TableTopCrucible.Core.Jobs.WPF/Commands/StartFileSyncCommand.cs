@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 using TableTopCrucible.Core.DI.Attributes;
 
 namespace TableTopCrucible.Core.Jobs.WPF.Commands
@@ -11,7 +8,7 @@ namespace TableTopCrucible.Core.Jobs.WPF.Commands
     {
 
     }
-    public class StartFileSyncCommand:IStartFileSync
+    public class StartFileSyncCommand : IStartFileSync
     {
     }
 }

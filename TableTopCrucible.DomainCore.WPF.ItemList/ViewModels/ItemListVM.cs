@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
-using TableTopCrucible.DomainCore.WPF.ItemList.Views;
-
 using TableTopCrucible.Data.Library.Services.Sources;
+using TableTopCrucible.DomainCore.WPF.ItemList.Views;
 
 namespace TableTopCrucible.DomainCore.WPF.ItemList.ViewModels
 {
@@ -16,7 +12,7 @@ namespace TableTopCrucible.DomainCore.WPF.ItemList.ViewModels
 
     }
     [ViewModel(typeof(ItemListV))]
-    class ItemListVM:IItemList
+    class ItemListVM : IItemList
     {
         public ItemListVM(IItemService itemService)
         {

@@ -1,18 +1,14 @@
 ﻿using DynamicData;
 
 using System;
-using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
 
-using TableTopCrucible.Core.DI;
+using TableTopCrucible.Core.BaseUtils;
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.Core.WPF.Tabs.Models;
 using TableTopCrucible.Core.WPF.Tabs.Views;
-
-using TableTopCrucible.Core.BaseUtils;
 
 namespace TableTopCrucible.Core.WPF.Tabs.ViewModels
 {

@@ -1,7 +1,6 @@
 ﻿using ReactiveUI;
 
 using System;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;

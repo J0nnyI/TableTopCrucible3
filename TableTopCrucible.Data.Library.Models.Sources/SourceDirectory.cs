@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 
-using TableTopCrucible.Core.Data;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
 

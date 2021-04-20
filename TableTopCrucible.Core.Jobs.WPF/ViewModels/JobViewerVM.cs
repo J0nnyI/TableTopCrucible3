@@ -1,10 +1,7 @@
 ﻿
 using DynamicData;
 
-using ReactiveUI;
-
 using System;
-using System.Reactive.Linq;
 
 using TableTopCrucible.Core.Jobs.Enums;
 using TableTopCrucible.Core.Jobs.Managers;

@@ -1,15 +1,9 @@
-﻿using ReactiveUI;
-
+﻿
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Security.Cryptography;
 
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.Jobs;
 using TableTopCrucible.Data.Library.Models.ValueTypes.Exceptions;
 
 using ValueOf;
