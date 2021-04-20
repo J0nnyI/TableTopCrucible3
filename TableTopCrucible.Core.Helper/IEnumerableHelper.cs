@@ -84,9 +84,16 @@ namespace TableTopCrucible.Core.Helper
         {
             return list.Where(x => sublist.Contains(selector(x)));
         }
-        /**
-         * { 1,2,3 }, {2,3,4} ==> {1}
-         */
+
+        /// <summary>
+        /// { 1,2,3 }, {2,3,4} ==> {1} 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="Tcmp"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="sublist"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
         public static IEnumerable<T> WhereNotIn<T, Tcmp>(this IEnumerable<T> list, IEnumerable<Tcmp> sublist, Func<T, Tcmp> selector)
         {
             return list.Where(x => !sublist.Contains(selector(x)));

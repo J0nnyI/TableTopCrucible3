@@ -14,9 +14,9 @@ using TableTopCrucible.Data.Library.Models.ValueTypes.Exceptions;
 
 using ValueOf;
 
-namespace TableTopCrucible.Data.Library.Models.ValueTypes
+namespace TableTopCrucible.Data.Library.Models.ValueTypes.General
 {
-    public class FileHash:ValueOf<byte[], FileHash>
+    public class FileHash : ValueOf<byte[], FileHash>
     {
         protected override void Validate()
         {
@@ -36,6 +36,6 @@ namespace TableTopCrucible.Data.Library.Models.ValueTypes
             using var hashAlgorithm = SHA512.Create();
             return Create(path, hashAlgorithm);
         }
-      
+
     }
 }

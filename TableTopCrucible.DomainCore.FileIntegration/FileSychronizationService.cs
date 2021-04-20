@@ -18,10 +18,10 @@ using TableTopCrucible.Core.Jobs;
 using TableTopCrucible.Core.Jobs.Enums;
 using TableTopCrucible.Core.Jobs.Managers;
 using TableTopCrucible.Core.Jobs.Services;
-using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.Services.Sources;
+using TableTopCrucible.Data.Library.ValueTypes.IDs;
 using TableTopCrucible.Data.Models.Sources;
 
 using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
@@ -72,7 +72,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
             logger.LogInformation("Sync Scheduled");
 
             var res = Observable.StartAsync(async () =>
-                    { 
+                    {
                         using var scope = logger.BeginScope(nameof(StartSync) + " - pre hash");
                         logger.LogInformation("Sync Started");
 
@@ -81,7 +81,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                         var hashedFiles = await hashFiles(files, hashFiles_2);
                         var items = getItems(hashedFiles, generateItems_3);
                         writeItems(items);
-                        logger.LogInformation("{0} items have been updated. There is now a total of {1} items",items.Count(), this._itemService.GetCache().Count);
+                        logger.LogInformation("{0} items have been updated. There is now a total of {1} items", items.Count(), this._itemService.GetCache().Count);
 
                     }, RxApp.TaskpoolScheduler)
                 .Replay(1)
@@ -108,7 +108,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                     .Items
                     .SelectMany(dir =>
                         Directory.GetFiles(dir.Path, "*", SearchOption.AllDirectories)
-                            .Select(file => new RawFileData(dir, file))
+                            .Select(file => new RawFileData(dir, FilePath.From(file)))
                     )
                     .Where(file => file.Type.IsIn(PathType.Image, PathType.Model));
                 progress.State = JobState.Done;
@@ -141,7 +141,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                     });
                     prog.State = JobState.InProgress;
                     try
-                     {
+                    {
                         prog.Target = fileGroup.Count();
                         fileGroup.ToList().ForEach(file =>
                         {
@@ -208,7 +208,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
 
         private class RawFileData
         {
-            public RawFileData(SourceDirectory directory, string path)
+            public RawFileData(SourceDirectory directory, FilePath path)
             {
                 Directory = directory;
                 this.Path = path;
@@ -218,7 +218,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
             }
 
             public SourceDirectory Directory { get; }
-            public string Path { get; }
+            public FilePath Path { get; }
             private FileInfo fileInfo;
             public FileInfo FileInfo
             {
@@ -230,11 +230,11 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                 }
             }
             public PathType Type { get; }
-            public FileHash? Hash { get; private set; }
-            public FileDataHashKey HashKey => new FileDataHashKey(Hash ?? throw new InvalidOperationException("hash not created"), FileInfo.Length);
+            public FileHash Hash { get; private set; }
+            public FileDataHashKey HashKey => FileDataHashKey.From((Hash, FileInfo.Length));
             public void CreateHash() => Hash = FileHash.Create(Path);
             public FileData GetFileData()
-            => new FileData(Path, DateTime.Now, Hash, fileInfo.LastWriteTime, Directory.Id, fileInfo.Length);
+                => new FileData(Path, DateTime.Now, Hash, fileInfo.LastWriteTime, Directory.Id, fileInfo.Length);
 
 
         }

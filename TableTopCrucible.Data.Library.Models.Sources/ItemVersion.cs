@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 
 using TableTopCrucible.Core.Data;
-using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
+using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
 
@@ -36,7 +36,7 @@ namespace TableTopCrucible.Data.Models.Sources
             Version version,
             IEnumerable<FileData> files = null)
             : this(
-            (ItemVersionId)Guid.NewGuid(),
+            ItemVersionId.New(),
             itemId,
             fileKey,
             version,

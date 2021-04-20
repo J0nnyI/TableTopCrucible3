@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Data.Library.Models.IDs;
+using TableTopCrucible.Data.Library.ValueTypes.IDs;
 using TableTopCrucible.Data.Models.Sources;
 
 namespace TableTopCrucible.Data.Library.Services.Sources

@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 
 using TableTopCrucible.Core.Data;
-using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
+using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
 
 namespace TableTopCrucible.Data.Models.Sources
 {
-    public class Item : IEntity<ItemId>
+    public class Item
     {
         public ItemId Id { get; }
         public ItemName Name { get; }
@@ -28,7 +28,7 @@ namespace TableTopCrucible.Data.Models.Sources
             IEnumerable<Tag> tags = null,
             IEnumerable<ItemVersion> versions = null,
             ItemId? id=null)
-            : this(id??(ItemId)Guid.NewGuid(), name, tags, versions, DateTime.Now) { }
+            : this(id??ItemId.New(), name, tags, versions, DateTime.Now) { }
         public Item(
             Item origin,
             ItemName name,
@@ -54,8 +54,6 @@ namespace TableTopCrucible.Data.Models.Sources
         }
 
         public override string ToString() => $"Tile {Id} ({Name})";
-        public override bool Equals(object obj) => obj is Item item && this.Id == item.Id && this.LastChange == item.LastChange;
-        public override int GetHashCode() => HashCode.Combine(LastChange, Id);
 
     }
 }

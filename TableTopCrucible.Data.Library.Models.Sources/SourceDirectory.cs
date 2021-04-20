@@ -2,12 +2,12 @@
 using System.IO;
 
 using TableTopCrucible.Core.Data;
-using TableTopCrucible.Data.Library.Models.IDs;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
+using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 namespace TableTopCrucible.Data.Models.Sources
 {
-    public struct SourceDirectory : IEntity<SourceDirectoryId>
+    public struct SourceDirectory
     {
         public string Path { get; }
         /// <summary>
@@ -18,8 +18,6 @@ namespace TableTopCrucible.Data.Models.Sources
         public DirectorySetupName Name { get; }
         public Description Description { get; }
 
-        public bool IsValid
-            => Directory.Exists(Path);
 
         public Guid Identity { get; }
 
@@ -29,7 +27,7 @@ namespace TableTopCrucible.Data.Models.Sources
 
 
         public SourceDirectory(string path, DirectorySetupName name, Description description)
-            : this(path, name, description, (SourceDirectoryId)Guid.NewGuid(), DateTime.Now)
+            : this(path, name, description, SourceDirectoryId.New(), DateTime.Now)
         { }
         public SourceDirectory(SourceDirectory origin, string path, DirectorySetupName name, Description description)
             : this(path, name, description, origin.Id, origin.Created)

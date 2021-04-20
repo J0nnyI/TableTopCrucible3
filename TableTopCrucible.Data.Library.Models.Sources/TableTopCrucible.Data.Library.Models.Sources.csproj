@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes\TableTopCrucible.Data.Library.Models.ValueTypes.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.BaseUtils\TableTopCrucible.Core.BaseUtils.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes.General\TableTopCrucible.Data.Library.Models.ValueTypes.General.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.ValueTypes.IDs\TableTopCrucible.Data.Library.ValueTypes.IDs.csproj" />

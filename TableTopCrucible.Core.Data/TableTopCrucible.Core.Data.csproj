@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ValueOf" Version="1.0.17" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.BaseUtils\TableTopCrucible.Core.BaseUtils.csproj" />
   </ItemGroup>
 
