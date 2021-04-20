@@ -28,23 +28,23 @@ using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
 
 namespace TableTopCrucible.DomainCore.FileIntegration
 {
-    [Singleton(typeof(FileSychronizationService))]
+    [Singleton(typeof(FileSynchronizationService))]
     public interface IFileSynchronizationService
     {
         IObservable<Unit> StartSync();
 
     }
-    internal class FileSychronizationService : IFileSynchronizationService
+    internal class FileSynchronizationService : IFileSynchronizationService
     {
-        private readonly ILogger<FileSychronizationService> logger;
+        private readonly ILogger<FileSynchronizationService> logger;
         private readonly IItemService _itemService;
         private readonly IJobService _jobManagementService;
         private readonly IFileSetupService _fileSetupService;
 
         int threadCount = 3;
-        public FileSychronizationService(IItemService itemService, IJobService jobManagementService, IFileSetupService fileSetupService, ILoggerFactory loggerFactory)
+        public FileSynchronizationService(IItemService itemService, IJobService jobManagementService, IFileSetupService fileSetupService, ILoggerFactory loggerFactory)
         {
-            logger = loggerFactory.CreateLogger<FileSychronizationService>();
+            logger = loggerFactory.CreateLogger<FileSynchronizationService>();
             _itemService = itemService;
             _jobManagementService = jobManagementService;
             _fileSetupService = fileSetupService;

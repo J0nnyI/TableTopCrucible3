@@ -26,8 +26,8 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Services
         /// <summary>
         /// the directory in which all the sub-jsons are unzipped
         /// </summary>
-        private BehaviorSubject<DirectoryPath> currentWorkingDirectoryChanges;
-        private ILogger<SavefileManagementService> logger;
+        private readonly BehaviorSubject<DirectoryPath> currentWorkingDirectoryChanges = new BehaviorSubject<DirectoryPath>(null);
+        private readonly ILogger<SavefileManagementService> logger;
 
         public DirectoryPath CurrentWorkingDirectory => currentWorkingDirectoryChanges.Value;
         public bool IsFileOpened => currentWorkingDirectoryChanges.Value != null;
