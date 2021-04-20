@@ -77,7 +77,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.DomainCore
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.DomainCore.FileIntegration", "TableTopCrucible.DomainCore.FileIntegration\TableTopCrucible.DomainCore.FileIntegration.csproj", "{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Core.Jobs.WPF", "TableTopCrucible.Core.Jobs.WPF\TableTopCrucible.Core.Jobs.WPF.csproj", "{A5D77A42-24D5-4CB0-A5D6-52BDE7D02775}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Jobs.WPF", "TableTopCrucible.Core.Jobs.WPF\TableTopCrucible.Core.Jobs.WPF.csproj", "{A5D77A42-24D5-4CB0-A5D6-52BDE7D02775}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DTO", "DTO", "{CF4FD53C-AE27-4806-8A9E-548BEF6A5B3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Data.Library.DataTransfer", "TableTopCrucible.Data.Library.DataTransfer\TableTopCrucible.Data.Library.DataTransfer.csproj", "{534BCBB6-B5D0-4367-A435-80D524CD2E97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -493,6 +497,26 @@ Global
 		{A5D77A42-24D5-4CB0-A5D6-52BDE7D02775}.Release|x64.Build.0 = Release|Any CPU
 		{A5D77A42-24D5-4CB0-A5D6-52BDE7D02775}.Release|x86.ActiveCfg = Release|Any CPU
 		{A5D77A42-24D5-4CB0-A5D6-52BDE7D02775}.Release|x86.Build.0 = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|ARM.Build.0 = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|x64.Build.0 = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Debug|x86.Build.0 = Debug|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|ARM.ActiveCfg = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|ARM.Build.0 = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|ARM64.Build.0 = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|x64.ActiveCfg = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|x64.Build.0 = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|x86.ActiveCfg = Release|Any CPU
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -527,6 +551,8 @@ Global
 		{D60DEA63-524B-416A-A570-7F4D73A1381E} = {3B7EDD73-6858-4676-B833-128971579D52}
 		{AF9B38E7-2829-4529-AB2F-8880FCD1A8E1} = {E92F51B8-03F3-46B7-B133-0CEB9ECFF28F}
 		{A5D77A42-24D5-4CB0-A5D6-52BDE7D02775} = {63E76212-B2A1-4E11-AF72-0D8A01608C89}
+		{CF4FD53C-AE27-4806-8A9E-548BEF6A5B3E} = {F3258B60-224D-4AEF-BAFB-57A94F101963}
+		{534BCBB6-B5D0-4367-A435-80D524CD2E97} = {CF4FD53C-AE27-4806-8A9E-548BEF6A5B3E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {339A61EA-C5C5-4D0C-BBBD-073C2CCC4A53}

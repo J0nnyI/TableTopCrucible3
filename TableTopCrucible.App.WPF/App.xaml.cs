@@ -46,9 +46,9 @@ namespace TableTopCrucible.App.WPF
             ILoggerFactory factory = LoggerFactory.Create(builder =>
             {
                 builder.ClearProviders();
-                builder.SetMinimumLevel(LogLevel.Trace);
+                builder.SetMinimumLevel(LogLevel.Warning);
                 var loggerConfig = new LoggerConfiguration()
-                 .MinimumLevel.Is(LogEventLevel.Verbose)
+                 .MinimumLevel.Is(LogEventLevel.Warning)
                  .WriteTo.Debug()
                  .WriteTo.File(
                     formatter: new CompactJsonFormatter(),
