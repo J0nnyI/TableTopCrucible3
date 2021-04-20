@@ -4,7 +4,12 @@ using System.Text;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Models
 {
-    class ItemListDTO
+    /**
+     * - Model Files
+     * - Image Files
+     * - Zip Files
+     */
+    class MasterFileListDTO
     {
     }
 }

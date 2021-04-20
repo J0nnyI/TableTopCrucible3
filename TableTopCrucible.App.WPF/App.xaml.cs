@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoMapper;
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Serilog;
@@ -32,17 +34,25 @@ namespace TableTopCrucible.App.WPF
         public App()
         {
         }
-        protected override void OnStartup(StartupEventArgs e)
+
+        private void configureAutomapper(IServiceCollection services)
         {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.ConstructServicesUsing(services.AddSingleton);
+
+                cfg.AddMaps(nameof(TableTopCrucible.Data.Library.DataTransfer));
+
+            });
 
 
-            this.Resources.MergedDictionaries.Add(ViewModelAttribute.GetTemplateDictionary());
+        }
 
-            var services = Core.DI.DiAttributeCollector.GenerateServiceProvider();
-
+        private ILoggerFactory buildLoggingFactory()
+        {
             var logDir = "logging";
-            if (Directory.Exists(logDir)) 
-            Directory.GetFiles(logDir).ToList().ForEach(File.Delete);
+            if (Directory.Exists(logDir))
+                Directory.GetFiles(logDir).ToList().ForEach(File.Delete);
             ILoggerFactory factory = LoggerFactory.Create(builder =>
             {
                 builder.ClearProviders();
@@ -52,7 +62,7 @@ namespace TableTopCrucible.App.WPF
                  .WriteTo.Debug()
                  .WriteTo.File(
                     formatter: new CompactJsonFormatter(),
-                    path: logDir +"\\ttc-log.clef",
+                    path: logDir + "\\ttc-log.clef",
                     fileSizeLimitBytes: 10000000,
                     retainedFileCountLimit: 2,
                     rollingInterval: RollingInterval.Day,
@@ -61,13 +71,27 @@ namespace TableTopCrucible.App.WPF
 
                 builder.AddSerilog(loggerConfig.CreateLogger());
             });
+            return factory;
 
-            services.AddSingleton(typeof(ILoggerFactory), factory);
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+
+
+            this.Resources.MergedDictionaries.Add(ViewModelAttribute.GetTemplateDictionary());
+
+            var services = Core.DI.DiAttributeCollector.GenerateServiceProvider();
+
+            var loggingFactory = buildLoggingFactory();
+
+            services.AddSingleton(typeof(ILoggerFactory), loggingFactory);
+            configureAutomapper(services);
 
             var provider = services.BuildServiceProvider();
 
 
-            ILogger msLogger = factory.CreateLogger(nameof(App));
+            ILogger msLogger = loggingFactory.CreateLogger(nameof(App));
             msLogger.LogInformation("DI initialized");
 
 

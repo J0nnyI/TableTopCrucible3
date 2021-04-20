@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
+
+using ValueOf;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Models
 {
-    class MasterFileListDTO
+    [DataContract]
+    public class FileDataDTO
     {
     }
 }

@@ -10,18 +10,18 @@ using PathType = TableTopCrucible.Core.Helper.PathType;
 
 namespace TableTopCrucible.Data.Models.Sources
 {
-    public struct FileData 
+    public class FileData 
     {
         public FileData(
-            FileData origin, string path, DateTime creationTime, FileHash? fileHash, DateTime lastWriteTime, SourceDirectoryId directorySetupId, long fileSize)
+            FileData origin, FilePath path, DateTime creationTime, FileHash? fileHash, DateTime lastWriteTime, SourceDirectoryId directorySetupId, long fileSize)
             : this(path, creationTime, fileHash, lastWriteTime, directorySetupId, fileSize, origin.Id, origin.Created)
         { }
         public FileData(
-            string path, DateTime creationTime, FileHash? fileHash, DateTime lastWriteTime, SourceDirectoryId directorySetupId, long fileSize)
+            FilePath path, DateTime creationTime, FileHash? fileHash, DateTime lastWriteTime, SourceDirectoryId directorySetupId, long fileSize)
             : this(path, creationTime, fileHash, lastWriteTime, directorySetupId, fileSize, FileDataId.New(), DateTime.Now)
         { }
         public FileData(
-            string path,
+            FilePath path,
             DateTime creationTime,
             FileHash? fileHash,
             DateTime lastWriteTime,
@@ -43,15 +43,15 @@ namespace TableTopCrucible.Data.Models.Sources
             this.Identity = Guid.NewGuid();
             this.HashKey = null;
             this.Type = FileSupportHelper.GetPathType(Path);
-            if (this.FileHash.HasValue)
-                this.HashKey = new FileDataHashKey(this.FileHash.Value, this.FileSize);
+            if (this.FileHash != null)
+                this.HashKey = new FileDataHashKey(this.FileHash, this.FileSize);
         }
 
         public FileDataHashKey? HashKey { get; }
         public string Path { get; }
         // the time when the file (not the model) was created
         public DateTime FileCreationTime { get; }
-        public FileHash? FileHash { get; }
+        public FileHash FileHash { get; }
         public DateTime LastWriteTime { get; }
         public SourceDirectoryId DirectorySetupId { get; }
         // identifies this item in this specific state
@@ -63,12 +63,8 @@ namespace TableTopCrucible.Data.Models.Sources
         public DateTime LastChange { get; }
         public PathType Type { get; }
 
-        public static bool operator ==(FileData fileA, FileData fileB)
-            => fileA.Identity == fileB.Identity;
-        public static bool operator !=(FileData fileA, FileData fileB)
-            => fileA.Identity != fileB.Identity;
 
-        public override bool Equals(object obj) => obj is FileData info && this == info;
+        public override bool Equals(object obj) => obj is FileData info && this.Identity == info.Identity;
         public override int GetHashCode() => HashCode.Combine(this.Identity);
     }
 }

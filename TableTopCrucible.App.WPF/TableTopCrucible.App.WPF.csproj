@@ -11,6 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Collection" Version="7.0.1" />
     <PackageReference Include="DynamicData" Version="7.1.1" />
     <PackageReference Include="DynamicData.ReactiveUI" Version="6.11.0.2613" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.0.3" />
@@ -29,6 +31,7 @@
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="ValueOf" Version="1.0.17" />
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.4" />
   </ItemGroup>
 
@@ -41,6 +44,7 @@
     <ProjectReference Include="..\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Helper\TableTopCrucible.Core.WPF.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Tabs\TableTopCrucible.Core.WPF.Tabs.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.DataTransfer\TableTopCrucible.Data.Library.DataTransfer.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.Models.Sources\TableTopCrucible.Data.Library.Models.Sources.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.Models.ValueTypes.General\TableTopCrucible.Data.Library.Models.ValueTypes.General.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes\TableTopCrucible.Data.Library.Models.ValueTypes.csproj" />

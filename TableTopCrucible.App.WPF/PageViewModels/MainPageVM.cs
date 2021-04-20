@@ -29,7 +29,7 @@ namespace TableTopCrucible.App.WPF.ViewModels
         public MainPageVM(
             IToolbar toolbar,
             ILibraryPage libraryPage,
-            IFileLoaderService fileLoaderService,
+            IFileSynchronizationService fileLoaderService,
             IFileSetupService fileSetupService,
             IJobOverview jobOverview,
             ILoggerFactory loggerFactory)
