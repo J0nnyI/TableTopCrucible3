@@ -15,6 +15,8 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Enums;
 using TableTopCrucible.Core.Jobs.Managers;
 using TableTopCrucible.Core.Jobs.Services;
+using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Data.Library.DataTransfer.Services;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.Services.Sources;
@@ -37,15 +39,20 @@ namespace TableTopCrucible.DomainCore.FileIntegration
         private readonly IItemService _itemService;
         private readonly IJobService _jobManagementService;
         private readonly IFileSetupService _fileSetupService;
-
+        private readonly IFileDataStorageService _fileDataStorageService;
         int threadCount = 3;
-        public FileSynchronizationService(IItemService itemService, IJobService jobManagementService, IFileSetupService fileSetupService, ILoggerFactory loggerFactory)
+        public FileSynchronizationService(
+            IItemService itemService,
+            IJobService jobManagementService,
+            IFileSetupService fileSetupService,
+            ILoggerFactory loggerFactory,
+            IFileDataStorageService fileDataStorageService)
         {
             logger = loggerFactory.CreateLogger<FileSynchronizationService>();
             _itemService = itemService;
             _jobManagementService = jobManagementService;
             _fileSetupService = fileSetupService;
-
+            _fileDataStorageService = fileDataStorageService;
         }
         // todo: second input with hashed files
         public IObservable<Unit> StartSync()
@@ -57,13 +64,8 @@ namespace TableTopCrucible.DomainCore.FileIntegration
 
             var readFiles_1 = job.TrackProgression("Load files", 1, 1);
             var hashFiles_2 = Enumerable.Range(0, threadCount).Select(i => job.TrackProgression($"Hash Files {i}", 1, 1)).ToArray();
-            var generateItems_3 = job.TrackProgression($"Generate Items", 1, 1);
-            //var changesetGenProg_4 = job.TrackProgression("Create Changesets", 1, 1);
-            //var removeFileProg_5 = job.TrackProgression("Remove deleted files", 1, 1);
-            //var changesetGenProg_6 = job.TrackProgression("Update changed files", 1, 1);
-            //var addFilesProg_7 = job.TrackProgression("Add new files", 1, 1);
-            //var addVersionsProg_8 = job.TrackProgression("create new versions", 1, 1); 
-            //var addNewItems_9 = job.TrackProgression("create new items", 1, 1);
+            var generateItems_3_1 = job.TrackProgression($"Generate Items", 1, 1);
+            var writeFileMasterList_3_2 = job.TrackProgression($"Write File Masterlist", 1, 1);
 
 
             logger.LogInformation("Sync Scheduled");
@@ -76,7 +78,22 @@ namespace TableTopCrucible.DomainCore.FileIntegration
 
                         var files = getFilePathsForDirectory(readFiles_1);
                         var hashedFiles = await hashFiles(files, hashFiles_2);
-                        var items = getItems(hashedFiles, generateItems_3);
+
+                        Observable.Start(() =>
+                        {
+                            try
+                            {
+                                _fileDataStorageService.WriteMasterFileList(hashedFiles.Select(file => file.GetFileData()));
+                            }
+                            catch (Exception ex)
+                            {
+                                writeFileMasterList_3_2.Current = writeFileMasterList_3_2.Target = 1;
+                                writeFileMasterList_3_2.Details = $"writing failed: {ex}";
+                                logger.LogError(ex, "could not write file master list");
+                            }
+                        }, RxApp.TaskpoolScheduler).Take(1).Subscribe();
+
+                        var items = getItems(hashedFiles, generateItems_3_1);
                         writeItems(items);
                         logger.LogInformation("{0} items have been updated. There is now a total of {1} items", items.Count(), this._itemService.GetCache().Count);
 
@@ -107,7 +124,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                         Directory.GetFiles(dir.Path, "*", SearchOption.AllDirectories)
                             .Select(file => new RawFileData(dir, FilePath.From(file)))
                     )
-                    .Where(file => file.Type.IsIn(PathType.Image, PathType.Model));
+                    .Where(file => file.Type.IsIn(FileType.Image, FileType.Model));
                 progress.State = JobState.Done;
                 progress.Current++;
                 logger.LogTrace("found {0} files", res.Count());
@@ -166,7 +183,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
         {
             try
             {
-                var filteredFiles = files.Where(file => file.Type == PathType.Model).ToArray();
+                var filteredFiles = files.Where(file => file.Type == FileType.Model).ToArray();
                 var hashes = filteredFiles.Select(x => x.Hash).ToArray();
                 var fileCount = filteredFiles.Count();
                 logger.LogTrace("creating {0} items: {1}", fileCount, hashes);
@@ -209,7 +226,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
             {
                 Directory = directory;
                 this.Path = path;
-                this.Type = FileSupportHelper.GetPathType(path);
+                this.Type = path.GetExtension().GetFileType();
                 this.fileInfo = null;
                 this.Hash = null;
             }
@@ -226,14 +243,12 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                     return fileInfo;
                 }
             }
-            public PathType Type { get; }
+            public FileType Type { get; }
             public FileHash Hash { get; private set; }
-            public FileDataHashKey HashKey => FileDataHashKey.From((Hash, FileInfo.Length));
+            public FileDataHashKey HashKey => FileDataHashKey.From((Hash, FileSize.From(FileInfo.Length)));
             public void CreateHash() => Hash = FileHash.Create(Path);
             public FileData GetFileData()
-                => new FileData(Path, DateTime.Now, Hash, fileInfo.LastWriteTime, Directory.Id, fileInfo.Length);
-
-
+                => new FileData(FileInfo, Hash);
         }
     }
 

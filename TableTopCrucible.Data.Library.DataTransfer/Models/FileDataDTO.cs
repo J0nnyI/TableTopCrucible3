@@ -1,26 +1,25 @@
-﻿using System;
+﻿using AutoMapper;
+
+using System;
 using System.Diagnostics.Eventing.Reader;
 using System.Runtime.Serialization;
 
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
-using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
+using TableTopCrucible.Data.Models.Sources;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Models
 {
     [DataContract]
+    [AutoMap(typeof(FileData))]
     public class FileDataDTO
     {
 
-        public FileDataHashKey HashKey { get; set; }
-        public FilePath Path { get; set; }
-        // the time when the file (not the model) was created
-        public FileHash FileHash { get; set; }
+        public string Path { get; set; }
+        public byte[] FileHash { get; set; }
         public DateTime MostRecentUpdate { get; set; }
-        public SourceDirectoryId DirectorySetupId { get; set; }
-        // identifies this item in this specific state
-        public FileSize FileSize { get; set; }
-        public PathType Type { get; set; }
+        public long FileSize { get; set; }
 
 
     }

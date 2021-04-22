@@ -5,7 +5,7 @@ using System.IO;
 using System.Reactive.Subjects;
 
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Data.Library.Models.ValueTypes.General;
+using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Services
 {
@@ -13,11 +13,12 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Services
     /// 
     /// </summary>
     [Singleton(typeof(SavefileManagementService))]
-    internal interface ISavefileManagementService
+    public interface ISavefileManagementService
     {
         DirectoryPath CurrentWorkingDirectory { get; }
         bool IsFileOpened { get; }
 
+        void CreateMasterfile();
     }
     internal class SavefileManagementService : ISavefileManagementService
     {

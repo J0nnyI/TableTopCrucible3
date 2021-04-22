@@ -5,14 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DynamicData" Version="7.1.1" />
-    <PackageReference Include="DynamicData.ReactiveUI" Version="6.11.0.2613" />
-    <PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-    <PackageReference Include="ReactiveUI" Version="13.2.18" />
-    <PackageReference Include="ReactiveUI.Fody" Version="13.2.18" />
-    <PackageReference Include="ReactiveUI.Validation" Version="2.1.1" />
     <PackageReference Include="ValueOf" Version="1.0.17" />
   </ItemGroup>
 
@@ -20,6 +12,7 @@
     <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
   </ItemGroup>
 
 </Project>

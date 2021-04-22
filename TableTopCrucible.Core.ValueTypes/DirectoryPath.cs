@@ -2,7 +2,7 @@
 
 using ValueOf;
 
-namespace TableTopCrucible.Data.Library.Models.ValueTypes.General
+namespace TableTopCrucible.Core.ValueTypes
 {
     /// <summary>
     /// the path of a directory

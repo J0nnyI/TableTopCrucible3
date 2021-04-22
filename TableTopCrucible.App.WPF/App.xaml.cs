@@ -9,6 +9,7 @@ using Serilog.Formatting.Compact;
 
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 
 using TableTopCrucible.App.WPF.ViewModels;
@@ -29,15 +30,7 @@ namespace TableTopCrucible.App.WPF
 
         private void configureAutomapper(IServiceCollection services)
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.ConstructServicesUsing(services.AddSingleton);
-
-                cfg.AddMaps(nameof(TableTopCrucible.Data.Library.DataTransfer));
-
-            });
-
-
+            services.AddAutoMapper(Assembly.Load("TableTopCrucible.Data.Library.DataTransfer"));
         }
 
         private ILoggerFactory buildLoggingFactory()

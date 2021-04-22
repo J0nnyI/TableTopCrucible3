@@ -4,6 +4,7 @@ using TableTopCrucible.App.WPF.Views;
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.Jobs.WPF.ViewModels;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
+using TableTopCrucible.Data.Library.DataTransfer.Services;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.Services.Sources;
 using TableTopCrucible.Data.Models.Sources;
@@ -27,13 +28,18 @@ namespace TableTopCrucible.App.WPF.ViewModels
             IFileSynchronizationService fileLoaderService,
             IFileSetupService fileSetupService,
             IJobOverview jobOverview,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            ISavefileManagementService savefileManagementService)
         {
             this.logger = loggerFactory.CreateLogger<MainPageVM>();
             Toolbar = toolbar;
             LibraryPage = libraryPage;
             JobOverview = jobOverview;
-            fileSetupService.AddOrUpdateDirectory(new SourceDirectory(@"D:\3d Demofiles", new DirectorySetupName("test 1"), new Description("demo files")));
+            fileSetupService.AddOrUpdateDirectory(new SourceDirectory(
+                @"D:\3d Demofiles",
+                new DirectorySetupName("test 1"),
+                new Description("demo files")));
+            savefileManagementService.CreateMasterfile();
             fileLoaderService.StartSync();
             logger.LogDebug("initialized");
         }

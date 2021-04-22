@@ -8,8 +8,8 @@ using System.Reactive.Linq;
 using System.Text.Json;
 
 using TableTopCrucible.Core.DI.Attributes;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Data.Library.DataTransfer.Models;
-using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Models.Sources;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Services
@@ -20,11 +20,12 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Services
     /// FileSystemWatcher => FileLoader => Observable Update
     /// </summary>
     [Singleton(typeof(FileDataStorageService))]
-    public interface IFileDataStorageSergvice
+    public interface IFileDataStorageService
     {
-
+        IEnumerable<FileData> ReadFileMasterList();
+        void WriteMasterFileList(IEnumerable<FileData> fileData);
     }
-    internal class FileDataStorageService : IFileDataStorageSergvice
+    internal class FileDataStorageService : IFileDataStorageService
     {
         private static readonly FileName fileName = FileName.From("MasterFileList.subttc");
         private readonly ISavefileManagementService _savefileManagementService;
