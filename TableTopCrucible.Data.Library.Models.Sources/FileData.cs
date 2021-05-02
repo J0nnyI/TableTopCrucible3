@@ -19,11 +19,11 @@ namespace TableTopCrucible.Data.Models.Sources
             FileHashKey.From((hash, FileSize.From(fileInfo.Length))),
             fileInfo.LastWriteTime)
         { }
-        public FileData(FilePath path, FileHashKey hashKey, DateTime mostRecentUpdate)
+        public FileData(FilePath path, FileHashKey hashKey, DateTime mostRecentUpdate):this()
         {
             Path = path ?? throw new ArgumentNullException(nameof(path));
-            Hash = HashKey.Hash;
-            Size = HashKey.FileSize;
+            Hash = hashKey.Hash;
+            Size = hashKey.FileSize;
             MostRecentUpdate = mostRecentUpdate;
         }
         /// <summary>
@@ -31,13 +31,14 @@ namespace TableTopCrucible.Data.Models.Sources
         /// </summary>
         public FileData()
         {
-
+            _hashKey = new Lazy<FileHashKey>(()=>FileHashKey.From(Hash, Size));
         }
 
         public FilePath Path { get; private set; }
         public FileHash Hash { get; private set; }
         public FileSize Size { get; private set; }
-        public FileHashKey HashKey => FileHashKey.From((Hash, Size));
+        private Lazy<FileHashKey> _hashKey { get; }
+        public FileHashKey HashKey => _hashKey?.Value;
 
         public DateTime MostRecentUpdate { get; private set; }
 

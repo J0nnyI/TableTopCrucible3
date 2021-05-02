@@ -17,11 +17,15 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
     [AutoMap(typeof(TestData), ReverseMap = true)]
     public class TestDTO
     {
-        public ValueOfDTO<string> ContentValue { get; set; }
+        public string ContentValue { get; set; }
     }
 
     public class TestData
     {
+        public TestData()
+        {
+                
+        }
         public TestData(FilePath content)
         {
             Content = content ?? throw new ArgumentNullException(nameof(content));
@@ -86,7 +90,7 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
                                     JsonSerializer.Serialize(obj.Item2),
                                     "\"dto\": ",
                                     JsonSerializer.Serialize(mapper.Map<Tdto>(obj.Item2))
-                                )
+                                ) + ","
                             )) +
                     Environment.NewLine + "},"
                 )
@@ -130,17 +134,6 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
 
         }
 
-        [TestMethod]
-        public void TestValueTypeMap()
-        {
-            var a = buildDemoFileData();
-            var b = buildDemoFileData();
-            var errorText = new Lazy<string>(() => getJson<FileData, FileDataDTO>(("a", a), ("b", b)));
-            Assert.AreEqual(a, b, errorText.Value);
-            Assert.IsTrue(a.Equals(b), errorText.Value);
-            TestMap<FilePath, ValueOfDTO<string>>(FilePath.From("path"));
-        }
-
         private FileData buildDemoFileData()
         {
             return new FileData(
@@ -154,6 +147,14 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
         }
         private FileHash buildHash()
             => FileHash.From(Enumerable.Range(1, 64).Select(i => Convert.ToByte(i)).ToArray());
+        [TestMethod]
+        public void TestFileDataEquals()
+        {
+            var a = buildDemoFileData();
+            var b = buildDemoFileData();
+            Assert.AreEqual(a, a,"same instance");
+            Assert.AreEqual(a, b, "same value");
+        }
         [TestMethod]
         public void TestFileDataDTO()
         {

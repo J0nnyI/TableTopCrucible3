@@ -16,10 +16,9 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models
     [AutoMap(typeof(FileData), ReverseMap = true)]
     public class FileDataDTO
     {
-
         public string PathValue { get; set; }
-        public byte[] HashValue { get; private set; }
-        public long SizeValue { get; private set; }
+        public byte[] HashValue { get; set; }
+        public long SizeValue { get; set; }
         public DateTime MostRecentUpdate { get; set; }
 
     }

@@ -34,14 +34,12 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public override bool Equals(object obj)
-        {
-            return obj is FileHash hash &&
+            => obj is FileHash hash &&
                 this.Value.SequenceEqual(hash.Value);
-        }
-
+        protected override bool Equals(ValueOf<byte[], FileHash> other)
+            => Equals(other as object);
         public override int GetHashCode()
-        {
-            return HashCode.Combine(base.GetHashCode(), Value);
-        }
+            => HashCode.Combine(base.GetHashCode(), Value);
+
     }
 }
