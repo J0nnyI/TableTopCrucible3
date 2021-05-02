@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-using TableTopCrucible.Data.Library.Models.ValueTypes;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
@@ -15,7 +15,7 @@ namespace TableTopCrucible.Data.Models.Sources
         public ItemVersion(
             ItemVersion origin,
             ItemId itemId,
-            FileDataHashKey fileKey,
+            FileHashKey fileKey,
             Version version,
             IEnumerable<FileData> files = null)
             : this(
@@ -31,7 +31,7 @@ namespace TableTopCrucible.Data.Models.Sources
 
         public ItemVersion(
             ItemId itemId,
-            FileDataHashKey fileKey,
+            FileHashKey fileKey,
             Version version,
             IEnumerable<FileData> files = null)
             : this(
@@ -48,7 +48,7 @@ namespace TableTopCrucible.Data.Models.Sources
         public ItemVersion(
             ItemVersionId id,
             ItemId itemId,
-            FileDataHashKey fileKey,
+            FileHashKey fileKey,
             Version version,
             DateTime created,
             DateTime? lastChange = null,
@@ -67,7 +67,7 @@ namespace TableTopCrucible.Data.Models.Sources
         public ItemVersionId Id { get; }
         public ItemId ItemId { get; }
 
-        public FileDataHashKey FileKey { get; }
+        public FileHashKey FileKey { get; }
         public Version Version { get; }
 
         public DateTime Created { get; }

@@ -6,7 +6,7 @@ using ValueOf;
 namespace TableTopCrucible.Core.ValueTypes
 {
     /// <summary>
-    /// the path of a file including it's name
+    /// the path of a file including its name
     /// </summary>
     public class FilePath : ValueOf<string, FilePath>
     {

@@ -17,7 +17,6 @@ using TableTopCrucible.Core.Jobs.Managers;
 using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Data.Library.DataTransfer.Services;
-using TableTopCrucible.Data.Library.Models.ValueTypes;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.Services.Sources;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
@@ -245,7 +244,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
             }
             public FileType Type { get; }
             public FileHash Hash { get; private set; }
-            public FileDataHashKey HashKey => FileDataHashKey.From((Hash, FileSize.From(FileInfo.Length)));
+            public FileHashKey HashKey => FileHashKey.From((Hash, FileSize.From(FileInfo.Length)));
             public void CreateHash() => Hash = FileHash.Create(Path);
             public FileData GetFileData()
                 => new FileData(FileInfo, Hash);

@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
+
+using System.IO;
+
+using TableTopCrucible.Core.Data;
 
 using ValueOf;
 

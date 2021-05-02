@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -31,5 +33,15 @@ namespace TableTopCrucible.Core.ValueTypes
             return Create(path, hashAlgorithm);
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is FileHash hash &&
+                this.Value.SequenceEqual(hash.Value);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(base.GetHashCode(), Value);
+        }
     }
 }

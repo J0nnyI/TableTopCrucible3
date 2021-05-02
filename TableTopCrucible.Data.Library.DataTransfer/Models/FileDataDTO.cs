@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 
 using System;
 using System.Diagnostics.Eventing.Reader;
@@ -12,15 +13,14 @@ using TableTopCrucible.Data.Models.Sources;
 namespace TableTopCrucible.Data.Library.DataTransfer.Models
 {
     [DataContract]
-    [AutoMap(typeof(FileData))]
+    [AutoMap(typeof(FileData), ReverseMap = true)]
     public class FileDataDTO
     {
 
-        public string Path { get; set; }
-        public byte[] FileHash { get; set; }
+        public string PathValue { get; set; }
+        public byte[] HashValue { get; private set; }
+        public long SizeValue { get; private set; }
         public DateTime MostRecentUpdate { get; set; }
-        public long FileSize { get; set; }
-
 
     }
 }
