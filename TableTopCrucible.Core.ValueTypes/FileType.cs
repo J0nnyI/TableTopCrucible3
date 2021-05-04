@@ -4,6 +4,7 @@
     {
         Model,
         Image,
+        Library,
         Other
     }
 }

@@ -31,14 +31,12 @@ namespace TableTopCrucible.Data.Models.Sources
         /// </summary>
         public FileData()
         {
-            _hashKey = new Lazy<FileHashKey>(()=>FileHashKey.From(Hash, Size));
         }
 
         public FilePath Path { get; private set; }
         public FileHash Hash { get; private set; }
         public FileSize Size { get; private set; }
-        private Lazy<FileHashKey> _hashKey { get; }
-        public FileHashKey HashKey => _hashKey?.Value;
+        public FileHashKey HashKey => FileHashKey.From(Hash, Size);
 
         public DateTime MostRecentUpdate { get; private set; }
 

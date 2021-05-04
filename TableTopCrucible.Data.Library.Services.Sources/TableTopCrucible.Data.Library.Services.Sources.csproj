@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.Models.Sources\TableTopCrucible.Data.Library.Models.Sources.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes\TableTopCrucible.Data.Library.Models.ValueTypes.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.ValueTypes.IDs\TableTopCrucible.Data.Library.ValueTypes.IDs.csproj" />
   </ItemGroup>
 

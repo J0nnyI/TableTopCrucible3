@@ -12,7 +12,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static readonly IEnumerable<FileExtension> ModelExtensions = FileExtension.FromList(".stl", ".obj", ".off", ".objz", ".lwo", ".3ds");
         public static readonly IEnumerable<FileExtension> ImageExtensions = FileExtension.FromList(".png", ".jpg", ".jpeg", ".bmp", ".gif", ".hdp", ".jp2", ".pbm", ".psd", ".tga", ".tiff", ".img");
-
+        public static readonly FileExtension LibraryExtension = From(".ttcl");
         public static IEnumerable<FileExtension> FromList(params string[] values)
             => values.Select(FileExtension.From);
         public FileExtension ToLower()
@@ -21,12 +21,16 @@ namespace TableTopCrucible.Core.ValueTypes
              => ModelExtensions.Contains(this.ToLower());
         public bool IsImage()
              => ImageExtensions.Contains(this.ToLower());
+        public bool IsLibrary()
+             => LibraryExtension == this.ToLower();
         public FileType GetFileType()
         {
             if (IsModel())
                 return FileType.Model;
             if (IsImage())
                 return FileType.Image;
+            if (IsLibrary())
+                return FileType.Library;
             return FileType.Other;
         }
     }

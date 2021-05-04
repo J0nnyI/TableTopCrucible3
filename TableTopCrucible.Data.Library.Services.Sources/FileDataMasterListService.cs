@@ -1,6 +1,10 @@
 ﻿namespace TableTopCrucible.Data.Library.Services.Sources
 {
-    class FileDataMasterListService
+    public class FileDataMasterListService
     {
+        public FileDataMasterListService()
+        {
+
+        }
     }
 }

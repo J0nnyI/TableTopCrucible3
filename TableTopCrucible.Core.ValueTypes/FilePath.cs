@@ -15,6 +15,8 @@ namespace TableTopCrucible.Core.ValueTypes
             => GetExtension().IsModel();
         public bool IsImage()
              => GetExtension().IsImage();
+        public bool IsLibrary()
+             => GetExtension().IsLibrary();
         public FileType GetFileType()
             => GetExtension().GetFileType();
     }
