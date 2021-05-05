@@ -22,8 +22,8 @@ using TableTopCrucible.Data.Library.Services.Sources.Exceptions;
 
 namespace TableTopCrucible.Data.Library.Services.Sources
 {
-    [Singleton(typeof(ISavefileService))]
-    public interface ISavefileService : INotifyPropertyChanged
+    [Singleton(typeof(IMasterFileService))]
+    public interface IMasterFileService : INotifyPropertyChanged
     {
         LibraryFilePath FilePath { get; }
         WorkingDirectoryPath WorkDirectoryPath { get; }
@@ -32,9 +32,9 @@ namespace TableTopCrucible.Data.Library.Services.Sources
         void New();
         void RegisterFileManager(ISaveFileManager saveFileManager);
     }
-    class SavefileService : DisposableReactiveObjectBase, ISavefileService
+    class MasterFileService : DisposableReactiveObjectBase, IMasterFileService
     {
-        private readonly ILogger<SavefileService> _logger;
+        private readonly ILogger<MasterFileService> _logger;
 
         [Reactive]
         public LibraryFilePath FilePath { get; private set; }
@@ -43,9 +43,9 @@ namespace TableTopCrucible.Data.Library.Services.Sources
         [Reactive]
         public FileServiceLoadingState LoadingState { get; private set; }
         private List<ISaveFileManager> _fileManagers;
-        public SavefileService(ILoggerFactory loggerFactory)
+        public MasterFileService(ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<SavefileService>();
+            _logger = loggerFactory.CreateLogger<MasterFileService>();
         }
 
         public void Close(LibraryFilePath file)

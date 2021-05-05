@@ -1,13 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <PackageProjectUrl>https://github.com/J0nnyI/TableTopCrucible3</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/J0nnyI/TableTopCrucible3</RepositoryUrl>
-    <Version>0.0.9</Version>
-    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,9 +29,7 @@
     <PackageReference Include="ValueOf" Version="1.0.17" />
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.4" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\TableTopCrucible.App.Shared\TableTopCrucible.App.Shared.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Core.BaseUtils\TableTopCrucible.Core.BaseUtils.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
@@ -59,5 +51,4 @@
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Settings\TableTopCrucible.DomainCore.WPF.Settings.csproj" />
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Toolbar\TableTopCrucible.DomainCore.WPF.Toolbar.csproj" />
   </ItemGroup>
-
 </Project>
