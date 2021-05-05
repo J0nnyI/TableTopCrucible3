@@ -13,5 +13,6 @@ namespace TableTopCrucible.App.WpfTestApp
     /// </summary>
     public partial class App : Application
     {
+        
     }
 }

@@ -44,12 +44,15 @@
     <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Jobs.WPF\TableTopCrucible.Core.Jobs.WPF.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes.Tests\TableTopCrucible.Core.ValueTypes.Tests.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Helper\TableTopCrucible.Core.WPF.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Tabs\TableTopCrucible.Core.WPF.Tabs.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.DataTransferTests\TableTopCrucible.Data.Library.DataTransferTests.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.DataTransfer\TableTopCrucible.Data.Library.DataTransfer.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.Models.Sources\TableTopCrucible.Data.Library.Models.Sources.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.Models.ValueTypes.General\TableTopCrucible.Data.Library.Models.ValueTypes.General.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes\TableTopCrucible.Data.Library.Models.ValueTypes.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.Models.Views\TableTopCrucible.Data.Library.Models.Views.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.Services.Sources\TableTopCrucible.Data.Library.Services.Sources.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.ValueTypes.IDs\TableTopCrucible.Data.Library.ValueTypes.IDs.csproj" />
@@ -57,6 +60,7 @@
     <ProjectReference Include="..\TableTopCrucible.DomainCore.FileIntegration\TableTopCrucible.DomainCore.FileIntegration.csproj" />
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.ItemList\TableTopCrucible.DomainCore.WPF.ItemList.csproj" />
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Settings\TableTopCrucible.DomainCore.WPF.Settings.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Startup\TableTopCrucible.DomainCore.WPF.Startup.csproj" />
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Toolbar\TableTopCrucible.DomainCore.WPF.Toolbar.csproj" />
   </ItemGroup>
 

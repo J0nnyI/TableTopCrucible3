@@ -22,7 +22,7 @@ using TableTopCrucible.Data.Library.Services.Sources.Exceptions;
 
 namespace TableTopCrucible.Data.Library.Services.Sources
 {
-    [Singleton(typeof(IMasterFileService))]
+    [Singleton(typeof(MasterFileService))]
     public interface IMasterFileService : INotifyPropertyChanged
     {
         LibraryFilePath FilePath { get; }
