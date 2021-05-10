@@ -29,8 +29,8 @@ namespace TableTopCrucible.Core.WPF.Tabs.ViewModels
         {
             _tabs.DisposeWith(disposables);
             _tabs.Connect()
-                .DisposeMany()
                 .TakeUntil(Destroy)
+                .DisposeMany()
                 .Subscribe();
         }
         public void SetCurrentTab(TabModel tab)

@@ -8,12 +8,15 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="StartupPageV">
+    <Page.Resources>
+        <ResourceDictionary Source="../Styles/Common.xaml"/>
+    </Page.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -21,37 +24,37 @@
             <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Style="{StaticResource MaterialDesignHeadline1TextBlock}" 
+        <TextBlock Style="{StaticResource ApplicationTitle1}" 
                    Text="TableTopCrucible"
                    Grid.Row="0"
                    Grid.Column="0"
                    Grid.ColumnSpan="4"
                    HorizontalAlignment="Center"/>
+        <TextBlock Text="Open recent"
+                   Style="{StaticResource MasterFileOptionTitle}"
+                   Grid.Row="1"
+                   Grid.Column="1"/>
         <ContentPresenter Content="{Binding Path=MasterFileList}"
-                            Grid.Row="1"
-                            Grid.Column="1"/>
+                          Grid.Row="2"
+                          Grid.Column="1"/>
         <TextBlock Text="Get Started"
-                    Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                    Style="{StaticResource MasterFileOptionTitle}"
                     Grid.Row="1"
                     Grid.Column="2"/>
-        <StackPanel Grid.Row="2"
-                    Grid.Column="2"
-                    Orientation="Horizontal">
-            <TextBlock Text="Create a new library"/>
+        <md:Card Grid.Row="2"
+                 Grid.Column="2"
+                 Style="{StaticResource FileCard}"
+                 VerticalAlignment="Top">
+            <md:Ripple>
+                <Grid>
+                    <TextBlock Text="Create a new library"
+                               Style="{StaticResource FileCardTitle}"/>
+                    <Border Style="{StaticResource IconContainer}">
+                        <md:PackIcon Kind="Plus"/>
+                    </Border>
+                </Grid>
+            </md:Ripple>
+        </md:Card>
 
-            <StackPanel HorizontalAlignment="Right">
-
-                <Border x:Name="border" 
-                        CornerRadius="20"
-                        Background="{StaticResource MaterialDesignLightBackground}"
-                        BorderThickness="0">
-                    <md:PackIcon Kind="Plus"
-                                 Foreground="{StaticResource MaterialDesignLightForeground}"
-                                 Height="40"
-                                 Width="40"/>
-                </Border>
-            </StackPanel>
-
-        </StackPanel>
     </Grid>
 </Page>

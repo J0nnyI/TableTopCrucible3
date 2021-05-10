@@ -6,8 +6,12 @@
       xmlns:local="clr-namespace:TableTopCrucible.DomainCore.WPF.Startup.Views"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary Source="../Styles/Common.xaml"/>
+    </UserControl.Resources>
 
     <Grid>
-        <TextBlock Text="Today"/>
+        <TextBlock Text="Today" 
+                   Style="{StaticResource MasterFileOptionTitle}"/>
     </Grid>
 </UserControl>
