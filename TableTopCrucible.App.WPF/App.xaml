@@ -28,10 +28,6 @@
                 <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />-->
 
 
-                <!--project common libs-->
-                <ResourceDictionary Source="pack://application:,,,/TableTopCrucible.Core.WPF.Tabs;component/Common.xaml"/>
-
-
                 <!-- internal libs -->
                 <ResourceDictionary Source="./Styles.xaml"/>
                 <!--<ResourceDictionary>
