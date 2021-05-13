@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Splat" Version="11.0.1" />
+    <PackageReference Include="Splat.Serilog" Version="11.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Helper\TableTopCrucible.Core.WPF.Helper.csproj" />
   </ItemGroup>

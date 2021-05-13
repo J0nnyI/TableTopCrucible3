@@ -13,8 +13,8 @@ using System.Reflection;
 using System.Windows;
 
 using TableTopCrucible.App.Shared;
-using TableTopCrucible.App.WPF.ViewModels;
 using TableTopCrucible.Core.WPF.Helper.Attributes;
+using TableTopCrucible.Core.WPF.MainWindow.ViewModels;
 using TableTopCrucible.DomainCore.WPF.Startup.PageViewModels;
 
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -42,7 +42,7 @@ namespace TableTopCrucible.App.WPF
 
             new MainWindow()
             {
-                Content = di.GetRequiredService<IStartupPage>()
+                Content = di.GetRequiredService<IMainPage>()
             }.Show();
 
 
