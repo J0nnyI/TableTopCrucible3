@@ -70,18 +70,30 @@ namespace TableTopCrucible.Data.Library.Services.Sources
                 if (this.FilePath != null)
                     throw new FileAlreadyOpenedException();
                 this.FilePath = file;
-                this.WorkDirectoryPath = WorkingDirectoryPath.ForFile(file);
+                try
+                {
+                    this.WorkDirectoryPath = FilePath.UnpackLibrary();
+                    validateWorkingDirectory();
+                }
+                catch (Exception ex)
+                {
+                    this._logger.LogError(ex, "Unpacking failed, starting recovery");
+                    handleRecovery(recoverFileResolver);
+                }
 
-                handleRecovery(recoverFileResolver);
 
-                ZipFile.ExtractToDirectory(FilePath, WorkDirectoryPath);
-                validateWorkingDirectory();
                 this.LoadingState = FileServiceLoadingState.Open;
             }
-            catch (Exception)
+            catch (RecoveryCanceledException ex)
             {
                 this.LoadingState = FileServiceLoadingState.Closed;
-                throw;
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                this.LoadingState = FileServiceLoadingState.Closed;
+                this._logger.LogError(ex, "recovery failed");
+                throw ex;
             }
         }
 
@@ -93,7 +105,7 @@ namespace TableTopCrucible.Data.Library.Services.Sources
         private void handleRecovery(Func<bool> recoverFileResolver)
         {
             _logger.LogWarning("recovery is not implemented yet");
-            if (!Directory.Exists(this.WorkDirectoryPath))
+            if (!this.WorkDirectoryPath.Exists())
                 return;
             _logger.LogWarning("Recovery-Requirement detected");
 

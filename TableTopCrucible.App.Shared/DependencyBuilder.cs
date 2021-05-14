@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 using Serilog;
@@ -16,15 +17,21 @@ namespace TableTopCrucible.App.Shared
 {
     public class DependencyBuilder
     {
+        public static IServiceCollection GetServices()
+        {
+            var services = new ServiceCollection();
+            GetServices(services);
+            return services;
+        }
+        public static void GetServices(IServiceCollection services)
+        {
+            services.TryAddEnumerable(Core.DI.DiAttributeCollector.GenerateServiceProvider());
+            services.AddSingleton(typeof(ILoggerFactory), buildLoggingFactory());
+        }
         public static IServiceProvider BuildDependencyProvider()
         {
-            var services = Core.DI.DiAttributeCollector.GenerateServiceProvider();
-
-            var loggingFactory = buildLoggingFactory();
-
-            services.AddSingleton(typeof(ILoggerFactory), loggingFactory);
+            var services = GetServices();
             configureAutomapper(services);
-
             return services.BuildServiceProvider();
         }
         private static void configureAutomapper(IServiceCollection services)

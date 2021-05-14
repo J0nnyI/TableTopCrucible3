@@ -12,9 +12,9 @@ namespace TableTopCrucible.Core.DI
 {
     public static class DiAttributeCollector
     {
-        public static IServiceCollection GenerateServiceProvider()
+        public static IServiceCollection GenerateServiceProvider(IServiceCollection services = null)
         {
-            ServiceCollection services = new ServiceCollection();
+            services ??= new ServiceCollection();
             var assemblies = AssemblyHelper.GetSolutionAssemblies();
             var types = assemblies
                     .SelectMany(assembly => assembly.DefinedTypes);

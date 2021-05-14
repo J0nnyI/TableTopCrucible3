@@ -138,10 +138,10 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
         {
             return new FileData(
                     FilePath.From("test"),
-                    FileHashKey.From(FileHashKey.From((
+                    FileHashKey.From((
                         buildHash(),
                         FileSize.From(12)
-                    ))),
+                    )),
                     DateTime.Parse("2019.01.01")
                 );
         }

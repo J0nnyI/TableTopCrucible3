@@ -15,6 +15,9 @@ namespace TableTopCrucible.Core.ValueTypes
     public class DirectoryPath : ValueOf<string, DirectoryPath>
     {
         public static FilePath operator +(DirectoryPath directory, FileName fileName)
-            => FilePath.From(Path.Combine(directory, fileName));
+            => FilePath.From(Path.Combine(directory.Value, fileName.Value));
+
+        public bool Exists() => Directory.Exists(Value);
+        public void CreateDirectory() => Directory.CreateDirectory(Value);
     }
 }

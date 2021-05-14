@@ -21,9 +21,9 @@ namespace TableTopCrucible.Core.ValueTypes
             if (Value.Length != SHA512_Size)
                 throw new InvalidHashSizeException(Value.Length);
         }
-        public static FileHash Create(FilePath path, HashAlgorithm hashAlgorithm)
+        public static FileHash Create(FilePath filePath, HashAlgorithm hashAlgorithm)
         {
-            using FileStream stream = File.OpenRead(path);
+            using FileStream stream = filePath.OpenRead();
             byte[] data = hashAlgorithm.ComputeHash(stream);
             return From(data);
         }

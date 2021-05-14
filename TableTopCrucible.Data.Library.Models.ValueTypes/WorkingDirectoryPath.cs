@@ -12,7 +12,7 @@ namespace TableTopCrucible.Data.Library.Models.ValueTypes
         public static readonly RelativeDirectoryPath RelativeWorkingDirectoryPath = RelativeDirectoryPath.From(@".\~TableTopCrucible WD");
         public static WorkingDirectoryPath ForFile(LibraryFilePath file)
         {
-            var path = DirectoryPath.From(Path.GetDirectoryName(file));
+            var path = file.GetDirectoryPath();
             var subPath = path + RelativeWorkingDirectoryPath;
             return new WorkingDirectoryPath
             {

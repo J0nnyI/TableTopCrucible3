@@ -10,6 +10,6 @@ namespace TableTopCrucible.Core.ValueTypes
     public class RelativeDirectoryPath : ValueOf<string, RelativeDirectoryPath>
     {
         public static DirectoryPath operator +(DirectoryPath directory, RelativeDirectoryPath relativeDirectory)
-            => DirectoryPath.From(Path.Combine(directory, relativeDirectory));
+            => DirectoryPath.From(Path.Combine(directory.Value, relativeDirectory.Value));
     }
 }

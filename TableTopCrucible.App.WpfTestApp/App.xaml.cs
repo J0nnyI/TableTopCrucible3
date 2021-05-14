@@ -14,6 +14,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using TableTopCrucible.App.Shared;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using TableTopCrucible.App.WpfTestApp.ViewModels;
 
 namespace TableTopCrucible.App.WpfTestApp
 {
@@ -33,11 +35,26 @@ namespace TableTopCrucible.App.WpfTestApp
                     var resolver = Locator.CurrentMutable;
                     resolver.InitializeSplat();
                     resolver.InitializeReactiveUI();
+                    
 
-                    services.
-                    DependencyBuilder.BuildDependencyProvider();
-                });
+                    services.TryAddEnumerable(DependencyBuilder.GetServices());
+                })
+                .ConfigureLogging(loggingBuilder =>
+                {
+                    loggingBuilder.AddSplat();
+                })
+                .UseEnvironment(Environments.Development)
+                .Build();
+            Container = host.Services;
+            Container.UseMicrosoftDependencyResolver();
+
+            new Window()
+            {
+                Title="TTC Tester",
+                Content = Container.GetRequiredService<IMain>()
+            }.Show();
 
         }
+
     }
 }

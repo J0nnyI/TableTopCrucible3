@@ -49,7 +49,7 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Services
         {
             var path = DirectoryPath.From(Path.Combine(Path.GetTempPath(), @"TableTopCrucible\newMasters\", "~" + DateTime.Now.ToString("yyyyMMddHHmmss")));
             this.logger.LogInformation("creating temporary working directory at {0}", path);
-            Directory.CreateDirectory(path);
+            path.CreateDirectory();
             return path;
         }
     }

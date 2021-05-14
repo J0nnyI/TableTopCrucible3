@@ -158,7 +158,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                         prog.Target = fileGroup.Count();
                         fileGroup.ToList().ForEach(file =>
                         {
-                            prog.Details = file.Path;
+                            prog.Details = file.Path.Value;
                             prog.Current++;
                             Thread.Sleep(5000);
                             logger.LogTrace("hashing file {0}", file.Path);
@@ -192,7 +192,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                     {
                         var itemId = ItemId.New();
                         return new Item(
-                            new ItemName(Path.GetFileNameWithoutExtension(fileGroup.First().Path)),
+                            ItemName.From(fileGroup.First().Path.GetFilenameWithoutExtension().Value),
                             null,
                             new ItemVersion(
                                 itemId,
@@ -238,7 +238,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                 get
                 {
                     if (fileInfo == null)
-                        this.fileInfo = new FileInfo(Path);
+                        this.fileInfo = Path.GetFileInfo();
                     return fileInfo;
                 }
             }

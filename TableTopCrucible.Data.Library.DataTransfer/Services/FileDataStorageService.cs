@@ -48,20 +48,19 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Services
                 throw new InvalidOperationException("could not read file master list - no ttcLib is loaded");
 
 
-            if (!File.Exists(workingFile))
+            if (!workingFile.Exists())
                 return new FileData[0];
 
             return _mapper.Map<IEnumerable<FileData>>(
                 JsonSerializer.Deserialize<IEnumerable<FileDataDTO>>(
-                    File.ReadAllText(workingFile)));
+                    workingFile.ReadAllText()));
         }
         public void WriteMasterFileList(IEnumerable<FileData> fileData)
         {
             if (fileData?.Any() != true)
-                File.Delete(workingFile);
+                workingFile.Delete();
 
-            File.WriteAllText(
-                workingFile,
+            workingFile.WriteAllText(
                 JsonSerializer.Serialize(
                     _mapper.Map<IEnumerable<FileDataDTO>>(fileData))
                 );
