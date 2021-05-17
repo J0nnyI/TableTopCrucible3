@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 
 namespace TableTopCrucible.Core.BaseUtils
 {
+    [Obsolete]
     public abstract class DisposableReactiveObjectBase : ReactiveObject, IDisposable
     {
         private readonly Subject<Unit> _destroy = new Subject<Unit>();

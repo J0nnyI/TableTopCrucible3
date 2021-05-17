@@ -1,5 +1,10 @@
 ﻿
+using ReactiveUI;
+
+using Splat;
+
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Markup;
@@ -12,27 +17,42 @@ namespace TableTopCrucible.Core.WPF.Helper.Attributes
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
     public class ViewModelAttribute : Attribute
     {
+        private struct MvvmPair
+        {
+            public MvvmPair(Type viewModel, Type vIew)
+            {
+                ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+                VIew = vIew ?? throw new ArgumentNullException(nameof(vIew));
+            }
+
+            public Type ViewModel { get; }
+            public Type VIew { get; }
+        }
+
+
         public Type viewType { get; }
         public ViewModelAttribute(Type view)
         {
             viewType = view;
         }
-
+        private static IEnumerable<MvvmPair> GetTypes()
+        {
+            return AssemblyHelper
+                .GetSolutionAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .Select(viewModelType => new MvvmPair(
+                    viewModelType,
+                    (viewModelType.GetCustomAttributes(typeof(ViewModelAttribute), false).FirstOrDefault() as ViewModelAttribute)?.viewType
+                ))
+                .Where(typeEx => typeEx.VIew != null);
+        }
         public static ResourceDictionary GetTemplateDictionary()
         {
             var res = new ResourceDictionary();
 
-            var types = AssemblyHelper
-                .GetSolutionAssemblies()
-                .SelectMany(assembly => assembly.GetTypes())
-                .Select(viewModelType => new
-                {
-                    viewModelType,
-                    (viewModelType.GetCustomAttributes(typeof(ViewModelAttribute), false).FirstOrDefault() as ViewModelAttribute)?.viewType
-                })
-                .Where(typeEx => typeEx.viewType != null);
+            var types = GetTypes();
 
-            types.Select(typeEx => createTemplate(typeEx.viewModelType, typeEx.viewType))
+            types.Select(typeEx => createTemplate(typeEx.ViewModel, typeEx.VIew))
                 .ToList()
                 .ForEach(template =>
                 {

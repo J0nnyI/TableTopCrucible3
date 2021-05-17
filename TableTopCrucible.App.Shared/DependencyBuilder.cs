@@ -26,12 +26,12 @@ namespace TableTopCrucible.App.Shared
         public static void GetServices(IServiceCollection services)
         {
             services.TryAddEnumerable(Core.DI.DiAttributeCollector.GenerateServiceProvider());
+            configureAutomapper(services);
             services.AddSingleton(typeof(ILoggerFactory), buildLoggingFactory());
         }
         public static IServiceProvider BuildDependencyProvider()
         {
             var services = GetServices();
-            configureAutomapper(services);
             return services.BuildServiceProvider();
         }
         private static void configureAutomapper(IServiceCollection services)

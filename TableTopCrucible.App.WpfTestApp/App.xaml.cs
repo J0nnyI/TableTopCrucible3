@@ -16,6 +16,8 @@ using System.Windows;
 using TableTopCrucible.App.Shared;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TableTopCrucible.App.WpfTestApp.ViewModels;
+using System.Reflection;
+using TableTopCrucible.App.WpfTestApp.PageViewModels;
 
 namespace TableTopCrucible.App.WpfTestApp
 {
@@ -35,9 +37,9 @@ namespace TableTopCrucible.App.WpfTestApp
                     var resolver = Locator.CurrentMutable;
                     resolver.InitializeSplat();
                     resolver.InitializeReactiveUI();
-                    
 
-                    services.TryAddEnumerable(DependencyBuilder.GetServices());
+
+                    DependencyBuilder.GetServices(services);
                 })
                 .ConfigureLogging(loggingBuilder =>
                 {
@@ -46,12 +48,24 @@ namespace TableTopCrucible.App.WpfTestApp
                 .UseEnvironment(Environments.Development)
                 .Build();
             Container = host.Services;
-            Container.UseMicrosoftDependencyResolver();
+            //Container.UseMicrosoftDependencyResolver();
 
+            Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
+
+
+            var value = Container.GetRequiredService<IMain>();
             new Window()
             {
-                Title="TTC Tester",
-                Content = Container.GetRequiredService<IMain>()
+                Title = "TTC Tester",
+                Content = new ViewModelViewHost() { 
+                    ViewModel = value, 
+                    VerticalContentAlignment = VerticalAlignment.Stretch ,
+                    HorizontalContentAlignment = HorizontalAlignment.Stretch
+                },
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
             }.Show();
 
         }

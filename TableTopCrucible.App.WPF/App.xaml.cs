@@ -3,9 +3,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using ReactiveUI;
+
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+
+using Splat;
 
 using System.IO;
 using System.Linq;
@@ -38,7 +42,7 @@ namespace TableTopCrucible.App.WPF
 
             ILogger msLogger = di.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(App));
             msLogger.LogInformation("DI initialized");
-
+            Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
 
             new MainWindow()
             {
