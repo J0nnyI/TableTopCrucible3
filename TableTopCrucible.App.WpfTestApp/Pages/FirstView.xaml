@@ -9,6 +9,11 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
         <TextBlock Text="first: "/>
+        <TextBox x:Name="DemoTextBox"/>
         <TextBlock x:Name="PathTextBlock" Foreground="White" Margin="10" />
+        <Button x:Name="setText" Content="SetText"/>
+        <TextBox x:Name="parameter" Text="added"/>
+        <TextBlock x:Name="suffixFills"/>
+        <Button x:Name="addText" Content="AddText"/>
     </StackPanel>
 </UserControl>

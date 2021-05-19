@@ -4,6 +4,7 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,6 +32,29 @@ namespace TableTopCrucible.App.WpfTestApp.Pages
             {
                 this.OneWayBind(ViewModel, vm => vm.UrlPathSegment, v => v.PathTextBlock.Text)
                     .DisposeWith(disposables);
+
+                this.Bind(ViewModel, vm => vm.Value, v => v.DemoTextBox.Text)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel, vm => vm.SuffixFills, v => v.suffixFills.Text, v => v.ToString())
+                    .DisposeWith(disposables);
+
+                this.BindCommand(this.ViewModel, vm => vm.SetText, v => v.setText)
+                    .DisposeWith(disposables);
+
+                this.BindCommand(
+                        this.ViewModel,
+                        vm => vm.AddText,
+                        v => v.addText,
+                        this.WhenAnyValue(v => v.parameter.Text))
+                    .DisposeWith(disposables);
+
+                this.parameter
+                    .WhenAnyValue(v => v.Text)
+                    .Select(txt => !string.IsNullOrWhiteSpace(txt))
+                    .BindTo(ViewModel, vm => vm.SuffixFills)
+                    .DisposeWith(disposables);
+                
             });
 
         }
