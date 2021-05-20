@@ -1,0 +1,15 @@
+﻿<rxui:ReactiveUserControl x:Class="TableTopCrucible.DomainCore.WPF.Startup.PageViews.DirectoryWizardPageV"
+                          x:TypeArguments="vm:DirectoryWizardPageVM"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                          xmlns:vm="clr-namespace:TableTopCrucible.DomainCore.WPF.Startup.PageViewModels"
+                          xmlns:rxui="http://reactiveui.net"
+                          xmlns:local="clr-namespace:TableTopCrucible.DomainCore.WPF.Startup.PageViews"
+                          mc:Ignorable="d" 
+                          d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Label>You're a wizard Harry</Label>
+    </Grid>
+</rxui:ReactiveUserControl>

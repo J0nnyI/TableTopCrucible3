@@ -2,6 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,9 +28,18 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.PageViews
         public StartupPageV()
         {
             InitializeComponent();
+            this.WhenActivated(disposables =>
+            {
+                createNewFile
+                    .Events()
+                    .MouseDown
+                    .Select(_ => Unit.Default)
+                    .InvokeCommand(ViewModel.OpenDirectoryWizard)
+                    .DisposeWith(disposables);
+            });
         }
 
-        public StartupPageVM ViewModel { get; set; }
-        object IViewFor.ViewModel { get => ViewModel; set => ViewModel = value as StartupPageVM; }
+        public StartupPageVM ViewModel { get => DataContext as StartupPageVM; set => DataContext = value; }
+        object IViewFor.ViewModel { get => DataContext; set => DataContext = value; }
     }
 }

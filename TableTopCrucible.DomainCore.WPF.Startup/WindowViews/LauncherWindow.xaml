@@ -7,19 +7,32 @@
         xmlns:rxui="http://reactiveui.net"
         mc:Ignorable="d"
         Title="LauncherWIndow" Height="450" Width="800"
-        Style="{StaticResource defaultWindow}">
+        Style="{StaticResource MaterialDesignWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="../Styles/Common.xaml"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <TextBlock Text="TableTopCrucible" 
                    Grid.Row="0"
+                   HorizontalAlignment="Center"
                    Style="{StaticResource ApplicationTitle1}"/>
         <rxui:RoutedViewHost
             x:Name="RoutedViewHost"
             Grid.Row="1"
             VerticalContentAlignment="Stretch"
-            HorizontalAlignment="Stretch"></rxui:RoutedViewHost>
+            HorizontalAlignment="Stretch"/>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Row="2">
+            <Button Content="Back"
+                    x:Name="Back"/>
+            <Button Content="Next"
+                    x:Name="Next"/>
+        </StackPanel>
     </Grid>
 </Window>
