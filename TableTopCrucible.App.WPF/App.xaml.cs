@@ -24,6 +24,8 @@ using TableTopCrucible.App.Shared;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.WPF.MainWindow.ViewModels;
 using TableTopCrucible.DomainCore.WPF.Startup.PageViewModels;
+using TableTopCrucible.DomainCore.WPF.Startup.Services;
+using TableTopCrucible.DomainCore.WPF.Startup.WindowViews;
 
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
@@ -63,20 +65,21 @@ namespace TableTopCrucible.App.WPF
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            new Window()
-            {
-                Title = "TTC Tester",
-                Content = new ViewModelViewHost()
-                {
-                    ViewModel = Locator.Current.GetService<IStartupPage>(),
-                    VerticalContentAlignment = VerticalAlignment.Stretch,
-                    HorizontalContentAlignment = HorizontalAlignment.Stretch
-                },
-                VerticalContentAlignment = VerticalAlignment.Stretch,
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-            }.Show();
+            Locator.Current.GetService<ILauncherService>().OpenLauncher();
+            //new Window()
+            //{
+            //    Title = "TTC Tester",
+            //    Content = new ViewModelViewHost()
+            //    {
+            //        ViewModel = Locator.Current.GetService<IStartupPage>(),
+            //        VerticalContentAlignment = VerticalAlignment.Stretch,
+            //        HorizontalContentAlignment = HorizontalAlignment.Stretch
+            //    },
+            //    VerticalContentAlignment = VerticalAlignment.Stretch,
+            //    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+            //    VerticalAlignment = VerticalAlignment.Stretch,
+            //    HorizontalAlignment = HorizontalAlignment.Stretch,
+            //}.Show();
 
 
 
