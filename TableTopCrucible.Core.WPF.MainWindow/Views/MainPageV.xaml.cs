@@ -28,7 +28,7 @@ namespace TableTopCrucible.Core.WPF.MainWindow.Views
             InitializeComponent();
         }
 
-        public MainPageVM ViewModel { get; set; }
-        object IViewFor.ViewModel { get; set; }
+        public MainPageVM ViewModel { get => DataContext as MainPageVM; set => DataContext = value; }
+        object IViewFor.ViewModel { get => DataContext; set => DataContext = value; }
     }
 }

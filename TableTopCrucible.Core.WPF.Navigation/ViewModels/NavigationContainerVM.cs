@@ -4,7 +4,6 @@ using System.Reactive.Subjects;
 using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.Core.WPF.Navigation.Models;
 using TableTopCrucible.Core.WPF.Navigation.Views;
 

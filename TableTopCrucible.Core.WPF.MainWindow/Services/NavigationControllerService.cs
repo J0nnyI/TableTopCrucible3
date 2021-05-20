@@ -6,12 +6,12 @@ using TableTopCrucible.Core.DI.Attributes;
 
 namespace TableTopCrucible.Core.WPF.MainWindow.Services
 {
-    [Singleton(typeof(WorkAreaNavigationService))]
-    public interface IWorkAreaNavigationService
+    [Singleton(typeof(NavigationControllerService))]
+    public interface INavigationControllerService
     {
 
     }
-    class WorkAreaNavigationService
+    class NavigationControllerService: INavigationControllerService
     {
     }
 }

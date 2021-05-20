@@ -11,8 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-using TableTopCrucible.Core.WPF.Helper.Attributes;
-
 namespace TableTopCrucible.App.Shared
 {
     public class DependencyBuilder

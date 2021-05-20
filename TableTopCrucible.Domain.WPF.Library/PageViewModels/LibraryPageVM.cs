@@ -1,7 +1,5 @@
 ﻿
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Core.WPF.Helper;
-using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.Domain.WPF.Library.PageViews;
 using TableTopCrucible.Domain.WPF.Library.ViewModels;
 using TableTopCrucible.DomainCore.WPF.ItemList.ViewModels;
@@ -13,8 +11,7 @@ namespace TableTopCrucible.Domain.WPF.Library.PageViewModels
     {
 
     }
-    [ViewModel(typeof(LibraryPageV))]
-    internal class LibraryPageVM : PageViewModelBase, ILibraryPage
+    public class LibraryPageVM : ILibraryPage
     {
         public LibraryPageVM(IItemList itemList, IItemViewer itemViewer)
         {

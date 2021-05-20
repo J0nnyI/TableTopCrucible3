@@ -34,6 +34,8 @@
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
     <PackageReference Include="Splat" Version="11.1.1" />
     <PackageReference Include="Splat.Serilog" Version="11.1.1" />
+    <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="11.1.1" />
+    <PackageReference Include="Splat.Microsoft.Extensions.Logging" Version="11.1.1" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     <PackageReference Include="ValueOf" Version="2.0.21" />
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.4" />
@@ -45,11 +47,9 @@
     <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.Jobs.WPF\TableTopCrucible.Core.Jobs.WPF.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes.Tests\TableTopCrucible.Core.ValueTypes.Tests.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.WPF.Helper\TableTopCrucible.Core.WPF.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.MainWindow\TableTopCrucible.Core.WPF.MainWindow.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Styles\TableTopCrucible.Core.WPF.Styles.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.DataTransferTests\TableTopCrucible.Data.Library.DataTransferTests.csproj" />

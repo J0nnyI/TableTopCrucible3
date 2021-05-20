@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.DomainCore.WPF.Startup.Views;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
@@ -13,7 +12,6 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
     {
 
     }
-    [ViewModel(typeof(RecentMasterFileListV))]
     public class RecentMasterFileListVM:IRecentMasterFileList
     {
     }

@@ -8,7 +8,7 @@ using TableTopCrucible.Core.Jobs.Managers;
 
 namespace TableTopCrucible.Core.Jobs.WPF.ViewModels
 {
-    internal class JobViewerVM : ModelWrapperBase<IJobViewer>, IJobViewer
+    public class JobViewerVM : ModelWrapperBase<IJobViewer>, IJobViewer
     {
 
         public JobViewerVM(IJobViewer source) : base(source)

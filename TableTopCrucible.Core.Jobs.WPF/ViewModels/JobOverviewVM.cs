@@ -10,7 +10,6 @@ using System.Reactive.Linq;
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Core.Jobs.WPF.Views;
-using TableTopCrucible.Core.WPF.Helper.Attributes;
 
 namespace TableTopCrucible.Core.Jobs.WPF.ViewModels
 {
@@ -20,8 +19,7 @@ namespace TableTopCrucible.Core.Jobs.WPF.ViewModels
     {
 
     }
-    [ViewModel(typeof(JobOverviewV))]
-    internal class JobOverviewVM : IJobOverview
+    public class JobOverviewVM : IJobOverview
     {
         public BindingList<JobViewerVM> Jobs { get; } = new BindingList<JobViewerVM>();
         public JobOverviewVM(IJobService jobService)

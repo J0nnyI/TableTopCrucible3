@@ -1,6 +1,5 @@
 ﻿
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Core.WPF.Helper.Attributes;
 using TableTopCrucible.Domain.WPF.Library.Views;
 
 namespace TableTopCrucible.Domain.WPF.Library.ViewModels
@@ -10,8 +9,7 @@ namespace TableTopCrucible.Domain.WPF.Library.ViewModels
     {
 
     }
-    [ViewModel(typeof(ItemViewerV))]
-    class ItemViewerVM : IItemViewer
+    public class ItemViewerVM : IItemViewer
     {
     }
 }
