@@ -1,13 +1,17 @@
-﻿<Window x:Class="TableTopCrucible.DomainCore.WPF.Startup.WindowViews.LauncherWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<rxui:ReactiveWindow x:Class="TableTopCrucible.DomainCore.WPF.Startup.WindowViews.LauncherWindow"
+        x:TypeArguments="vm:LauncherWindowVM"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"        
+        xmlns:vm="clr-namespace:TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TableTopCrucible.DomainCore.WPF.Startup.WindowViews"
         xmlns:rxui="http://reactiveui.net"
         mc:Ignorable="d"
-        Title="LauncherWIndow" Height="450" Width="800"
-        Style="{StaticResource MaterialDesignWindow}">
+        Style="{StaticResource DefaultWindow}"
+        Title="LauncherWindow" Height="450" Width="800"
+        ResizeMode="NoResize"
+        >
     <Window.Resources>
         <ResourceDictionary Source="../Styles/Common.xaml"/>
     </Window.Resources>
@@ -30,9 +34,9 @@
                     HorizontalAlignment="Right"
                     Grid.Row="2">
             <Button Content="Back"
-                    x:Name="Back"/>
+                    x:Name="PreviousStep"/>
             <Button Content="Next"
-                    x:Name="Next"/>
+                    x:Name="NextStep"/>
         </StackPanel>
     </Grid>
-</Window>
+</rxui:ReactiveWindow>

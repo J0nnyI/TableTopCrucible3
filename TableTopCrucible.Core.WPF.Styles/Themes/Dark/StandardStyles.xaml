@@ -9,6 +9,9 @@
     <!--
         <Setter Property="Background" Value="{StaticResource MaterialDesignDarkBackground}"/>
     </Style>-->
+    <Style x:Key="DefaultWindow"
+           TargetType="Window"
+           BasedOn="{StaticResource MaterialDesignWindow}"/>
     <Style TargetType="TextBlock">
         <Setter Property="Foreground"
                 Value="{StaticResource MaterialDesignDarkForeground}"/>

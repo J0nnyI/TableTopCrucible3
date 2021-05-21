@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:rxui="http://reactiveui.net"
       xmlns:local="clr-namespace:TableTopCrucible.DomainCore.WPF.Startup.PageViews"
       xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
@@ -13,8 +14,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -25,16 +25,16 @@
         <TextBlock Text="Open recent"
                    Style="{StaticResource MasterFileOptionTitle}"
                    Grid.Row="0"
-                   Grid.Column="1"/>
-        <ContentPresenter Content="{Binding Path=MasterFileList}"
-                          Grid.Row="2"
-                          Grid.Column="1"/>
+                   Grid.Column="0"/>
+        <rxui:ViewModelViewHost x:Name="MasterFileListContainer"
+                                Grid.Row="1"
+                                Grid.Column="0"/>
         <TextBlock Text="Get Started"
                     Style="{StaticResource MasterFileOptionTitle}"
                     Grid.Row="0"
-                    Grid.Column="2"/>
+                    Grid.Column="1"/>
         <md:Card Grid.Row="1"
-                 Grid.Column="2"
+                 Grid.Column="1"
                  Style="{StaticResource FileCard}"
                  x:Name="createNewFile"
                  VerticalAlignment="Top">

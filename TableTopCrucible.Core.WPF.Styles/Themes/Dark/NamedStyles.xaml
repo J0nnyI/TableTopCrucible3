@@ -35,7 +35,7 @@
         </Style.Resources>
     </Style>
 
-    <Style x:Key="primaryButton"
+    <Style x:Key="secondaryButton"
            TargetType="Button"
            BasedOn="{StaticResource MaterialDesignOutlinedButton}"/>
 </ResourceDictionary>

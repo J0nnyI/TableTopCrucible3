@@ -36,6 +36,7 @@ namespace TableTopCrucible.App.WPF
     /// </summary>
     public partial class App : Application
     {
+
         public App()
         {
             var host = Host
@@ -61,6 +62,12 @@ namespace TableTopCrucible.App.WPF
                 .GetSolutionAssemblies()
                 .ToList()
                 .ForEach(Locator.CurrentMutable.RegisterViewsForViewModels);
+
+            // https://stackoverflow.com/questions/431940/how-to-set-default-wpf-window-style-in-app-xaml
+            FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata
+            {
+                DefaultValue = Application.Current.FindResource(typeof(Window))
+            });
         }
 
         protected override void OnStartup(StartupEventArgs e)

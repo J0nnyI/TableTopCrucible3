@@ -34,7 +34,8 @@
     </Style>
 
     <Style TargetType="Button"
-           BasedOn="{StaticResource primaryButton}">
+           BasedOn="{StaticResource secondaryButton}">
+        <Setter Property="Margin" Value="8"/>
     </Style>
 
 </ResourceDictionary>

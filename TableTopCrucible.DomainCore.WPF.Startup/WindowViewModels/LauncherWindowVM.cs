@@ -14,12 +14,12 @@ using TableTopCrucible.DomainCore.WPF.Startup.Services;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels
 {
-    [Singleton(typeof(LauncherVM))]
+    [Singleton(typeof(LauncherWindowVM))]
     public interface ILauncherWindow:IScreen
     {
         void Close();
     }
-    public class LauncherVM : ReactiveObject, IActivatableViewModel, ILauncherWindow
+    public class LauncherWindowVM : ReactiveObject, IActivatableViewModel, ILauncherWindow
     {
         public void Close()
         {
@@ -34,7 +34,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels
 
         public ReactiveCommand<Unit, Unit> NavigateBack => Router.NavigateBack;
 
-        public LauncherVM(ILauncherService launcherService, IStartupPage startupPage)
+        public LauncherWindowVM(ILauncherService launcherService, IStartupPage startupPage)
         {
             Router.Navigate.Execute(startupPage);
             

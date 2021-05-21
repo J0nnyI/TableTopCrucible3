@@ -22,7 +22,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViews
     /// <summary>
     /// Interaction logic for LauncherWIndow.xaml
     /// </summary>
-    public partial class LauncherWindow : Window, IViewFor<LauncherVM>
+    public partial class LauncherWindow : ReactiveWindow<LauncherWindowVM>
     {
         public LauncherWindow()
         {
@@ -30,7 +30,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViews
 
             this.WhenActivated(disposables =>
             {
-                ViewModel ??= Locator.Current.GetService<ILauncherWindow>() as LauncherVM;
+                ViewModel ??= Locator.Current.GetService<ILauncherWindow>() as LauncherWindowVM;
                 ViewModel
                     .CloseRequested
                     .Subscribe(_ => this.Close())
@@ -41,12 +41,10 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViews
                     .DisposeWith(disposables);
                 //this.BindCommand(ViewModel, x => x.GoNext, x => x.GoNextButton)
                 //    .DisposeWith(disposables);
-                //this.BindCommand(ViewModel, x => x.GoBack, x => x.GoBackButton)
-                //    .DisposeWith(disposables);
+                this.BindCommand(ViewModel, vm => vm.NavigateBack, v => v.PreviousStep)
+                    .DisposeWith(disposables);
             });
         }
 
-        public LauncherVM ViewModel { get => DataContext as LauncherVM; set => DataContext = value; }
-        object IViewFor.ViewModel { get => DataContext; set => DataContext = value; }
     }
 }
