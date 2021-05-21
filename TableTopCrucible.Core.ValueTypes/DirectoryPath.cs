@@ -2,6 +2,7 @@
 using AutoMapper.Configuration.Annotations;
 
 using System.IO;
+using System.Linq;
 
 using TableTopCrucible.Core.Data;
 
@@ -19,5 +20,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public bool Exists() => Directory.Exists(Value);
         public void CreateDirectory() => Directory.CreateDirectory(Value);
+        public DirectoryName GetDirectoryName() => 
+            DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
     }
 }

@@ -27,18 +27,16 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels
         }
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
         public Subject<Unit> _closeRequested = new Subject<Unit>();
-        private readonly ILauncherService _launcherService;
 
         public IObservable<Unit> CloseRequested => _closeRequested;
         public RoutingState Router { get; } = new RoutingState();
 
         public ReactiveCommand<Unit, Unit> NavigateBack => Router.NavigateBack;
 
-        public LauncherWindowVM(ILauncherService launcherService, IStartupPage startupPage)
+        public LauncherWindowVM(IStartupPage startupPage)
         {
             Router.Navigate.Execute(startupPage);
             
-            _launcherService = launcherService;
         }
     }
 }

@@ -1,11 +1,18 @@
-﻿using ReactiveUI;
+﻿using Ookii.Dialogs.Wpf;
+
+using ReactiveUI;
 
 using System;
 using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using TableTopCrucible.Core.DI.Attributes;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.DomainCore.WPF.Startup.Services;
+using TableTopCrucible.DomainCore.WPF.Startup.ViewModels;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.PageViewModels
 {
@@ -18,12 +25,19 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.PageViewModels
     {
         private readonly ILauncherService _launcherService;
 
-        public DirectoryWizardPageVM(ILauncherService launcherService)
+        public DirectoryWizardPageVM(ILauncherService launcherService, IDirectoryList directoryList)
         {
             _launcherService = launcherService;
+            DirectoryList = directoryList;
+            //if (VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
+            //{
+            //    new VistaFolderBrowserDialog().ShowDialog();
+            //}
         }
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
         public string UrlPathSegment => "DirectoryWizard";
         public IScreen HostScreen => _launcherService.Screen;
+
+        public IDirectoryList DirectoryList { get; }
     }
 }

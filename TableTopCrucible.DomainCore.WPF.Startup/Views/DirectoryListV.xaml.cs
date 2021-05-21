@@ -14,24 +14,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using TableTopCrucible.DomainCore.WPF.Startup.PageViewModels;
+using TableTopCrucible.DomainCore.WPF.Startup.ViewModels;
 
-namespace TableTopCrucible.DomainCore.WPF.Startup.PageViews
+namespace TableTopCrucible.DomainCore.WPF.Startup.Views
 {
     /// <summary>
-    /// Interaction logic for DirectoryWizardPageV.xaml
+    /// Interaction logic for DirectoryListV.xaml
     /// </summary>
-    public partial class DirectoryWizardPageV : ReactiveUserControl<DirectoryWizardPageVM>
+    public partial class DirectoryListV : ReactiveUserControl<DirectoryListVM>
     {
-        public DirectoryWizardPageV()
+        public DirectoryListV()
         {
             InitializeComponent();
             this.WhenActivated(disposables =>
             {
-                this.Bind(ViewModel, vm => vm.DirectoryList, v => v.DirectoryList.ViewModel)
+                this.Bind(ViewModel, vm => vm.TemporaryDirectoryCard, v => v.TemporaryDirectoryCard.ViewModel)
                     .DisposeWith(disposables);
             });
         }
-
     }
 }

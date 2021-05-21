@@ -28,7 +28,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.Services
             return win.ViewModel;
         }
 
-        private Lazy<IScreen> _screen = new Lazy<IScreen>(
+        private readonly Lazy<IScreen> _screen = new Lazy<IScreen>(
             () => Locator.Current.GetService<ILauncherWindow>());
         internal IScreen Screen => _screen.Value;
         IScreen ILauncherService.Screen => Screen;

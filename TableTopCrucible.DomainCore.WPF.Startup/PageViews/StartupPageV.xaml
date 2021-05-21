@@ -23,14 +23,14 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock Text="Open recent"
-                   Style="{StaticResource MasterFileOptionTitle}"
+                   Style="{StaticResource Subtitle}"
                    Grid.Row="0"
                    Grid.Column="0"/>
         <rxui:ViewModelViewHost x:Name="MasterFileListContainer"
                                 Grid.Row="1"
                                 Grid.Column="0"/>
         <TextBlock Text="Get Started"
-                    Style="{StaticResource MasterFileOptionTitle}"
+                    Style="{StaticResource Subtitle}"
                     Grid.Row="0"
                     Grid.Column="1"/>
         <md:Card Grid.Row="1"
