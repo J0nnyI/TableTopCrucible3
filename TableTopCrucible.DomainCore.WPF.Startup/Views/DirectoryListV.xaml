@@ -15,6 +15,11 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+        <TextBox x:Name="Filter" 
+                 md:HintAssist.Hint="Filter"/>
+        <ListView>
+            
+        </ListView>
         <TextBlock Text="dirList"/>
         <rxui:ViewModelViewHost x:Name="TemporaryDirectoryCard"/>
     </Grid>

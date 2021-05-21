@@ -20,6 +20,7 @@ using System.Reactive.Linq;
 using System.Reactive;
 using DirectoryPathVT = TableTopCrucible.Core.ValueTypes.DirectoryPath;
 using TableTopCrucible.Core.ValueTypes;
+using ReactiveUI.Validation.Extensions;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.Views
 {
@@ -33,12 +34,12 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.Views
             InitializeComponent();
             this.WhenActivated(disposables =>
             {
-                this.Bind(ViewModel, vm => vm.Description, v => v.Description.Text,
-                    vt => vt?.Value, str => SingleLineDescription.From(str))
+                this.DataContext = this.ViewModel;
+                this.Bind(ViewModel, vm => vm.Description, v => v.Description.Text)
                     .DisposeWith(disposables);
-                this.Bind(ViewModel, vm => vm.DirectoryPath, v => v.DirectoryPath.Text,
-                        vt => vt?.Value, str => DirectoryPathVT.From(str))
-                    .DisposeWith(disposables);
+                //this.BindValidation(ViewModel, vm=>vm.Description, v=>v.Description.err)
+                //this.Bind(ViewModel, vm => vm.DirectoryPath, v => v.DirectoryPath.Text)
+                //    .DisposeWith(disposables);
 
                 Observable
                     .FromEventPattern(PickDirectoryBtn, nameof(PickDirectoryBtn.Click))
@@ -47,12 +48,11 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.Views
                     {
                         var dialog = new VistaFolderBrowserDialog()
                         {
-                            SelectedPath = curPath?.Value,
+                            SelectedPath = curPath,
                         };
-                        if (dialog.ShowDialog() == true)
-                            return DirectoryPathVT.From(dialog.SelectedPath);
-                        else
-                            return null;
+                        return dialog.ShowDialog() == true
+                            ? DirectoryPathVT.From(dialog.SelectedPath)
+                            : null;
                     })
                     .Where(newPath => newPath != null)
                     .Subscribe(ViewModel.UpdateDirectoryPath)

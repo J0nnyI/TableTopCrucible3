@@ -8,23 +8,25 @@
                           xmlns:vm="clr-namespace:TableTopCrucible.DomainCore.WPF.Startup.ViewModels"
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                          Height="auto"
                           mc:Ignorable="d" 
-                          d:DesignHeight="450" d:DesignWidth="800">
+                          d:DesignHeight="450" d:DesignWidth="800"
+                          d:DataContext="{d:DesignInstance Type=vm:DirectoryCardVM}">
     <md:Card Padding="20px">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <TextBox x:Name="Description"
                      md:HintAssist.Hint="Description"
                      Margin="10"
                      Grid.Row="0"/>
-            <TextBox x:Name="DirectoryPath"
+            <TextBox Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}"
                      md:HintAssist.Hint="Directory"
                      Margin="10"
                      Grid.Row="1"/>
@@ -36,6 +38,10 @@
                     Margin="0 0 8 0">
                 <md:PackIcon Kind="FolderEdit"/>
             </Button>
+            <rxui:ViewModelViewHost ViewModel="{Binding EditSelector}"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="1"/>
         </Grid>
     </md:Card>
 </rxui:ReactiveUserControl>
