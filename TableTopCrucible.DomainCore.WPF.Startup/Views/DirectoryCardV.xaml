@@ -23,14 +23,17 @@
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <TextBox x:Name="Description"
+                     IsEnabled="{Binding EditSelector.EditModeEnabled}"
                      md:HintAssist.Hint="Description"
                      Margin="10"
                      Grid.Row="0"/>
-            <TextBox Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding Directory, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding EditSelector.EditModeEnabled}"
                      md:HintAssist.Hint="Directory"
                      Margin="10"
                      Grid.Row="1"/>
             <Button x:Name="PickDirectoryBtn"
+                    IsEnabled="{Binding EditSelector.EditModeEnabled}"
                     Style="{StaticResource MaterialDesignIconButton}"
                     Grid.Row="1"
                     VerticalAlignment="Center"

@@ -7,20 +7,38 @@
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                           xmlns:local="clr-namespace:TableTopCrucible.DomainCore.WPF.Startup.Views"
+                          xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           mc:Ignorable="d" 
-                          d:DesignHeight="450" d:DesignWidth="800">
+                          d:DesignHeight="450" d:DesignWidth="800"
+                          d:DataContext="{d:DesignInstance Type=vm:DirectoryListVM}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <TextBox x:Name="Filter" 
-                 md:HintAssist.Hint="Filter"/>
-        <ListView>
-            
+                 md:HintAssist.Hint="Filter"
+                 Grid.Row="0"/>
+        <ListView x:Name="DirectoryCards"
+                  Style="{StaticResource MaterialDesignCardsListBox}"
+                  Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <rxui:ViewModelViewHost ViewModel="{Binding}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <wpftk:VirtualizingWrapPanel Orientation="Vertical"
+                                                 SpacingMode="None"
+                                                 StretchItems="False"
+                                                 ItemSize="512,216"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
         </ListView>
-        <TextBlock Text="dirList"/>
-        <rxui:ViewModelViewHost x:Name="TemporaryDirectoryCard"/>
+        <rxui:ViewModelViewHost x:Name="TemporaryDirectoryCard"
+                                Grid.Row="2"/>
     </Grid>
 </rxui:ReactiveUserControl>

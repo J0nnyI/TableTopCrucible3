@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Text;
@@ -29,6 +30,11 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.Views
             this.WhenActivated(disposables =>
             {
                 this.Bind(ViewModel, vm => vm.TemporaryDirectoryCard, v => v.TemporaryDirectoryCard.ViewModel)
+                    .DisposeWith(disposables);
+                this.OneWayBind(ViewModel, 
+                        vm => vm.DirectoryCards,
+                        v => v.DirectoryCards.ItemsSource,
+                        lst=>lst as IEnumerable)
                     .DisposeWith(disposables);
             });
         }

@@ -8,7 +8,8 @@
                           xmlns:vm="clr-namespace:TableTopCrucible.Core.WPF.ViewModels"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           mc:Ignorable="d" 
-                          d:DesignHeight="450" d:DesignWidth="800">
+                          d:DesignHeight="450" d:DesignWidth="800"
+                          d:DataContext="{d:DesignInstance Type=vm:EditSelectorVM}">
 
     <StackPanel Orientation="Vertical"
                         Grid.Row="0"
@@ -17,14 +18,22 @@
         <StackPanel.Resources>
             <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}"/>
         </StackPanel.Resources>
-        <Button x:Name="ToggleEdit">
+        <Button x:Name="EnterEdit"
+                Command="{Binding EnterEditMode}"
+                ToolTip="Edit">
             <md:PackIcon Kind="PencilOutline"/>
         </Button>
-        <Button x:Name="Revert">
+        <Button x:Name="RevertChanges"
+                ToolTip="Revert changes">
             <md:PackIcon Kind="Undo"/>
         </Button>
-        <Button x:Name="Save">
+        <Button x:Name="SaveChanges"
+                ToolTip="Save changes">
             <md:PackIcon Kind="ContentSaveOutline"/>
+        </Button>
+        <Button x:Name="Delete"
+                ToolTip="Remove">
+            <md:PackIcon Kind="Delete"/>
         </Button>
     </StackPanel>
 </rxui:ReactiveUserControl>

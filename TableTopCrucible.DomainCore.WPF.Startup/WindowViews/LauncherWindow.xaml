@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindow}"
         Title="LauncherWindow" Height="450" Width="800"
-        ResizeMode="NoResize"
+        
         >
     <Window.Resources>
         <ResourceDictionary Source="../Styles/Common.xaml"/>

@@ -25,6 +25,19 @@ namespace TableTopCrucible.Core.WPF.Views
         public EditSelectorV()
         {
             InitializeComponent();
+            this.WhenActivated(disposables =>
+            {
+                this.OneWayBind(ViewModel, vm => vm.EditModeEnabled, v => v.EnterEdit.Visibility,
+                    vmp => !vmp ? Visibility.Visible : Visibility.Collapsed);
+                this.OneWayBind(ViewModel, vm => vm.EditModeEnabled, v => v.RevertChanges.Visibility,
+                    vmp => vmp ? Visibility.Visible : Visibility.Collapsed);
+                this.OneWayBind(ViewModel, vm => vm.EditModeEnabled, v => v.SaveChanges.Visibility,
+                    vmp => vmp ? Visibility.Visible : Visibility.Collapsed);
+
+                this.BindCommand(ViewModel, vm => vm.EnterEditMode, v => v.EnterEdit);
+                this.BindCommand(ViewModel, vm => vm.RevertChanges, v => v.RevertChanges);
+                this.BindCommand(ViewModel, vm => vm.SaveChanges, v => v.SaveChanges);
+            });
         }
     }
 }

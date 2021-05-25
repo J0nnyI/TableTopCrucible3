@@ -41,17 +41,28 @@ namespace TableTopCrucible.Core.ValueTypes
         public static void RegisterValidator<T>(T vm, Expression<Func<T, string>> propertyName, bool includeExists = true) where T : ReactiveObject, IValidatableViewModel
         {
             vm.ValidationRule(propertyName, value => !string.IsNullOrWhiteSpace(value), "The path must not be empty");
-            
-            if(includeExists)
-                vm.ValidationRule(propertyName, value => Directory.Exists(value), "This directory dows not exist");
 
-            vm.ValidationRule(propertyName, value => !string.IsNullOrWhiteSpace(value), "This is not a valid directory path");
+            if (includeExists)
+                vm.ValidationRule(propertyName, value => Directory.Exists(value), "This directory does not exist");
+
+            vm.ValidationRule(propertyName,
+                value =>
+                {
+                    try
+                    {
+                        return Path.IsPathRooted(value);
+                    }
+                    catch (Exception) { return false; }
+                }, "This is not a valid directory path");
         }
 
         public bool Exists() => Directory.Exists(Value);
         public void CreateDirectory() => Directory.CreateDirectory(Value);
         public DirectoryName GetDirectoryName() =>
             DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
+        public string[] GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
+            => Directory.GetFiles(Value, searchPattern, searchOption);
+
     }
 
 }

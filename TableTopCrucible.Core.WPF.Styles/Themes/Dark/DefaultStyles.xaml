@@ -89,4 +89,9 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
     </Style>
+
+    <Style TargetType="ToolTip" BasedOn="{StaticResource MaterialDesignToolTip}">
+        <Setter Property="Foreground" Value="{StaticResource MaterialDesignDarkForeground}"/>
+        <Setter Property="Background" Value="#474747"/>
+    </Style>
 </ResourceDictionary>

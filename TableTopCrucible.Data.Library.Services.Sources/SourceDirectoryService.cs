@@ -6,15 +6,15 @@ using TableTopCrucible.Data.Models.Sources;
 
 namespace TableTopCrucible.Data.Library.Services.Sources
 {
-    [Singleton(typeof(FileSetupService))]
-    public interface IFileSetupService
+    [Singleton(typeof(SourceDirectoryService))]
+    public interface ISourceDirectoryService
     {
         IObservableCache<SourceDirectory, SourceDirectoryId> Directories { get; }
         void AddOrUpdateDirectory(SourceDirectory directory);
     }
-    internal class FileSetupService : IFileSetupService
+    internal class SourceDirectoryService : ISourceDirectoryService
     {
-        private SourceCache<SourceDirectory, SourceDirectoryId> _directories = new SourceCache<SourceDirectory, SourceDirectoryId>(dir => dir.Id);
+        private readonly SourceCache<SourceDirectory, SourceDirectoryId> _directories = new SourceCache<SourceDirectory, SourceDirectoryId>(dir => dir.Id);
         public IObservableCache<SourceDirectory, SourceDirectoryId> Directories => _directories;
         public void AddOrUpdateDirectory(SourceDirectory directory)
         {

@@ -14,7 +14,7 @@ namespace TableTopCrucible.Data.Library.ValueTypes.IDs
         {
             return new T()
             {
-                Value = new Guid()
+                Value = Guid.NewGuid()
             };
         }
     }

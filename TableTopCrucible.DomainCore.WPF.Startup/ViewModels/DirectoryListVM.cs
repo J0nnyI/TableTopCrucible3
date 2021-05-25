@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using DynamicData.Binding;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -6,13 +7,17 @@ using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Contexts;
 using ReactiveUI.Validation.Extensions;
 
+using Splat;
+
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
+using TableTopCrucible.Data.Library.Services.Sources;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
 {
@@ -26,12 +31,23 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
         [Reactive]
         public string Filter { get; set; }
 
-        private readonly SourceList<IDirectoryCard> _items = new SourceList<IDirectoryCard>();
-        public IObservableList<IDirectoryCard> Items => _items;
-
-        public DirectoryListVM()
+        [Reactive]
+        public ReadOnlyObservableCollection<IDirectoryCard> DirectoryCards { get; private set; }
+        public DirectoryListVM(ISourceDirectoryService sourceDirectoryService, IDirectoryCard temporaryDirectoryCard)
         {
-
+            TemporaryDirectoryCard = temporaryDirectoryCard;
+            this.WhenActivated(disposables =>
+            {
+                sourceDirectoryService.Directories
+                    .Connect()
+                    .Transform(model =>
+                        Locator.Current.GetService<IDirectoryCard>()
+                            .SetSourceModel(model)
+                    ).Bind(out var directoryCards)
+                    .Subscribe()
+                    .DisposeWith(disposables);
+                this.DirectoryCards = directoryCards;
+            });
 
         }
 
@@ -39,10 +55,5 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
 
         public IDirectoryCard TemporaryDirectoryCard { get; }
         public ValidationContext ValidationContext { get; } = new ValidationContext();
-
-        public DirectoryListVM(IDirectoryCard temporaryDirectoryCard)
-        {
-            TemporaryDirectoryCard = temporaryDirectoryCard;
-        }
     }
 }

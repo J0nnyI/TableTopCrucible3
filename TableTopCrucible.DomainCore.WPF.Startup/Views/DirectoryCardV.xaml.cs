@@ -35,15 +35,12 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.Views
             this.WhenActivated(disposables =>
             {
                 this.DataContext = this.ViewModel;
-                this.Bind(ViewModel, vm => vm.Description, v => v.Description.Text)
+                this.Bind(ViewModel, vm => vm.Name, v => v.Description.Text)
                     .DisposeWith(disposables);
-                //this.BindValidation(ViewModel, vm=>vm.Description, v=>v.Description.err)
-                //this.Bind(ViewModel, vm => vm.DirectoryPath, v => v.DirectoryPath.Text)
-                //    .DisposeWith(disposables);
 
                 Observable
                     .FromEventPattern(PickDirectoryBtn, nameof(PickDirectoryBtn.Click))
-                    .Select(_ => ViewModel.DirectoryPath)
+                    .Select(_ => ViewModel.Directory)
                     .Select(curPath =>
                     {
                         var dialog = new VistaFolderBrowserDialog()
@@ -54,7 +51,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.Views
                             ? DirectoryPathVT.From(dialog.SelectedPath)
                             : null;
                     })
-                    .Where(newPath => newPath != null)
+                    .WhereNotNull()
                     .Subscribe(ViewModel.UpdateDirectoryPath)
                     .DisposeWith(disposables);
 

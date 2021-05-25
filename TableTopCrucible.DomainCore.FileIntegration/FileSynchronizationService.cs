@@ -34,20 +34,20 @@ namespace TableTopCrucible.DomainCore.FileIntegration
     }
     internal class FileSynchronizationService : IFileSynchronizationService
     {
-        private readonly ILogger<FileSynchronizationService> logger;
+        private readonly ILogger<FileSynchronizationService> _logger;
         private readonly IItemService _itemService;
         private readonly IJobService _jobManagementService;
-        private readonly IFileSetupService _fileSetupService;
+        private readonly ISourceDirectoryService _fileSetupService;
         private readonly IFileDataStorageService _fileDataStorageService;
-        int threadCount = 3;
+        private readonly int _threadCount = 3;
         public FileSynchronizationService(
             IItemService itemService,
             IJobService jobManagementService,
-            IFileSetupService fileSetupService,
+            ISourceDirectoryService fileSetupService,
             ILoggerFactory loggerFactory,
             IFileDataStorageService fileDataStorageService)
         {
-            logger = loggerFactory.CreateLogger<FileSynchronizationService>();
+            _logger = loggerFactory.CreateLogger<FileSynchronizationService>();
             _itemService = itemService;
             _jobManagementService = jobManagementService;
             _fileSetupService = fileSetupService;
@@ -62,21 +62,21 @@ namespace TableTopCrucible.DomainCore.FileIntegration
 
 
             var readFiles_1 = job.TrackProgression("Load files", 1, 1);
-            var hashFiles_2 = Enumerable.Range(0, threadCount).Select(i => job.TrackProgression($"Hash Files {i}", 1, 1)).ToArray();
+            var hashFiles_2 = Enumerable.Range(0, _threadCount).Select(i => job.TrackProgression($"Hash Files {i}", 1, 1)).ToArray();
             var generateItems_3_1 = job.TrackProgression($"Generate Items", 1, 1);
             var writeFileMasterList_3_2 = job.TrackProgression($"Write File Masterlist", 1, 1);
 
 
-            logger.LogInformation("Sync Scheduled");
+            _logger.LogInformation("Sync Scheduled");
 
             var res = Observable.StartAsync(async () =>
                     {
-                        using var scope = logger.BeginScope(nameof(StartSync) + " - pre hash");
-                        logger.LogInformation("Sync Started");
+                        using var scope = _logger.BeginScope(nameof(StartSync) + " - pre hash");
+                        _logger.LogInformation("Sync Started");
 
 
-                        var files = getFilePathsForDirectory(readFiles_1);
-                        var hashedFiles = await hashFiles(files, hashFiles_2);
+                        var files = _getFilePathsForDirectory(readFiles_1);
+                        var hashedFiles = await _hashFiles(files, hashFiles_2);
 
                         Observable.Start(() =>
                         {
@@ -88,13 +88,13 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                             {
                                 writeFileMasterList_3_2.Current = writeFileMasterList_3_2.Target = 1;
                                 writeFileMasterList_3_2.Details = $"writing failed: {ex}";
-                                logger.LogError(ex, "could not write file master list");
+                                _logger.LogError(ex, "could not write file master list");
                             }
                         }, RxApp.TaskpoolScheduler).Take(1).Subscribe();
 
-                        var items = getItems(hashedFiles, generateItems_3_1);
-                        writeItems(items);
-                        logger.LogInformation("{0} items have been updated. There is now a total of {1} items", items.Count(), this._itemService.GetCache().Count);
+                        var items = _getItems(hashedFiles, generateItems_3_1);
+                        _writeItems(items);
+                        _logger.LogInformation("{0} items have been updated. There is now a total of {1} items", items.Count(), this._itemService.GetCache().Count);
 
                     }, RxApp.TaskpoolScheduler)
                 .Replay(1)
@@ -102,17 +102,17 @@ namespace TableTopCrucible.DomainCore.FileIntegration
             res.Subscribe(
                 onNext: _ =>
                 {
-                    logger.LogInformation("file sync completed");
+                    _logger.LogInformation("file sync completed");
                 }, onError: err =>
                   {
-                      logger.LogError("file sync failed");
+                      _logger.LogError("file sync failed");
                   });
             return res;
         }
 
-        private IEnumerable<RawFileData> getFilePathsForDirectory(IProgressionHandler progress)
+        private IEnumerable<RawFileData> _getFilePathsForDirectory(IProgressionHandler progress)
         {
-            logger.LogTrace("reading local files");
+            _logger.LogTrace("reading local files");
             progress.State = JobState.InProgress;
             try
             {
@@ -120,37 +120,37 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                     .Directories
                     .Items
                     .SelectMany(dir =>
-                        Directory.GetFiles(dir.Path, "*", SearchOption.AllDirectories)
+                        dir.Directory.GetFiles()
                             .Select(file => new RawFileData(dir, FilePath.From(file)))
                     )
                     .Where(file => file.Type.IsIn(FileType.Image, FileType.Model));
                 progress.State = JobState.Done;
                 progress.Current++;
-                logger.LogTrace("found {0} files", res.Count());
+                _logger.LogTrace("found {0} files", res.Count());
                 return res;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "files could not be read.");
+                _logger.LogError(ex, "files could not be read.");
                 progress.State = JobState.Failed;
                 progress.Details = ex.ToString();
                 throw ex;
             }
         }
-        private IObservable<IEnumerable<RawFileData>> hashFiles(IEnumerable<RawFileData> files, IEnumerable<IProgressionHandler> progress)
+        private IObservable<IEnumerable<RawFileData>> _hashFiles(IEnumerable<RawFileData> files, IEnumerable<IProgressionHandler> progress)
         {
-            logger.LogTrace("starting hashing {0} files.", files.Count());
+            _logger.LogTrace("starting hashing {0} files.", files.Count());
             return files
                 .SplitEvenly(progress.Count())
                 .Select(fileGroup => Observable.Start(() =>
                 {
-                    using var scope = logger.BeginScope("hashing {0}", fileGroup.Key);
-                    logger.LogTrace("thread {0} started", fileGroup.Key);
+                    using var scope = _logger.BeginScope("hashing {0}", fileGroup.Key);
+                    _logger.LogTrace("thread {0} started", fileGroup.Key);
 
                     var prog = progress.ElementAt(fileGroup.Key);
                     prog.WhenAnyValue(x => x.Current).Subscribe(x =>
                     {
-                        logger.LogTrace("updating current to {0}", x);
+                        _logger.LogTrace("updating current to {0}", x);
                     });
                     prog.State = JobState.InProgress;
                     try
@@ -161,7 +161,7 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                             prog.Details = file.Path.Value;
                             prog.Current++;
                             Thread.Sleep(5000);
-                            logger.LogTrace("hashing file {0}", file.Path);
+                            _logger.LogTrace("hashing file {0}", file.Path);
                             file.CreateHash();
                         });
                         prog.State = JobState.Done;
@@ -171,21 +171,21 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                     {
                         prog.State = JobState.Failed;
                         prog.Details = $"failed {ex}";
-                        logger.LogError("failed to hash file", ex);
+                        _logger.LogError("failed to hash file", ex);
                         throw ex;
                     }
                 }, RxApp.TaskpoolScheduler
                 ))
                 .CombineLatest(threadResult => threadResult.SelectMany(files => files));
         }
-        private IEnumerable<Item> getItems(IEnumerable<RawFileData> files, IProgressionHandler progress)
+        private IEnumerable<Item> _getItems(IEnumerable<RawFileData> files, IProgressionHandler progress)
         {
             try
             {
                 var filteredFiles = files.Where(file => file.Type == FileType.Model).ToArray();
                 var hashes = filteredFiles.Select(x => x.Hash).ToArray();
                 var fileCount = filteredFiles.Count();
-                logger.LogTrace("creating {0} items: {1}", fileCount, hashes);
+                _logger.LogTrace("creating {0} items: {1}", fileCount, hashes);
                 var res = filteredFiles
                     .GroupBy(fileEx => fileEx.HashKey)
                     .Select(fileGroup =>
@@ -203,17 +203,17 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                             itemId);
                     }).ToArray();
                 progress.Current++;
-                logger.LogInformation("created {0} items with a total of {1} Versions", res.Count(), res.SelectMany(item => item.Versions).Count());
+                _logger.LogInformation("created {0} items with a total of {1} Versions", res.Count(), res.SelectMany(item => item.Versions).Count());
                 return res;
 
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "item-creation failed");
+                _logger.LogError(ex, "item-creation failed");
                 return null;
             }
         }
-        private void writeItems(IEnumerable<Item> items)
+        private void _writeItems(IEnumerable<Item> items)
         {
             this._itemService.AddOrUpdate(items);
 
@@ -226,20 +226,20 @@ namespace TableTopCrucible.DomainCore.FileIntegration
                 Directory = directory;
                 this.Path = path;
                 this.Type = path.GetExtension().GetFileType();
-                this.fileInfo = null;
+                this._fileInfo = null;
                 this.Hash = null;
             }
 
             public SourceDirectory Directory { get; }
             public FilePath Path { get; }
-            private FileInfo fileInfo;
+            private FileInfo _fileInfo;
             public FileInfo FileInfo
             {
                 get
                 {
-                    if (fileInfo == null)
-                        this.fileInfo = Path.GetFileInfo();
-                    return fileInfo;
+                    if (_fileInfo == null)
+                        this._fileInfo = Path.GetFileInfo();
+                    return _fileInfo;
                 }
             }
             public FileType Type { get; }

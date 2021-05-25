@@ -30,6 +30,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.PageViews
             {
                 this.Bind(ViewModel, vm => vm.DirectoryList, v => v.DirectoryList.ViewModel)
                     .DisposeWith(disposables);
+
             });
         }
 
