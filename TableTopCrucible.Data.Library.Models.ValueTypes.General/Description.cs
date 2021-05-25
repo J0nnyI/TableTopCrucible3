@@ -20,15 +20,12 @@ namespace TableTopCrucible.Data.Library.Models.ValueTypes.General
             => _description;
         public override bool Equals(object obj)
         {
-            switch (obj)
+            return obj switch
             {
-                case string str:
-                    return _description == str;
-                case Description name:
-                    return _description == name._description;
-                default:
-                    return false;
-            }
+                string str => _description == str,
+                Description name => _description == name._description,
+                _ => false,
+            };
         }
         public override int GetHashCode()
             => _description.GetHashCode();

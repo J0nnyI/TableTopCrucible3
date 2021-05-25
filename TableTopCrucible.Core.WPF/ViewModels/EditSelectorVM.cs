@@ -16,19 +16,21 @@ namespace TableTopCrucible.Core.WPF.ViewModels
     {
         bool EditModeEnabled { get; set; }
 
-        void SetCommands(ReactiveCommand<Unit, Unit> revertChanges, ReactiveCommand<Unit, Unit> saveChanges);
+        void SetCommands(ReactiveCommand<Unit, Unit> revertChanges, ReactiveCommand<Unit, Unit> saveChanges, ReactiveCommand<Unit, Unit> deleteChanges);
     }
     public class EditSelectorVM : ReactiveObject, IEditSelector, IActivatableViewModel
     {
         [Reactive]
         public bool EditModeEnabled { get; set; }
         [Reactive]
-        
+
         public ReactiveCommand<Unit, Unit> EnterEditMode { get; private set; }
         [Reactive]
         public ReactiveCommand<Unit, Unit> RevertChanges { get; set; }
         [Reactive]
         public ReactiveCommand<Unit, Unit> SaveChanges { get; set; }
+        [Reactive]
+        public ReactiveCommand<Unit, Unit> Remove { get; set; }
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
         public EditSelectorVM()
@@ -42,16 +44,14 @@ namespace TableTopCrucible.Core.WPF.ViewModels
             });
         }
 
-        public void SetCommands(ReactiveCommand<Unit, Unit> revertChanges, ReactiveCommand<Unit, Unit> saveChanges)
+        public void SetCommands(
+            ReactiveCommand<Unit, Unit> revertChanges,
+            ReactiveCommand<Unit, Unit> saveChanges,
+            ReactiveCommand<Unit, Unit> remove)
         {
-            if (revertChanges is null)
-                throw new ArgumentNullException(nameof(revertChanges));
-
-            if (saveChanges is null)
-                throw new ArgumentNullException(nameof(saveChanges));
-            this.RevertChanges = revertChanges;
-            this.SaveChanges = saveChanges;
-
+            this.RevertChanges = revertChanges ?? throw new ArgumentNullException(nameof(revertChanges));
+            this.SaveChanges = saveChanges ?? throw new ArgumentNullException(nameof(saveChanges));
+            this.Remove = remove ?? throw new ArgumentNullException(nameof(remove));
         }
     }
 }

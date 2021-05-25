@@ -8,7 +8,7 @@
                           xmlns:vm="clr-namespace:TableTopCrucible.Core.WPF.ViewModels"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           mc:Ignorable="d" 
-                          d:DesignHeight="450" d:DesignWidth="800"
+                          d:DesignWidth="800"
                           d:DataContext="{d:DesignInstance Type=vm:EditSelectorVM}">
 
     <StackPanel Orientation="Vertical"
@@ -31,7 +31,7 @@
                 ToolTip="Save changes">
             <md:PackIcon Kind="ContentSaveOutline"/>
         </Button>
-        <Button x:Name="Delete"
+        <Button x:Name="Remove"
                 ToolTip="Remove">
             <md:PackIcon Kind="Delete"/>
         </Button>

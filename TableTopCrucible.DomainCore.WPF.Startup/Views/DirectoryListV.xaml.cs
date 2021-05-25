@@ -29,13 +29,13 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.Views
             InitializeComponent();
             this.WhenActivated(disposables =>
             {
-                this.Bind(ViewModel, vm => vm.TemporaryDirectoryCard, v => v.TemporaryDirectoryCard.ViewModel)
-                    .DisposeWith(disposables);
                 this.OneWayBind(ViewModel, 
                         vm => vm.DirectoryCards,
                         v => v.DirectoryCards.ItemsSource,
                         lst=>lst as IEnumerable)
                     .DisposeWith(disposables);
+
+                this.BindCommand(ViewModel, vm => vm.AddDirectory, v => v.addDirectory);
             });
         }
     }

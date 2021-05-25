@@ -9,12 +9,13 @@ namespace TableTopCrucible.Data.Models.Sources
 {
     public struct SourceDirectory
     {
-        public SourceDirectory(DirectoryPath filePath, DirectoryPath thumbnailSubDir, DirectorySetupName name)
+
+        public SourceDirectory(SourceDirectoryId id, DirectoryPath filePath, DirectoryPath thumbnailSubDir, DirectorySetupName name)
         {
             Directory = filePath ?? throw new ArgumentNullException(nameof(filePath));
             ThumbnailPath = thumbnailSubDir;//todo ?? throw new ArgumentNullException(nameof(thumbnailSubDir));
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            Id = SourceDirectoryId.New();
+            Id = id ?? throw new ArgumentNullException(nameof(id));
         }
 
         public DirectoryPath Directory { get; }

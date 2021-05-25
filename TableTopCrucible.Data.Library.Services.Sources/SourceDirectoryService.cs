@@ -11,6 +11,7 @@ namespace TableTopCrucible.Data.Library.Services.Sources
     {
         IObservableCache<SourceDirectory, SourceDirectoryId> Directories { get; }
         void AddOrUpdateDirectory(SourceDirectory directory);
+        void RemoveSourceDirectory(SourceDirectoryId id);
     }
     internal class SourceDirectoryService : ISourceDirectoryService
     {
@@ -19,6 +20,10 @@ namespace TableTopCrucible.Data.Library.Services.Sources
         public void AddOrUpdateDirectory(SourceDirectory directory)
         {
             this._directories.AddOrUpdate(directory);
+        }
+        public void RemoveSourceDirectory(SourceDirectoryId id)
+        {
+            this._directories.Remove(id);
         }
     }
 }

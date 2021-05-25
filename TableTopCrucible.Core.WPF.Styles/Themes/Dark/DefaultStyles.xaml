@@ -70,20 +70,7 @@
 
 
     <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFilledTextBox}">
-        <!--<Setter Property="BorderBrush"
-                Value="{StaticResource MaterialDesignTextBoxBorder}"/>
-
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Foreground"
-                Value="{StaticResource MaterialDesignDarkForeground}"/>
-        <Setter Property="Margin"
-                Value="8"/>-->
-        <!--<Style.Resources>
-            <Style TargetType="Grid">
-                <Setter Property="Background"
-                        Value="Transparent"/>
-            </Style>
-        </Style.Resources>-->
+        <Setter Property="Margin" Value="8px"/>
     </Style>
     <Style TargetType="rxui:ViewModelViewHost">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
