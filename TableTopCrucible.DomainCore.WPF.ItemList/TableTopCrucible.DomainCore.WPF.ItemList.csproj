@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReactiveUI.Events.WPF" Version="13.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
+    <ProjectReference Include="..\TableTopcrucible.Data.Library.Services.Sources\TableTopCrucible.Data.Library.Services.Sources.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Services.Sources\TableTopCrucible.Data.Library.Services.Sources.csproj" />
+  </ItemGroup>
+</Project>

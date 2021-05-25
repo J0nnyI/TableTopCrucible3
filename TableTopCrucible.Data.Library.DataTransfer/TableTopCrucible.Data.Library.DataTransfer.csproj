@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Collection" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
+    <ProjectReference Include="..\TableTopcrucible.Data.Library.Models.Sources\TableTopCrucible.Data.Library.Models.Sources.csproj" />
+    <ProjectReference Include="..\TableTopcrucible.Data.Library.Models.ValueTypes.General\TableTopCrucible.Data.Library.Models.ValueTypes.General.csproj" />
+    <ProjectReference Include="..\TableTopcrucible.Data.Library.ValueTypes.IDs\TableTopCrucible.Data.Library.ValueTypes.IDs.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,6 +1,7 @@
-﻿using System.Windows.Media.Media3D;
+﻿using DynamicData;
+
 using System.Linq;
-using DynamicData;
+using System.Windows.Media.Media3D;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -19,7 +20,7 @@ namespace TableTopCrucible.Core.Helper
 
             model.Transform = new MatrixTransform3D(matrix);
         }
-        public static void Move(this Model3D model, double x, double y, double z) 
+        public static void Move(this Model3D model, double x, double y, double z)
             => Move(model, new Point3D(x, y, z));
         public static void Move(this Model3D model, Point3D location)
         {

@@ -1,6 +1,6 @@
-﻿using System.Windows.Media.Media3D;
+﻿using DynamicData;
 
-using DynamicData;
+using System.Windows.Media.Media3D;
 
 namespace TableTopCrucible.Core.Helper
 {

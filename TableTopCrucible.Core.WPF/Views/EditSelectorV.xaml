@@ -1,0 +1,39 @@
+﻿<rxui:ReactiveUserControl x:Class="TableTopCrucible.Core.WPF.Views.EditSelectorV"
+                          x:TypeArguments="vm:EditSelectorVM"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                          xmlns:rxui="http://reactiveui.net"
+                          xmlns:vm="clr-namespace:TableTopCrucible.Core.WPF.ViewModels"
+                          xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                          mc:Ignorable="d" 
+                          d:DesignWidth="800"
+                          d:DataContext="{d:DesignInstance Type=vm:EditSelectorVM}">
+
+    <StackPanel Orientation="Vertical"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="1">
+        <StackPanel.Resources>
+            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}"/>
+        </StackPanel.Resources>
+        <Button x:Name="EnterEdit"
+                Command="{Binding EnterEditMode}"
+                ToolTip="Edit">
+            <md:PackIcon Kind="PencilOutline"/>
+        </Button>
+        <Button x:Name="RevertChanges"
+                ToolTip="Revert changes">
+            <md:PackIcon Kind="Undo"/>
+        </Button>
+        <Button x:Name="SaveChanges"
+                ToolTip="Save changes">
+            <md:PackIcon Kind="ContentSaveOutline"/>
+        </Button>
+        <Button x:Name="Remove"
+                ToolTip="Remove">
+            <md:PackIcon Kind="Delete"/>
+        </Button>
+    </StackPanel>
+</rxui:ReactiveUserControl>

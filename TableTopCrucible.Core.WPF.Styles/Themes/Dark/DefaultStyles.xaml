@@ -1,0 +1,84 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                    xmlns:rxui="http://reactiveui.net">
+
+    <!--<Style TargetType="Grid">
+        -->
+    <!--<Setter Property="Background" Value="Transparent"/>-->
+    <!--
+        <Setter Property="Background" Value="{StaticResource MaterialDesignDarkBackground}"/>
+    </Style>-->
+    <Style x:Key="DefaultWindow"
+           TargetType="Window"
+           BasedOn="{StaticResource MaterialDesignWindow}"/>
+    <Style TargetType="TextBlock">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignHeadline1TextBlock" BasedOn="{StaticResource MaterialDesignHeadline1TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignHeadline2TextBlock" BasedOn="{StaticResource MaterialDesignHeadline2TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignHeadline3TextBlock" BasedOn="{StaticResource MaterialDesignHeadline3TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignHeadline4TextBlock" BasedOn="{StaticResource MaterialDesignHeadline4TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignHeadline5TextBlock" BasedOn="{StaticResource MaterialDesignHeadline5TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignHeadline6TextBlock" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignSubtitle1TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignSubtitle2TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle2TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignBody1TextBlock" BasedOn="{StaticResource MaterialDesignBody1TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignBody2TextBlock" BasedOn="{StaticResource MaterialDesignBody2TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="MaterialDesignTextBlock" BasedOn="{StaticResource MaterialDesignTextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+
+
+    <Style TargetType="md:PackIcon">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+
+
+    <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFilledTextBox}">
+        <Setter Property="Margin" Value="8px"/>
+    </Style>
+    <Style TargetType="rxui:ViewModelViewHost">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+    </Style>
+
+    <Style TargetType="ToolTip" BasedOn="{StaticResource MaterialDesignToolTip}">
+        <Setter Property="Foreground" Value="{StaticResource MaterialDesignDarkForeground}"/>
+        <Setter Property="Background" Value="#474747"/>
+    </Style>
+</ResourceDictionary>

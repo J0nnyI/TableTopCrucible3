@@ -1,21 +1,16 @@
 ﻿using DynamicData;
 using DynamicData.Kernel;
 
-using ReactiveUI;
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Reflection;
-using System.Text;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -43,7 +38,7 @@ namespace TableTopCrucible.Core.Helper
         }
 
         public static Collection<T> ToCollection<T>(this IEnumerable<T> list)
-            =>new Collection<T>(list.ToList());
+            => new Collection<T>(list.ToList());
 
         public static IEnumerable<T> Distinct<T>(this IEnumerable<T> list, Func<T, T, bool> comparer)
             => list.Distinct(new proxyComparer<T>(comparer));
@@ -84,9 +79,16 @@ namespace TableTopCrucible.Core.Helper
         {
             return list.Where(x => sublist.Contains(selector(x)));
         }
-        /**
-         * { 1,2,3 }, {2,3,4} ==> {1}
-         */
+
+        /// <summary>
+        /// { 1,2,3 }, {2,3,4} ==> {1} 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="Tcmp"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="sublist"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
         public static IEnumerable<T> WhereNotIn<T, Tcmp>(this IEnumerable<T> list, IEnumerable<Tcmp> sublist, Func<T, Tcmp> selector)
         {
             return list.Where(x => !sublist.Contains(selector(x)));
@@ -120,17 +122,17 @@ namespace TableTopCrucible.Core.Helper
             return res.ToArray();
         }
 
-    public static Optional<T> MaxBy<T>(this IEnumerable<T> source, Func<T, IComparable> selector)
-            => source.Aggregate<T, Optional<T>>
-                (
-                    Optional<T>.None,
-                    (Optional<T> acc, T value) =>
-                    {
-                        return !acc.HasValue || selector(acc.Value).CompareTo(selector(value)) > 0
-                            ? acc.Value
-                            : acc;
-                    }
-                );
+        public static Optional<T> MaxBy<T>(this IEnumerable<T> source, Func<T, IComparable> selector)
+                => source.Aggregate<T, Optional<T>>
+                    (
+                        Optional<T>.None,
+                        (Optional<T> acc, T value) =>
+                        {
+                            return !acc.HasValue || selector(acc.Value).CompareTo(selector(value)) > 0
+                                ? acc.Value
+                                : acc;
+                        }
+                    );
 
     }
 }
