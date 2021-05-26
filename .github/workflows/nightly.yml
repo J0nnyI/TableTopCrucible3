@@ -1,7 +1,9 @@
 name: "deploy .NET Core Desktop"
 
 on:
-    pull_request
+    push:
+        tags:
+            - "TTC/v*"
 
 env:
     PROJECT_PATH: TableTopCrucible.App.WPF/TableTopCrucible.App.WPF.csproj
@@ -35,4 +37,4 @@ jobs:
           with: 
             github-token: ${{ secrets.GITHUB_TOKEN }}
             pattern: TableTopCrucible.App.WPF/bin/Release/netcoreapp3.1/win-x64/publish/*
-            release-url: ${{ steps.create_release.outputs.upload_url }}/pr/executable
+            release-url: ${{ steps.create_release.outputs.upload_url }}/release/executable
