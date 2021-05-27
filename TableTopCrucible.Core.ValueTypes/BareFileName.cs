@@ -11,5 +11,9 @@ namespace TableTopCrucible.Core.ValueTypes
     /// </summary>
     public class BareFileName : ValueOf<string, BareFileName>
     {
+        public static BareFileName operator +(BareFileName bareFileA, BareFileName bareFileB)
+            => BareFileName.From(bareFileA.Value + bareFileB.Value);
+        public static FileName operator +(BareFileName fileName, FileExtension extension)
+            => FileName.From(fileName.Value + extension.Value);
     }
 }

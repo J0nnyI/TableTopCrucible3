@@ -17,7 +17,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Directories"
+        <TextBlock Text="Please select the Directories where your Files are located"
                    Grid.Row="0"
                    Style="{StaticResource Subtitle}"/>
         <rxui:ViewModelViewHost x:Name="DirectoryList"

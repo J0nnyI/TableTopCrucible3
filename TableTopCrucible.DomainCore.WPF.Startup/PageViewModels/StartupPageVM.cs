@@ -9,6 +9,7 @@ using System.Reactive.Disposables;
 using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
+using TableTopCrucible.Data.Library.DataTransfer.Master;
 using TableTopCrucible.DomainCore.WPF.Startup.PageViews;
 using TableTopCrucible.DomainCore.WPF.Startup.Services;
 using TableTopCrucible.DomainCore.WPF.Startup.ViewModels;
@@ -24,7 +25,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.PageViewModels
     {
         private readonly ILauncherService _launcherService;
 
-        public StartupPageVM(IRecentMasterFileList masterFileList, ILauncherService launcherService)
+        public StartupPageVM(IRecentMasterFileList masterFileList,IMasterFileService masterFileService, ILauncherService launcherService)
         {
             MasterFileList = masterFileList;
             _launcherService = launcherService;
@@ -35,6 +36,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.PageViewModels
                     {
                         HostScreen.Router.Navigate.Execute(
                             Locator.Current.GetService<IDirectoryWizardPage>());
+                        masterFileService.New();
                     })
                     .DisposeWith(disposables);
 

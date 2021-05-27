@@ -1,6 +1,15 @@
 ﻿using DynamicData;
 
+using ReactiveUI;
+
+using System;
+using System.Reactive;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+
 using TableTopCrucible.Core.DI.Attributes;
+using TableTopCrucible.Data.Library.DataTransfer.Master;
+using TableTopCrucible.Data.Library.DataTransfer.Services;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
 using TableTopCrucible.Data.Models.Sources;
 
@@ -16,6 +25,12 @@ namespace TableTopCrucible.Data.Library.Services.Sources
     internal class SourceDirectoryService : ISourceDirectoryService
     {
         private readonly SourceCache<SourceDirectory, SourceDirectoryId> _directories = new SourceCache<SourceDirectory, SourceDirectoryId>(dir => dir.Id);
+        private readonly IDirectoryDataStorageService _directoryDataStorageService;
+
+        public SourceDirectoryService(IDirectoryDataStorageService directoryDataStorageService)
+        {
+            _directoryDataStorageService = directoryDataStorageService;
+        }
         public IObservableCache<SourceDirectory, SourceDirectoryId> Directories => _directories;
         public void AddOrUpdateDirectory(SourceDirectory directory)
         {
@@ -25,5 +40,7 @@ namespace TableTopCrucible.Data.Library.Services.Sources
         {
             this._directories.Remove(id);
         }
+        public void Quicksave()
+            => _directoryDataStorageService.Quicksave(this._directories.Items);
     }
 }

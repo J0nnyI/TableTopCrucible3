@@ -30,12 +30,10 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
     public interface IDirectoryCard
     {
         SourceDirectoryId Id { get; }
+        string Name { get; }
 
         IDirectoryCard SetSourceModel(SourceDirectory model);
         SourceDirectory ToModel();
-        void SetEditMode(bool isEnabled);
-
-        public IObservable<bool> EditModeChanges { get; }
     }
     public class DirectoryCardVM : ReactiveValidationObject, IActivatableViewModel, IDirectoryCard, IValidatableViewModel, INotifyDataErrorInfo
     {
@@ -43,23 +41,24 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
         public string Name { get; set; }
         [Reactive]
         public string Directory { get; set; }
+        [Reactive]
+        public string ThumbnailDirectory { get; set; }
 
         public SourceDirectoryId Id { get; private set; } = SourceDirectoryId.New();
         public IObservable<Unit> OnDirectorySelected { get; }
         [Reactive]
-        private SourceDirectory _originalData { get; set; }
+        public SourceDirectory? OriginalData { get; private set; }
         private readonly ISourceDirectoryService _sourceDirectoryService;
 
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
         public IEditSelector EditSelector { get; }
-
-        public IObservable<bool> EditModeChanges => this.WhenAnyValue(vm => vm.EditSelector.EditModeEnabled).DistinctUntilChanged();
-
+        
         public DirectoryCardVM(
             IEditSelector editSelector,
             ISourceDirectoryService sourceDirectoryService)
         {
             DirectoryPathVT.RegisterValidator(this, vm => vm.Directory, true);
+            DirectoryPathVT.RegisterValidator(this, vm => vm.ThumbnailDirectory, false);
             EditSelector = editSelector;
             _sourceDirectoryService = sourceDirectoryService;
 
@@ -70,8 +69,9 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
                         () =>
                         {
                             EditSelector.EditModeEnabled = false;
-                            Name = _originalData.Name?.Value;
-                            Directory = _originalData.Directory?.Value;
+                            Name = OriginalData?.Name?.Value;
+                            Directory = OriginalData?.Directory?.Value;
+                            ThumbnailDirectory = OriginalData?.ThumbnailPath?.Value;
                         },
                         this._sourceDirectoryService
                             .Directories
@@ -100,19 +100,19 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
         {
             Name = newPath.GetDirectoryName().Value;
             Directory = newPath.Value;
+            ThumbnailDirectory = (newPath + DirectoryName.From("Thumbnails")).Value;
         }
         public IDirectoryCard SetSourceModel(SourceDirectory model)
         {
             this.Name = model.Name.Value;
             this.Directory = model.Directory.Value;
             this.Id = model.Id;
-            this._originalData = model;
+            this.ThumbnailDirectory = model.ThumbnailPath.Value;
+            this.OriginalData = model;
             return this;
         }
         public SourceDirectory ToModel()
-            => new SourceDirectory(Id, DirectoryPathVT.From(Directory), null, DirectorySetupName.From(Name));
+            => new SourceDirectory(Id, DirectoryPathVT.From(Directory), DirectoryPathVT.From(ThumbnailDirectory), DirectorySetupName.From(Name));
 
-        public void SetEditMode(bool isEnabled)
-            => EditSelector.EditModeEnabled = isEnabled;
     }
 }

@@ -54,6 +54,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Data"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{0B8C5D57-D557-4A37-87B9-87FED3044BF9}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\nightly.yml = .github\workflows\nightly.yml
 		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
 EndProject
@@ -91,7 +92,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.WPF.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.WPF.MainWindow", "TableTopCrucible.Core.WPF.MainWindow\TableTopCrucible.Core.WPF.MainWindow.csproj", "{8F7D78D8-3003-4D0D-9D50-3AD3F92BEB22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Core.WPF", "TableTopCrucible.Core.WPF\TableTopCrucible.Core.WPF.csproj", "{0A405AAA-B920-495E-BE16-21C8CEA52905}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.WPF", "TableTopCrucible.Core.WPF\TableTopCrucible.Core.WPF.csproj", "{0A405AAA-B920-495E-BE16-21C8CEA52905}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

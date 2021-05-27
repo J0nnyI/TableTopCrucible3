@@ -10,21 +10,24 @@
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindow}"
         Title="LauncherWindow" Height="450" Width="800"
-        
         >
     <Window.Resources>
         <ResourceDictionary Source="../Styles/Common.xaml"/>
     </Window.Resources>
-    <Grid>
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="TableTopCrucible" 
-                   Grid.Row="0"
-                   HorizontalAlignment="Center"
-                   Style="{StaticResource ApplicationTitle1}"/>
+        <StackPanel Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top">
+            <TextBlock Margin="0 0 0 20"
+                       Padding="0"
+                       Text="TableTopCrucible"
+                       Style="{StaticResource ApplicationTitle}"/>
+        </StackPanel>
         <rxui:RoutedViewHost
             x:Name="RoutedViewHost"
             Grid.Row="1"

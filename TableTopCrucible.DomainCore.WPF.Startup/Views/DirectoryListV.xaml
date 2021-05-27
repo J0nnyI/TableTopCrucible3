@@ -31,9 +31,7 @@
             </ListView.ItemTemplate>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <wpftk:VirtualizingWrapPanel Orientation="Vertical"
-                                                 SpacingMode="Uniform"
-                                                 StretchItems="True"/>
+                    <WrapPanel IsItemsHost="True"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListView>

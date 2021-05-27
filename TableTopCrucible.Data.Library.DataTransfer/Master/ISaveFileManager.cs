@@ -4,7 +4,7 @@ using System.Text;
 
 using TableTopCrucible.Core.Jobs.Managers;
 
-namespace TableTopCrucible.Data.Library.Services.Sources
+namespace TableTopCrucible.Data.Library.DataTransfer.Master
 {
     public interface ISaveFileManager
     {

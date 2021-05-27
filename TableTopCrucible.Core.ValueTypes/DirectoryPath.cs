@@ -22,6 +22,8 @@ namespace TableTopCrucible.Core.ValueTypes
     {
         public static FilePath operator +(DirectoryPath directory, FileName fileName)
             => FilePath.From(Path.Combine(directory.Value, fileName.Value));
+        public static DirectoryPath operator +(DirectoryPath directory, DirectoryName subDirectory)
+            => DirectoryPath.From(Path.Combine(directory.Value, subDirectory.Value));
 
         protected override void Validate()
         {
@@ -63,6 +65,8 @@ namespace TableTopCrucible.Core.ValueTypes
         public string[] GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
             => Directory.GetFiles(Value, searchPattern, searchOption);
 
+        public static DirectoryPath GetTemporaryPath()
+            => From(Path.GetTempPath());
     }
 
 }

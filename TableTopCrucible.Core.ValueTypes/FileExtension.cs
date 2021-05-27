@@ -9,7 +9,7 @@ namespace TableTopCrucible.Core.ValueTypes
 {
     public class FileExtension:ValueOf<string, FileExtension>
     {
-
+        public static readonly FileExtension JSON = From(".json");
         public static readonly IEnumerable<FileExtension> ModelExtensions = FileExtension.FromList(".stl", ".obj", ".off", ".objz", ".lwo", ".3ds");
         public static readonly IEnumerable<FileExtension> ImageExtensions = FileExtension.FromList(".png", ".jpg", ".jpeg", ".bmp", ".gif", ".hdp", ".jp2", ".pbm", ".psd", ".tga", ".tiff", ".img");
         public static readonly FileExtension LibraryExtension = From(".ttcl");

@@ -36,7 +36,6 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels
         public LauncherWindowVM(IStartupPage startupPage)
         {
             Router.Navigate.Execute(startupPage);
-            
         }
     }
 }

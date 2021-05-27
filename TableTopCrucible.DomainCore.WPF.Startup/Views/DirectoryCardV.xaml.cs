@@ -21,6 +21,7 @@ using System.Reactive;
 using DirectoryPathVT = TableTopCrucible.Core.ValueTypes.DirectoryPath;
 using TableTopCrucible.Core.ValueTypes;
 using ReactiveUI.Validation.Extensions;
+using TableTopCrucible.Core.WPF.Helper;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.Views
 {
@@ -38,24 +39,52 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.Views
                 this.Bind(ViewModel, vm => vm.Name, v => v.Description.Text)
                     .DisposeWith(disposables);
 
-                Observable
-                    .FromEventPattern(PickDirectoryBtn, nameof(PickDirectoryBtn.Click))
-                    .Select(_ => ViewModel.Directory)
-                    .Select(curPath =>
-                    {
-                        var dialog = new VistaFolderBrowserDialog()
-                        {
-                            SelectedPath = curPath,
-                        };
-                        return dialog.ShowDialog() == true
-                            ? DirectoryPathVT.From(dialog.SelectedPath)
-                            : null;
+                _registerDirectorySelector(PickDirectoryBtn, disposables);
+                _registerDirectorySelector(PickThumbnailDirBtn, disposables);
+
+                this.OneWayBind(
+                    ViewModel, vm => vm.EditSelector.EditModeEnabled,
+                    v => v.PickDirectoryBtn.Visibility,
+                    visible => visible ? Visibility.Visible : Visibility.Collapsed);
+                this.OneWayBind(
+                    ViewModel, vm => vm.EditSelector.EditModeEnabled,
+                    v => v.PickThumbnailDirBtn.Visibility,
+                    visible => visible ? Visibility.Visible : Visibility.Collapsed);
+
+                this.WhenAnyValue(v=>v.ViewModel.OriginalData)
+                    .Subscribe(_ => {
+                        ThumbnailDirectory.ScrollToHorizontalEnd();
+                        Directory.ScrollToHorizontalEnd();
                     })
-                    .WhereNotNull()
-                    .Subscribe(ViewModel.UpdateDirectoryPath)
                     .DisposeWith(disposables);
 
+                
             });
+            
+        }
+        private void _registerDirectorySelector(Button button, CompositeDisposable disposables)
+        {
+            Observable
+                .FromEventPattern(button, nameof(Button.Click))
+                .Select(_ => ViewModel.Directory)
+                .Select(curPath =>
+                {
+                    var dialog = new VistaFolderBrowserDialog()
+                    {
+                        SelectedPath = curPath,
+                    };
+                    return dialog.ShowDialog() == true
+                        ? DirectoryPathVT.From(dialog.SelectedPath)
+                        : null;
+                })
+                .WhereNotNull()
+                .Subscribe(newPath=> {
+                    ViewModel.UpdateDirectoryPath(newPath);
+                    ThumbnailDirectory.ScrollToHorizontalEnd();
+                    Directory.ScrollToHorizontalEnd();
+                })
+                .DisposeWith(disposables);
+
         }
     }
 }

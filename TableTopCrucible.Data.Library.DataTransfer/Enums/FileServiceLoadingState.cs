@@ -1,4 +1,4 @@
-﻿namespace TableTopCrucible.Data.Library.Services.Sources.Enums
+﻿namespace TableTopCrucible.Data.Library.DataTransfer.Enums
 {
     public enum FileServiceLoadingState
     {

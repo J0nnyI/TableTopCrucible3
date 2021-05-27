@@ -1,4 +1,4 @@
-﻿namespace TableTopCrucible.Data.Library.Services.Sources
+﻿namespace TableTopCrucible.Data.Library.DataTransfer.Services
 {
     public class FileDataMasterListService
     {

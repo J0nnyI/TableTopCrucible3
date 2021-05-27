@@ -11,16 +11,18 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using TableTopCrucible.Core.BaseUtils;
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Data.Library.DataTransfer.Enums;
+using TableTopCrucible.Data.Library.DataTransfer.Exceptions;
+using TableTopCrucible.Data.Library.DataTransfer.Services;
 using TableTopCrucible.Data.Library.Models.ValueTypes;
-using TableTopCrucible.Data.Library.Services.Sources.Enums;
-using TableTopCrucible.Data.Library.Services.Sources.Exceptions;
 
-namespace TableTopCrucible.Data.Library.Services.Sources
+namespace TableTopCrucible.Data.Library.DataTransfer.Master
 {
     [Singleton(typeof(MasterFileService))]
     public interface IMasterFileService : INotifyPropertyChanged
@@ -31,10 +33,12 @@ namespace TableTopCrucible.Data.Library.Services.Sources
         void Close(LibraryFilePath file);
         void New();
         void RegisterFileManager(ISaveFileManager saveFileManager);
+        void Quicksave<Tdto>(DirectoryName directoryname, object data);
     }
-    class MasterFileService : DisposableReactiveObjectBase, IMasterFileService
+    class MasterFileService : ReactiveObject, IMasterFileService
     {
         private readonly ILogger<MasterFileService> _logger;
+        private readonly IMapperService _mapperService;
 
         [Reactive]
         public LibraryFilePath FilePath { get; private set; }
@@ -43,9 +47,11 @@ namespace TableTopCrucible.Data.Library.Services.Sources
         [Reactive]
         public FileServiceLoadingState LoadingState { get; private set; }
         private List<ISaveFileManager> _fileManagers;
-        public MasterFileService(ILoggerFactory loggerFactory)
+        private static readonly BareFileName _baseFileName = BareFileName.From("data");
+        public MasterFileService(ILoggerFactory loggerFactory, IMapperService mapperService)
         {
             _logger = loggerFactory.CreateLogger<MasterFileService>();
+            _mapperService = mapperService;
         }
 
         public void Close(LibraryFilePath file)
@@ -55,7 +61,9 @@ namespace TableTopCrucible.Data.Library.Services.Sources
 
         public void New()
         {
-            throw new NotImplementedException();
+            if (this.WorkDirectoryPath != null)
+                throw new FileAlreadyOpenedException();
+            this.WorkDirectoryPath = WorkingDirectoryPath.GetTemporaryPath();
         }
         /// <summary>
         /// 
@@ -66,36 +74,57 @@ namespace TableTopCrucible.Data.Library.Services.Sources
         {
             try
             {
-                this.LoadingState = FileServiceLoadingState.Opening;
-                if (this.FilePath != null)
+                LoadingState = FileServiceLoadingState.Opening;
+                if (FilePath != null)
                     throw new FileAlreadyOpenedException();
-                this.FilePath = file;
+                FilePath = file;
                 try
                 {
-                    this.WorkDirectoryPath = FilePath.UnpackLibrary();
+                    WorkDirectoryPath = FilePath.UnpackLibrary();
                     validateWorkingDirectory();
                 }
                 catch (Exception ex)
                 {
-                    this._logger.LogError(ex, "Unpacking failed, starting recovery");
+                    _logger.LogError(ex, "Unpacking failed, starting recovery");
                     handleRecovery(recoverFileResolver);
                 }
 
 
-                this.LoadingState = FileServiceLoadingState.Open;
+                LoadingState = FileServiceLoadingState.Open;
             }
             catch (RecoveryCanceledException ex)
             {
-                this.LoadingState = FileServiceLoadingState.Closed;
+                LoadingState = FileServiceLoadingState.Closed;
                 throw ex;
             }
             catch (Exception ex)
             {
-                this.LoadingState = FileServiceLoadingState.Closed;
-                this._logger.LogError(ex, "recovery failed");
+                LoadingState = FileServiceLoadingState.Closed;
+                _logger.LogError(ex, "recovery failed");
                 throw ex;
             }
         }
+        /// <summary>
+        /// takes the directory for the module and 
+        /// </summary>
+        /// <typeparam name="Tdto"></typeparam>
+        /// <param name="directoryname"></param>
+        /// <param name="baseFileName"></param>
+        /// <param name="data"></param>
+        public void Quicksave<Tdto>(DirectoryName directoryname, object data)
+        {
+            if (LoadingState != FileServiceLoadingState.Open)
+                throw new NoMasterfileOpenedException();
+            var path = WorkDirectoryPath + directoryname + (_baseFileName + getQuicksaveSuffix() + FileExtension.JSON);
+
+            path.WriteAllText(
+                JsonSerializer.Serialize(
+                        _mapperService.Map<Tdto>(
+                            data
+                        )));
+        }
+        private static BareFileName getQuicksaveSuffix()
+            => BareFileName.From(DateTime.Now.ToString("yyyyMMmmssfff"));
 
         /// <summary>
         /// throws an exception if the recovery was unsuccessfull or canceled
@@ -105,7 +134,7 @@ namespace TableTopCrucible.Data.Library.Services.Sources
         private void handleRecovery(Func<bool> recoverFileResolver)
         {
             _logger.LogWarning("recovery is not implemented yet");
-            if (!this.WorkDirectoryPath.Exists())
+            if (!WorkDirectoryPath.Exists())
                 return;
             _logger.LogWarning("Recovery-Requirement detected");
 
@@ -120,7 +149,7 @@ namespace TableTopCrucible.Data.Library.Services.Sources
 
         private void validateWorkingDirectory()
         {
-            this._fileManagers.ForEach(mgr => mgr.Validate());
+            _fileManagers.ForEach(mgr => mgr.Validate());
         }
 
         public void RegisterFileManager(ISaveFileManager saveFileManager)

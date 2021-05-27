@@ -8,7 +8,16 @@
     <RepositoryUrl>https://github.com/J0nnyI/TableTopCrucible3</RepositoryUrl>
     <Version>0.0.9</Version>
     <NeutralLanguage>en</NeutralLanguage>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />

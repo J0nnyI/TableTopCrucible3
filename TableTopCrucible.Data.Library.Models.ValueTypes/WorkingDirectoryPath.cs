@@ -19,5 +19,12 @@ namespace TableTopCrucible.Data.Library.Models.ValueTypes
                 Value = subPath.Value
             };
         }
+        public static new WorkingDirectoryPath From(string value)
+            => new WorkingDirectoryPath() { Value = value };
+        public static new WorkingDirectoryPath GetTemporaryPath()
+            => WorkingDirectoryPath.From(
+                    DirectoryPath.GetTemporaryPath().Value +
+                    DirectoryName.From(@"TableTopCrucible\TemporaryFiles")
+                );
     }
 }

@@ -10,16 +10,12 @@ using ValueOf;
 using TableTopCrucible.Data.Models.Sources;
 using System.Linq;
 using AutoMapper.Configuration.Annotations;
+using TableTopCrucible.Data.Library.DataTransfer.Services;
+using TableTopCrucible.App.Shared;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
 {
-
-    [AutoMap(typeof(TestData), ReverseMap = true)]
-    public class TestDTO
-    {
-        public string ContentValue { get; set; }
-    }
-
     public class TestData
     {
         public TestData()
@@ -52,18 +48,13 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
     {
         public FileDataDTOTests()
         {
-            _mapperConfig = new Lazy<MapperConfiguration>(
-                () => new MapperConfiguration(cfg =>
-                {
-                    cfg.AddMaps("TableTopCrucible.Data.Library.DataTransfer");
-                    cfg.AddMaps("TableTopCrucible.Data.Library.DataTransferTests");
-                }));
-            _mapper = new Lazy<IMapper>(() => mapperConfig.CreateMapper());
+            this.mapperService = 
+                DependencyBuilder
+                    .GetServices()
+                    .BuildServiceProvider()
+                    .GetRequiredService<IMapperService>();
         }
-        private readonly Lazy<MapperConfiguration> _mapperConfig;
-        private MapperConfiguration mapperConfig => _mapperConfig.Value;
-        private readonly Lazy<IMapper> _mapper;
-        private IMapper mapper => _mapper.Value;
+        private IMapperService mapperService { get; }
 
 
         private string getJson<T>(params (string, T)[] objs) =>
@@ -89,7 +80,7 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
                                     "\"data\": ",
                                     JsonSerializer.Serialize(obj.Item2),
                                     "\"dto\": ",
-                                    JsonSerializer.Serialize(mapper.Map<Tdto>(obj.Item2))
+                                    JsonSerializer.Serialize(mapperService.Map<Tdto>(obj.Item2))
                                 ) + ","
                             )) +
                     Environment.NewLine + "},"
@@ -105,10 +96,10 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
         /// <param name="mapper"></param>
         public void TestMap<Tdata, Tdto>(Tdata data)
         {
-            var dtoIn = mapper.Map<Tdto>(data);
+            var dtoIn = mapperService.Map<Tdto>(data);
             var file = JsonSerializer.Serialize(dtoIn);
             var dtoOut = JsonSerializer.Deserialize<Tdto>(file);
-            var dataOut = mapper.Map<Tdata>(dtoOut);
+            var dataOut = mapperService.Map<Tdata>(dtoOut);
             Assert.AreEqual(data, dataOut, "testmap failed" + Environment.NewLine +
                 getJson<Tdata, Tdto>(("dataIn", data), ("dataOut", dataOut))
                 );
@@ -117,15 +108,13 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
         [TestMethod]
         public void IsConfigValid()
         {
-            mapperConfig.AssertConfigurationIsValid();
+            new MapperConfiguration(cfg =>
+            {
+                IMapperService.RegisteredAssemblies
+                    .ToList()
+                    .ForEach(lib => cfg.AddMaps(lib));
+            }).AssertConfigurationIsValid();
 
-        }
-
-        [TestMethod]
-        public void TestDto()
-        {
-            var data = new TestData(FilePath.From("tester"));
-            TestMap<TestData, TestDTO>(data);
         }
 
         [TestMethod]
