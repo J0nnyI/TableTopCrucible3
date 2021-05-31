@@ -1,20 +1,15 @@
-﻿using AutoMapper.Configuration.Annotations;
-
+﻿
 using System;
-using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
 
-using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Data.Library.Models.IDs;
-using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 
 namespace TableTopCrucible.Data.Models.Sources
 {
     public class FileData
     {
-        public FileData(FileInfo fileInfo, FileHash hash) : this(
+        public FileData(IFileInfo fileInfo, FileHash hash) : this(
             FilePath.From(fileInfo.FullName),
             FileHashKey.From((hash, FileSize.From(fileInfo.Length))),
             fileInfo.LastWriteTime)

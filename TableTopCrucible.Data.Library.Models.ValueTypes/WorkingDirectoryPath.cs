@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
+﻿
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Data.Library.Models.ValueTypes
@@ -24,7 +20,7 @@ namespace TableTopCrucible.Data.Library.Models.ValueTypes
         public static new WorkingDirectoryPath GetTemporaryPath()
             => WorkingDirectoryPath.From(
                     DirectoryPath.GetTemporaryPath().Value +
-                    DirectoryName.From(@"TableTopCrucible\TemporaryFiles")
+                    DirectoryName.From(@"TableTopCrucible\TemporaryWorkingDirectory")
                 );
     }
 }

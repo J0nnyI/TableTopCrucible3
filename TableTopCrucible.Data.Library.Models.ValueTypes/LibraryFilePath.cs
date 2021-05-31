@@ -1,11 +1,7 @@
-﻿using System;
-using System.IO;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-
-using ValueOf;
 
 namespace TableTopCrucible.Data.Library.Models.ValueTypes
 {

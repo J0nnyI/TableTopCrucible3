@@ -4,7 +4,7 @@ using ReactiveUI;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -232,8 +232,8 @@ namespace TableTopCrucible.DomainCore.FileIntegration
 
             public SourceDirectory Directory { get; }
             public FilePath Path { get; }
-            private FileInfo _fileInfo;
-            public FileInfo FileInfo
+            private IFileInfo _fileInfo;
+            public IFileInfo FileInfo
             {
                 get
                 {

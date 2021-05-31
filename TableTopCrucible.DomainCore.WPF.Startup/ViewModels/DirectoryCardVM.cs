@@ -46,13 +46,14 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
 
         public SourceDirectoryId Id { get; private set; } = SourceDirectoryId.New();
         public IObservable<Unit> OnDirectorySelected { get; }
+        public Interaction<string, bool> UserConfirmationInteraction { get; } = new Interaction<string, bool>();
         [Reactive]
         public SourceDirectory? OriginalData { get; private set; }
         private readonly ISourceDirectoryService _sourceDirectoryService;
 
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
         public IEditSelector EditSelector { get; }
-        
+
         public DirectoryCardVM(
             IEditSelector editSelector,
             ISourceDirectoryService sourceDirectoryService)
@@ -89,8 +90,15 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
                     deleteChanges: ReactiveCommand.Create(
                         () =>
                         {
-                            editSelector.EditModeEnabled = false;// triggers the removal from the temporary list
-                            this._sourceDirectoryService.RemoveSourceDirectory(this.Id);
+                            this.UserConfirmationInteraction.Handle("Do you really want to remove this directory form the registration?")
+                                .Take(1)
+                                .Where(x => x == true)
+                                .Subscribe(_ =>
+                                {
+                                    editSelector.EditModeEnabled = false;// triggers the removal from the temporary list
+                                    this._sourceDirectoryService.RemoveSourceDirectory(this.Id);
+                                });
+
                         })
                     );
 

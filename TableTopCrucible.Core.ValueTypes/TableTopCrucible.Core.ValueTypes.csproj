@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.33" />
     <PackageReference Include="ValueOf" Version="2.0.21" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TableTopcrucible.Core.BaseUtils\TableTopCrucible.Core.BaseUtils.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
   </ItemGroup>
 

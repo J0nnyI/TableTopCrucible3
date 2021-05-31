@@ -58,7 +58,12 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.Views
                     })
                     .DisposeWith(disposables);
 
-                
+                this.ViewModel.UserConfirmationInteraction.RegisterHandler(context =>
+                {
+                    context.SetOutput(
+                        MessageBox.Show(context.Input, "Table Top Crucible", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+                            == MessageBoxResult.Yes);
+                });
             });
             
         }

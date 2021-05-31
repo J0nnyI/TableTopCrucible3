@@ -1,33 +1,19 @@
-﻿using AutoMapper;
-
+﻿
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 using ReactiveUI;
-
-using Serilog;
-using Serilog.Events;
-using Serilog.Formatting.Compact;
 
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
 
-using System;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 
 using TableTopCrucible.App.Shared;
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.WPF.MainWindow.ViewModels;
-using TableTopCrucible.DomainCore.WPF.Startup.PageViewModels;
 using TableTopCrucible.DomainCore.WPF.Startup.Services;
-using TableTopCrucible.DomainCore.WPF.Startup.WindowViews;
-
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace TableTopCrucible.App.WPF
 {

@@ -1,7 +1,9 @@
 ﻿
-using System.IO;
+using static TableTopCrucible.Core.BaseUtils.FileSystemHelper;
 
 using ValueOf;
+using System.IO.Abstractions;
+using Stream = System.IO.Stream;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -19,13 +21,14 @@ namespace TableTopCrucible.Core.ValueTypes
              => GetExtension().IsLibrary();
         public FileType GetFileType()
             => GetExtension().GetFileType();
-        public FileStream OpenRead() => File.OpenRead(this.Value);
+        public Stream OpenRead() => File.OpenRead(this.Value);
         public void Delete() => File.Delete(Value);
         public string ReadAllText() => File.ReadAllText(Value);
         public bool Exists() => File.Exists(Value);
         public void WriteAllText(string text) => File.WriteAllText(Value, text);
         public BareFileName GetFilenameWithoutExtension() => BareFileName.From(Path.GetFileNameWithoutExtension(Value));
         public DirectoryPath GetDirectoryPath() => DirectoryPath.From(Path.GetDirectoryName(Value));
-        public FileInfo GetFileInfo() => new FileInfo(Value);
+        public IFileInfo GetFileInfo() => FileInfo.FromFileName(Value);
+
     }
 }

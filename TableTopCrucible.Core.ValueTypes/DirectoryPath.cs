@@ -1,7 +1,6 @@
 ﻿using ReactiveUI.Validation.Abstractions;
 
 using System;
-using System.IO;
 using System.Linq;
 
 using TableTopCrucible.Core.Data;
@@ -12,6 +11,10 @@ using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Contexts;
 using System.Linq.Expressions;
 using ReactiveUI;
+using Splat;
+using System.IO.Abstractions;
+using static TableTopCrucible.Core.BaseUtils.FileSystemHelper;
+using SearchOption = System.IO.SearchOption;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -63,7 +66,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public DirectoryName GetDirectoryName() =>
             DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
         public string[] GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
-            => Directory.GetFiles(Value, searchPattern, searchOption);
+            => Locator.Current.GetService<IFileSystem>().Directory.GetFiles(Value, searchPattern, searchOption);
 
         public static DirectoryPath GetTemporaryPath()
             => From(Path.GetTempPath());
