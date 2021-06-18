@@ -17,14 +17,9 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels
     [Singleton(typeof(LauncherWindowVM))]
     public interface ILauncherWindow:IScreen
     {
-        void Close();
     }
     public class LauncherWindowVM : ReactiveObject, IActivatableViewModel, ILauncherWindow
     {
-        public void Close()
-        {
-
-        }
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
         public Subject<Unit> _closeRequested = new Subject<Unit>();
 

@@ -1,16 +1,6 @@
-﻿using Ookii.Dialogs.Wpf;
-
-using ReactiveUI;
-
-using System;
-using System.Collections.Generic;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ReactiveUI;
 
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.DomainCore.WPF.Startup.Services;
 using TableTopCrucible.DomainCore.WPF.Startup.ViewModels;
 

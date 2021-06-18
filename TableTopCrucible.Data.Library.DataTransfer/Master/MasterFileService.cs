@@ -6,6 +6,7 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reactive.Linq;
 using System.Text.Json;
 
 using TableTopCrucible.Core.DI.Attributes;
@@ -22,6 +23,8 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Master
     {
         LibraryFilePath FilePath { get; }
         WorkingDirectoryPath WorkDirectoryPath { get; }
+        bool IsOpen { get; }
+
         void Open(LibraryFilePath file, Func<bool> recoverFileResolver = null);
         void Close(LibraryFilePath file);
         void New();
@@ -32,6 +35,8 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Master
     {
         private readonly ILogger<MasterFileService> _logger;
         private readonly IMapperService _mapperService;
+        private readonly ObservableAsPropertyHelper<bool> _isOpen;
+        public bool IsOpen => _isOpen.Value;
 
         [Reactive]
         public LibraryFilePath FilePath { get; private set; }
@@ -45,6 +50,10 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Master
         {
             _logger = loggerFactory.CreateLogger<MasterFileService>();
             _mapperService = mapperService;
+            _isOpen = this.WhenAnyValue(s => s.FilePath)
+                .Select(p => !(p is null))
+                .DistinctUntilChanged()
+                .ToProperty(this, nameof(IsOpen));
         }
 
         public void Close(LibraryFilePath file)
@@ -68,7 +77,7 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Master
             try
             {
                 LoadingState = FileServiceLoadingState.Opening;
-                if (FilePath != null)
+                if (IsOpen)
                     throw new FileAlreadyOpenedException();
                 FilePath = file;
                 try

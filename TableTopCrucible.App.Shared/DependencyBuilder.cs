@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using static TableTopCrucible.Core.BaseUtils.FileSystemHelper;
 
 using Serilog;
 using Serilog.Events;
@@ -11,6 +10,11 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.IO.Abstractions;
+using System.IO;
+using Splat;
+using ReactiveUI;
+using Splat.Microsoft.Extensions.DependencyInjection;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace TableTopCrucible.App.Shared
 {
@@ -21,6 +25,18 @@ namespace TableTopCrucible.App.Shared
             var services = new ServiceCollection();
             GetServices(services);
             return services;
+        }
+        public static IServiceProvider GetTestProvider(Action<ServiceCollection> serviceModifier= null) 
+        {
+
+            var services = new ServiceCollection();
+            GetServices(services);
+            serviceModifier?.Invoke(services);
+            services.UseMicrosoftDependencyResolver();
+            Locator.CurrentMutable.InitializeSplat();
+            Locator.CurrentMutable.InitializeReactiveUI();
+
+            return services.BuildServiceProvider();
         }
         public static void GetServices(IServiceCollection services)
         {

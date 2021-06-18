@@ -14,6 +14,9 @@ namespace TableTopCrucible.Data.Library.Models.ValueTypes
             base.Validate();
         }
 
+        public static new LibraryFilePath From(string value)
+            => new LibraryFilePath { Value = value };
+
         public WorkingDirectoryPath UnpackLibrary(bool overwriteFiles = false)
         {
             var path = WorkingDirectoryPath.ForFile(this);

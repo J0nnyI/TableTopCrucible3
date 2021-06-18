@@ -41,7 +41,13 @@ namespace TableTopCrucible.App.WPF
                 {
                     loggingBuilder.AddSplat();
                 })
-                .UseEnvironment(Environments.Development)
+                .UseEnvironment(
+#if DEBUG
+                Environments.Development
+#else
+                Environments.Production
+#endif
+                )
                 .Build();
 
             AssemblyHelper
