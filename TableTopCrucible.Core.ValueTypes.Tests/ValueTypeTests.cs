@@ -1,9 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using TableTopCrucible.Data.Library.DataTransfer.Models;
 
 namespace TableTopCrucible.Core.ValueTypes.Tests
 {

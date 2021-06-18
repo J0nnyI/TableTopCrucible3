@@ -14,7 +14,7 @@ namespace TableTopCrucible.Data.Models.Sources
             FileHashKey.From((hash, FileSize.From(fileInfo.Length))),
             fileInfo.LastWriteTime)
         { }
-        public FileData(FilePath path, FileHashKey hashKey, DateTime mostRecentUpdate):this()
+        public FileData(FilePath path, FileHashKey hashKey, DateTime mostRecentUpdate) : this()
         {
             Path = path ?? throw new ArgumentNullException(nameof(path));
             Hash = hashKey.Hash;

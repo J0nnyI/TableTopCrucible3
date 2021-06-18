@@ -5,16 +5,13 @@ using Microsoft.Reactive.Testing;
 
 using NUnit.Framework;
 
-using ReactiveUI;
 using ReactiveUI.Testing;
 
 using System;
-using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading;
 
 using TableTopCrucible.App.Shared;

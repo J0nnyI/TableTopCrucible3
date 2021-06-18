@@ -1,7 +1,7 @@
 ﻿
-using static TableTopCrucible.Core.BaseUtils.FileSystemHelper;
-
 using ValueOf;
+
+using static TableTopCrucible.Core.BaseUtils.FileSystemHelper;
 
 namespace TableTopCrucible.Core.ValueTypes
 {

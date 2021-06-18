@@ -1,19 +1,20 @@
-﻿using ReactiveUI.Validation.Abstractions;
+﻿using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Extensions;
+
+using Splat;
 
 using System;
+using System.IO.Abstractions;
 using System.Linq;
+using System.Linq.Expressions;
 
-using TableTopCrucible.Core.Data;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 using ValueOf;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Contexts;
-using System.Linq.Expressions;
-using ReactiveUI;
-using Splat;
-using System.IO.Abstractions;
+
 using static TableTopCrucible.Core.BaseUtils.FileSystemHelper;
+
 using SearchOption = System.IO.SearchOption;
 
 namespace TableTopCrucible.Core.ValueTypes

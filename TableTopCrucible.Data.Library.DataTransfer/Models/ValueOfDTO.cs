@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
-using ValueOf;
-
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.Configuration.Annotations;
+
+using System.Runtime.Serialization;
 
 using TableTopCrucible.Core.ValueTypes;
 

@@ -1,13 +1,6 @@
-﻿using AutoMapper;
-
-using ReactiveUI;
-
+﻿
 using System;
 using System.Collections.Generic;
-using System.Reactive;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Text.Json;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.ValueTypes;
@@ -40,7 +33,7 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Services
         }
         public void Quicksave(IEnumerable<SourceDirectory> directories)
         {
-            MasterFileService.Quicksave<SourceDirectoryDTO>(_subDirectory,  directories);
+            MasterFileService.Quicksave<SourceDirectoryDTO>(_subDirectory, directories);
         }
     }
 }

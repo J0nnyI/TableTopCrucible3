@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 using ValueOf;
 
@@ -14,7 +13,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public override bool Equals(object obj)
         {
             return obj is FileHashKey key &&
-                Value.Item1.Equals(key.Value.Item1 )&&
+                Value.Item1.Equals(key.Value.Item1) &&
                 Value.Item2 == key.Value.Item2;
         }
 

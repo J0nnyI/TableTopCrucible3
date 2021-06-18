@@ -1,14 +1,6 @@
 ﻿using DynamicData;
 
-using ReactiveUI;
-
-using System;
-using System.Reactive;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Data.Library.DataTransfer.Master;
 using TableTopCrucible.Data.Library.DataTransfer.Services;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
 using TableTopCrucible.Data.Models.Sources;

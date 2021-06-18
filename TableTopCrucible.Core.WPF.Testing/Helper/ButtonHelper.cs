@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Controls;
-using System.Windows.Input;
-
-using TableTopCrucible.Core.WPF.Testing.Exceptions;
+﻿using System.Windows.Controls;
 
 namespace TableTopCrucible.Core.WPF.Testing.Helper
 {

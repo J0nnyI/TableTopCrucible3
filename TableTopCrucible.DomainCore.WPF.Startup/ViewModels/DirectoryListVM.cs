@@ -1,27 +1,22 @@
 ﻿using DynamicData;
-using DynamicData.Binding;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Contexts;
-using ReactiveUI.Validation.Extensions;
 
 using Splat;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Data.Library.Services.Sources;
-using TableTopCrucible.Data.Library.ValueTypes.IDs;
 using TableTopCrucible.Data.Models.Sources;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
@@ -51,7 +46,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
                         GetDirectoryFromUser.Handle(Unit.Default)
                             .Take(1)
                             .WhereNotNull()
-                            .Subscribe(dir=>
+                            .Subscribe(dir =>
                                 sourceDirectoryService.AddOrUpdateDirectory(new SourceDirectory(dir))
                             );
                     }
@@ -66,7 +61,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
                     )
                     .Filter(
                         this.WhenAnyValue(vm => vm.Filter)
-                            .ToFilter((IDirectoryCard vm, string filter) 
+                            .ToFilter((IDirectoryCard vm, string filter)
                                 => vm.Name?.Contains(filter ?? "") ?? true))
                     .Sort(vm => vm.Name)
                     .Bind(out var directoryCards)

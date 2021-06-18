@@ -10,8 +10,8 @@ namespace TableTopCrucible.Data.Models.Sources
     public struct SourceDirectory
     {
         public SourceDirectory(DirectoryPath dir)
-            : this(SourceDirectoryId.New(), 
-                  dir, dir + DirectoryName.From("Thumbnails"), 
+            : this(SourceDirectoryId.New(),
+                  dir, dir + DirectoryName.From("Thumbnails"),
                   DirectorySetupName.From(dir.GetDirectoryName().Value))
         {
         }

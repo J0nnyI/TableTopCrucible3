@@ -2,18 +2,21 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
+using ReactiveUI;
+
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
 
+using Splat;
+using Splat.Microsoft.Extensions.DependencyInjection;
+
 using System;
+using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
-using System.IO.Abstractions;
-using System.IO;
-using Splat;
-using ReactiveUI;
-using Splat.Microsoft.Extensions.DependencyInjection;
+
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace TableTopCrucible.App.Shared
@@ -26,7 +29,7 @@ namespace TableTopCrucible.App.Shared
             GetServices(services);
             return services;
         }
-        public static IServiceProvider GetTestProvider(Action<ServiceCollection> serviceModifier= null) 
+        public static IServiceProvider GetTestProvider(Action<ServiceCollection> serviceModifier = null)
         {
 
             var services = new ServiceCollection();

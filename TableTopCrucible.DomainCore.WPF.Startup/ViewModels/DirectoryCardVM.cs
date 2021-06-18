@@ -1,28 +1,26 @@
-﻿using ReactiveUI;
+﻿using DynamicData;
+
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Abstractions;
-using ReactiveUI.Validation.Contexts;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.ValueTypes;
-using DirectoryPathVT = TableTopCrucible.Core.ValueTypes.DirectoryPath;
-using TableTopCrucible.Data.Models.Sources;
-using ReactiveUI.Validation.Helpers;
-using System.ComponentModel;
 using TableTopCrucible.Core.WPF.ViewModels;
-using ReactiveUI.Validation.Extensions;
-using System.Reactive.Disposables;
 using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.Services.Sources;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
-using DynamicData;
+using TableTopCrucible.Data.Models.Sources;
+
+using DirectoryPathVT = TableTopCrucible.Core.ValueTypes.DirectoryPath;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
 {

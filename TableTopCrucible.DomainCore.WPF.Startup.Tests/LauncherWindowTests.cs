@@ -1,18 +1,23 @@
-﻿using System;
-using TableTopCrucible.App.Shared;
-using ReactiveUI;
-using Microsoft.Reactive.Testing;
+﻿using FluentAssertions;
+
 using Microsoft.Extensions.DependencyInjection;
-using TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels;
+using Microsoft.Reactive.Testing;
+
 using NUnit.Framework;
-using FluentAssertions;
-using System.Windows.Controls;
-using System.Threading;
+
+using ReactiveUI;
+
+using System;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using System.Reactive;
+using System.Threading;
+using System.Windows.Controls;
+
+using TableTopCrucible.App.Shared;
 using TableTopCrucible.Core.WPF.Testing.Helper;
 using TableTopCrucible.DomainCore.WPF.Startup.PageViewModels;
-using System.IO.Abstractions.TestingHelpers;
-using System.IO.Abstractions;
+using TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViews.Tests
 {

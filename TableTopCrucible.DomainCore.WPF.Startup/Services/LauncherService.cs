@@ -3,8 +3,6 @@
 using Splat;
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels;

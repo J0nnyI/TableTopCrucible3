@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration.Annotations;
 
 using System;
-using System.Diagnostics.Eventing.Reader;
 using System.Runtime.Serialization;
 
-using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Data.Library.Models.ValueTypes;
-using TableTopCrucible.Data.Library.ValueTypes.IDs;
 using TableTopCrucible.Data.Models.Sources;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Models

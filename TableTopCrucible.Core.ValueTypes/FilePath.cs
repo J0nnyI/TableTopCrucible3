@@ -1,8 +1,10 @@
 ﻿
-using static TableTopCrucible.Core.BaseUtils.FileSystemHelper;
+using System.IO.Abstractions;
 
 using ValueOf;
-using System.IO.Abstractions;
+
+using static TableTopCrucible.Core.BaseUtils.FileSystemHelper;
+
 using Stream = System.IO.Stream;
 
 namespace TableTopCrucible.Core.ValueTypes

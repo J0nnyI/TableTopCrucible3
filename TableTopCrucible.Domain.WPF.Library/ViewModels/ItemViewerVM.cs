@@ -1,6 +1,5 @@
 ﻿
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Domain.WPF.Library.Views;
 
 namespace TableTopCrucible.Domain.WPF.Library.ViewModels
 {

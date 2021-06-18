@@ -1,20 +1,26 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AutoMapper;
+
+using FluentAssertions;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using NUnit.Framework;
+
+using Splat;
+
 using System;
 using System.Collections.Generic;
-using AutoMapper;
-using TableTopCrucible.Core.ValueTypes;
-using System.Text.Json;
-using TableTopCrucible.Data.Models.Sources;
-using System.Linq;
-using TableTopCrucible.Data.Library.DataTransfer.Services;
-using TableTopCrucible.App.Shared;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
-using FluentAssertions;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using Splat;
+using System.Linq;
+using System.Text.Json;
+
+using TableTopCrucible.App.Shared;
 using TableTopCrucible.Core.BaseUtils;
+using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Data.Library.DataTransfer.Services;
+using TableTopCrucible.Data.Models.Sources;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
 {

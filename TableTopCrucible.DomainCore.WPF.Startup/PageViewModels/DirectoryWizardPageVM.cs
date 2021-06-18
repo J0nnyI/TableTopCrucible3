@@ -11,7 +11,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.PageViewModels
     {
 
     }
-    public class DirectoryWizardPageVM : ReactiveObject, IDirectoryWizardPage,IActivatableViewModel
+    public class DirectoryWizardPageVM : ReactiveObject, IDirectoryWizardPage, IActivatableViewModel
     {
         private readonly ILauncherService _launcherService;
 

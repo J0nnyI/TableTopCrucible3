@@ -1,7 +1,6 @@
 ﻿
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Data.Library.Services.Sources;
-using TableTopCrucible.DomainCore.WPF.ItemList.Views;
 
 namespace TableTopCrucible.DomainCore.WPF.ItemList.ViewModels
 {
