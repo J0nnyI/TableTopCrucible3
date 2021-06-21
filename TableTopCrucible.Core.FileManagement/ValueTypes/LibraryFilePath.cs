@@ -3,14 +3,14 @@
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
-namespace TableTopCrucible.Data.Library.Models.ValueTypes
+namespace TableTopCrucible.Core.FileManagement.ValueTypes
 {
     public class LibraryFilePath : FilePath
     {
         protected override void Validate()
         {
-            if (!base.IsLibrary())
-                throw new InvalidFiletypeException($"{this.Value} is not a valid library file");
+            if (!IsLibrary())
+                throw new InvalidFiletypeException($"{Value} is not a valid library file");
             base.Validate();
         }
 

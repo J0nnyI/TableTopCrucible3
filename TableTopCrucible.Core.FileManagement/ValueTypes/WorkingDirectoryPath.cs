@@ -1,7 +1,6 @@
-﻿
-using TableTopCrucible.Core.ValueTypes;
+﻿using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Data.Library.Models.ValueTypes
+namespace TableTopCrucible.Core.FileManagement.ValueTypes
 {
     public class WorkingDirectoryPath : DirectoryPath
     {
@@ -18,7 +17,7 @@ namespace TableTopCrucible.Data.Library.Models.ValueTypes
         public static new WorkingDirectoryPath From(string value)
             => new WorkingDirectoryPath() { Value = value };
         public static new WorkingDirectoryPath GetTemporaryPath()
-            => WorkingDirectoryPath.From(
+            => From(
                     DirectoryPath.GetTemporaryPath().Value +
                     DirectoryName.From(@"TableTopCrucible\TemporaryWorkingDirectory")
                 );
