@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.DataAccess\TableTopCrucible.Core.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
