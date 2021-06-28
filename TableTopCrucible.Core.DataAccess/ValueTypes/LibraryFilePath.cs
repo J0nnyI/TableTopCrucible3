@@ -5,7 +5,7 @@ using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.FileManagement.ValueTypes
 {
-    public class LibraryFilePath : FilePath
+    public class LibraryFilePath : FilePath<LibraryFilePath>
     {
         protected override void Validate()
         {
@@ -13,9 +13,6 @@ namespace TableTopCrucible.Core.FileManagement.ValueTypes
                 throw new InvalidFiletypeException($"{Value} is not a valid library file");
             base.Validate();
         }
-
-        public static new LibraryFilePath From(string value)
-            => new LibraryFilePath { Value = value };
 
         public WorkingDirectoryPath UnpackLibrary(bool overwriteFiles = false)
         {

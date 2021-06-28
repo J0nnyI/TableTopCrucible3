@@ -15,8 +15,10 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Reactive.Disposables;
 
 using TableTopCrucible.App.Shared;
+using TableTopCrucible.Core.DataAccess.Exceptions;
 using TableTopCrucible.Core.FileManagement.Exceptions;
 using TableTopCrucible.Core.FileManagement.Models;
+using TableTopCrucible.Core.FileManagement.ValueTypes;
 
 using ValueOf;
 
@@ -51,6 +53,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
     {
         private IServiceProvider di;
         private IDatabase database;
+        private Database internalDatabase;
         private CompositeDisposable disposables;
 
         [SetUp]
@@ -59,6 +62,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
             disposables = new CompositeDisposable();
             di = DependencyBuilder.GetTestProvider(srv => srv.AddSingleton<IFileSystem, MockFileSystem>());
             database = di.GetRequiredService<IDatabase>();
+            internalDatabase = database as Database;
         }
         [TearDown]
         public void AfterEach()
@@ -77,16 +81,28 @@ namespace TableTopCrucible.Core.FileManagement.Tests
         [Test]
         public void CreateNewWarehouseTest()
         {
+            //checkiong defaults
             database.Should().NotBeNull();
+            internalDatabase.WorkingDirectory.Should().BeNull();
+            database.State.Should().Be(DatabaseState.Closed);
+            // initializing
             database.Initialize();
+            internalDatabase.WorkingDirectory.Should().NotBeNull();
+            database.State.Should().Be(DatabaseState.Open);
+            internalDatabase.WorkingDirectory.Exists().Should().BeTrue();
+            // checking table access
             var table = database.GetTable<TestEntityId, TestEntity, TestEntityDTO>();
             var table2 = database.GetTable<TestEntityId, TestEntity, TestEntityDTO>();
             table.Should().BeSameAs(table2);
 
+            // closing the database
             database.Close();
-            table.State.Should().Be(TableState.Closed);
+            database.State.Should().Be(DatabaseState.Closed);
+            internalDatabase.WorkingDirectory.Should().BeNull();
+
+            table.State.Should().Be(DatabaseState.Closed);
         }
-        [Test]
+        //[Test]
         public void InternalFileSystemGeneration()
         {
 
@@ -101,7 +117,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
             TestEntity resultEntity = null;
 
             table.WatchValue(testEntity.Id)
-                .Subscribe(entity=>resultEntity = entity)
+                .Subscribe(entity => resultEntity = entity)
                 .DisposeWith(disposables);
 
             resultEntity.Should().BeNull();
@@ -119,7 +135,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
         public void DoubleOpenedTest()
         {
             database.Initialize();
-            Action act = ()=>database.Initialize();
+            Action act = () => database.Initialize();
             act.Should().Throw<DatabaseAlreadyOpenedException>();
         }
         [Test]
@@ -128,6 +144,45 @@ namespace TableTopCrucible.Core.FileManagement.Tests
             database.Initialize();
             Action act = () => database.Save();
             act.Should().Throw<NoDatabaseLocationSelectedException>();
+        }
+        [Test]
+        public void InitializationAfterCrash()
+        {
+            true.Should().BeFalse("incomplete test, add data to be reloaded");
+            database.Initialize();
+            BeforeEach();
+            Action act = () => database.Initialize();
+            // it is expected that it loads the old data
+            act.Should().NotThrow();
+        }
+        [Test]
+        public void InitializationFromFileAfterCrash_cancel()
+        {
+            var path = LibraryFilePath.From(@".\test.ttcl");
+            database.InitializeFromFile(path);
+            BeforeEach();
+            Action cancel = () => database.InitializeFromFile(path, DatabaseInitializationBehavior.Cancel);
+            cancel.Should().Throw<OldDatabaseVersionFoundException>();
+        }
+        [Test]
+        public void InitializationFromFileAfterCrash_restore()
+        {
+            Assert.Fail("incomplete test, add data to be overridden");
+            var path = LibraryFilePath.From(@".\test.ttcl");
+            database.InitializeFromFile(path);
+            BeforeEach();
+            database.InitializeFromFile(path, DatabaseInitializationBehavior.Override);
+            Assert.Fail("test if data has been overridden");
+        }
+        [Test]
+        public void InitializationFromFileAfterCrash_override()
+        {
+            true.Should().BeFalse("incomplete test, add data to restored");
+            var path = LibraryFilePath.From(@".\test.ttcl");
+            database.InitializeFromFile(path);
+            BeforeEach();
+            database.InitializeFromFile(path, DatabaseInitializationBehavior.Restore);
+            Assert.Fail("test if data has been overridden");
         }
     }
 }

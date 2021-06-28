@@ -13,7 +13,7 @@ using TableTopCrucible.Core.FileManagement.ValueTypes;
 
 namespace TableTopCrucible.Core.FileManagement
 {
-    public enum TableState
+    public enum DatabaseState
     {
         Open,
         Closed
@@ -23,7 +23,7 @@ namespace TableTopCrucible.Core.FileManagement
     public interface ITable : IReactiveObject
     {
         TableName Name { get; set; }
-        TableState State { get; }
+        DatabaseState State { get; }
         DateTime? LastSave { get; }
         DateTime? LastChange { get; }
     }
@@ -45,7 +45,7 @@ namespace TableTopCrucible.Core.FileManagement
         [Reactive]
         public TableName Name { get; set; }
         [Reactive]
-        public TableState State { get; protected set; }
+        public DatabaseState State { get; protected set; }
         [Reactive]
         public DateTime? LastSave { get; protected set; }
         [Reactive]

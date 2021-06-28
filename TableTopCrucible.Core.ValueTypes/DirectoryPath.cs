@@ -22,12 +22,13 @@ namespace TableTopCrucible.Core.ValueTypes
     /// <summary>
     /// the path of a directory
     /// </summary>
-    public class DirectoryPath : ValueOf<string, DirectoryPath>
+    public class DirectoryPath<Tthis> : ValueOf<string, Tthis> where Tthis:DirectoryPath<Tthis>, new()
     {
-        public static FilePath operator +(DirectoryPath directory, FileName fileName)
+
+        public static FilePath operator +(DirectoryPath<Tthis> directory, FileName fileName)
             => FilePath.From(Path.Combine(directory.Value, fileName.Value));
-        public static DirectoryPath operator +(DirectoryPath directory, DirectoryName subDirectory)
-            => DirectoryPath.From(Path.Combine(directory.Value, subDirectory.Value));
+        public static Tthis operator +(DirectoryPath<Tthis> directory, DirectoryName subDirectory)
+            => From(Path.Combine(directory.Value, subDirectory.Value));
 
         protected override void Validate()
         {
@@ -68,6 +69,17 @@ namespace TableTopCrucible.Core.ValueTypes
             DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
         public string[] GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
             => Locator.Current.GetService<IFileSystem>().Directory.GetFiles(Value, searchPattern, searchOption);
+
+    }
+    public class DirectoryPath: DirectoryPath<DirectoryPath>
+    {
+
+        public static FilePath operator +(DirectoryPath directory, FileName fileName)
+            => FilePath.From(Path.Combine(directory.Value, fileName.Value));
+        public static DirectoryPath operator +(DirectoryPath directory, DirectoryName subDirectory)
+            => From(Path.Combine(directory.Value, subDirectory.Value));
+
+        public static DirectoryPath AppData => DirectoryPath.From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) + DirectoryName.From("TableTopCrucible");
 
         public static DirectoryPath GetTemporaryPath()
             => From(Path.GetTempPath());

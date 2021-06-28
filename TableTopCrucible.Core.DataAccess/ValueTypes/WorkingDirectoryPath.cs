@@ -1,8 +1,11 @@
-﻿using TableTopCrucible.Core.ValueTypes;
+﻿using System;
+using System.Windows;
+
+using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.FileManagement.ValueTypes
 {
-    public class WorkingDirectoryPath : DirectoryPath
+    public class WorkingDirectoryPath : DirectoryPath<WorkingDirectoryPath>
     {
         public static readonly RelativeDirectoryPath RelativeWorkingDirectoryPath = RelativeDirectoryPath.From(@".\~TableTopCrucible WD");
         public static WorkingDirectoryPath ForFile(LibraryFilePath file)
@@ -14,11 +17,11 @@ namespace TableTopCrucible.Core.FileManagement.ValueTypes
                 Value = subPath.Value
             };
         }
-        public static new WorkingDirectoryPath From(string value)
-            => new WorkingDirectoryPath() { Value = value };
-        public static new WorkingDirectoryPath GetTemporaryPath()
+        public static WorkingDirectoryPath From(DirectoryPath dirPath)
+            => new WorkingDirectoryPath() { Value = dirPath.Value };
+        public static  WorkingDirectoryPath GetTemporaryPath()
             => From(
-                    DirectoryPath.GetTemporaryPath().Value +
+                    DirectoryPath.AppData +
                     DirectoryName.From(@"TableTopCrucible\TemporaryWorkingDirectory")
                 );
     }

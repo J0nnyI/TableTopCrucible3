@@ -20,12 +20,12 @@
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit.Console" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <ProjectReference Include="..\TableTopCrucible.App.Shared\TableTopCrucible.App.Shared.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.FileManagement\TableTopCrucible.Core.FileManagement.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.DataAccess\TableTopCrucible.Core.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
