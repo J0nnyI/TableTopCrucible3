@@ -1,6 +1,8 @@
-﻿namespace TableTopCrucible.Data.Library.ValueTypes.IDs
+﻿using TableTopCrucible.Core.FileManagement.Models;
+
+namespace TableTopCrucible.Data.Library.ValueTypes.IDs
 {
-    public class SourceDirectoryId : IdBase<SourceDirectoryId>
+    public class SourceDirectoryId : EntityIdBase<SourceDirectoryId>
     {
     }
 }

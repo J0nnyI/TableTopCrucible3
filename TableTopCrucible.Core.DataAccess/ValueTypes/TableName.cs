@@ -6,7 +6,7 @@ using ValueOf;
 
 namespace TableTopCrucible.Core.FileManagement.ValueTypes
 {
-    public class DataCrateName:ValueOf<string, DataCrateName>
+    public class TableName:ValueOf<string, TableName>
     {
     }
 }

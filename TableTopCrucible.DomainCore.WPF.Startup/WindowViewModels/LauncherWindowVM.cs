@@ -21,7 +21,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.WindowViewModels
         public IObservable<Unit> CloseRequested => _closeRequested;
         public RoutingState Router { get; } = new RoutingState();
 
-        public ReactiveCommand<Unit, Unit> NavigateBack => Router.NavigateBack;
+        public ReactiveCommand<Unit, IRoutableViewModel> NavigateBack => Router.NavigateBack;
 
         public LauncherWindowVM(IStartupPage startupPage)
         {

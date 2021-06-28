@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />

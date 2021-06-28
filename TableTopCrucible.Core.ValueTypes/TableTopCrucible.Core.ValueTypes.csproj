@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TableTopcrucible.Core.BaseUtils\TableTopCrucible.Core.BaseUtils.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
   </ItemGroup>
 
 </Project>

@@ -53,7 +53,6 @@
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.App.Shared\TableTopCrucible.App.Shared.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Core.BaseUtils\TableTopCrucible.Core.BaseUtils.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.Data\TableTopCrucible.Core.Data.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />

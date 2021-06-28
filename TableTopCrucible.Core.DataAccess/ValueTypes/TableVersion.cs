@@ -6,7 +6,7 @@ using ValueOf;
 
 namespace TableTopCrucible.Core.FileManagement.ValueTypes
 {
-    public class DataBranchName:ValueOf<string, DataBranchName>
+    public class TableVersion:ValueOf<DateTime, TableVersion>
     {
     }
 }
