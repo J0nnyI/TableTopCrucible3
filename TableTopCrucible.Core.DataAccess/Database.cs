@@ -6,12 +6,15 @@ using ReactiveUI.Fody.Helpers;
 using Splat;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 
 using TableTopCrucible.Core.DataAccess.Exceptions;
+using TableTopCrucible.Core.DataAccess.ValueTypes;
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.FileManagement.Models;
 using TableTopCrucible.Core.FileManagement.ValueTypes;
@@ -30,7 +33,7 @@ namespace TableTopCrucible.Core.FileManagement
     [Singleton(typeof(Database))]
     public interface IDatabase
     {
-        void Save();
+        void Save(bool autoSave = true);
         void SaveAs(FilePath file);
         void Close();
         ITable<Tid, Tentity, Tdto> GetTable<Tid, Tentity, Tdto>()
@@ -43,7 +46,7 @@ namespace TableTopCrucible.Core.FileManagement
         /// <param name="file"></param>
         /// <param name="behavior">determines what happens if the file has not been closed properly</param>
         void InitializeFromFile(LibraryFilePath file, DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel);
-        void Initialize();
+        void Initialize(DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel);
         DatabaseState State { get; }
 
     }
@@ -56,17 +59,19 @@ namespace TableTopCrucible.Core.FileManagement
         internal WorkingDirectoryPath WorkingDirectory { get; private set; }
         [Reactive]
         internal LibraryFilePath CurrentFile { get; private set; }
+        internal ConcurrentDictionary<TableName, ITable> tables { get; } = new ConcurrentDictionary<TableName, ITable>();
 
         public Database()
         {
-            this.WhenAnyValue(vm => vm.WorkingDirectory)
+            this._state = this.WhenAnyValue(vm => vm.WorkingDirectory)
                 .Select(dir => dir != null ? DatabaseState.Open : DatabaseState.Closed)
                 .ToProperty(this, nameof(State));
         }
 
-        public void Close()
+        public void Close(bool autoSave = true)
         {
-            throw new NotImplementedException();
+            if (autoSave)
+                this.Save();
         }
 
         public ITable<Tid, Tentity, Tdto> GetTable<Tid, Tentity, Tdto>()
@@ -74,13 +79,14 @@ namespace TableTopCrucible.Core.FileManagement
             where Tentity : IEntity<Tid>
             where Tdto : IEntityDTO<Tid, Tentity>
         {
-            throw new NotImplementedException();
+            var name = TableName.FromType<Tid, Tentity>();
+            tables.TryAdd(name, new Table<Tid, Tentity, Tdto>());
+            return tables[name] as ITable<Tid, Tentity, Tdto>;
         }
 
-        public void Initialize()
+        public void Initialize(DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel)
         {
-            WorkingDirectory = WorkingDirectoryPath.GetTemporaryPath();
-
+            _initialize(null, behavior);
         }
         /// <summary>
         /// 
@@ -89,7 +95,12 @@ namespace TableTopCrucible.Core.FileManagement
         /// <param name="force"></param>
         public void InitializeFromFile(LibraryFilePath file, DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel)
         {
-            var dir = WorkingDirectoryPath.ForFile(file);
+        }
+        private void _initialize(LibraryFilePath file, DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel)
+        {
+            var dir = file != null
+                ? WorkingDirectoryPath.ForFile(file)
+                : WorkingDirectoryPath.GetTemporaryPath();
             CurrentFile = file;
             if (dir.Exists())
             {
@@ -106,13 +117,25 @@ namespace TableTopCrucible.Core.FileManagement
                         throw new InvalidOperationException($"Behavior {behavior} has not been implemented yet");
                 }
             }
+            else
+                dir.Create();
 
             this.WorkingDirectory = dir;
         }
 
         public void Save()
         {
-            throw new NotImplementedException();
+            var saveName = TableSaveId.New();
+            try
+            {
+                this.tables.ToList().ForEach(table => table.Value.Save(saveName));
+            }
+            catch (Exception ex)
+            {
+                this.tables.ToList().ForEach(table => table.Value.RollBack(saveName));
+
+                throw new SaveFailedException(ex);
+            }
         }
 
         public void SaveAs(FilePath file)

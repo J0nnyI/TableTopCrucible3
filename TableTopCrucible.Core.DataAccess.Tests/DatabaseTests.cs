@@ -49,7 +49,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
     }
 
     [TestFixture]
-    public class DataWarehouseFactoryTests
+    public class DatabaseTests
     {
         private IServiceProvider di;
         private IDatabase database;
@@ -89,7 +89,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
             database.Initialize();
             internalDatabase.WorkingDirectory.Should().NotBeNull();
             database.State.Should().Be(DatabaseState.Open);
-            internalDatabase.WorkingDirectory.Exists().Should().BeTrue();
+            internalDatabase.WorkingDirectory.Exists().Should().BeTrue($"the directory '{internalDatabase.WorkingDirectory.Value}' does not exist");
             // checking table access
             var table = database.GetTable<TestEntityId, TestEntity, TestEntityDTO>();
             var table2 = database.GetTable<TestEntityId, TestEntity, TestEntityDTO>();
@@ -102,10 +102,10 @@ namespace TableTopCrucible.Core.FileManagement.Tests
 
             table.State.Should().Be(DatabaseState.Closed);
         }
-        //[Test]
+        [Test]
         public void InternalFileSystemGeneration()
         {
-
+            throw new NotImplementedException("test not implemented");
         }
         [Test]
         public void SaveItem()
@@ -167,12 +167,12 @@ namespace TableTopCrucible.Core.FileManagement.Tests
         [Test]
         public void InitializationFromFileAfterCrash_restore()
         {
-            Assert.Fail("incomplete test, add data to be overridden");
+            throw new NotImplementedException("incomplete test, add data to be overridden");
             var path = LibraryFilePath.From(@".\test.ttcl");
             database.InitializeFromFile(path);
             BeforeEach();
             database.InitializeFromFile(path, DatabaseInitializationBehavior.Override);
-            Assert.Fail("test if data has been overridden");
+            throw new NotImplementedException("test if data has been overridden");
         }
         [Test]
         public void InitializationFromFileAfterCrash_override()
@@ -182,7 +182,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
             database.InitializeFromFile(path);
             BeforeEach();
             database.InitializeFromFile(path, DatabaseInitializationBehavior.Restore);
-            Assert.Fail("test if data has been overridden");
+            throw new NotImplementedException("test if data has been overridden");
         }
     }
 }

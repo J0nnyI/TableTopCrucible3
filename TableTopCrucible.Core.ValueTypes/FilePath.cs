@@ -1,5 +1,9 @@
 ﻿
+using System;
 using System.IO.Abstractions;
+using System.Text.Json;
+
+using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 using ValueOf;
 
@@ -24,7 +28,33 @@ namespace TableTopCrucible.Core.ValueTypes
         public void Delete() => File.Delete(Value);
         public string ReadAllText() => File.ReadAllText(Value);
         public bool Exists() => File.Exists(Value);
-        public void WriteAllText(string text) => File.WriteAllText(Value, text);
+        public void WriteAllText(string text)
+        {
+            try
+            {
+                File.WriteAllText(Value, text);
+            }
+            catch (Exception ex)
+            {
+
+                throw new FileWriteFailedException(ex);
+            }
+        }
+
+        public void WriteObject(object data)
+        {
+            string text = null;
+            try
+            {
+                text = JsonSerializer.Serialize(data);
+            }
+            catch (Exception ex)
+            {
+
+                throw new SerializationFailedException(ex);
+            }
+            WriteAllText(JsonSerializer.Serialize(data));
+        }
         public BareFileName GetFilenameWithoutExtension() => BareFileName.From(Path.GetFileNameWithoutExtension(Value));
         public DirectoryPath GetDirectoryPath() => DirectoryPath.From(Path.GetDirectoryName(Value));
         public IFileInfo GetFileInfo() => FileInfo.FromFileName(Value);

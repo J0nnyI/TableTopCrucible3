@@ -5,6 +5,7 @@
         Model,
         Image,
         Library,
+        Table,
         Other
     }
 }

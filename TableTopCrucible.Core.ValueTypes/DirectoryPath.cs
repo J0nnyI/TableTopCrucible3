@@ -29,6 +29,8 @@ namespace TableTopCrucible.Core.ValueTypes
             => FilePath.From(Path.Combine(directory.Value, fileName.Value));
         public static Tthis operator +(DirectoryPath<Tthis> directory, DirectoryName subDirectory)
             => From(Path.Combine(directory.Value, subDirectory.Value));
+        public static Tthis operator +(DirectoryPath<Tthis> directory, RelativeDirectoryPath relativeDirectory)
+            => From(Path.Combine(directory.Value, relativeDirectory.Value));
 
         protected override void Validate()
         {
@@ -64,7 +66,7 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public bool Exists() => Directory.Exists(Value);
-        public void CreateDirectory() => Directory.CreateDirectory(Value);
+        public void Create() => Directory.CreateDirectory(Value);
         public DirectoryName GetDirectoryName() =>
             DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
         public string[] GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
