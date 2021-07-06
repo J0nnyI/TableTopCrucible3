@@ -159,7 +159,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
             table.AddOrUpdate(updatedEntity);
             resultEntity.Should().BeSameAs(updatedEntity);
             table.LastChange.Should().BeAfter(timestamp);
-
+            throw new NotImplementedException("the table should hold a reference to its own working directory so that a proper cleanup is ensured");
         }
         [Test]
         public void DoubleOpenedTest()

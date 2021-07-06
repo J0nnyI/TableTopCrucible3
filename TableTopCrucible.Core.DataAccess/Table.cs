@@ -96,7 +96,10 @@ namespace TableTopCrucible.Core.FileManagement
         }
 
         public void AddOrUpdate(Tentity entity)
-            => this._data.AddOrUpdate(entity);
+        {
+            this._data.AddOrUpdate(entity);
+            LastChange = DateTime.Now;
+        }
 
         public IObservable<Tentity> WatchValue(Tid entityId)
             => this._data.WatchValue(entityId);
