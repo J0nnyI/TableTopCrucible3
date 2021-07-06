@@ -22,7 +22,7 @@ namespace TableTopCrucible.Core.ValueTypes
     /// <summary>
     /// the path of a directory
     /// </summary>
-    public class DirectoryPath<Tthis> : ValueOf<string, Tthis> where Tthis:DirectoryPath<Tthis>, new()
+    public class DirectoryPath<Tthis> : ValueOf<string, Tthis> where Tthis : DirectoryPath<Tthis>, new()
     {
 
         public static FilePath operator +(DirectoryPath<Tthis> directory, FileName fileName)
@@ -41,7 +41,7 @@ namespace TableTopCrucible.Core.ValueTypes
             }
             catch (Exception ex)
             {
-                throw new InvalidPathException("The path is either not relative or invalid", ex);
+                throw new InvalidPathException($"The path '{Path}' is either not relative or invalid", ex);
             }
 
             if (string.IsNullOrWhiteSpace(Value))
@@ -66,14 +66,37 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public bool Exists() => Directory.Exists(Value);
-        public void Create() => Directory.CreateDirectory(Value);
+        public void Create()
+        {
+            try
+            {
+                Directory.CreateDirectory(Value);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new DirectoryCreationFailedException<Tthis>(this as Tthis, ex);
+            }
+        }
+        public void Delete(bool recursive = true)
+        {
+            try
+            {
+                Directory.Delete(Value, recursive);
+            }
+            catch (Exception ex)
+            {
+                throw new DirectoryDeletionFailedException<Tthis>(this as Tthis, ex);
+            }
+        }
         public DirectoryName GetDirectoryName() =>
             DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
         public string[] GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
             => Locator.Current.GetService<IFileSystem>().Directory.GetFiles(Value, searchPattern, searchOption);
 
     }
-    public class DirectoryPath: DirectoryPath<DirectoryPath>
+    public class DirectoryPath : DirectoryPath<DirectoryPath>
     {
 
         public static FilePath operator +(DirectoryPath directory, FileName fileName)

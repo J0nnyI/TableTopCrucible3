@@ -33,9 +33,9 @@ namespace TableTopCrucible.Core.FileManagement
     [Singleton(typeof(Database))]
     public interface IDatabase
     {
-        void Save(bool autoSave = true);
+        void Save();
         void SaveAs(FilePath file);
-        void Close();
+        void Close(bool autoSave = true);
         ITable<Tid, Tentity, Tdto> GetTable<Tid, Tentity, Tdto>()
             where Tid : IEntityId
             where Tentity : IEntity<Tid>
@@ -72,6 +72,9 @@ namespace TableTopCrucible.Core.FileManagement
         {
             if (autoSave)
                 this.Save();
+            this.tables.Values.ToList().ForEach(table => table.Close(WorkingDirectory));
+            WorkingDirectory.Delete();
+            this.WorkingDirectory = null;
         }
 
         public ITable<Tid, Tentity, Tdto> GetTable<Tid, Tentity, Tdto>()
@@ -125,14 +128,14 @@ namespace TableTopCrucible.Core.FileManagement
 
         public void Save()
         {
-            var saveName = TableSaveId.New();
+            var saveId = TableSaveId.New();
             try
             {
-                this.tables.ToList().ForEach(table => table.Value.Save(saveName));
+                this.tables.ToList().ForEach(table => table.Value.Save(WorkingDirectory,saveId));
             }
             catch (Exception ex)
             {
-                this.tables.ToList().ForEach(table => table.Value.RollBack(saveName));
+                this.tables.ToList().ForEach(table => table.Value.RollBackSave(WorkingDirectory, saveId));
 
                 throw new SaveFailedException(ex);
             }

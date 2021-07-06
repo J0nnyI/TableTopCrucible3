@@ -22,10 +22,16 @@ namespace TableTopCrucible.Core.ValueTypes
              => GetExtension().IsImage();
         public bool IsLibrary()
              => GetExtension().IsLibrary();
+        public bool IsTable()
+             => GetExtension().IsTable();
         public FileType GetFileType()
             => GetExtension().GetFileType();
         public Stream OpenRead() => File.OpenRead(this.Value);
         public void Delete() => File.Delete(Value);
+        public void TryDelete()
+        {
+            if (Exists()) File.Delete(Value);
+        }
         public string ReadAllText() => File.ReadAllText(Value);
         public bool Exists() => File.Exists(Value);
         public void WriteAllText(string text)
@@ -36,24 +42,23 @@ namespace TableTopCrucible.Core.ValueTypes
             }
             catch (Exception ex)
             {
-
                 throw new FileWriteFailedException(ex);
             }
         }
 
-        public void WriteObject(object data)
+        public void WriteObject(object data, bool createDirectory= true)
         {
-            string text = null;
+            this.GetDirectoryPath().Create();
+            string text;
             try
             {
                 text = JsonSerializer.Serialize(data);
             }
             catch (Exception ex)
             {
-
                 throw new SerializationFailedException(ex);
             }
-            WriteAllText(JsonSerializer.Serialize(data));
+            WriteAllText(text);
         }
         public BareFileName GetFilenameWithoutExtension() => BareFileName.From(Path.GetFileNameWithoutExtension(Value));
         public DirectoryPath GetDirectoryPath() => DirectoryPath.From(Path.GetDirectoryName(Value));

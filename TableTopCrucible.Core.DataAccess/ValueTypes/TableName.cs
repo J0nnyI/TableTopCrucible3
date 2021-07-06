@@ -15,7 +15,7 @@ namespace TableTopCrucible.Core.FileManagement.ValueTypes
         {
             return new TableName
             {
-                Value = typeof(Tentity).AssemblyQualifiedName
+                Value = typeof(Tentity).FullName
             };
         }
         public RelativeDirectoryPath GetRelativePath()

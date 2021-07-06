@@ -10,7 +10,7 @@ namespace TableTopCrucible.Core.FileManagement.ValueTypes
     {
         protected override void Validate()
         {
-            if (!IsLibrary())
+            if (!IsTable())
                 throw new InvalidFiletypeException($"{Value} is not a valid library file");
             base.Validate();
         }

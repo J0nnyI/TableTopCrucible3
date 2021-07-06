@@ -1,21 +1,28 @@
 ﻿
 using AutoMapper;
 
+using DynamicData;
+
 using FluentAssertions;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using NUnit.Framework;
 
 using ReactiveUI;
 
 using System;
+using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using System.Reactive.Disposables;
+using System.Reflection;
 
 using TableTopCrucible.App.Shared;
 using TableTopCrucible.Core.DataAccess.Exceptions;
+using TableTopCrucible.Core.DI;
 using TableTopCrucible.Core.FileManagement.Exceptions;
 using TableTopCrucible.Core.FileManagement.Models;
 using TableTopCrucible.Core.FileManagement.ValueTypes;
@@ -31,6 +38,10 @@ namespace TableTopCrucible.Core.FileManagement.Tests
     }
     public class TestEntity : IEntity<TestEntityId>
     {
+        public TestEntity()
+        {
+
+        }
         public TestEntity(TestEntityId id, string text)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
@@ -41,10 +52,10 @@ namespace TableTopCrucible.Core.FileManagement.Tests
         public TestEntityId Id { get; }
         public string Text { get; }
     }
-    [AutoMap(typeof(TestEntity))]
+    [AutoMap(typeof(TestEntity), ReverseMap = true)]
     public class TestEntityDTO : IEntityDTO<TestEntityId, TestEntity>
     {
-        public Guid Id { get; set; }
+        public Guid IdValue { get; set; }
         public string Text { get; set; }
     }
 
@@ -60,7 +71,12 @@ namespace TableTopCrucible.Core.FileManagement.Tests
         public void BeforeEach()
         {
             disposables = new CompositeDisposable();
-            di = DependencyBuilder.GetTestProvider(srv => srv.AddSingleton<IFileSystem, MockFileSystem>());
+            di = DependencyBuilder.GetTestProvider(srv =>
+            {
+                srv.RemoveAutoMapper();
+                srv.AddAutoMapper(Assembly.GetAssembly(typeof(TestEntity)));
+                srv.ReplaceFileSystem<MockFileSystem>();
+            });
             database = di.GetRequiredService<IDatabase>();
             internalDatabase = database as Database;
         }
@@ -73,10 +89,24 @@ namespace TableTopCrucible.Core.FileManagement.Tests
         public void TestEntity()
         {
             string text = "test";
-            var entity = new TestEntity(text);
-            entity.Id.Should().NotBeNull();
-            entity.Id.Value.Should().NotBe(default);
-            entity.Text.Should().Be(text);
+            var entityIn = new TestEntity(text);
+            entityIn.Id.Should().NotBeNull();
+            entityIn.Id.Value.Should().NotBe(default);
+            entityIn.Text.Should().Be(text);
+
+            var entity2 = new TestEntity(entityIn.Id, text);
+            entity2.Should().BeEquivalentTo(entityIn);
+
+            var mapper = di.GetRequiredService<IMapper>();
+            var dto = mapper.Map<TestEntityDTO>(entityIn);
+            var entityOut = mapper.Map<TestEntity>(dto);
+            entityOut.Should().BeEquivalentTo(entityIn);
+
+            var lstIn = new SourceCache<TestEntity, TestEntityId>(e=>e.Id);
+            lstIn.AddOrUpdate(entityIn);
+            var lstDto = mapper.Map<IEnumerable<TestEntityDTO>>(lstIn.Items);
+            var lstOut = mapper.Map<IEnumerable<TestEntity>>(lstDto);
+            lstIn.Items.Should().BeEquivalentTo(lstOut);
         }
         [Test]
         public void CreateNewWarehouseTest()
