@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using LiteDB;
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -47,6 +49,7 @@ namespace TableTopCrucible.App.Shared
             services.TryAddEnumerable(Core.DI.DiAttributeCollector.GenerateServiceProvider());
             configureAutomapper(services);
             services.AddSingleton(typeof(ILoggerFactory), buildLoggingFactory());
+
         }
         public static IServiceProvider BuildDependencyProvider()
             => GetServices().BuildServiceProvider();
@@ -54,6 +57,8 @@ namespace TableTopCrucible.App.Shared
         {
             services.AddAutoMapper(Assembly.Load("TableTopCrucible.Data.Library.DataTransfer"));
         }
+
+
 
         private static ILoggerFactory buildLoggingFactory()
         {

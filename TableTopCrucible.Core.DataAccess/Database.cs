@@ -1,26 +1,16 @@
-﻿using DynamicData;
-
+﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Reactive.Linq;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-
-using Splat;
-
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Text;
-
 using TableTopCrucible.Core.DataAccess.Exceptions;
+using TableTopCrucible.Core.DataAccess.Models;
 using TableTopCrucible.Core.DataAccess.ValueTypes;
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Core.FileManagement.Models;
-using TableTopCrucible.Core.FileManagement.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.FileManagement
+namespace TableTopCrucible.Core.DataAccess
 {
     public enum DatabaseInitializationBehavior
     {
@@ -56,7 +46,7 @@ namespace TableTopCrucible.Core.FileManagement
         public DatabaseState State => _state.Value;
 
         [Reactive]
-        internal WorkingDirectoryPath WorkingDirectory { get; private set; }
+        internal LibraryDirectoryPath WorkingDirectory { get; private set; }
         [Reactive]
         internal LibraryFilePath CurrentFile { get; private set; }
         internal ConcurrentDictionary<TableName, ITable> tables { get; } = new ConcurrentDictionary<TableName, ITable>();
@@ -102,8 +92,8 @@ namespace TableTopCrucible.Core.FileManagement
         private void _initialize(LibraryFilePath file, DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel)
         {
             var dir = file != null
-                ? WorkingDirectoryPath.ForFile(file)
-                : WorkingDirectoryPath.GetTemporaryPath();
+                ? LibraryDirectoryPath.ForFile(file)
+                : LibraryDirectoryPath.GetTemporaryPath();
             CurrentFile = file;
             if (dir.Exists())
             {

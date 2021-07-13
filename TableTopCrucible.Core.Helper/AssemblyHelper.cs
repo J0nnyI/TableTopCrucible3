@@ -20,5 +20,12 @@ namespace TableTopCrucible.Core.Helper
                 .ToArray();
         }
 
+        public static IEnumerable<Type> GetSolutionTypes()
+            => GetSolutionAssemblies().SelectMany(a => a.GetTypes());
+        
+        public static IEnumerable<Type> GetSolutionTypes(Type baseType)
+            => GetSolutionTypes().Where(t => t.IsAssignableFrom(baseType));
+
+
     }
 }

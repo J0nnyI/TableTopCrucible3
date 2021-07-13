@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TableTopCrucible.Core.FileManagement.Models
+﻿namespace TableTopCrucible.Core.DataAccess.Models
 {
     public interface IEntity<Tid> where Tid : IEntityId
     {

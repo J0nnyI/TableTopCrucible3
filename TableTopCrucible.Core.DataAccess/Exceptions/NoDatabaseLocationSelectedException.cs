@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace TableTopCrucible.Core.FileManagement.Exceptions
+namespace TableTopCrucible.Core.DataAccess.Exceptions
 {
     public class NoDatabaseLocationSelectedException : Exception
     {

@@ -21,12 +21,11 @@ using System.Reactive.Disposables;
 using System.Reflection;
 
 using TableTopCrucible.App.Shared;
+using TableTopCrucible.Core.DataAccess;
 using TableTopCrucible.Core.DataAccess.Exceptions;
+using TableTopCrucible.Core.DataAccess.Models;
+using TableTopCrucible.Core.DataAccess.ValueTypes;
 using TableTopCrucible.Core.DI;
-using TableTopCrucible.Core.FileManagement.Exceptions;
-using TableTopCrucible.Core.FileManagement.Models;
-using TableTopCrucible.Core.FileManagement.ValueTypes;
-
 using ValueOf;
 
 namespace TableTopCrucible.Core.FileManagement.Tests
@@ -159,7 +158,8 @@ namespace TableTopCrucible.Core.FileManagement.Tests
             table.AddOrUpdate(updatedEntity);
             resultEntity.Should().BeSameAs(updatedEntity);
             table.LastChange.Should().BeAfter(timestamp);
-            throw new NotImplementedException("the table should hold a reference to its own working directory so that a proper cleanup is ensured");
+            throw new NotImplementedException("todo the table should hold a reference to its own working directory so that a proper cleanup is ensured");
+            throw new NotImplementedException("todo when closing a table / database, check if its dirty and implement an autosave");
         }
         [Test]
         public void DoubleOpenedTest()

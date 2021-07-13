@@ -1,8 +1,13 @@
-﻿using TableTopCrucible.Core.DataAccess.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+using TableTopCrucible.Core.FileManagement.Models;
 using TableTopCrucible.Core.ValueTypes;
+
 using ValueOf;
 
-namespace TableTopCrucible.Core.DataAccess.ValueTypes
+namespace TableTopCrucible.Core.FileManagement.ValueTypes
 {
     public class TableName:ValueOf<string, TableName>
     {

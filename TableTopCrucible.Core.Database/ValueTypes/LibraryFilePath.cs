@@ -1,8 +1,9 @@
 ﻿using System.IO.Compression;
+
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
-namespace TableTopCrucible.Core.DataAccess.ValueTypes
+namespace TableTopCrucible.Core.FileManagement.ValueTypes
 {
     public class LibraryFilePath : FilePath<LibraryFilePath>
     {

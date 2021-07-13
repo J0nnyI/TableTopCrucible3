@@ -5,21 +5,21 @@ using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.FileManagement.ValueTypes
 {
-    public class WorkingDirectoryPath : DirectoryPath<WorkingDirectoryPath>
+    public class LibraryDirectoryPath : DirectoryPath<LibraryDirectoryPath>
     {
         public static readonly RelativeDirectoryPath RelativeWorkingDirectoryPath = RelativeDirectoryPath.From(@".\~TableTopCrucible WD");
-        public static WorkingDirectoryPath ForFile(LibraryFilePath file)
+        public static LibraryDirectoryPath ForFile(LibraryFilePath file)
         {
             var path = file.GetDirectoryPath();
             var subPath = path + RelativeWorkingDirectoryPath;
-            return new WorkingDirectoryPath
+            return new LibraryDirectoryPath
             {
                 Value = subPath.Value
             };
         }
-        public static WorkingDirectoryPath From(DirectoryPath dirPath)
-            => new WorkingDirectoryPath() { Value = dirPath.Value };
-        public static  WorkingDirectoryPath GetTemporaryPath()
+        public static LibraryDirectoryPath From(DirectoryPath dirPath)
+            => new LibraryDirectoryPath() { Value = dirPath.Value };
+        public static  LibraryDirectoryPath GetTemporaryPath()
             => From(
                     DirectoryPath.AppData +
                     DirectoryName.From(@"TableTopCrucible\TemporaryWorkingDirectory")

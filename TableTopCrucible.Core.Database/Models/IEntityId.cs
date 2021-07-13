@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
 using ValueOf;
 
-namespace TableTopCrucible.Core.DataAccess.Models
+namespace TableTopCrucible.Core.FileManagement.Models
 {
     public interface IEntityId
     {
