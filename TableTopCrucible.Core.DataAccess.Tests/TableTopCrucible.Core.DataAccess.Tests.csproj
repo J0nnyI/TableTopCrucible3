@@ -21,11 +21,26 @@
     <PackageReference Include="NUnit.Console" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
+
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.38" />
+    <PackageReference Include="ValueOf" Version="2.0.21" />
+    <PackageReference Include="ReactiveUI" Version="14.1.1" />
+    <PackageReference Include="ReactiveUI.Events.WPF" Version="14.1.1" />
+    <PackageReference Include="ReactiveUI.Fody" Version="14.1.1" />
+    <PackageReference Include="ReactiveUI.Validation" Version="2.1.1" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <ProjectReference Include="..\TableTopCrucible.Core.DataAccess\TableTopCrucible.Core.DataAccess.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.DataAccess\TableTopCrucible.Core.DataAccess.csproj">
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+    </ProjectReference>
+    <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj">
+      <Private>true</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
   </ItemGroup>
 
 </Project>

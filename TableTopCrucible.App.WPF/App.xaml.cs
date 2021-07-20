@@ -10,8 +10,7 @@ using Splat.Microsoft.Extensions.Logging;
 
 using System.Linq;
 using System.Windows;
-
-using TableTopCrucible.App.Shared;
+using TableTopCrucible.Core.DI;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.DomainCore.WPF.Startup.Services;
 

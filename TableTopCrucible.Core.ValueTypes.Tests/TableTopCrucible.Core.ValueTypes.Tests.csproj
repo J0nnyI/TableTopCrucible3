@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Data.Library.DataTransfer\TableTopCrucible.Data.Library.DataTransfer.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TableTopCrucible.WPF.Helper
+namespace TableTopCrucible.Core.Helper
 {
     public static class UriHelper
     {

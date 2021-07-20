@@ -1,34 +1,21 @@
-﻿
-using AutoMapper;
-
-using DynamicData;
-
-using FluentAssertions;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
-using NUnit.Framework;
-
-using ReactiveUI;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO.Abstractions;
+using System.Diagnostics;
 using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reflection;
-
-using TableTopCrucible.App.Shared;
-using TableTopCrucible.Core.DataAccess;
+using AutoMapper;
+using DynamicData;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using TableTopCrucible.Core.DataAccess.Exceptions;
 using TableTopCrucible.Core.DataAccess.Models;
 using TableTopCrucible.Core.DataAccess.ValueTypes;
 using TableTopCrucible.Core.DI;
 using ValueOf;
 
-namespace TableTopCrucible.Core.FileManagement.Tests
+namespace TableTopCrucible.Core.DataAccess.Tests
 {
     public class TestEntityId : ValueOf<Guid, TestEntityId>, IEntityId
     {
@@ -52,7 +39,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
         public string Text { get; }
     }
     [AutoMap(typeof(TestEntity), ReverseMap = true)]
-    public class TestEntityDTO : IEntityDTO<TestEntityId, TestEntity>
+    public class TestEntityDTO : IEntityDto<TestEntityId, TestEntity>
     {
         public Guid IdValue { get; set; }
         public string Text { get; set; }
@@ -69,15 +56,23 @@ namespace TableTopCrucible.Core.FileManagement.Tests
         [SetUp]
         public void BeforeEach()
         {
-            disposables = new CompositeDisposable();
-            di = DependencyBuilder.GetTestProvider(srv =>
+            try
             {
-                srv.RemoveAutoMapper();
-                srv.AddAutoMapper(Assembly.GetAssembly(typeof(TestEntity)));
-                srv.ReplaceFileSystem<MockFileSystem>();
-            });
-            database = di.GetRequiredService<IDatabase>();
-            internalDatabase = database as Database;
+                disposables = new CompositeDisposable();
+                di = DependencyBuilder.GetTestProvider(srv =>
+                {
+                    srv.RemoveAutoMapper();
+                    srv.AddAutoMapper(Assembly.GetAssembly(typeof(TestEntity)));
+                    srv.ReplaceFileSystem<MockFileSystem>();
+                });
+                database = di.GetRequiredService<IDatabase>();
+                internalDatabase = database as Database;
+            }
+            catch (Exception ex)
+            {
+                Debugger.Break();
+                throw new Exception("Setup fails: ", ex);
+            }
         }
         [TearDown]
         public void AfterEach()
@@ -112,13 +107,13 @@ namespace TableTopCrucible.Core.FileManagement.Tests
         {
             //checkiong defaults
             database.Should().NotBeNull();
-            internalDatabase.WorkingDirectory.Should().BeNull();
+            internalDatabase.LibraryPath.Should().BeNull();
             database.State.Should().Be(DatabaseState.Closed);
             // initializing
             database.Initialize();
-            internalDatabase.WorkingDirectory.Should().NotBeNull();
+            internalDatabase.LibraryPath.Should().NotBeNull();
             database.State.Should().Be(DatabaseState.Open);
-            internalDatabase.WorkingDirectory.Exists().Should().BeTrue($"the directory '{internalDatabase.WorkingDirectory.Value}' does not exist");
+            internalDatabase.LibraryPath.Exists().Should().BeTrue($"the directory '{internalDatabase.LibraryPath.Value}' does not exist");
             // checking table access
             var table = database.GetTable<TestEntityId, TestEntity, TestEntityDTO>();
             var table2 = database.GetTable<TestEntityId, TestEntity, TestEntityDTO>();
@@ -127,7 +122,7 @@ namespace TableTopCrucible.Core.FileManagement.Tests
             // closing the database
             database.Close();
             database.State.Should().Be(DatabaseState.Closed);
-            internalDatabase.WorkingDirectory.Should().BeNull();
+            internalDatabase.LibraryPath.Should().BeNull();
 
             table.State.Should().Be(DatabaseState.Closed);
         }

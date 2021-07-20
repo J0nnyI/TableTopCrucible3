@@ -29,7 +29,7 @@ namespace TableTopCrucible.Core.DataAccess
         ITable<Tid, Tentity, Tdto> GetTable<Tid, Tentity, Tdto>()
             where Tid : IEntityId
             where Tentity : IEntity<Tid>
-            where Tdto : IEntityDTO<Tid, Tentity>;
+            where Tdto : IEntityDto<Tid, Tentity>;
         /// <summary>
         /// 
         /// </summary>
@@ -46,14 +46,14 @@ namespace TableTopCrucible.Core.DataAccess
         public DatabaseState State => _state.Value;
 
         [Reactive]
-        internal LibraryDirectoryPath WorkingDirectory { get; private set; }
+        internal LibraryDirectoryPath LibraryPath { get; private set; }
         [Reactive]
         internal LibraryFilePath CurrentFile { get; private set; }
         internal ConcurrentDictionary<TableName, ITable> tables { get; } = new ConcurrentDictionary<TableName, ITable>();
 
         public Database()
         {
-            this._state = this.WhenAnyValue(vm => vm.WorkingDirectory)
+            this._state = this.WhenAnyValue(vm => vm.LibraryPath)
                 .Select(dir => dir != null ? DatabaseState.Open : DatabaseState.Closed)
                 .ToProperty(this, nameof(State));
         }
@@ -62,18 +62,18 @@ namespace TableTopCrucible.Core.DataAccess
         {
             if (autoSave)
                 this.Save();
-            this.tables.Values.ToList().ForEach(table => table.Close(WorkingDirectory));
-            WorkingDirectory.Delete();
-            this.WorkingDirectory = null;
+            this.tables.Values.ToList().ForEach(table => table.Close());
+            LibraryPath.Delete();
+            this.LibraryPath = null;
         }
 
         public ITable<Tid, Tentity, Tdto> GetTable<Tid, Tentity, Tdto>()
             where Tid : IEntityId
             where Tentity : IEntity<Tid>
-            where Tdto : IEntityDTO<Tid, Tentity>
+            where Tdto : IEntityDto<Tid, Tentity>
         {
             var name = TableName.FromType<Tid, Tentity>();
-            tables.TryAdd(name, new Table<Tid, Tentity, Tdto>());
+            tables.TryAdd(name, new Table<Tid, Tentity, Tdto>(LibraryPath));
             return tables[name] as ITable<Tid, Tentity, Tdto>;
         }
 
@@ -113,7 +113,7 @@ namespace TableTopCrucible.Core.DataAccess
             else
                 dir.Create();
 
-            this.WorkingDirectory = dir;
+            this.LibraryPath = dir;
         }
 
         public void Save()
@@ -121,11 +121,11 @@ namespace TableTopCrucible.Core.DataAccess
             var saveId = TableSaveId.New();
             try
             {
-                this.tables.ToList().ForEach(table => table.Value.Save(WorkingDirectory,saveId));
+                this.tables.ToList().ForEach(table => table.Value.Save(saveId));
             }
             catch (Exception ex)
             {
-                this.tables.ToList().ForEach(table => table.Value.RollBackSave(WorkingDirectory, saveId));
+                this.tables.ToList().ForEach(table => table.Value.RollBackSave(saveId));
 
                 throw new SaveFailedException(ex);
             }

@@ -15,9 +15,9 @@ namespace TableTopCrucible.Core.DI
         public static IServiceCollection GenerateServiceProvider(IServiceCollection services = null)
         {
             services ??= new ServiceCollection();
-            var assemblies = AssemblyHelper.GetSolutionAssemblies();
-            var types = assemblies
-                    .SelectMany(assembly => assembly.DefinedTypes);
+
+            var types = AssemblyHelper.GetSolutionTypes()
+                    .ToArray();
 
             var transients = getCollectionForAttribute<TransientAttribute>(types, ServiceLifetime.Transient);
             var singletons = getCollectionForAttribute<SingletonAttribute>(types, ServiceLifetime.Singleton);

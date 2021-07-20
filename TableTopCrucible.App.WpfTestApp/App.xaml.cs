@@ -10,9 +10,8 @@ using Splat.Microsoft.Extensions.Logging;
 using System;
 using System.Reflection;
 using System.Windows;
-
-using TableTopCrucible.App.Shared;
 using TableTopCrucible.App.WpfTestApp.ViewModels;
+using TableTopCrucible.Core.DI;
 
 namespace TableTopCrucible.App.WpfTestApp
 {

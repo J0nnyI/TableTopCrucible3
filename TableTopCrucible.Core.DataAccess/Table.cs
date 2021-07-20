@@ -26,18 +26,18 @@ namespace TableTopCrucible.Core.DataAccess
         DatabaseState State { get; }
         DateTime? LastSave { get; }
         DateTime? LastChange { get; }
-        LibraryDirectoryPath WorkingDirectory { get; }
+        LibraryDirectoryPath LibraryDirectory { get; }
 
-        void Save(LibraryDirectoryPath workingDirectory, TableSaveId saveId);
-        void RollBackSave(LibraryDirectoryPath workingDirectory, TableSaveId saveId);
-        internal void Close(LibraryDirectoryPath workingDirectory);
+        void Save(TableSaveId saveId);
+        void RollBackSave(TableSaveId saveId);
+        internal void Close();
     }
 
 
     public interface ITable<Tid, Tentity, Tdto> : ITable
         where Tid : IEntityId
         where Tentity : IEntity<Tid>
-        where Tdto : IEntityDTO<Tid, Tentity>
+        where Tdto : IEntityDto<Tid, Tentity>
     {
 
         void AddOrUpdate(Tentity entity);
@@ -50,35 +50,35 @@ namespace TableTopCrucible.Core.DataAccess
 
         public abstract TableName Name { get; }
         [Reactive]
-        public LibraryDirectoryPath WorkingDirectory { get; }
+        public LibraryDirectoryPath LibraryDirectory { get; protected set; }
         [Reactive]
         public DatabaseState State { get; protected set; }
         [Reactive]
         public DateTime? LastSave { get; protected set; }
         [Reactive]
         public DateTime? LastChange { get; protected set; }
-        protected readonly IMapper _mapper;
+        protected readonly IMapper mapper;
 
-        public Table(LibraryDirectoryPath workingDirectory)
+        protected Table(LibraryDirectoryPath libraryDirectory)
         {
-            _mapper = Locator.Current.GetService<IMapper>();
-            this.WorkingDirectory = workingDirectory;
+            mapper = Locator.Current.GetService<IMapper>();
+            this.LibraryDirectory = libraryDirectory;
         }
 
-        public abstract void RollBackSave(LibraryDirectoryPath workingDirectory, TableSaveId saveId);
+        public abstract void RollBackSave(TableSaveId saveId);
 
-        public abstract void Save(LibraryDirectoryPath workingDirectory, TableSaveId saveId);
-        internal abstract void Close(LibraryDirectoryPath workingDirectory);
+        public abstract void Save( TableSaveId saveId);
+        internal abstract void Close();
 
-        void ITable.Close(LibraryDirectoryPath workingDirectory)
-            => Close(workingDirectory);
+        void ITable.Close()
+            => Close();
     }
 
 
     internal class Table<Tid, Tentity, Tdto> : Table, ITable<Tid, Tentity, Tdto>
         where Tid : IEntityId
         where Tentity : IEntity<Tid>
-        where Tdto : IEntityDTO<Tid, Tentity>
+        where Tdto : IEntityDto<Tid, Tentity>
     {
         private readonly SourceCache<Tentity, Tid> _data
              = new SourceCache<Tentity, Tid>(data => data.Id);
@@ -86,8 +86,10 @@ namespace TableTopCrucible.Core.DataAccess
         public override TableName Name 
             => TableName.FromType<Tid, Tentity>();
 
-        public Table() : base(Locator.Current.GetService<IMapper>())
+        public Table(LibraryDirectoryPath libraryDirectory) : base(libraryDirectory)
         {
+            if (LibraryDirectory is null)
+                throw new ArgumentNullException(nameof(LibraryDirectory));
         }
 
         public void AddOrUpdate(Tentity entity)
@@ -101,24 +103,22 @@ namespace TableTopCrucible.Core.DataAccess
         public IObservable<Tentity> WatchValue(IObservable<Tid> entityIdChanges)
             => entityIdChanges.Select(entityId => this._data.WatchValue(entityId)).Switch();
 
-        public override void Save(LibraryDirectoryPath workingDirectory, TableSaveId saveId)
+        public override void Save(TableSaveId saveId)
         {
-            if (workingDirectory is null)
-                throw new ArgumentNullException(nameof(workingDirectory));
             if (saveId is null)
                 throw new ArgumentNullException(nameof(saveId));
 
-            var file = TableFilePath.From(workingDirectory, saveId, TableName.FromType<Tid, Tentity>());
+            var file = TableFilePath.From(LibraryDirectory, saveId, TableName.FromType<Tid, Tentity>());
             try
             {
-                var dto = _mapper.Map<IEnumerable<Tdto>>(this._data.Items);
+                var dto = mapper.Map<IEnumerable<Tdto>>(this._data.Items);
                 file.WriteObject(dto);
             }
             catch (Exception ex) when (
-                ex is FileWriteFailedException
-                || ex is SerializationFailedException)
+                ex is FileWriteFailedException ||
+                ex is SerializationFailedException)
             {
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {
@@ -126,23 +126,18 @@ namespace TableTopCrucible.Core.DataAccess
             }
         }
 
-        public override void RollBackSave(LibraryDirectoryPath workingDirectory, TableSaveId saveId)
+        public override void RollBackSave(TableSaveId saveId)
         {
-            if (workingDirectory is null)
-                throw new ArgumentNullException(nameof(workingDirectory));
             if (saveId is null)
                 throw new ArgumentNullException(nameof(saveId));
 
-            var file = TableFilePath.From(workingDirectory, saveId, TableName.FromType<Tid, Tentity>());
+            var file = TableFilePath.From(LibraryDirectory, saveId, TableName.FromType<Tid, Tentity>());
             file.TryDelete();
         }
 
-        internal override void Close(LibraryDirectoryPath workingDirectory)
+        internal override void Close()
         {
-            if (workingDirectory is null)
-                throw new ArgumentNullException(nameof(workingDirectory));
-            
-            (workingDirectory + Name.GetRelativePath()).Delete();
+            (LibraryDirectory + Name.GetRelativePath()).Delete();
             this._data.Dispose();
             this.State = DatabaseState.Closed;
         }

@@ -1,27 +1,20 @@
-﻿using LiteDB;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
-
-using ReactiveUI;
-
-using Serilog;
-using Serilog.Events;
-using Serilog.Formatting.Compact;
-
-using Splat;
-using Splat.Microsoft.Extensions.DependencyInjection;
-
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
-
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using ReactiveUI;
+using Serilog;
+using Serilog.Events;
+using Serilog.Formatting.Compact;
+using Splat;
+using Splat.Microsoft.Extensions.DependencyInjection;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-namespace TableTopCrucible.App.Shared
+namespace TableTopCrucible.Core.DI
 {
     public class DependencyBuilder
     {
@@ -55,7 +48,7 @@ namespace TableTopCrucible.App.Shared
             => GetServices().BuildServiceProvider();
         private static void configureAutomapper(IServiceCollection services)
         {
-            services.AddAutoMapper(Assembly.Load("TableTopCrucible.Data.Library.DataTransfer"));
+            //services.AddAutoMapper(Assembly.Load("TableTopCrucible.Data.Library.DataTransfer"));
         }
 
 

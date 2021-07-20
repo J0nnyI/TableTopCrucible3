@@ -5,7 +5,7 @@ namespace TableTopCrucible.Core.DataAccess.Models
 {
     public interface IEntityId
     {
-        public Guid GetGuid();
+        Guid GetGuid();
     }
     public class EntityIdBase<Tthis> : ValueOf<Guid, Tthis>, IEntityId where Tthis : EntityIdBase<Tthis>, new()
     {

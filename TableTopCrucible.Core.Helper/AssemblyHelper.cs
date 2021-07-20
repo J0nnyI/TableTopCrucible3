@@ -26,6 +26,8 @@ namespace TableTopCrucible.Core.Helper
         public static IEnumerable<Type> GetSolutionTypes(Type baseType)
             => GetSolutionTypes().Where(t => t.IsAssignableFrom(baseType));
 
+        public static IEnumerable<Type> GetSolutionTypesByAttribute<T>() where T : Attribute
+            => GetSolutionTypes().Where(t => t.HasCustomAttribute<T>());
 
     }
 }
