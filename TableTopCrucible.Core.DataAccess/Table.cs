@@ -108,7 +108,7 @@ namespace TableTopCrucible.Core.DataAccess
             if (saveId is null)
                 throw new ArgumentNullException(nameof(saveId));
 
-            var file = TableFilePath.From(LibraryDirectory, saveId, TableName.FromType<Tid, Tentity>());
+            var file = _getFilepath(saveId);
             try
             {
                 var dto = mapper.Map<IEnumerable<Tdto>>(this._data.Items);
@@ -131,9 +131,11 @@ namespace TableTopCrucible.Core.DataAccess
             if (saveId is null)
                 throw new ArgumentNullException(nameof(saveId));
 
-            var file = TableFilePath.From(LibraryDirectory, saveId, TableName.FromType<Tid, Tentity>());
+            var file = _getFilepath(saveId);
             file.TryDelete();
         }
+
+        private TableFilePath _getFilepath(TableSaveId saveId) => TableFilePath.From(LibraryDirectory, saveId, TableName.FromType<Tid, Tentity>());
 
         internal override void Close()
         {

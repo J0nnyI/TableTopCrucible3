@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
@@ -19,5 +20,10 @@ namespace TableTopCrucible.Core.DataAccess.ValueTypes
             ZipFile.ExtractToDirectory(Value, path.Value, overwriteFiles);
             return path;
         }
+
+        public LibraryDirectoryPath GetWorkingDirectory()
+            => LibraryDirectoryPath.ForFile(this);
+
+        public new LibraryDirectoryPath GetDirectoryPath() => LibraryDirectoryPath.From(base.GetDirectoryPath());
     }
 }

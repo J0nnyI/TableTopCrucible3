@@ -7,11 +7,11 @@ namespace TableTopCrucible.Core.DataAccess.Models
     {
         Guid GetGuid();
     }
-    public class EntityIdBase<Tthis> : ValueOf<Guid, Tthis>, IEntityId where Tthis : EntityIdBase<Tthis>, new()
+    public class EntityIdBase<TThis> : ValueOf<Guid, TThis>, IEntityId where TThis : EntityIdBase<TThis>, new()
     {
         public Guid GetGuid()
             => Value;
-        public static Tthis New()
-            => new Tthis() { Value = Guid.NewGuid() };
+        public static TThis New()
+            => new TThis() { Value = Guid.NewGuid() };
     }
 }

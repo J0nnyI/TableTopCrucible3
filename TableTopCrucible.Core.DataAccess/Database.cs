@@ -12,7 +12,7 @@ using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.DataAccess
 {
-    public enum DatabaseInitializationBehavior
+    public enum DatabaseInitErrorBehavior
     {
         // cancels the initialization by throwing an exception
         Cancel,
@@ -24,7 +24,7 @@ namespace TableTopCrucible.Core.DataAccess
     public interface IDatabase
     {
         void Save();
-        void SaveAs(FilePath file);
+        void SaveAs(LibraryFilePath file);
         void Close(bool autoSave = true);
         ITable<Tid, Tentity, Tdto> GetTable<Tid, Tentity, Tdto>()
             where Tid : IEntityId
@@ -35,8 +35,8 @@ namespace TableTopCrucible.Core.DataAccess
         /// </summary>
         /// <param name="file"></param>
         /// <param name="behavior">determines what happens if the file has not been closed properly</param>
-        void InitializeFromFile(LibraryFilePath file, DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel);
-        void Initialize(DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel);
+        void InitializeFromFile(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel);
+        void Initialize(DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel);
         DatabaseState State { get; }
 
     }
@@ -45,6 +45,7 @@ namespace TableTopCrucible.Core.DataAccess
         private ObservableAsPropertyHelper<DatabaseState> _state;
         public DatabaseState State => _state.Value;
 
+        // set once the library is created and ready to be worked with
         [Reactive]
         internal LibraryDirectoryPath LibraryPath { get; private set; }
         [Reactive]
@@ -77,7 +78,7 @@ namespace TableTopCrucible.Core.DataAccess
             return tables[name] as ITable<Tid, Tentity, Tdto>;
         }
 
-        public void Initialize(DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel)
+        public void Initialize(DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
         {
             _initialize(null, behavior);
         }
@@ -86,25 +87,29 @@ namespace TableTopCrucible.Core.DataAccess
         /// </summary>
         /// <param name="file">when true, the old files will be overridden and no exception will be thrown</param>
         /// <param name="force"></param>
-        public void InitializeFromFile(LibraryFilePath file, DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel)
+        public void InitializeFromFile(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
         {
+            throw new NotImplementedException(nameof(InitializeFromFile));
         }
-        private void _initialize(LibraryFilePath file, DatabaseInitializationBehavior behavior = DatabaseInitializationBehavior.Cancel)
+        private void _initialize(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
         {
+            if (State == DatabaseState.Open)
+                throw new DatabaseAlreadyOpenedException();
+            
             var dir = file != null
-                ? LibraryDirectoryPath.ForFile(file)
+                ? file.GetWorkingDirectory()
                 : LibraryDirectoryPath.GetTemporaryPath();
             CurrentFile = file;
             if (dir.Exists())
             {
                 switch (behavior)
                 {
-                    case DatabaseInitializationBehavior.Cancel:
+                    case DatabaseInitErrorBehavior.Cancel:
                         throw new OldDatabaseVersionFoundException();
-                    case DatabaseInitializationBehavior.Override:
+                    case DatabaseInitErrorBehavior.Override:
                         file.UnpackLibrary(true);
                         break;
-                    case DatabaseInitializationBehavior.Restore:
+                    case DatabaseInitErrorBehavior.Restore:
                         break;
                     default:
                         throw new InvalidOperationException($"Behavior {behavior} has not been implemented yet");
@@ -131,9 +136,13 @@ namespace TableTopCrucible.Core.DataAccess
             }
         }
 
-        public void SaveAs(FilePath file)
+        public void SaveAs(LibraryFilePath file)
         {
-            throw new NotImplementedException();
+            this.CurrentFile = file;
+            var newDir = file.GetWorkingDirectory();
+            this.LibraryPath.Rename(newDir);
+            this.LibraryPath = newDir;
+            Save();
         }
     }
 }

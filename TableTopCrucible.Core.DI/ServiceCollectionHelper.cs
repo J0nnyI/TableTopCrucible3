@@ -22,8 +22,8 @@ namespace TableTopCrucible.Core.DI
         }
         public static void RemoveAutoMapper(this ServiceCollection srv)
         {
-            var automapperAssembly = Assembly.GetAssembly(typeof(Mapper));
-            srv.Where(desc => desc.ServiceType.Assembly == automapperAssembly)
+            var autoMapperAssembly = Assembly.GetAssembly(typeof(Mapper));
+            srv.Where(desc => desc.ServiceType.Assembly == autoMapperAssembly)
                 .Select(desc => desc.ServiceType)
                 .ToList()
                 .ForEach(asrv => srv.RemoveAll(asrv));

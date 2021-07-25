@@ -90,6 +90,28 @@ namespace TableTopCrucible.Core.ValueTypes
                 throw new DirectoryDeletionFailedException<Tthis>(this as Tthis, ex);
             }
         }
+
+        public IDirectoryInfo GetParent()
+            => Directory.GetParent(Value);
+        public void Rename(Tthis newLocation)
+        {
+            try
+            {
+                if (!this.GetParent().Exists)
+                    return;
+                var newParent = newLocation.GetParent();
+                if (!newParent.Exists)
+                    Directory.CreateDirectory(newParent.FullName);
+                Directory.Move(Value, newLocation.Value);
+
+            }
+            catch (Exception ex)
+            {
+                throw new DirectoryMoveFailedException<Tthis>(this as Tthis, newLocation, ex);
+            }
+        }
+
+        public void Move(Tthis newLocation) => Directory.Move(Value, newLocation.Value);
         public DirectoryName GetDirectoryName() =>
             DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
         public string[] GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
