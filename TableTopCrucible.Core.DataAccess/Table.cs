@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+
 using AutoMapper;
+
 using DynamicData;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using Splat;
+
 using TableTopCrucible.Core.DataAccess.Exceptions;
 using TableTopCrucible.Core.DataAccess.Models;
 using TableTopCrucible.Core.DataAccess.ValueTypes;
@@ -26,10 +31,11 @@ namespace TableTopCrucible.Core.DataAccess
         DatabaseState State { get; }
         DateTime? LastSave { get; }
         DateTime? LastChange { get; }
-        LibraryDirectoryPath LibraryDirectory { get; }
+        LibraryDirectoryPath LibraryDirectory { get; internal set; }
 
         void Save(TableSaveId saveId);
         void RollBackSave(TableSaveId saveId);
+        int Count { get; }
         internal void Close();
     }
 
@@ -41,7 +47,10 @@ namespace TableTopCrucible.Core.DataAccess
     {
 
         void AddOrUpdate(Tentity entity);
+        void AddOrUpdate(IEnumerable<Tentity> entity);
+
         IObservable<Tentity> WatchValue(Tid entityId);
+        IObservableCache<Tentity, Tid> Data { get; }
     }
 
 
@@ -51,6 +60,11 @@ namespace TableTopCrucible.Core.DataAccess
         public abstract TableName Name { get; }
         [Reactive]
         public LibraryDirectoryPath LibraryDirectory { get; protected set; }
+        LibraryDirectoryPath ITable.LibraryDirectory
+        {
+            get => this.LibraryDirectory;
+            set => this.LibraryDirectory = value;
+        }
         [Reactive]
         public DatabaseState State { get; protected set; }
         [Reactive]
@@ -67,11 +81,13 @@ namespace TableTopCrucible.Core.DataAccess
 
         public abstract void RollBackSave(TableSaveId saveId);
 
-        public abstract void Save( TableSaveId saveId);
+        public abstract void Save(TableSaveId saveId);
         internal abstract void Close();
 
         void ITable.Close()
             => Close();
+
+        public abstract int Count { get; }
     }
 
 
@@ -83,7 +99,7 @@ namespace TableTopCrucible.Core.DataAccess
         private readonly SourceCache<Tentity, Tid> _data
              = new SourceCache<Tentity, Tid>(data => data.Id);
 
-        public override TableName Name 
+        public override TableName Name
             => TableName.FromType<Tid, Tentity>();
 
         public Table(LibraryDirectoryPath libraryDirectory) : base(libraryDirectory)
@@ -97,6 +113,15 @@ namespace TableTopCrucible.Core.DataAccess
             this._data.AddOrUpdate(entity);
             LastChange = DateTime.Now;
         }
+        public void AddOrUpdate(IEnumerable<Tentity> entity)
+        {
+            this._data.AddOrUpdate(entity);
+            LastChange = DateTime.Now;
+        }
+
+        public IObservableCache<Tentity, Tid> Data => _data.AsObservableCache();
+
+        public override int Count => _data.Count;
 
         public IObservable<Tentity> WatchValue(Tid entityId)
             => this._data.WatchValue(entityId);

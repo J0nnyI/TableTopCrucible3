@@ -1,6 +1,8 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -15,6 +17,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 using TableTopCrucible.Core.DataAccess.Exceptions;
 using TableTopCrucible.Core.DataAccess.Models;
@@ -26,11 +29,7 @@ using ValueOf;
 
 namespace TableTopCrucible.Core.DataAccess.Tests
 {
-    public class TestEntityId : EntityIdBase<TestEntityId>
-    {
-        public Guid GetGuid()
-            => this.Value;
-    }
+    public class TestEntityId : EntityIdBase<TestEntityId> { }
     public class TestEntity : IEntity<TestEntityId>
     {
         public TestEntity(TestEntityId id, string text)
@@ -44,7 +43,7 @@ namespace TableTopCrucible.Core.DataAccess.Tests
         public string Text { get; }
     }
     [AutoMap(typeof(TestEntity), ReverseMap = true)]
-    public class TestEntityDTO : IEntityDto<TestEntityId, TestEntity>
+    public class TestEntityDto : IEntityDto<TestEntityId, TestEntity>
     {
         public Guid IdValue { get; set; }
         public string Text { get; set; }
@@ -107,8 +106,20 @@ namespace TableTopCrucible.Core.DataAccess.Tests
 
 
 
-        public IEnumerable<TestEntity> BuildTestData(int count = 10)
-            => Enumerable.Range(0, count).Select(c => new TestEntity(TestEntityId.New(), $"TestEntity_SingleEntity {c}"));
+        public IEnumerable<TestEntity> GenerateTestData(int start = 0, int count = 10)
+            => Enumerable.Range(start, count).Select(c => new TestEntity(TestEntityId.New(), $"TestEntity_SingleEntity {c}"));
+
+
+        public IEnumerable<TestEntity> AddTestData(int start = 0, int count = 10, IDatabase otherDatabase = null)
+        {
+            var table = GetTestTable(otherDatabase);
+            var addedData = GenerateTestData(start, count).ToArray();
+            table.AddOrUpdate(addedData);
+            return addedData;
+        }
+
+        public ITable<TestEntityId, TestEntity, TestEntityDto> GetTestTable(IDatabase otherDatabase = null)
+            => (otherDatabase ?? database).GetTable<TestEntityId, TestEntity, TestEntityDto>();
 
 
 
@@ -123,11 +134,15 @@ namespace TableTopCrucible.Core.DataAccess.Tests
 
 
 
+        [Test]
+        public void GetTable_SameInstance()
+        {
+            GetTestTable(database).Should().BeSameAs(GetTestTable(database));
+        }
 
-
-
-
-
+        [Test]
+        public void GetTableWhenStillClosed()
+            => new Action(() => GetTestTable()).Should().Throw<DatabaseClosedException>();
 
         [Test]
         public void TestEntity_Single()
@@ -142,21 +157,22 @@ namespace TableTopCrucible.Core.DataAccess.Tests
             entity2.Should().BeEquivalentTo(entityIn);
 
             var mapper = di.GetRequiredService<IMapper>();
-            var dto = mapper.Map<TestEntityDTO>(entityIn);
+            var dto = mapper.Map<TestEntityDto>(entityIn);
             var entityOut = mapper.Map<TestEntity>(dto);
             entityOut.Should().BeEquivalentTo(entityIn);
 
-            var lstIn = new SourceCache<TestEntity, TestEntityId>(e => e.Id);
-            lstIn.AddOrUpdate(entityIn);
-            var lstDto = mapper.Map<IEnumerable<TestEntityDTO>>(lstIn.Items);
-            var lstOut = mapper.Map<IEnumerable<TestEntity>>(lstDto);
-            lstIn.Items.Should().BeEquivalentTo(lstOut);
         }
 
         [Test]
         public void TestEntity_List()
         {
-            throw new NotImplementedException();
+            var mapper = di.GetRequiredService<IMapper>();
+
+            var lstIn = new SourceCache<TestEntity, TestEntityId>(e => e.Id);
+            lstIn.AddOrUpdate(GenerateTestData());
+            var lstDto = mapper.Map<IEnumerable<TestEntityDto>>(lstIn.Items);
+            var lstOut = mapper.Map<IEnumerable<TestEntity>>(lstDto);
+            lstIn.Items.Should().BeEquivalentTo(lstOut);
         }
         [Test]
         public void CreateNewWarehouseTest()
@@ -166,13 +182,13 @@ namespace TableTopCrucible.Core.DataAccess.Tests
             internalDatabase.LibraryPath.Should().BeNull();
             database.State.Should().Be(DatabaseState.Closed);
             // initializing
-            database.Initialize();
+            database.New();
             internalDatabase.LibraryPath.Should().NotBeNull();
             database.State.Should().Be(DatabaseState.Open);
             internalDatabase.LibraryPath.Exists().Should().BeTrue($"the directory '{internalDatabase.LibraryPath.Value}' does not exist");
             // checking table access
-            var table = database.GetTable<TestEntityId, TestEntity, TestEntityDTO>();
-            var table2 = database.GetTable<TestEntityId, TestEntity, TestEntityDTO>();
+            var table = database.GetTable<TestEntityId, TestEntity, TestEntityDto>();
+            var table2 = database.GetTable<TestEntityId, TestEntity, TestEntityDto>();
             table.Should().BeSameAs(table2);
 
             // closing the database
@@ -190,7 +206,7 @@ namespace TableTopCrucible.Core.DataAccess.Tests
         [Test]
         public void SaveItem()
         {
-            var table = database.GetTable<TestEntityId, TestEntity, TestEntityDTO>();
+            var table = database.GetTable<TestEntityId, TestEntity, TestEntityDto>();
             var testEntity = new TestEntity("data");
             var updatedEntity = new TestEntity(testEntity.Id, "newData");
 
@@ -215,26 +231,28 @@ namespace TableTopCrucible.Core.DataAccess.Tests
         [Test]
         public void DoubleOpenedTest()
         {
-            database.Initialize();
-            new Action(() => database.Initialize())
+            database.New();
+            new Action(() => database.New())
                 .Should()
                 .Throw<DatabaseAlreadyOpenedException>();
         }
         [Test]
         public void SaveWithoutLocation()
         {
-            database.Initialize();
+            database.New();
             Action act = () => database.Save();
             act.Should().Throw<NoDatabaseLocationSelectedException>();
         }
         [Test]
+        [Ignore("influences other tests")]
         public void InitializationAfterCrash()
         {
-            database.Initialize();
+            database.New();
             BeforeEach();
-            Action act = () => database.Initialize();
-            // it is expected that it loads the old data
-            act.Should().NotThrow();
+            AfterEach();
+            Action act = () => database.New();
+            //it is expected that it loads the old data
+            act.Should().Throw<Exception>();
             throw new NotImplementedException("incomplete test, add data to be reloaded");
         }
 
@@ -247,7 +265,7 @@ namespace TableTopCrucible.Core.DataAccess.Tests
             // assert: initial state
             database.State.Should().Be(DatabaseState.Closed, "database not closed");
             // init
-            database.Initialize();
+            database.New();
             // assert: post init state
             database.State.Should().Be(DatabaseState.Open, "database not open after init");
             ((Database)database).CurrentFile.Should().BeNull("a file has been set despite not having created one");
@@ -256,33 +274,56 @@ namespace TableTopCrucible.Core.DataAccess.Tests
             oldDir.Exists().Should().BeTrue("temp working directory has not been created");
             newDir.Exists().Should().BeFalse("the new directory exists before renaming the file");
 
+            var batchSize = 10;
+            var addedData = AddTestData(100, batchSize).ToArray();
+            var testTable = GetTestTable();
+            testTable.Data.Items.Should().BeEquivalentTo(addedData);
 
             database.SaveAs(newFile);
 
             oldDir.Exists().Should().BeFalse("the old path still exists after save-as");
             newDir.Exists().Should().BeTrue("the new dir has not been created");
             ((Database)database).LibraryPath.Should().Be(newDir, "the internal library path has not been updated");
+            ((Database)database).tables
+                .Select(kv=>kv.Value)
+                .Cast<Table<TestEntityId,TestEntity,TestEntityDto>>()
+                .Select(t=>t.LibraryDirectory)
+                .Should()
+                .AllBeEquivalentTo(newDir, "items have not been added properly");
 
-            throw new NotImplementedException("check data,");
+            database.Close();
+
+            newDir.Exists().Should().BeFalse("the working directory has not been deleted");
+
+            BeforeEach();
+            database.OpenFile(newFile);
+            testTable.Data.Items.Should().BeEquivalentTo(addedData, "items have not been loaded properly");
+
+
+
+            database.Save();
+
+
+            
         }
 
         [Test]
         public void InitializationFromFileAfterCrash_cancel()
         {
             var path = LibraryFilePath.From(@".\test.ttcl");
-            database.Initialize();
+            database.New();
             database.SaveAs(path);
             BeforeEach();
-            Action cancel = () => database.InitializeFromFile(path, DatabaseInitErrorBehavior.Cancel);
+            Action cancel = () => database.OpenFile(path, DatabaseInitErrorBehavior.Cancel);
             cancel.Should().Throw<OldDatabaseVersionFoundException>();
         }
         [Test]
         public void InitializationFromFileAfterCrash_restore()
         {
             var path = LibraryFilePath.From(@".\test.ttcl");
-            database.InitializeFromFile(path);
+            database.OpenFile(path);
             BeforeEach();
-            database.InitializeFromFile(path, DatabaseInitErrorBehavior.Override);
+            database.OpenFile(path, DatabaseInitErrorBehavior.Override);
             throw new NotImplementedException("test if data has been overridden");
         }
         [Test]
@@ -290,9 +331,9 @@ namespace TableTopCrucible.Core.DataAccess.Tests
         {
             true.Should().BeFalse("incomplete test, add data to restored");
             var path = LibraryFilePath.From(@".\test.ttcl");
-            database.InitializeFromFile(path);
+            database.OpenFile(path);
             BeforeEach();
-            database.InitializeFromFile(path, DatabaseInitErrorBehavior.Restore);
+            database.OpenFile(path, DatabaseInitErrorBehavior.Restore);
             throw new NotImplementedException("test if data has been overridden");
         }
     }

@@ -35,8 +35,8 @@ namespace TableTopCrucible.Core.DataAccess
         /// </summary>
         /// <param name="file"></param>
         /// <param name="behavior">determines what happens if the file has not been closed properly</param>
-        void InitializeFromFile(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel);
-        void Initialize(DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel);
+        void OpenFile(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel);
+        void New(DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel);
         DatabaseState State { get; }
 
     }
@@ -61,6 +61,8 @@ namespace TableTopCrucible.Core.DataAccess
 
         public void Close(bool autoSave = true)
         {
+            if (State == DatabaseState.Closed)
+                return;
             if (autoSave)
                 this.Save();
             this.tables.Values.ToList().ForEach(table => table.Close());
@@ -73,12 +75,14 @@ namespace TableTopCrucible.Core.DataAccess
             where Tentity : IEntity<Tid>
             where Tdto : IEntityDto<Tid, Tentity>
         {
+            if (State == DatabaseState.Closed)
+                throw new DatabaseClosedException();
             var name = TableName.FromType<Tid, Tentity>();
             tables.TryAdd(name, new Table<Tid, Tentity, Tdto>(LibraryPath));
             return tables[name] as ITable<Tid, Tentity, Tdto>;
         }
 
-        public void Initialize(DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
+        public void New(DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
         {
             _initialize(null, behavior);
         }
@@ -87,9 +91,9 @@ namespace TableTopCrucible.Core.DataAccess
         /// </summary>
         /// <param name="file">when true, the old files will be overridden and no exception will be thrown</param>
         /// <param name="force"></param>
-        public void InitializeFromFile(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
+        public void OpenFile(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
         {
-            throw new NotImplementedException(nameof(InitializeFromFile));
+            _initialize(file, behavior);
         }
         private void _initialize(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
         {
@@ -140,8 +144,11 @@ namespace TableTopCrucible.Core.DataAccess
         {
             this.CurrentFile = file;
             var newDir = file.GetWorkingDirectory();
-            this.LibraryPath.Rename(newDir);
+            var oldDir = this.LibraryPath;
+            oldDir.Rename(newDir);
             this.LibraryPath = newDir;
+            foreach (var table in this.tables.Select(kv=>kv.Value))
+                table.LibraryDirectory = newDir;
             Save();
         }
     }
