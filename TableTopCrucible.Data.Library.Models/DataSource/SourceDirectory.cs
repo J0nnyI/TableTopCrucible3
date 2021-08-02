@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Data.Library.Models.ValueTypes.General;
+using TableTopCrucible.Data.Library.Models.Values;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
-namespace TableTopCrucible.Data.Models.Sources
+namespace TableTopCrucible.Data.Library.Models.DataSource
 {
     public struct SourceDirectory
     {

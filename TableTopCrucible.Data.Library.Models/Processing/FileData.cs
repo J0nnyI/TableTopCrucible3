@@ -1,11 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.IO.Abstractions;
-
 using TableTopCrucible.Core.ValueTypes;
 
-
-namespace TableTopCrucible.Data.Models.Sources
+namespace TableTopCrucible.Data.Library.Models.Processing
 {
     public class FileData
     {

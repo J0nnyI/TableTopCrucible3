@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace TableTopCrucible.Data.Library.Models.ValueTypes.General
+﻿namespace TableTopCrucible.Data.Library.Models.Values
 {
     public struct Description
     {

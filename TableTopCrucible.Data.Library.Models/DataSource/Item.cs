@@ -1,14 +1,13 @@
-﻿using DynamicData.Binding;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-
-using TableTopCrucible.Data.Library.Models.ValueTypes.General;
+using DynamicData.Binding;
+using TableTopCrucible.Core.DataAccess.Models;
+using TableTopCrucible.Data.Library.Models.Values;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
-namespace TableTopCrucible.Data.Models.Sources
+namespace TableTopCrucible.Data.Library.Models.DataSource
 {
-    public class Item
+    public class Item:IEntity<ItemId>
     {
         public ItemId Id { get; }
         public ItemName Name { get; }

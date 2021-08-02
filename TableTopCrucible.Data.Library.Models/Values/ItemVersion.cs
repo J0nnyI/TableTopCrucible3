@@ -1,14 +1,11 @@
-﻿using DynamicData.Binding;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-
+using DynamicData.Binding;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Data.Library.Models.Processing;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
-using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
-
-namespace TableTopCrucible.Data.Models.Sources
+namespace TableTopCrucible.Data.Library.Models.Values
 {
     public class ItemVersion
     {

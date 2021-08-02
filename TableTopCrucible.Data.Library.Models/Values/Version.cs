@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-
 using TableTopCrucible.Core.Helper;
 
-namespace TableTopCrucible.Data.Library.Models.ValueTypes.General
+namespace TableTopCrucible.Data.Library.Models.Values
 {
     public struct Version : IComparable<Version>, IComparable
     {
