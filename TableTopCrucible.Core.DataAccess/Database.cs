@@ -127,6 +127,8 @@ namespace TableTopCrucible.Core.DataAccess
 
         public void Save()
         {
+            if (this.CurrentFile == null)
+                throw new DatabasenameRequiredException();
             var saveId = TableSaveId.New();
             try
             {

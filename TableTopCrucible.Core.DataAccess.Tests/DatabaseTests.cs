@@ -19,6 +19,8 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
+using ReactiveUI;
+
 using TableTopCrucible.Core.DataAccess.Exceptions;
 using TableTopCrucible.Core.DataAccess.Models;
 using TableTopCrucible.Core.DataAccess.ValueTypes;
@@ -100,7 +102,19 @@ namespace TableTopCrucible.Core.DataAccess.Tests
         }
 
 
-
+        [TestCase]
+        public void Closing()
+        {
+            database.State.Should().Be(DatabaseState.Closed);
+            database.New();
+            database.State.Should().Be(DatabaseState.Open);
+            database.Close();
+            database.State.Should().Be(DatabaseState.Closed);
+            database.New();
+            database.State.Should().Be(DatabaseState.Open);
+            database.Close();
+            database.State.Should().Be(DatabaseState.Closed);
+        }
 
 
 
@@ -137,6 +151,7 @@ namespace TableTopCrucible.Core.DataAccess.Tests
         [Test]
         public void GetTable_SameInstance()
         {
+            database.New();
             GetTestTable(database).Should().BeSameAs(GetTestTable(database));
         }
 
@@ -206,6 +221,7 @@ namespace TableTopCrucible.Core.DataAccess.Tests
         [Test]
         public void SaveItem()
         {
+            database.New();
             var table = database.GetTable<TestEntityId, TestEntity, TestEntityDto>();
             var testEntity = new TestEntity("data");
             var updatedEntity = new TestEntity(testEntity.Id, "newData");
@@ -225,8 +241,27 @@ namespace TableTopCrucible.Core.DataAccess.Tests
             table.AddOrUpdate(updatedEntity);
             resultEntity.Should().BeSameAs(updatedEntity);
             table.LastChange.Should().BeAfter(timestamp);
-            throw new NotImplementedException("todo the table should hold a reference to its own working directory so that a proper cleanup is ensured");
-            throw new NotImplementedException("todo when closing a table / database, check if its dirty and implement an autosave");
+            table.LibraryDirectory.Should().Be(internalDatabase.LibraryPath);
+            database.Save();
+        }
+
+        [Test]
+        public void CantSaveWithoutFilename()
+        {
+            database.New();
+            new Action(() => database.Save()).Should().Throw<DatabasenameRequiredException>();
+        }
+        [Test]
+        public void AutoSaveWhenClosedDirty()
+        {
+            var dbFile = LibraryFilePath.From("./databasefile.ttcl");
+            database.New();
+            database.SaveAs(dbFile);
+            var table = GetTestTable();
+            var items = new TestEntity[]
+            {
+                new TestEntity("testValue")
+            };
         }
         [Test]
         public void DoubleOpenedTest()
@@ -281,13 +316,16 @@ namespace TableTopCrucible.Core.DataAccess.Tests
 
             database.SaveAs(newFile);
 
+
+            testTable.Data.Items.Should().BeEquivalentTo(addedData);
+
             oldDir.Exists().Should().BeFalse("the old path still exists after save-as");
             newDir.Exists().Should().BeTrue("the new dir has not been created");
             ((Database)database).LibraryPath.Should().Be(newDir, "the internal library path has not been updated");
             ((Database)database).tables
-                .Select(kv=>kv.Value)
-                .Cast<Table<TestEntityId,TestEntity,TestEntityDto>>()
-                .Select(t=>t.LibraryDirectory)
+                .Select(kv => kv.Value)
+                .Cast<Table<TestEntityId, TestEntity, TestEntityDto>>()
+                .Select(t => t.LibraryDirectory)
                 .Should()
                 .AllBeEquivalentTo(newDir, "items have not been added properly");
 
@@ -299,12 +337,12 @@ namespace TableTopCrucible.Core.DataAccess.Tests
             database.OpenFile(newFile);
             testTable.Data.Items.Should().BeEquivalentTo(addedData, "items have not been loaded properly");
 
-
+            throw new NotImplementedException("save to another file and check if it only saved to the most recent one");
 
             database.Save();
 
 
-            
+
         }
 
         [Test]

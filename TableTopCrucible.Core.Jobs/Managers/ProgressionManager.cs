@@ -9,6 +9,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 
 using TableTopCrucible.Core.BaseUtils;
 using TableTopCrucible.Core.Helper;
@@ -28,21 +29,29 @@ namespace TableTopCrucible.Core.Jobs.Managers
     }
 
 
-    public interface IProgressionHandler : IProgressionViewer
+    public interface IProgressionHandler : IProgressionViewer, IDisposable
     {
+        JobState IProgressionViewer.State => State;
+        int IProgressionViewer.Target => Target;
+        int IProgressionViewer.Current => Current;
+        string IProgressionViewer.Title => Title;
+        string IProgressionViewer.Details => Details;
+        int IProgressionViewer.Weight => Weight;
         new JobState State { get; set; }
         new int Target { get; set; }
-        new int Current { get; set; }
+        new int Current { get; }
         new string Title { get; set; }
         new string Details { get; set; }
         /// <summary>
         ///  the Weight (duration) of this progress relative to the others in the <see cref="IJobViewer"/>
         /// </summary>
         new int Weight { get; set; }
+
+        int Increase();
     }
 
-
-    class DerivedProgressionManager : DisposableReactiveObjectBase, IProgressionViewer
+    // joins multiple progressions into one
+    class DerivedProgressionManager : DisposableReactiveObject, IProgressionViewer
     {
         private readonly ILogger<DerivedProgressionManager> logger;
 
@@ -50,8 +59,9 @@ namespace TableTopCrucible.Core.Jobs.Managers
         public JobState State { get; private set; }
         [Reactive]
         public int Target { get; private set; }
+
         [Reactive]
-        public int Current { get; private set; }
+        public int Current { get; protected set; }
         [Reactive]
         public string Title { get; private set; }
         [Reactive]
@@ -102,29 +112,37 @@ namespace TableTopCrucible.Core.Jobs.Managers
                     logger.LogTrace("updating progress - {0}subs: {1}/{2} ({3}): {4}", progs.Count(), Current, Target, State, Details);
                 });
         }
+
+
     }
 
 
-    class ProgressionManager : DisposableReactiveObjectBase, IProgressionHandler
+    class ProgressionManager : DisposableReactiveObject, IProgressionHandler
     {
-        public ProgressionManager(string title, int target, int weight)
-        {
-            Title = title;
-            Target = target;
-            Weight = weight;
-        }
+
 
         [Reactive]
         public JobState State { get; set; } = JobState.ToDo;
         [Reactive]
         public int Target { get; set; }
-        [Reactive]
-        public int Current { get; set; }
+
+        private int _current = 0;
+        [Reactive] public int Current => _current;
+
         [Reactive]
         public string Title { get; set; }
         [Reactive]
         public string Details { get; set; }
         [Reactive]
         public int Weight { get; set; }
+
+        public ProgressionManager(string title, int target, int weight)
+        {
+            Title = title;
+            Target = target;
+            Weight = weight;
+        }
+        public int Increase()
+            => Interlocked.Increment(ref _current);
     }
 }

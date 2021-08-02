@@ -7,12 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Security.Cryptography;
 
-using TableTopCrucible.Core.Enums;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs;
-using TableTopCrucible.Core.Models.Sources;
+using TableTopCrucible.Core.Jobs.Managers;
 
 namespace TableTopCrucible.Domain.Models.ValueTypes
 {
@@ -55,32 +55,28 @@ namespace TableTopCrucible.Domain.Models.ValueTypes
         /**
          * each thread fires once
          */
-        public static IEnumerable<IProgression> CreateMany<T>(
-            IEnumerable<T> fileModel,
+        public static IEnumerable<IProgressionViewer> CreateMany<T>(
+            T[] fileModel,
             Func<T, string> pathReader,
             Action<T, FileHash> hashWriter,
-            int threadcount,
-            Func<int, string, string, IProgressionController> trackerGenerator)
+            int threadCount,
+            Func<int, string, string, IProgressionHandler> trackerGenerator)
         {
-            using var totalProg = trackerGenerator(fileModel.Count(), "Hashing", $"with {threadcount} threads");
-            using HashAlgorithm hashAlgorithm = SHA512.Create();
-            return fileModel.ToList()
-                .SplitEvenly(threadcount)
-                .Select(group =>
-                {
-                    using var subProg = trackerGenerator(group.Count(), "", "");
+            using var totalProgress = 
+                trackerGenerator(fileModel.Count(), "Hashing", $"with {threadCount} threads");
 
-                    Observable.Start(() =>
-                    {
-                        trackerGenerator.
-                        group.ToList().ForEach(file =>
-                        {
-                            hashWriter(file, Create(pathReader(file)));
-                        });
-                    }, RxApp.TaskpoolScheduler);
-                    return subProg;
-                })
-                .ToArray();
+            using HashAlgorithm hashAlgorithm = SHA512.Create();
+            
+            fileModel
+                .AsParallel()
+                .WithDegreeOfParallelism(threadCount)
+                .ForAll((file) =>
+                {
+                    hashWriter(file, Create(pathReader(file)));
+                    totalProgress.Increase();
+                });
+
+
         }
     }
 }

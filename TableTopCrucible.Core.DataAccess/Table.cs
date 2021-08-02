@@ -56,7 +56,10 @@ namespace TableTopCrucible.Core.DataAccess
 
     internal abstract class Table : ReactiveObject, ITable
     {
-
+        /*
+        TableTopCurcible.Data.Library.ValueTypes.IDs
+        TableTopCrucible.Data.Library.ValueTypes.IDs
+        */
         public abstract TableName Name { get; }
         [Reactive]
         public LibraryDirectoryPath LibraryDirectory { get; protected set; }
