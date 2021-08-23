@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TableTopCrucible.App.Shared\TableTopCrucible.App.Shared.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.WPF.Testing\TableTopCrucible.Core.WPF.Testing.csproj" />
     <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Startup\TableTopCrucible.DomainCore.WPF.Startup.csproj" />
   </ItemGroup>

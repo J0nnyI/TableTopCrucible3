@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+
+using TableTopCrucible.Core.DataAccess.Models;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Data.Library.Models.Values;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 namespace TableTopCrucible.Data.Library.Models.DataSource
 {
-    public struct SourceDirectory
+    public class SourceDirectory : IEntity<SourceDirectoryId>
     {
         public SourceDirectory(DirectoryPath dir)
             : this(SourceDirectoryId.New(),

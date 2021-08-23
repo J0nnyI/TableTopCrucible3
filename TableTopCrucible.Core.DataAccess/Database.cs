@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -38,12 +39,14 @@ namespace TableTopCrucible.Core.DataAccess
         void OpenFile(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel);
         void New(DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel);
         DatabaseState State { get; }
+        IObservable<DatabaseState> StateChanges { get; }
 
     }
     internal class Database : ReactiveObject, IDatabase
     {
-        private ObservableAsPropertyHelper<DatabaseState> _state;
+        private readonly ObservableAsPropertyHelper<DatabaseState> _state;
         public DatabaseState State => _state.Value;
+        public IObservable<DatabaseState> StateChanges { get; }
 
         // set once the library is created and ready to be worked with
         [Reactive]
@@ -54,8 +57,9 @@ namespace TableTopCrucible.Core.DataAccess
 
         public Database()
         {
-            this._state = this.WhenAnyValue(vm => vm.LibraryPath)
-                .Select(dir => dir != null ? DatabaseState.Open : DatabaseState.Closed)
+            this.StateChanges = this.WhenAnyValue(vm => vm.LibraryPath)
+                .Select(dir => dir != null ? DatabaseState.Open : DatabaseState.Closed);
+            this._state = StateChanges
                 .ToProperty(this, nameof(State));
         }
 

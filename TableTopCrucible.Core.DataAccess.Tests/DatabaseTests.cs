@@ -263,6 +263,18 @@ namespace TableTopCrucible.Core.DataAccess.Tests
                 new TestEntity("testValue")
             };
         }
+
+        [Test]
+        public void KeepCacheInstanceBeyondClose()
+        {
+
+        }
+
+        [Test]
+        public void GetCacheInstanceBeforeTableIsOpen()
+        {
+
+        }
         [Test]
         public void DoubleOpenedTest()
         {

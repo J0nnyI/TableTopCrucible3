@@ -15,10 +15,10 @@ using System.Reactive.Linq;
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.WPF.ViewModels;
-using TableTopCrucible.Data.Library.Models.ValueTypes.General;
+using TableTopCrucible.Data.Library.Models.DataSource;
+using TableTopCrucible.Data.Library.Models.Values;
 using TableTopCrucible.Data.Library.Services.Sources;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
-using TableTopCrucible.Data.Models.Sources;
 
 using DirectoryPathVT = TableTopCrucible.Core.ValueTypes.DirectoryPath;
 
@@ -61,7 +61,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
             EditSelector = editSelector;
             _sourceDirectoryService = sourceDirectoryService;
 
-            this.WhenActivated(disposables =>
+            this.WhenActivated((CompositeDisposable disposables)=>
             {
                 EditSelector.SetCommands(
                     revertChanges: ReactiveCommand.Create(

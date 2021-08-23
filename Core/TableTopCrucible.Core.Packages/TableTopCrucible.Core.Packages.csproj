@@ -1,14 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <PackageProjectUrl>https://github.com/J0nnyI/TableTopCrucible3</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/J0nnyI/TableTopCrucible3</RepositoryUrl>
-    <Version>0.0.9</Version>
-    <NeutralLanguage>en</NeutralLanguage>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,10 +34,4 @@
     <PackageReference Include="ValueOf" Version="2.0.21" />
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.4" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Startup\TableTopCrucible.DomainCore.WPF.Startup.csproj" />
-  </ItemGroup>
-
 </Project>

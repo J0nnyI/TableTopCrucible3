@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TableTopCrucible.Starter": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

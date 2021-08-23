@@ -16,13 +16,10 @@ using TableTopCrucible.Core.Jobs.Enums;
 using TableTopCrucible.Core.Jobs.Managers;
 using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Data.Library.DataTransfer.Services;
-using TableTopCrucible.Data.Library.Models.ValueTypes.General;
 using TableTopCrucible.Data.Library.Services.Sources;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
-using TableTopCrucible.Data.Models.Sources;
 
-using Version = TableTopCrucible.Data.Library.Models.ValueTypes.General.Version;
+using Version = TableTopCrucible.Data.Library.Models.Values.Version;
 
 namespace TableTopCrucible.DomainCore.FileIntegration
 {

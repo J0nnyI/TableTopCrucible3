@@ -127,7 +127,11 @@ namespace TableTopCrucible.Core.Jobs.Managers
         public int Target { get; set; }
 
         private int _current = 0;
-        [Reactive] public int Current => _current;
+        [Reactive] public int Current
+        {
+            get => _current;
+            set => _current = value;
+        }
 
         [Reactive]
         public string Title { get; set; }

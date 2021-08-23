@@ -14,19 +14,19 @@ using TableTopCrucible.Data.Library.ValueTypes.IDs;
 
 namespace TableTopCrucible.Data.Library.Services.Sources
 {
-    [Singleton(typeof(ItemService))]
-    public interface IItemService
+    [Singleton(typeof(ItemRepository))]
+    public interface IItemService:ITable<ItemId, Item, ItemDto>
     {
         IObservableCache<Item, ItemId> GetCache();
         void AddOrUpdate(Item item);
         void AddOrUpdate(IEnumerable<Item> items);
     }
-    internal class ItemService : DisposableReactiveObject, IItemService
+    internal class ItemRepository : IItemService
     {
         private readonly IDatabase _database;
         protected ITable<ItemId, Item, ItemDto> Table => _database.GetTable<ItemId, Item, ItemDto>();
         
-        public ItemService(IDatabase database)
+        public ItemRepository(IDatabase database)
         {
             _database = database;
         }
