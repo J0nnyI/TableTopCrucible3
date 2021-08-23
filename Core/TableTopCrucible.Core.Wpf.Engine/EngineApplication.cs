@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+
 using Microsoft.Extensions.Hosting;
+
 using ReactiveUI;
+
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
@@ -13,7 +16,7 @@ namespace TableTopCrucible.Core.Wpf.Engine
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public class EngineApplication : Application
+    public class EngineApplication: Application
     {
         public EngineApplication()
         {
@@ -57,6 +60,7 @@ namespace TableTopCrucible.Core.Wpf.Engine
         protected override void OnStartup(StartupEventArgs e)
         {
             //Locator.Current.GetService<ILauncherService>().OpenLauncher();
+            new Window() { Content = "works" }.Show();
         }
     }
 }

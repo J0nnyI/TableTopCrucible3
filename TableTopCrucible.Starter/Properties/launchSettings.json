@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "TableTopCrucible.Starter": {
+    "Run Application": {
       "commandName": "Project",
       "nativeDebugging": true
     }
