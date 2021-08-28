@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI" Version="14.1.1" />
-    <PackageReference Include="ReactiveUI.Fody" Version="14.1.1" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.43" />
+    <PackageReference Include="ReactiveUI" Version="16.2.1" />
+    <PackageReference Include="ReactiveUI.Fody" Version="16.2.1" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.47" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.1.1" />
   </ItemGroup>
 

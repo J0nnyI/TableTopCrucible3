@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 
@@ -10,6 +11,8 @@ using ReactiveUI;
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
+using TableTopCrucible.Core.Helper;
+using TableTopCtucible.Core.DependencyInjection;
 
 namespace TableTopCrucible.Core.Wpf.Engine
 {
@@ -30,7 +33,7 @@ namespace TableTopCrucible.Core.Wpf.Engine
                     resolver.InitializeReactiveUI();
 
 
-                    //DependencyBuilder.GetServices(services);
+                    DependencyBuilder.GetServices(services);
                 })
                 .ConfigureLogging(loggingBuilder =>
                 {
@@ -45,10 +48,10 @@ namespace TableTopCrucible.Core.Wpf.Engine
                 )
                 .Build();
 
-            //AssemblyHelper
-            //    .GetSolutionAssemblies()
-            //    .ToList()
-            //    .ForEach(Locator.CurrentMutable.RegisterViewsForViewModels);
+            AssemblyHelper
+                .GetSolutionAssemblies()
+                .ToList()
+                .ForEach(Locator.CurrentMutable.RegisterViewsForViewModels);
 
             // https://stackoverflow.com/questions/431940/how-to-set-default-wpf-window-style-in-app-xaml
             FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata
