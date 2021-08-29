@@ -165,7 +165,7 @@ namespace TableTopCrucible.Core.DataAccess.Tests
             const string text = "test";
             var entityIn = new TestEntity(text);
             entityIn.Id.Should().NotBeNull();
-            entityIn.Id.Value.Should().NotBe(default);
+            entityIn.Id.Value.Should().NotBe((Guid)default);
             entityIn.Text.Should().Be(text);
 
             var entity2 = new TestEntity(entityIn.Id, text);

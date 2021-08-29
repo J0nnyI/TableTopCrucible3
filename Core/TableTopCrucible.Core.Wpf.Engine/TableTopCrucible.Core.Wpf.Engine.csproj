@@ -6,7 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="WindowViewModels\" />
+    <Folder Include="ViewModels\Controls\" />
+    <Folder Include="ViewModels\Pages\" />
+    <Folder Include="Views\Controls\" />
+    <Folder Include="Views\Pages\" />
   </ItemGroup>
 
   <ItemGroup>

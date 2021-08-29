@@ -1,0 +1,16 @@
+﻿<rx:ReactiveWindow x:Class="TableTopCrucible.Core.Wpf.Engine.Views.Windows.MainWindow"
+        x:ClassModifier="internal"
+        x:TypeArguments="wvm:MainWindowVm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:rx="http://reactiveui.net"
+        xmlns:wvm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.ViewModels.Windows"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        Style="{StaticResource DefaultWindow}">
+    <Grid>
+        <TextBox Text="{Binding TestValue}"></TextBox>
+    </Grid>
+</rx:ReactiveWindow>

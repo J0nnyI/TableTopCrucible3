@@ -12,6 +12,7 @@ using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.Wpf.Engine.Views.Windows;
 using TableTopCtucible.Core.DependencyInjection;
 
 namespace TableTopCrucible.Core.Wpf.Engine
@@ -62,8 +63,7 @@ namespace TableTopCrucible.Core.Wpf.Engine
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            //Locator.Current.GetService<ILauncherService>().OpenLauncher();
-            new Window() { Content = "works" }.Show();
+            Locator.Current.GetService<IMainWindowStarter>().Show();
         }
     }
 }
