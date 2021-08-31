@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Run Application": {
-      "commandName": "Project",
-      "nativeDebugging": true
+      "commandName": "Project"
     }
   }
 }

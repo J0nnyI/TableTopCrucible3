@@ -32,8 +32,8 @@ namespace TableTopCrucible.Core.Wpf.Engine
         {
             initializeHost();
             initializeWpf();
-            Application.Current.Startup += 
-                (_, _) => Locator.Current!.GetService<IMainWindowStarter>()!.Show();
+            //Application.Current.Startup += 
+            //    (_, _) => Locator.Current!.GetService<IMainWindowStarter>()!.Show();
         }
 
         private static void initializeHost()

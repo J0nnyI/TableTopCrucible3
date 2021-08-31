@@ -4,12 +4,26 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <AssemblyName>TableTopCrucible</AssemblyName>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <StartupObject>TableTopCrucible.Starter.App</StartupObject>
+    <Version>0.0.10</Version>
+    <PackageProjectUrl>https://github.com/J0nnyI/TableTopCrucible3</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/J0nnyI/TableTopCrucible3</RepositoryUrl>
+    <Authors>Marcel Rehkemper</Authors>
+    <Company>CrucibleSoftware</Company>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
-    <Page Include="App.xaml" />
+    <PackageReference Include="DynamicData" Version="7.3.1" />
+    <PackageReference Include="DynamicData.ReactiveUI" Version="6.11.0.2613" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.3" />
+    <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.17.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
+    <PackageReference Include="Ookii.Dialogs.Wpf" Version="3.1.0" />
+    <PackageReference Include="ReactiveUI.WPF" Version="16.2.1" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="VirtualizingWrapPanel" Version="1.5.4" />
   </ItemGroup>
 
   <ItemGroup>

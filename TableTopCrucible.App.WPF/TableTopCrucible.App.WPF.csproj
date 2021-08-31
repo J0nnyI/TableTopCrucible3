@@ -9,6 +9,7 @@
     <Version>0.0.9</Version>
     <NeutralLanguage>en</NeutralLanguage>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
 
   <ItemGroup>
