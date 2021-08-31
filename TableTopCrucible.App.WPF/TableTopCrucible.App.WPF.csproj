@@ -44,7 +44,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.Startup\TableTopCrucible.DomainCore.WPF.Startup.csproj" />
   </ItemGroup>
 
 </Project>

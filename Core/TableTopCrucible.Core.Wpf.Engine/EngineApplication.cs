@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
+using MaterialDesignColors;
+
+using MaterialDesignThemes.Wpf;
+
 using Microsoft.Extensions.Hosting;
 
 using ReactiveUI;
@@ -11,8 +15,10 @@ using ReactiveUI;
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Engine.Views.Windows;
+
 using TableTopCtucible.Core.DependencyInjection;
 
 namespace TableTopCrucible.Core.Wpf.Engine
@@ -20,50 +26,72 @@ namespace TableTopCrucible.Core.Wpf.Engine
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public class EngineApplication: Application
+    public class EngineApplication : Application
     {
         public EngineApplication()
         {
-            var host = Host
-                .CreateDefaultBuilder()
-                .ConfigureServices(services =>
-                {
-                    services.UseMicrosoftDependencyResolver();
-                    var resolver = Locator.CurrentMutable;
-                    resolver.InitializeSplat();
-                    resolver.InitializeReactiveUI();
+            initializeWpf();
+            initializeHost();
+        }
+
+        private void initializeHost()
+        {
+            Host
+            .CreateDefaultBuilder()
+            .ConfigureServices(services =>
+            {
+                services.UseMicrosoftDependencyResolver();
+                var resolver = Locator.CurrentMutable;
+                resolver.InitializeSplat();
+                resolver.InitializeReactiveUI();
 
 
-                    DependencyBuilder.GetServices(services);
-                })
-                .ConfigureLogging(loggingBuilder =>
-                {
-                    loggingBuilder.AddSplat();
-                })
-                .UseEnvironment(
+                DependencyBuilder.GetServices(services);
+            })
+            .ConfigureLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddSplat();
+            })
+            .UseEnvironment(
 #if DEBUG
-                    Environments.Development
+                Environments.Development
 #else
-                Environments.Production
+            Environments.Production
 #endif
-                )
-                .Build();
+            )
+            .Build();
+        }
 
+        private void initializeWpf()
+        {
             AssemblyHelper
                 .GetSolutionAssemblies()
                 .ToList()
                 .ForEach(Locator.CurrentMutable.RegisterViewsForViewModels);
 
-            // https://stackoverflow.com/questions/431940/how-to-set-default-wpf-window-style-in-app-xaml
-            FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata
-            {
-                DefaultValue = Application.Current.FindResource(typeof(Window))
-            });
+            //this.Resources.Add(Guid.NewGuid(), new ResourceDictionary()
+            //{
+            //    MergedDictionaries =
+            //    {
+            //        new BundledTheme()
+            //        {
+            //            BaseTheme = BaseTheme.Dark,
+            //            PrimaryColor = PrimaryColor.Red,
+            //            SecondaryColor = SecondaryColor.Amber,
+            //            ColorAdjustment = new ColorAdjustment()
+            //        },
+            //        new ResourceDictionary{
+            //            Source = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml", UriKind.RelativeOrAbsolute)
+            //        },
+            //        new ResourceDictionary{
+            //            Source = new Uri("pack://application:,,,/TableTopCrucible.Core.Wpf.Engine;component/Themes/Dark.xaml" , UriKind.RelativeOrAbsolute)
+            //        }
+            //    }
+            //});
         }
-
         protected override void OnStartup(StartupEventArgs e)
         {
-            Locator.Current.GetService<IMainWindowStarter>().Show();
+            Locator.Current!.GetService<IMainWindowStarter>()!.Show();
         }
     }
 }

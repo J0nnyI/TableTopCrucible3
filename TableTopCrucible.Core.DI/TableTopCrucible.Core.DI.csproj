@@ -19,8 +19,4 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Core\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
-  </ItemGroup>
-
 </Project>

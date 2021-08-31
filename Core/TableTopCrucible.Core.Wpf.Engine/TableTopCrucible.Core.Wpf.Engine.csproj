@@ -16,7 +16,21 @@
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.Wpf.Styles\TableTopCrucible.Core.Wpf.Styles.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Themes\Dark.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\Dark\DefaultStyles.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\Dark\NamedStyles.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

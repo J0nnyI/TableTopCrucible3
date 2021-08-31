@@ -40,4 +40,8 @@
     <Style x:Key="secondaryButton"
            TargetType="Button"
            BasedOn="{StaticResource MaterialDesignOutlinedButton}"/>
+
+    <Style x:Key="DefaultWindow"
+           TargetType="Window"
+           BasedOn="{StaticResource MaterialDesignWindow}"/>
 </ResourceDictionary>
