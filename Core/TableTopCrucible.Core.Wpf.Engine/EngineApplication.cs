@@ -68,26 +68,6 @@ namespace TableTopCrucible.Core.Wpf.Engine
                 .GetSolutionAssemblies()
                 .ToList()
                 .ForEach(Locator.CurrentMutable.RegisterViewsForViewModels);
-
-            //this.Resources.Add(Guid.NewGuid(), new ResourceDictionary()
-            //{
-            //    MergedDictionaries =
-            //    {
-            //        new BundledTheme()
-            //        {
-            //            BaseTheme = BaseTheme.Dark,
-            //            PrimaryColor = PrimaryColor.Red,
-            //            SecondaryColor = SecondaryColor.Amber,
-            //            ColorAdjustment = new ColorAdjustment()
-            //        },
-            //        new ResourceDictionary{
-            //            Source = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml", UriKind.RelativeOrAbsolute)
-            //        },
-            //        new ResourceDictionary{
-            //            Source = new Uri("pack://application:,,,/TableTopCrucible.Core.Wpf.Engine;component/Themes/Dark.xaml" , UriKind.RelativeOrAbsolute)
-            //        }
-            //    }
-            //});
         }
         protected override void OnStartup(StartupEventArgs e)
         {

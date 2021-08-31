@@ -4,39 +4,15 @@
                             xmlns:local="clr-namespace:TableTopCrucible.App.WPF"
                             xmlns:engine="clr-namespace:TableTopCrucible.Core.Wpf.Engine;assembly=TableTopCrucible.Core.Wpf.Engine"
                             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes">
-
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <md:BundledTheme BaseTheme="Dark" PrimaryColor="Red" SecondaryColor="Amber"
-                                             ColorAdjustment="{md:ColorAdjustment}" />
-
-
-                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />-->
-                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />-->
-
+                <md:BundledTheme BaseTheme="Dark" 
+                                 PrimaryColor="Red" 
+                                 SecondaryColor="Amber"
+                                 ColorAdjustment="{md:ColorAdjustment}" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/TableTopCrucible.Core.Wpf.Engine;component/Themes/Dark.xaml" />
-
-                <!--<ResourceDictionary Source="pack://application:,,,/ShowMeTheXAML.AvalonEdit;component/Themes/xamldisplayer.xaml" />-->
-                <!--material design-->
-                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />-->
-                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />-->
-                <!--<materialDesign:CustomColorTheme BaseTheme="Dark" PrimaryColor="Aqua" SecondaryColor="Beige"/>-->
-                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Light.xaml" />-->
-                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />-->
-
-
-                <!-- internal libs -->
-                <!--<ResourceDictionary>
-                    <Style TargetType="local:MainWindow">
-                        <Setter Property="Background"
-                                Value="Blue"/>
-                    </Style>
-                </ResourceDictionary>-->
-
-
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

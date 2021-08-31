@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.Database\TableTopCrucible.Core.Database.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
+  </ItemGroup>
+
+</Project>
