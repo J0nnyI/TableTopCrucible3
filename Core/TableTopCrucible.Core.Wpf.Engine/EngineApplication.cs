@@ -30,8 +30,8 @@ namespace TableTopCrucible.Core.Wpf.Engine
     {
         public EngineApplication()
         {
-            initializeWpf();
             initializeHost();
+            initializeWpf();
         }
 
         private void initializeHost()

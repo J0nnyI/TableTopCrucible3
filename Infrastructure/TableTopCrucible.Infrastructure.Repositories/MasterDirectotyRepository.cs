@@ -11,17 +11,17 @@ using TableTopCtucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Infrastructure.Repositories
 {
-    [Singleton(typeof(MasterDirectoryListRepository))]
-    public interface IMasterDirectoryListRepository :
+    [Singleton(typeof(MasterDirectoryRepository))]
+    public interface IMasterDirectoryRepository :
         ISourceRepository<MasterDirectoryId, MasterDirectory, MasterDirectoryDto>
     {
         IConnectableCache<MasterDirectory, MasterDirectoryId> Data { get; }
     }
-    internal class MasterDirectoryListRepository :
+    internal class MasterDirectoryRepository :
         SourceRepositoryBase<MasterDirectoryId, MasterDirectory, MasterDirectoryDto>,
-        IMasterDirectoryListRepository
+        IMasterDirectoryRepository
     {
-        public MasterDirectoryListRepository(IDatabase database) : base(database)
+        public MasterDirectoryRepository(IDatabase database) : base(database)
         {
         }
     }

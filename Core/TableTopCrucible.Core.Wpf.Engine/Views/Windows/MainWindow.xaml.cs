@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Reactive.Disposables;
+using System.Windows;
 using ReactiveUI;
 using Splat;
 using TableTopCrucible.Core.Wpf.Engine.ViewModels.Windows;
@@ -16,13 +17,27 @@ namespace TableTopCrucible.Core.Wpf.Engine.Views.Windows
     /// </summary>
     internal partial class MainWindow :
         ReactiveWindow<MainWindowVm>,
-        IMainWindowStarter,
-        IViewFor<MainWindowVm>
+        IMainWindowStarter
     {
         public MainWindow()
         {
-            this.DataContext = Locator.Current.GetService<IMainWindow>();
-            InitializeComponent();
+            this.InitializeComponent();
+            this.ViewModel = (MainWindowVm)Locator.Current.GetService<IMainWindow>();
+            this.WhenActivated((CompositeDisposable disposables) =>
+            {
+                this.OneWayBind(
+                    ViewModel, 
+                    vm => vm.SettingsPage, 
+                    v => v.MainContainer.ViewModel)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(
+                        ViewModel,
+                        vm => vm.SettingsPage,
+                        v => v.TestLabel.Content)
+                    .DisposeWith(disposables);
+            });
         }
+
     }
 }

@@ -16,5 +16,10 @@ namespace TableTopCrucible.Core.Database.Models
         where Tid : IEntityId
     {
         public Tid Id { get; }
+
+        public EntityBase(Tid id)
+        {
+            this.Id = id;
+        }
     }
 }

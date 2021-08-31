@@ -1,12 +1,12 @@
-<UserControl x:Class="TableTopCrucible.Domain.Settings.Wpf.UserControl1"
+﻿<UserControl x:Class="TableTopCrucible.Domain.Settings.Wpf.Pages.MasterDirectorySettingsPv"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:TableTopCrucible.Domain.Settings.Wpf"
+             xmlns:local="clr-namespace:TableTopCrucible.Domain.Settings.Wpf.Pages"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+            <Label> master dir settings page</Label>
     </Grid>
 </UserControl>

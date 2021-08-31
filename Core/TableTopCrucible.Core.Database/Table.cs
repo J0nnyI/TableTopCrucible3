@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive;
 using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using AutoMapper;
+
 using DynamicData;
+using DynamicData.Kernel;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using Splat;
+
 using TableTopCrucible.Core.Database.Exceptions;
 using TableTopCrucible.Core.Database.Models;
 using TableTopCrucible.Core.Database.ValueTypes;
@@ -25,7 +31,7 @@ namespace TableTopCrucible.Core.Database
         TableName Name { get; }
         DatabaseState State { get; }
         DateTime? LastSave { get; }
-        DateTime? LastChange { get; }
+        IObservable<Optional<DateTime>> LastUpdateChanges { get; }
         LibraryDirectoryPath LibraryDirectory { get; internal set; }
 
         void Save(TableSaveId saveId);
@@ -46,16 +52,14 @@ namespace TableTopCrucible.Core.Database
 
         IObservable<Tentity> WatchValue(Tid entityId);
         IObservableCache<Tentity, Tid> Data { get; }
+        public void Remove(Tid id);
     }
 
 
     internal abstract class Table : ReactiveObject, ITable
     {
-        /*
-        TableTopCurcible.Data.Library.ValueTypes.IDs
-        TableTopCrucible.Data.Library.ValueTypes.IDs
-        */
         public abstract TableName Name { get; }
+        protected abstract IObservable<Unit> DataChanges { get; }
         [Reactive]
         public LibraryDirectoryPath LibraryDirectory { get; protected set; }
         LibraryDirectoryPath ITable.LibraryDirectory
@@ -67,14 +71,18 @@ namespace TableTopCrucible.Core.Database
         public DatabaseState State { get; protected set; }
         [Reactive]
         public DateTime? LastSave { get; protected set; }
-        [Reactive]
-        public DateTime? LastChange { get; protected set; }
+        public IObservable<Optional<DateTime>> LastUpdateChanges { get; }
         protected readonly IMapper mapper;
 
         protected Table(LibraryDirectoryPath libraryDirectory)
         {
             mapper = Locator.Current.GetService<IMapper>();
             this.LibraryDirectory = libraryDirectory;
+
+            this.LastUpdateChanges = this.DataChanges
+                .Select(_ => Optional.Some(DateTime.Now))
+                .StartWith(Optional.None<DateTime>())
+                .Replay(1);
         }
 
         public abstract void RollBackSave(TableSaveId saveId);
@@ -86,6 +94,7 @@ namespace TableTopCrucible.Core.Database
             => Close();
 
         public abstract int Count { get; }
+
     }
 
 
@@ -100,24 +109,24 @@ namespace TableTopCrucible.Core.Database
         public override TableName Name
             => TableName.FromType<Tid, Tentity>();
 
+        protected override IObservable<Unit> DataChanges => _data.Connect().Select(_ => Unit.Default);
+
         public Table(LibraryDirectoryPath libraryDirectory) : base(libraryDirectory)
         {
             if (LibraryDirectory is null)
                 throw new ArgumentNullException(nameof(LibraryDirectory));
+
         }
 
         public void AddOrUpdate(Tentity entity)
-        {
-            this._data.AddOrUpdate(entity);
-            LastChange = DateTime.Now;
-        }
+            => this._data.AddOrUpdate(entity);
         public void AddOrUpdate(IEnumerable<Tentity> entity)
-        {
-            this._data.AddOrUpdate(entity);
-            LastChange = DateTime.Now;
-        }
+            => this._data.AddOrUpdate(entity);
 
         public IObservableCache<Tentity, Tid> Data => _data.AsObservableCache();
+
+        public void Remove(Tid id)
+            => _data.Remove(id);
 
         public override int Count => _data.Count;
 

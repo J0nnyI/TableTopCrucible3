@@ -9,8 +9,10 @@
         xmlns:wvm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.ViewModels.Windows"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        Style="{StaticResource DefaultWindow}">
-    <Grid>
-        <TextBox Text="{Binding TestValue}"></TextBox>
-    </Grid>
+        Style="{StaticResource DefaultWindow}"
+        d:DataContext="{d:DesignInstance wvm:MainWindowVm}">
+    <StackPanel>
+        <Label x:Name="TestLabel"></Label>
+        <rx:ViewModelViewHost x:Name="MainContainer"></rx:ViewModelViewHost>
+    </StackPanel>
 </rx:ReactiveWindow>
