@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.WPF.Packages.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
+  </ItemGroup>
+
+</Project>

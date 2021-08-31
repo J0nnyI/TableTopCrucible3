@@ -4,10 +4,9 @@ using DynamicData;
 
 using TableTopCrucible.Core.Database;
 using TableTopCrucible.Core.Database.Models;
-using TableTopCrucible.Infrastructure.Repositories.Dtos;
-using TableTopCrucible.Infrastructure.Repositories.Entities;
-using TableTopCrucible.Infrastructure.Repositories.EntityIds;
-
+using TableTopCrucible.Infrastructure.Repositories.Models.Dtos;
+using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
+using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
 using TableTopCtucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Infrastructure.Repositories
