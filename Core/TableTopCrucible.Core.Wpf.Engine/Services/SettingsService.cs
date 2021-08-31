@@ -15,19 +15,17 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
     [Singleton(typeof(SettingsService))]
     public interface ISettingsService
     {
-        void RegisterPage(ISettingsCategoryPage categoryPage);
+         IObservableCache<ISettingsCategoryPage, Name> Pages { get; }
     }
     internal class SettingsService:ISettingsService
     {
-        private SourceCache<ISettingsCategoryPage, Name> pages = new SourceCache<ISettingsCategoryPage, Name>(page => page.Title);
-        public void RegisterPage(ISettingsCategoryPage categoryPage)
-        {
-            throw new NotImplementedException();
-        }
+        private SourceCache<ISettingsCategoryPage, Name> _pages = new SourceCache<ISettingsCategoryPage, Name>(page => page.Title);
+        public IObservableCache<ISettingsCategoryPage, Name> Pages { get; }
+
 
         public SettingsService()
         {
-            this.pages
+            this._pages
                 .AddOrUpdate(
                     AssemblyHelper.GetSolutionTypes()
                         !.Where(t => t.IsAssignableFrom(typeof(ISettingsCategoryPage)))

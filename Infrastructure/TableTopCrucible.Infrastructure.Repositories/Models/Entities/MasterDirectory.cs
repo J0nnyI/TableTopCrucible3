@@ -12,17 +12,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Entities
 {
     public class MasterDirectory : EntityBase<MasterDirectoryId>
     {
-        [NotNull] public Name Name { get;  }
-        [NotNull] public MasterDirectoryPath Path { get; }
-
-        public MasterDirectory(
-            [NotNull] MasterDirectoryId id, 
-            [NotNull] Name name, 
-            [NotNull] MasterDirectoryPath path
-            ) : base(id)
-        {
-            Name = name;
-            Path = path;
-        }
+        [NotNull] public Name Name { get; init; }
+        [NotNull] public MasterDirectoryPath Path { get; init; }
+        
     }
 }
