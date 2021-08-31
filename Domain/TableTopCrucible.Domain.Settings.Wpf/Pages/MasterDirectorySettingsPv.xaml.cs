@@ -18,24 +18,11 @@ namespace TableTopCrucible.Domain.Settings.Wpf.Pages
     /// <summary>
     /// Interaction logic for MasterDirectorySettingsPv.xaml
     /// </summary>
-    public partial class MasterDirectorySettingsPv : UserControl, IViewFor<MasterDirectorySettingsCategoryPvm>
+    public partial class MasterDirectorySettingsPv : ReactiveUserControl<MasterDirectorySettingsCategoryPvm>
     {
         public MasterDirectorySettingsPv()
         {
             InitializeComponent();
         }
-
-        object? IViewFor.ViewModel
-        {
-            get => DataContext;
-            set => DataContext = value;
-        }
-
-        public MasterDirectorySettingsCategoryPvm ViewModel
-        {
-            get => DataContext as MasterDirectorySettingsCategoryPvm;
-            set => DataContext = value;
-        }
-
     }
 }

@@ -11,7 +11,7 @@ using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 using TableTopCtucible.Core.DependencyInjection.Attributes;
 
-using NameVt = TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes.Name;
+
 namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
 {
     [Transient(typeof(MasterDirectorySettingsCategoryPvm))]
@@ -19,17 +19,14 @@ namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
     {
 
     }
-    public class MasterDirectorySettingsCategoryPvm : ViewModelViewHost, IMasterDirectorySettingsCategoryPage
+    public class MasterDirectorySettingsCategoryPvm : IActivatableViewModel, IMasterDirectorySettingsCategoryPage
     {
-        public NameVt Title
-        {
-            get =>NameVt.From(Name);
-            private set => Name = value.Value;
-        }
+        public Name Title => Name.From("File Directories");
 
         public MasterDirectorySettingsCategoryPvm()
         {
-            this.Title = NameVt.From("Master Directories");
         }
+
+        public ViewModelActivator Activator { get; } = new ViewModelActivator();
     }
 }

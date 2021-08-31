@@ -1,11 +1,10 @@
 ﻿using System.Reactive.Disposables;
-using System.Windows;
 using ReactiveUI;
 using Splat;
-using TableTopCrucible.Core.Wpf.Engine.ViewModels.Windows;
+using TableTopCrucible.Core.Wpf.Engine.Windows.ViewModels;
 using TableTopCtucible.Core.DependencyInjection.Attributes;
 
-namespace TableTopCrucible.Core.Wpf.Engine.Views.Windows
+namespace TableTopCrucible.Core.Wpf.Engine.Windows.Views
 {
     [Singleton(typeof(MainWindow))]
     internal interface IMainWindowStarter
@@ -29,12 +28,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.Views.Windows
                     ViewModel, 
                     vm => vm.SettingsPage, 
                     v => v.MainContainer.ViewModel)
-                    .DisposeWith(disposables);
-
-                this.OneWayBind(
-                        ViewModel,
-                        vm => vm.SettingsPage,
-                        v => v.TestLabel.Content)
                     .DisposeWith(disposables);
             });
         }

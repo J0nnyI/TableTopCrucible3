@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive.Disposables;
-using System.Text;
 using DynamicData;
 using DynamicData.Binding;
 using ReactiveUI;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.Services;
-
 using TableTopCtucible.Core.DependencyInjection.Attributes;
 
-namespace TableTopCrucible.Core.Wpf.Engine.ViewModels.Pages
+namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
 {
     [Singleton(typeof(SettingsPvm))]
     public interface ISettingsPage
@@ -25,7 +22,12 @@ namespace TableTopCrucible.Core.Wpf.Engine.ViewModels.Pages
         {
             this.WhenActivated((CompositeDisposable disposables) =>
             {
-                settingsService.Pages.Connect().Bind(Pages).Subscribe();
+                settingsService
+                    .Pages
+                    .Connect()
+                    .Bind(Pages)
+                    .Subscribe()
+                    .DisposeWith(disposables);
             });
         }
 

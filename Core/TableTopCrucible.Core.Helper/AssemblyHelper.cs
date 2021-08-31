@@ -11,17 +11,18 @@ namespace TableTopCrucible.Core.Helper
     public static class AssemblyHelper
     {
         // must not use System.IO.Abstractions since the DI builder is not yet done
-        public static IEnumerable<Assembly> GetSolutionAssemblies()
+
+        public static Lazy<IEnumerable<Assembly>> SolutionAssemblies = new Lazy<IEnumerable<Assembly>>(() =>
         {
             return Directory
-                .GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
+                .GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories)
                 .Where(file => Path.GetFileName(file).Contains("TableTopCrucible"))
                 .Select(x => Assembly.Load(AssemblyName.GetAssemblyName(x)))
                 .ToArray();
-        }
+        }, true);
 
         public static IEnumerable<Type> GetSolutionTypes()
-            => GetSolutionAssemblies().SelectMany(a => a.GetTypes());
+            => SolutionAssemblies.Value.SelectMany(a => a.GetTypes());
 
         public static IEnumerable<Type> GetSolutionTypes(Type baseType)
             => GetSolutionTypes().Where(t => t.IsAssignableFrom(baseType));

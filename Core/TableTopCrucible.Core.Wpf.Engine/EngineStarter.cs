@@ -17,7 +17,7 @@ using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
 
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.Wpf.Engine.Views.Windows;
+using TableTopCrucible.Core.Wpf.Engine.Windows.Views;
 
 using TableTopCtucible.Core.DependencyInjection;
 
@@ -26,15 +26,17 @@ namespace TableTopCrucible.Core.Wpf.Engine
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public class EngineApplication : Application
+    public static class EngineStarter
     {
-        public EngineApplication()
+        public static void InitializeEngine()
         {
             initializeHost();
             initializeWpf();
+            Application.Current.Startup += 
+                (_, _) => Locator.Current!.GetService<IMainWindowStarter>()!.Show();
         }
 
-        private void initializeHost()
+        private static void initializeHost()
         {
             Host
             .CreateDefaultBuilder()
@@ -62,16 +64,12 @@ namespace TableTopCrucible.Core.Wpf.Engine
             .Build();
         }
 
-        private void initializeWpf()
+        private static void initializeWpf()
         {
             AssemblyHelper
-                .GetSolutionAssemblies()
+                .SolutionAssemblies.Value
                 .ToList()
                 .ForEach(Locator.CurrentMutable.RegisterViewsForViewModels);
-        }
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            Locator.Current!.GetService<IMainWindowStarter>()!.Show();
         }
     }
 }

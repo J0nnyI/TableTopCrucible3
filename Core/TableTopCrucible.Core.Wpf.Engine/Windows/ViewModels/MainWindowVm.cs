@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ReactiveUI;
-using TableTopCrucible.Core.Wpf.Engine.Models;
-using TableTopCrucible.Core.Wpf.Engine.ViewModels.Pages;
+﻿using ReactiveUI;
+using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
 using TableTopCtucible.Core.DependencyInjection.Attributes;
 
-namespace TableTopCrucible.Core.Wpf.Engine.ViewModels.Windows
+namespace TableTopCrucible.Core.Wpf.Engine.Windows.ViewModels
 {
     [Singleton(typeof(MainWindowVm))]
     public interface IMainWindow
