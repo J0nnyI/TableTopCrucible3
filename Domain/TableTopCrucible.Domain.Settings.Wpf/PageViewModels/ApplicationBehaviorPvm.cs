@@ -8,6 +8,7 @@ using ReactiveUI;
 
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.Services;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 using TableTopCtucible.Core.DependencyInjection.Attributes;
@@ -20,5 +21,6 @@ namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
     {
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
         public Name Title => Name.From("Application Behavior");
+        public SortingOrder Position => SortingOrder.From(2);
     }
 }

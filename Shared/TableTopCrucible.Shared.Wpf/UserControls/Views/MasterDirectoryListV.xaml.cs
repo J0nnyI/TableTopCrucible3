@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,16 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ReactiveUI;
-using TableTopCrucible.Domain.Settings.Wpf.PageViewModels;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
-namespace TableTopCrucible.Domain.Settings.Wpf.Pages
+namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 {
     /// <summary>
-    /// Interaction logic for MasterDirectorySettingsPv.xaml
+    /// Interaction logic for MasterDirectoryListV.xaml
     /// </summary>
-    public partial class MasterDirectorySettingsPv : ReactiveUserControl<MasterDirectorySettingsCategoryPvm>
+    public partial class MasterDirectoryListV : ReactiveUserControl<MasterDirectoryListVm>
     {
-        public MasterDirectorySettingsPv()
+        public MasterDirectoryListV()
         {
             InitializeComponent();
         }

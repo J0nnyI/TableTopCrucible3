@@ -50,6 +50,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
                                         it.HasCustomAttribute<SingletonAttribute>()
                                         || it.HasCustomAttribute<TransientAttribute>()
                                         || it.HasCustomAttribute<ScopedAttribute>())))
+                        !.OrderBy(vm=>vm.Position)
                         !.ToArray()
                 );
         }

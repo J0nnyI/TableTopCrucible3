@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Wpf.Engine\TableTopCrucible.Core.Wpf.Engine.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.WPF.Packages.csproj" />
+    <ProjectReference Include="..\..\Shared\TableTopCrucible.Shared.Wpf\TableTopCrucible.Shared.Wpf.csproj" />
   </ItemGroup>
 
   <ItemGroup>
