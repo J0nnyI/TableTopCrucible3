@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
 
 using DynamicData;
+using Microsoft.AspNetCore.Components.Routing;
+using ReactiveUI;
 
 using Splat;
 
@@ -22,27 +25,34 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
     {
         IObservableCache<ISettingsCategoryPage, Name> Pages { get; }
     }
+
     internal class SettingsService : ISettingsService
     {
-        private SourceCache<ISettingsCategoryPage, Name> _pages = new SourceCache<ISettingsCategoryPage, Name>(page => page.Title);
+        private readonly SourceCache<ISettingsCategoryPage, Name> _pages = new(page => page.Title);
         public IObservableCache<ISettingsCategoryPage, Name> Pages => _pages;
 
 
         public SettingsService()
         {
-            this._pages
+            _initPages();
+        }
+
+        private void _initPages()
+        {
+            _pages
                 .AddOrUpdate(
                     AssemblyHelper.GetSolutionTypes()
                         !.Where(t => t.IsAssignableTo(typeof(ISettingsCategoryPage)) && t.IsClass)
                         !.Select(t => (ISettingsCategoryPage)
                             Locator.Current.GetService(
                                 t.GetInterfaces()
-                                    .FirstOrDefault(it =>// get the actual type which we can use to inject the instance
+                                    .FirstOrDefault(it => // get the actual type which we can use to inject the instance
                                         it.HasCustomAttribute<SingletonAttribute>()
                                         || it.HasCustomAttribute<TransientAttribute>()
                                         || it.HasCustomAttribute<ScopedAttribute>())))
                         !.ToArray()
                 );
         }
+
     }
 }

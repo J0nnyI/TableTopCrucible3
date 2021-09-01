@@ -22,11 +22,7 @@ namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
     public class MasterDirectorySettingsCategoryPvm : IActivatableViewModel, IMasterDirectorySettingsCategoryPage
     {
         public Name Title => Name.From("File Directories");
-
-        public MasterDirectorySettingsCategoryPvm()
-        {
-        }
-
+        
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
     }
 }
