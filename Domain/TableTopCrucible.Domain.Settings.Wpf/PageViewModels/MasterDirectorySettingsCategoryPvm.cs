@@ -5,7 +5,7 @@ using System.Text;
 using AutoMapper.Configuration;
 
 using ReactiveUI;
-
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;

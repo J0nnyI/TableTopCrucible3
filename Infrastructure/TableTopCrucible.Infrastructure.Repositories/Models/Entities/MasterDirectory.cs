@@ -5,6 +5,7 @@ using DynamicData.Kernel;
 
 using TableTopCrucible.Core.Database.Models;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 

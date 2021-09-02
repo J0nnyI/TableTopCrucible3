@@ -17,7 +17,6 @@ using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
 
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.Wpf.Engine.Windows.Views;
 
 using TableTopCtucible.Core.DependencyInjection;
 

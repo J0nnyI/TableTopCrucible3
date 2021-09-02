@@ -13,9 +13,8 @@ using ReactiveUI;
 using Splat;
 
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
-using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
-
 using TableTopCtucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Services

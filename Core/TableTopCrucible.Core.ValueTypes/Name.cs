@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ValueOf;
 
-using ValueOf;
-
-namespace TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes
+namespace TableTopCrucible.Core.ValueTypes
 {
     public class Name : ValueOf<string, Name>
     {

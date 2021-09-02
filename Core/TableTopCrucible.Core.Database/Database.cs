@@ -2,11 +2,14 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reactive.Linq;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.Database.Exceptions;
 using TableTopCrucible.Core.Database.Models;
 using TableTopCrucible.Core.Database.ValueTypes;
+
 using TableTopCtucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Core.Database
@@ -51,7 +54,7 @@ namespace TableTopCrucible.Core.Database
         internal LibraryDirectoryPath LibraryPath { get; private set; }
         [Reactive]
         internal LibraryFilePath CurrentFile { get; private set; }
-        internal ConcurrentDictionary<TableName, ITable> tables { get; } = new ConcurrentDictionary<TableName, ITable>();
+        internal ConcurrentDictionary<TableName, ITable> tables { get; } = new();
 
         public Database()
         {
@@ -59,6 +62,8 @@ namespace TableTopCrucible.Core.Database
                 .Select(dir => dir != null ? DatabaseState.Open : DatabaseState.Closed);
             this._state = StateChanges
                 .ToProperty(this, nameof(State));
+
+            this.New(DatabaseInitErrorBehavior.Override);
         }
 
         public void Close(bool autoSave = true)
@@ -77,8 +82,6 @@ namespace TableTopCrucible.Core.Database
             where Tentity : IEntity<Tid>
             where Tdto : IEntityDto<Tid, Tentity>
         {
-            if (State == DatabaseState.Closed)
-                throw new DatabaseClosedException();
             var name = TableName.FromType<Tid, Tentity>();
             tables.TryAdd(name, new Table<Tid, Tentity, Tdto>(LibraryPath));
             return tables[name] as ITable<Tid, Tentity, Tdto>;
@@ -101,10 +104,10 @@ namespace TableTopCrucible.Core.Database
         {
             if (State == DatabaseState.Open)
                 throw new DatabaseAlreadyOpenedException();
-            
-            var dir = file != null
-                ? file.GetWorkingDirectory()
-                : LibraryDirectoryPath.GetTemporaryPath();
+
+            var dir = file == null
+                ? LibraryDirectoryPath.GetTemporaryPath()
+                : file.GetWorkingDirectory();
             CurrentFile = file;
             if (dir.Exists())
             {
@@ -113,7 +116,12 @@ namespace TableTopCrucible.Core.Database
                     case DatabaseInitErrorBehavior.Cancel:
                         throw new OldDatabaseVersionFoundException();
                     case DatabaseInitErrorBehavior.Override:
-                        file.UnpackLibrary(true);
+                        if (file == null)
+                        {
+                            dir.Clear();
+                        }
+                        else
+                            file.UnpackLibrary(true);
                         break;
                     case DatabaseInitErrorBehavior.Restore:
                         break;
@@ -151,7 +159,7 @@ namespace TableTopCrucible.Core.Database
             var oldDir = this.LibraryPath;
             oldDir.Rename(newDir);
             this.LibraryPath = newDir;
-            foreach (var table in this.tables.Select(kv=>kv.Value))
+            foreach (var table in this.tables.Select(kv => kv.Value))
                 table.LibraryDirectory = newDir;
             Save();
         }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using ReactiveUI;
-
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;

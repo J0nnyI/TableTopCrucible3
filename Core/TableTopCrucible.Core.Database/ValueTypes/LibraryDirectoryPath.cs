@@ -20,5 +20,13 @@ namespace TableTopCrucible.Core.Database.ValueTypes
                     DirectoryPath.AppData +
                     DirectoryName.From(@"TableTopCrucible\TemporaryWorkingDirectory")
                 );
+
+        // clears the content ofn the directory without deleting it
+        // implemented by deleting it and creating it again
+        public void Clear()
+        {
+            this.Delete();
+            this.Create();
+        }
     }
 }

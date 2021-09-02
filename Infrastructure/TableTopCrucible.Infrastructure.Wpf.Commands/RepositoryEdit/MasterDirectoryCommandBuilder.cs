@@ -12,10 +12,17 @@ using ReactiveUI;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
+using TableTopCtucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Infrastructure.Wpf.Commands.RepositoryEdit
 {
-    public class MasterDirectoryCommandBuilder
+    [Singleton(typeof(MasterDirectoryCommandBuilder))]
+    public interface IMasterDirectoryCommandBuilder
+    {
+        ICommand AddOrUpdate([NotNull] IObservable<MasterDirectory> masterDirChanges);
+        ICommand DeleteCommand([NotNull] IObservable<MasterDirectoryId> masterDirId);
+    }
+    public class MasterDirectoryCommandBuilder: IMasterDirectoryCommandBuilder
     {
         private readonly IMasterDirectoryRepository _repository;
 

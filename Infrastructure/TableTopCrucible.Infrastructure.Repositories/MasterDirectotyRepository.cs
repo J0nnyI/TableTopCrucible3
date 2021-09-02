@@ -15,7 +15,6 @@ namespace TableTopCrucible.Infrastructure.Repositories
     public interface IMasterDirectoryRepository :
         ISourceRepository<MasterDirectoryId, MasterDirectory, MasterDirectoryDto>
     {
-        IConnectableCache<MasterDirectory, MasterDirectoryId> Data { get; }
     }
     internal class MasterDirectoryRepository :
         SourceRepositoryBase<MasterDirectoryId, MasterDirectory, MasterDirectoryDto>,

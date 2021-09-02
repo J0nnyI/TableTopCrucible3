@@ -19,7 +19,7 @@
                   SelectionMode="Single">
             <ListView.ItemTemplate >
                 <DataTemplate>
-                    <StackPanel d:DataContext="{d:DesignInstance models:ISettingsCategoryPage}">
+                    <StackPanel>
                         <TextBlock Text="{Binding Title}"
                                />
                     </StackPanel>

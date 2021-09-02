@@ -103,8 +103,7 @@ namespace TableTopCrucible.Core.Database
         where Tentity : IEntity<Tid>
         where Tdto : IEntityDto<Tid, Tentity>
     {
-        private readonly SourceCache<Tentity, Tid> _data
-             = new SourceCache<Tentity, Tid>(data => data.Id);
+        private readonly SourceCache<Tentity, Tid> _data = new (data => data.Id);
 
         public override TableName Name
             => TableName.FromType<Tid, Tentity>();
