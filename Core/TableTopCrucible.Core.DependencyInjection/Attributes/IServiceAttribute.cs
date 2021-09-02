@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TableTopCtucible.Core.DependencyInjection.Attributes
+namespace TableTopCrucible.Core.DependencyInjection.Attributes
 {
     public interface IServiceAttribute
     {

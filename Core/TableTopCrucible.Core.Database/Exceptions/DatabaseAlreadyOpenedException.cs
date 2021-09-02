@@ -2,7 +2,7 @@
 
 namespace TableTopCrucible.Core.Database.Exceptions
 {
-    public class DatabaseAlreadyOpenedException:Exception
+    public class DatabaseAlreadyOpenedException : Exception
     {
 
     }

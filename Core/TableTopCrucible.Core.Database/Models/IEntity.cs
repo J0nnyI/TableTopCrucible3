@@ -1,8 +1,4 @@
-﻿
-
-using System.Collections.Generic;
-
-namespace TableTopCrucible.Core.Database.Models
+﻿namespace TableTopCrucible.Core.Database.Models
 {
     public interface IEntity<Tid>
         where Tid : IEntityId
@@ -16,6 +12,6 @@ namespace TableTopCrucible.Core.Database.Models
         where Tid : IEntityId
     {
         public Tid Id { get; init; }
-        
+
     }
 }

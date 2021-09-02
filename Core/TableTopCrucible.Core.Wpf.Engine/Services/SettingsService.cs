@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Reflection;
-using System.Text;
-using System.Windows;
-
-using DynamicData;
-using Microsoft.AspNetCore.Components.Routing;
-using ReactiveUI;
+﻿using DynamicData;
 
 using Splat;
 
+using System.Linq;
+using System.Reactive.Linq;
+
+using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
-using TableTopCtucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Services
 {
@@ -49,7 +42,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
                                         it.HasCustomAttribute<SingletonAttribute>()
                                         || it.HasCustomAttribute<TransientAttribute>()
                                         || it.HasCustomAttribute<ScopedAttribute>())))
-                        !.OrderBy(vm=>vm.Position)
+                        !.OrderBy(vm => vm.Position)
                         !.ToArray()
                 );
         }

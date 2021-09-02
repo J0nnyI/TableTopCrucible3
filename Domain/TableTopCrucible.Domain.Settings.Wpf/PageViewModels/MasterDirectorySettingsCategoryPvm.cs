@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using AutoMapper.Configuration;
-
+﻿
 using ReactiveUI;
+
+using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
-using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
-using TableTopCtucible.Core.DependencyInjection.Attributes;
 
 
 namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
@@ -26,7 +21,7 @@ namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
         public Name Title => Name.From("File Directories");
         public SortingOrder Position => SortingOrder.From(1);
 
-        public ViewModelActivator Activator { get; } = new ();
+        public ViewModelActivator Activator { get; } = new();
 
         public MasterDirectorySettingsCategoryPvm(IMasterDirectoryList directoryList)
         {

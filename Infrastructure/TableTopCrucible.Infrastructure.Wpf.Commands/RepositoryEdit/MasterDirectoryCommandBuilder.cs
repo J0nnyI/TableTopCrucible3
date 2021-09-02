@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ReactiveUI;
+
+using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Text;
 using System.Windows.Input;
 
-using ReactiveUI;
-
+using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
-using TableTopCtucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Infrastructure.Wpf.Commands.RepositoryEdit
 {
@@ -22,7 +18,7 @@ namespace TableTopCrucible.Infrastructure.Wpf.Commands.RepositoryEdit
         ICommand AddOrUpdate([NotNull] IObservable<MasterDirectory> masterDirChanges);
         ICommand DeleteCommand([NotNull] IObservable<MasterDirectoryId> masterDirId);
     }
-    public class MasterDirectoryCommandBuilder: IMasterDirectoryCommandBuilder
+    public class MasterDirectoryCommandBuilder : IMasterDirectoryCommandBuilder
     {
         private readonly IMasterDirectoryRepository _repository;
 

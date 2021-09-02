@@ -6,7 +6,7 @@ using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos
 {
-    public class MasterDirectoryDto:IEntityDto<MasterDirectoryId, MasterDirectory>
+    public class MasterDirectoryDto : IEntityDto<MasterDirectoryId, MasterDirectory>
     {
         public Name Name { get; }
         public MasterDirectoryPath Path { get; }

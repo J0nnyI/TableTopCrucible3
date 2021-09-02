@@ -2,7 +2,7 @@
 
 namespace TableTopCrucible.Core.Database.Exceptions
 {
-    public class OldDatabaseVersionFoundException:Exception
+    public class OldDatabaseVersionFoundException : Exception
     {
     }
 }

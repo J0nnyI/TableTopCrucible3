@@ -1,4 +1,5 @@
 ﻿using System.IO;
+
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Database.ValueTypes

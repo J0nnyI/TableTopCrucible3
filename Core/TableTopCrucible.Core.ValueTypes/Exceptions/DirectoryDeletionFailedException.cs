@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TableTopCrucible.Core.ValueTypes.Exceptions
 {
-    public class DirectoryDeletionFailedException: Exception
+    public class DirectoryDeletionFailedException : Exception
     {
         internal DirectoryDeletionFailedException(string dir, Exception innerException) : base($"directory '{dir}' could not be deleted", innerException)
         {

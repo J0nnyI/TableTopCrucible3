@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TableTopCrucible.Core.ValueTypes.Exceptions
 {
-    public class DirectoryCreationFailedException: Exception
+    public class DirectoryCreationFailedException : Exception
     {
         internal DirectoryCreationFailedException(string dir, Exception innerException) : base($"directory '{dir}' could not be created", innerException)
         {

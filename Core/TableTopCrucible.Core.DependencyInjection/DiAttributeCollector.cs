@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using TableTopCrucible.Core.Helper;
-using TableTopCtucible.Core.DependencyInjection.Attributes;
 
-namespace TableTopCtucible.Core.DependencyInjection
+using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
+
+namespace TableTopCrucible.Core.DependencyInjection
 {
     public static class DiAttributeCollector
     {

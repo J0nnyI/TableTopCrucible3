@@ -1,20 +1,16 @@
-﻿using System;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-
-using DynamicData;
+﻿using DynamicData;
 using DynamicData.Binding;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
+using System;
+using System.Linq;
+using System.Reactive.Linq;
+
+using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.Services;
-
-using TableTopCtucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
 {

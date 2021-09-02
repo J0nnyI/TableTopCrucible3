@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-
-using DynamicData.Kernel;
+﻿using System.Diagnostics.CodeAnalysis;
 
 using TableTopCrucible.Core.Database.Models;
-using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
@@ -15,6 +11,6 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Entities
     {
         [NotNull] public Name Name { get; init; }
         [NotNull] public MasterDirectoryPath Path { get; init; }
-        
+
     }
 }

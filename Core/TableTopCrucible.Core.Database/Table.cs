@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
-using AutoMapper;
+﻿using AutoMapper;
 
 using DynamicData;
 using DynamicData.Kernel;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 using Splat;
+
+using System;
+using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Linq;
 
 using TableTopCrucible.Core.Database.Exceptions;
 using TableTopCrucible.Core.Database.Models;
@@ -103,7 +104,7 @@ namespace TableTopCrucible.Core.Database
         where Tentity : IEntity<Tid>
         where Tdto : IEntityDto<Tid, Tentity>
     {
-        private readonly SourceCache<Tentity, Tid> _data = new (data => data.Id);
+        private readonly SourceCache<Tentity, Tid> _data = new(data => data.Id);
 
         public override TableName Name
             => TableName.FromType<Tid, Tentity>();

@@ -2,7 +2,7 @@
 
 namespace TableTopCrucible.Core.Database.Exceptions
 {
-    public class DatabasenameRequiredException:Exception
+    public class DatabasenameRequiredException : Exception
     {
     }
 }

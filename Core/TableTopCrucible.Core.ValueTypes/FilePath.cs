@@ -46,7 +46,7 @@ namespace TableTopCrucible.Core.ValueTypes
             }
         }
 
-        public void WriteObject(object data, bool createDirectory= true)
+        public void WriteObject(object data, bool createDirectory = true)
         {
             this.GetDirectoryPath().Create();
             string text;

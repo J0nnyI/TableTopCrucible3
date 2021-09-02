@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using DynamicData;
+﻿using DynamicData;
 using DynamicData.Binding;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
+using System;
+using System.Reactive.Linq;
+using System.Windows.Input;
+
+using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
-using TableTopCrucible.Infrastructure.Wpf.Commands.RepositoryEdit;
-using TableTopCtucible.Core.DependencyInjection.Attributes;
+
 using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
@@ -35,7 +29,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         [Reactive]
         public string Name { get; set; }
 
-        public ICommand CreateDirectory { get; } 
+        public ICommand CreateDirectory { get; }
         public MasterDirectoryListVm(IMasterDirectoryRepository masterDirectoryRepository)
         {
             CreateDirectory = ReactiveCommand.Create(() =>
@@ -50,7 +44,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     vm => vm.Name,
                     (path, name) =>
                         path != null && MasterDirectoryPath.From(path).Exists()
-                ),RxApp.TaskpoolScheduler, RxApp.MainThreadScheduler
+                ), RxApp.TaskpoolScheduler, RxApp.MainThreadScheduler
             );
             this.WhenActivated(() => new[]
             {

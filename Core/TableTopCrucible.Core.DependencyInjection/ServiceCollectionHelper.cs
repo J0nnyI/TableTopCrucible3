@@ -1,11 +1,13 @@
-﻿using System.IO.Abstractions;
-using System.Linq;
-using System.Reflection;
-using AutoMapper;
+﻿using AutoMapper;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace TableTopCtucible.Core.DependencyInjection
+using System.IO.Abstractions;
+using System.Linq;
+using System.Reflection;
+
+namespace TableTopCrucible.Core.DependencyInjection
 {
     public static class ServiceCollectionHelper
     {
@@ -22,6 +24,6 @@ namespace TableTopCtucible.Core.DependencyInjection
                 .ToList()
                 .ForEach(asrv => srv.RemoveAll(asrv));
         }
-        
+
     }
 }

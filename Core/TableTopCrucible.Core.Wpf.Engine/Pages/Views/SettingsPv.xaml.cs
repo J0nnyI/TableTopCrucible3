@@ -1,9 +1,6 @@
-﻿using System;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Windows;
+﻿using ReactiveUI;
 
-using ReactiveUI;
+using System.Reactive.Linq;
 
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Engine.Models;

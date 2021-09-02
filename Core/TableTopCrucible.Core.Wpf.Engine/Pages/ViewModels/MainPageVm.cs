@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TableTopCtucible.Core.DependencyInjection.Attributes;
+﻿using TableTopCrucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
 {
@@ -12,7 +7,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
     {
 
     }
-    public class MainPageVm:IMainPage
+    public class MainPageVm : IMainPage
     {
         public ISettingsPage SettingsPage { get; }
 

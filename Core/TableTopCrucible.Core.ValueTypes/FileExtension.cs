@@ -38,6 +38,6 @@ namespace TableTopCrucible.Core.ValueTypes
             return FileType.Other;
         }
 
-        
+
     }
 }

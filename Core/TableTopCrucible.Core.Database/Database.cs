@@ -1,16 +1,15 @@
-﻿using System;
+﻿using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reactive.Linq;
 
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-
 using TableTopCrucible.Core.Database.Exceptions;
 using TableTopCrucible.Core.Database.Models;
 using TableTopCrucible.Core.Database.ValueTypes;
-
-using TableTopCtucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.DependencyInjection.Attributes;
 
 namespace TableTopCrucible.Core.Database
 {
