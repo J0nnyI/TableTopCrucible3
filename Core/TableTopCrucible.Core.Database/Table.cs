@@ -52,6 +52,7 @@ namespace TableTopCrucible.Core.Database
         void AddOrUpdate(IEnumerable<Tentity> entity);
 
         IObservable<Tentity> WatchValue(Tid entityId);
+        IConnectableCache<Tentity, Tid> DataChanges { get; }
         IObservableCache<Tentity, Tid> Data { get; }
         public void Remove(Tid id);
     }
@@ -60,7 +61,7 @@ namespace TableTopCrucible.Core.Database
     internal abstract class Table : ReactiveObject, ITable
     {
         public abstract TableName Name { get; }
-        protected abstract IObservable<Unit> DataChanges { get; }
+        protected abstract IObservable<Unit> OnDataUpdate { get; }
         [Reactive]
         public LibraryDirectoryPath LibraryDirectory { get; protected set; }
         LibraryDirectoryPath ITable.LibraryDirectory
@@ -80,7 +81,7 @@ namespace TableTopCrucible.Core.Database
             mapper = Locator.Current.GetService<IMapper>();
             this.LibraryDirectory = libraryDirectory;
 
-            this.LastUpdateChanges = this.DataChanges
+            this.LastUpdateChanges = this.OnDataUpdate
                 .Select(_ => Optional.Some(DateTime.Now))
                 .StartWith(Optional.None<DateTime>())
                 .Replay(1);
@@ -99,7 +100,8 @@ namespace TableTopCrucible.Core.Database
     }
 
 
-    internal class Table<Tid, Tentity, Tdto> : Table, ITable<Tid, Tentity, Tdto>
+    internal class Table<Tid, Tentity, Tdto> 
+        : Table, ITable<Tid, Tentity, Tdto>
         where Tid : IEntityId
         where Tentity : IEntity<Tid>
         where Tdto : IEntityDto<Tid, Tentity>
@@ -109,7 +111,10 @@ namespace TableTopCrucible.Core.Database
         public override TableName Name
             => TableName.FromType<Tid, Tentity>();
 
-        protected override IObservable<Unit> DataChanges => _data.Connect().Select(_ => Unit.Default);
+        protected override IObservable<Unit> OnDataUpdate => _data.Connect().Select(_ => Unit.Default);
+        public IConnectableCache<Tentity, Tid> DataChanges => _data;
+        public IObservableCache<Tentity, Tid> Data => _data;
+
 
         public Table(LibraryDirectoryPath libraryDirectory) : base(libraryDirectory)
         {
@@ -119,16 +124,18 @@ namespace TableTopCrucible.Core.Database
         }
 
         public void AddOrUpdate(Tentity entity)
-            => this._data.AddOrUpdate(entity);
+        {
+            this._data.AddOrUpdate(entity);
+        }
         public void AddOrUpdate(IEnumerable<Tentity> entity)
             => this._data.AddOrUpdate(entity);
 
-        public IObservableCache<Tentity, Tid> Data => _data.AsObservableCache();
 
         public void Remove(Tid id)
             => _data.Remove(id);
 
         public override int Count => _data.Count;
+
 
         public IObservable<Tentity> WatchValue(Tid entityId)
             => this._data.WatchValue(entityId);

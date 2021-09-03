@@ -6,8 +6,14 @@
         xmlns:local="clr-namespace:TableTopCrucible.Starter"
         xmlns:rxui="http://reactiveui.net"
         mc:Ignorable="d"
+        Background="{StaticResource MaterialDesignDarkBackground}"
+        Foreground="{StaticResource MaterialDesignDarkForeground}"
+        WindowState="Maximized"
         Title="MainWindow" Height="450" Width="800">
-    <rxui:ViewModelViewHost x:Name="MainPageContainer"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"/>
+    <Grid VerticalAlignment="Stretch"
+          HorizontalAlignment="Stretch">
+
+        <rxui:ViewModelViewHost x:Name="MainPageContainer"/>
+    <!--<Button Style="{StaticResource MaterialDesignIconForegroundButton}"></Button>-->
+    </Grid>
 </Window>

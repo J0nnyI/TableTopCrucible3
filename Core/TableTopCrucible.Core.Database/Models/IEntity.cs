@@ -12,6 +12,6 @@
         where Tid : IEntityId
     {
         public Tid Id { get; init; }
-
+        
     }
 }

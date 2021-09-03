@@ -7,8 +7,14 @@
                    xmlns:rx="http://reactiveui.net"
                    xmlns:pvm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels"
                    mc:Ignorable="d"
-                   Height="450" Width="800"
-                   d:DataContext="{d:DesignInstance pvm:MainPageVm}"
-                   Background="{StaticResource MaterialDesignDarkBackground}">
-    <rx:ViewModelViewHost x:Name="MainContainer"></rx:ViewModelViewHost>
+                   d:DataContext="{d:DesignInstance pvm:MainPageVm}">
+    <Grid VerticalAlignment="Stretch"
+          HorizontalAlignment="Stretch">
+        <rx:ViewModelViewHost x:Name="MainContainer" 
+                          VerticalAlignment="Stretch"
+                          HorizontalAlignment="Stretch"
+                          VerticalContentAlignment="Stretch"
+                          HorizontalContentAlignment="Stretch"></rx:ViewModelViewHost>
+        <!--<Rectangle Fill="Blue" Stroke="Blue"/>-->
+    </Grid>
 </rx:ReactiveUserControl>

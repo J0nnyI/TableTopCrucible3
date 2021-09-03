@@ -5,10 +5,14 @@ using ReactiveUI.Validation.Extensions;
 using Splat;
 
 using System;
+using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
-
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using ReactiveUI.Validation.Collections;
+using ReactiveUI.Validation.Formatters.Abstractions;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 using ValueOf;
@@ -32,27 +36,57 @@ namespace TableTopCrucible.Core.ValueTypes
         public static Tthis operator +(DirectoryPath<Tthis> directory, RelativeDirectoryPath relativeDirectory)
             => From(Path.Combine(directory.Value, relativeDirectory.Value));
 
-        protected override void Validate()
+        public static Exception IsValid(string path)
         {
+            if (path == null)
+                return new InvalidPathException("the path must not be null");
             // throws an exception if the path is invalid or relative
             try
             {
-                Path.IsPathRooted(Value);
+                Path.IsPathRooted(path);
             }
             catch (Exception ex)
             {
-                throw new InvalidPathException($"The path '{Path}' is either not relative or invalid", ex);
+                return new InvalidPathException($"The path '{Path}' is either not relative or invalid", ex);
             }
 
-            if (string.IsNullOrWhiteSpace(Value))
-                throw new InvalidPathException("The path must not be empty");
+            if (string.IsNullOrWhiteSpace(path))
+                return new InvalidPathException("The path must not be empty");
+            return null;
         }
-        public static void RegisterValidator<T>(T vm, Expression<Func<T, string>> propertyName, bool includeExists = true) where T : ReactiveObject, IValidatableViewModel
+        protected override void Validate()
         {
-            vm.ValidationRule(propertyName, value => !string.IsNullOrWhiteSpace(value), "The path must not be empty");
+            var ex = IsValid(Value);
+            if (ex != null) throw ex;
+        }
+        public static IDisposable RegisterValidator<T>(
+            T vm,
+            Expression<Func<T, string>> propertyName, 
+            bool includeExists = true,
+            IObservable<IEnumerable<DirectoryPath<Tthis>>> blacklistChanges = null
+            ) where T : ReactiveObject, IValidatableViewModel
+        {
+            CompositeDisposable disposables = new();
+            vm.ValidationRule(propertyName, value => !string.IsNullOrWhiteSpace(value), "The path must not be empty")
+                .DisposeWith(disposables);
 
             if (includeExists)
-                vm.ValidationRule(propertyName, value => Directory.Exists(value), "This directory does not exist");
+                vm.ValidationRule(propertyName, value => Directory.Exists(value), "This directory does not exist")
+                    .DisposeWith(disposables);
+
+            if (blacklistChanges != null)
+            {
+                vm.ValidationRule(
+                    propertyName,
+                Observable.CombineLatest(
+                    vm.WhenAnyValue(propertyName),
+                    blacklistChanges,
+                    (prop, blacklist) =>
+                    {
+                        return blacklist.Select(vt => vt.Value).Contains(prop);
+                    }),"This directory has already been registered"
+                );
+            }
 
             vm.ValidationRule(propertyName,
                 value =>
@@ -62,7 +96,9 @@ namespace TableTopCrucible.Core.ValueTypes
                         return Path.IsPathRooted(value);
                     }
                     catch (Exception) { return false; }
-                }, "This is not a valid directory path");
+                }, "This is not a valid directory path")
+                .DisposeWith(disposables);
+            return disposables;
         }
 
         public bool Exists() => Directory.Exists(Value);
@@ -131,5 +167,4 @@ namespace TableTopCrucible.Core.ValueTypes
         public static DirectoryPath GetTemporaryPath()
             => From(Path.GetTempPath());
     }
-
 }

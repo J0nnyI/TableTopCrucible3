@@ -10,12 +10,22 @@
                         mc:Ignorable="d" 
                         d:DesignHeight="450" 
                         d:DesignWidth="800"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
                         d:DataContext="{d:DesignInstance pvm:SettingsPvm}">
-    <DockPanel>
+    <DockPanel
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
         <ListView x:Name="SettingsList"
                   DockPanel.Dock="Left"
                   MinWidth="200px"
                   SelectedIndex="0"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  VerticalContentAlignment="Stretch"
                   SelectionMode="Single">
             <ListView.ItemTemplate >
                 <DataTemplate>

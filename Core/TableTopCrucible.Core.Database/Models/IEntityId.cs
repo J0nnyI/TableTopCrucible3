@@ -1,5 +1,5 @@
 ﻿using System;
-
+using TableTopCrucible.Core.Database.Exceptions;
 using ValueOf;
 
 namespace TableTopCrucible.Core.Database.Models
@@ -13,6 +13,12 @@ namespace TableTopCrucible.Core.Database.Models
         public Guid GetGuid()
             => Value;
         public static TThis New()
-            => new TThis() { Value = Guid.NewGuid() };
+            => new (){ Value = Guid.NewGuid() };
+
+        protected override void Validate()
+        {
+            if (Value == default)
+                throw new InvalidIdException("Id must not be default");
+        }
     }
 }

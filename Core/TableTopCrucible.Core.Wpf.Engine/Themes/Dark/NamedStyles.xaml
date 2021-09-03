@@ -41,11 +41,97 @@
         </Style.Resources>
     </Style>
 
-    <Style x:Key="secondaryButton"
+    <Style x:Key="SecondaryButton"
            TargetType="Button"
            BasedOn="{StaticResource MaterialDesignOutlinedButton}"/>
 
     <Style x:Key="DefaultWindow"
            TargetType="Window"
            BasedOn="{StaticResource MaterialDesignWindow}"/>
+
+    <Style x:Key="DefaultTextBox"
+           TargetType="TextBox"
+           BasedOn="{StaticResource MaterialDesignFilledTextBox}">
+        <Setter Property="Margin" Value="8px"/>
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
+        <Setter Property="ToolTipService.VerticalOffset" Value="-14"/>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background"
+                        Value="Transparent"/>
+                <Setter Property="BorderBrush"
+                        Value="Transparent"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="DirectoryPickerTextBox"
+           TargetType="TextBox"
+           BasedOn="{StaticResource DefaultTextBox}">
+        <Setter Property="md:TextFieldAssist.TrailingIcon"
+                Value="Folder"/>
+        <Setter Property="md:TextFieldAssist.HasTrailingIcon"
+                Value="True"/>
+        <Setter Property="md:HintAssist.Hint"
+                Value="Path"/>
+    </Style>
+    <Style x:Key="DirectoryPickerButton"
+           TargetType="Button"
+           BasedOn="{StaticResource MaterialDesignIconButton}">
+        <Setter Property="Content">
+            <Setter.Value>
+                <md:PackIcon Kind="Folder"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Margin" Value="-57 0 0 0"/>
+    </Style>
+
+    <Style TargetType="TextBox"
+           BasedOn="{StaticResource DefaultTextBox}"/>
+    <!--#Region-->
+    <Style TargetType="TextBlock" x:Key="Headline1" BasedOn="{StaticResource MaterialDesignHeadline1TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Headline2" BasedOn="{StaticResource MaterialDesignHeadline2TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Headline3" BasedOn="{StaticResource MaterialDesignHeadline3TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Headline4" BasedOn="{StaticResource MaterialDesignHeadline4TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Headline5" BasedOn="{StaticResource MaterialDesignHeadline5TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Headline6" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Subtitle1" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Subtitle2" BasedOn="{StaticResource MaterialDesignSubtitle2TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Body1" BasedOn="{StaticResource MaterialDesignBody1TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Body2" BasedOn="{StaticResource MaterialDesignBody2TextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="TextBlock" BasedOn="{StaticResource MaterialDesignTextBlock}">
+        <Setter Property="Foreground"
+                Value="{StaticResource MaterialDesignDarkForeground}"/>
+    </Style>
+    <!--#Endregion-->
 </ResourceDictionary>

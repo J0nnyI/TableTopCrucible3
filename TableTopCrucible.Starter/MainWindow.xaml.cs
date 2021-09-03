@@ -3,6 +3,7 @@
 using System.Windows;
 
 using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Starter
 {

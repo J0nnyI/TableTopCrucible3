@@ -10,7 +10,8 @@ namespace TableTopCrucible.Infrastructure.Repositories
         where Tentity : IEntity<Tid>
         where Tdto : IEntityDto<Tid, Tentity>
     {
-        public IConnectableCache<Tentity, Tid> Data { get; }
+        public IConnectableCache<Tentity, Tid> DataChanges { get; }
+        public IObservableCache<Tentity, Tid> Data { get; }
         public void AddOrUpdate(Tentity entity);
         public void Delete(Tid id);
     }
@@ -21,7 +22,9 @@ namespace TableTopCrucible.Infrastructure.Repositories
         where Tdto : IEntityDto<Tid, Tentity>
     {
         private readonly ITable<Tid, Tentity, Tdto> _table;
-        public IConnectableCache<Tentity, Tid> Data => _table.Data;
+        public IConnectableCache<Tentity, Tid> DataChanges => _table.Data;
+        public IObservableCache<Tentity, Tid> Data => _table.Data;
+
         public void AddOrUpdate(Tentity entity) => _table.AddOrUpdate(entity);
         public void Delete(Tid id)
             => _table.Remove(id);

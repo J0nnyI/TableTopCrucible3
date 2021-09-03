@@ -12,5 +12,9 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Entities
         [NotNull] public Name Name { get; init; }
         [NotNull] public MasterDirectoryPath Path { get; init; }
 
+        public MasterDirectory()
+        {
+            this.Id = MasterDirectoryId.New();
+        }
     }
 }

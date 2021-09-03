@@ -11,26 +11,23 @@
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel Orientation="Vertical">
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="Directory" Width="200"
-                     md:HintAssist.Hint="Path"
-                     md:HintAssist.IsFloating="True"
-                     md:HintAssist.HelperText="Path2"
-                     md:TextFieldAssist.HasClearButton="True"
-                     md:TextFieldAssist.HasTrailingIcon="True"
-                     md:TextFieldAssist.TrailingIcon="Location"
-                     md:TextFieldAssist.DecorationVisibility="Visible">
-            </TextBox>
-            <Button >
-                <md:PackIcon Kind="Folder"/>
-            </Button>
-            <TextBox x:Name="Name" Width="200"/>
-            <Button x:Name="CreateDirectory">Add Directory</Button>
-        </StackPanel>
-        <ListView x:Name="DirectoryList" BorderBrush="Red" BorderThickness="2">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ListView x:Name="DirectoryList"
+                  BorderBrush="Red"
+                  BorderThickness="2"
+                  Grid.Row="0"
+                  Grid.ColumnSpan="3">
             <ListView.ItemTemplate>
-                <DataTemplate d:DataContext="{d:DesignInstance entities:MasterDirectory}">
+                <DataTemplate>
                     <StackPanel>
                         <TextBlock Text="{Binding Path}" 
                                    md:HintAssist.Hint="Path"
@@ -48,5 +45,30 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </StackPanel>
+        <TextBox x:Name="Directory"
+                 Grid.Row="1"
+                 Grid.Column="0"
+                 Width="200"
+                 Text="{Binding Path=Directory, UpdateSourceTrigger=PropertyChanged}"
+                 Style="{StaticResource DirectoryPickerTextBox}"
+                 md:ValidationAssist.UsePopup="True"
+                 md:HintAssist.Hint="Path"
+                 md:HintAssist.IsFloating="True">
+            </TextBox>
+        <Button Click="_SelectDirectoryClicked"
+                Grid.Row="1"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Style="{StaticResource DirectoryPickerButton}"
+                Margin="0 0 6 0"/>
+        <TextBox x:Name="Name"
+                 Grid.Row="1"
+                 Grid.Column="1"
+                 Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
+                 Width="200"/>
+        <Button x:Name="CreateDirectory"
+                Grid.Row="1"
+                Grid.Column="2">Add Directory</Button>
+    </Grid>
 </rxui:ReactiveUserControl>
