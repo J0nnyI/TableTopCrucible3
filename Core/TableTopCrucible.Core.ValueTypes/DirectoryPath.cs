@@ -38,11 +38,15 @@ namespace TableTopCrucible.Core.ValueTypes
         public static Tthis operator +(DirectoryPath<Tthis> directory, RelativeDirectoryPath relativeDirectory)
             => From(Path.Combine(directory.Value, relativeDirectory.Value));
 
-        public static Exception IsValid(string path)
+        public static Exception IsValid(string path, bool includeExists = false)
         {
             if (path == null)
                 return new InvalidPathException("the path must not be null");
             // throws an exception if the path is invalid or relative
+
+            if (includeExists && !Directory.Exists(path))
+                return new InvalidPathException("This directory does not exist");
+
             try
             {
                 Path.IsPathRooted(path);

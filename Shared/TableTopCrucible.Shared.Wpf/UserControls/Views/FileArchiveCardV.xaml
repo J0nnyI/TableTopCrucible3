@@ -8,7 +8,7 @@
                           xmlns:rxUi="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-                          xmlns:cc="clr-namespace:TableTopCrucible.Core.CustomControls;assembly=TableTopCrucible.Core.CustomControls"
+                          xmlns:cuc="clr-namespace:TableTopCrucible.Core.UserControls;assembly=TableTopCrucible.Core.UserControls"
                           md:RippleAssist.IsDisabled="False"
                           mc:Ignorable="d" 
                           d:DataContext="{d:DesignInstance vm:FileArchiveCardVm}"
@@ -23,19 +23,14 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBox Text="{Binding Path=Name}"
                      md:HintAssist.Hint="Name"
                      Grid.Column="0"
                      Grid.Row="0"/>
-            <cc:DirectoryPicker
-                Grid.Column="0"
-                Grid.Row="2"/>
-            <TextBox Text="{Binding Path=Path}"
-                     md:HintAssist.Hint="Directory"
-                     Grid.Column="0"
-                     Grid.Row="1"/>
+            <cuc:DirectoryPicker UserText="{Binding Path=Path}"
+                                 Grid.Column="0"
+                                 Grid.Row="1"/>
             <Button x:Name="UndoChanges"
                     ToolTip="Undo Changes"
                     Style="{StaticResource MaterialDesignIconButton}"
