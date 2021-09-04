@@ -1,6 +1,7 @@
-﻿using System;
+﻿using DynamicData;
+
+using System;
 using System.Collections.Generic;
-using DynamicData;
 
 using TableTopCrucible.Core.Database;
 using TableTopCrucible.Core.Database.Models;

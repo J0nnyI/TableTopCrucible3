@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
+
+using System;
+using System.Windows.Input;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
-using vtName=TableTopCrucible.Core.ValueTypes.Name;
+
+using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
@@ -26,7 +24,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         [Reactive]
         public FileArchive FileArchive { get; set; }
 
-        [Reactive] 
+        [Reactive]
         public bool ResetOnSave { get; set; } = false;
 
         [Reactive]
@@ -59,7 +57,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     (dir, Name, path) =>
                         dir.Name.Value != Name || dir.Path.Value != path)
                     .ToProperty(this, vm=>vm.IsDirty,out _isDirty),
-                
+
                 vtName.RegisterValidator(this, vm=>vm.Name),
                 FileArchivePath.RegisterValidator(this, vm=>vm.Path),
             });

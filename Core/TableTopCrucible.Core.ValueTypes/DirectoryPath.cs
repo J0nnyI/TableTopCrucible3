@@ -11,8 +11,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using ReactiveUI.Validation.Collections;
-using ReactiveUI.Validation.Formatters.Abstractions;
+
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 using ValueOf;
@@ -26,8 +25,8 @@ namespace TableTopCrucible.Core.ValueTypes
     /// <summary>
     /// the path of a directory
     /// </summary>
-    public class DirectoryPath<Tthis> 
-        : ValueOf<string, Tthis> 
+    public class DirectoryPath<Tthis>
+        : ValueOf<string, Tthis>
         where Tthis : DirectoryPath<Tthis>, new()
     {
 
@@ -73,14 +72,14 @@ namespace TableTopCrucible.Core.ValueTypes
             ) where T : ReactiveObject, IValidatableViewModel
         {
             CompositeDisposable disposables = new();
-            vm.ValidationRule(propertyName, 
+            vm.ValidationRule(propertyName,
                     value => !string.IsNullOrWhiteSpace(value),
                     "The path must not be empty")
                 .DisposeWith(disposables);
 
             if (includeExists)
-                vm.ValidationRule(propertyName, 
-                        value => Directory.Exists(value), 
+                vm.ValidationRule(propertyName,
+                        value => Directory.Exists(value),
                         "This directory does not exist")
                     .DisposeWith(disposables);
 

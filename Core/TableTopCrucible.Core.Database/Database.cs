@@ -82,7 +82,7 @@ namespace TableTopCrucible.Core.Database
             where Tdto : IEntityDto<Tid, Tentity>
         {
             var name = TableName.FromType<Tid, Tentity>();
-            if(!tables.ContainsKey(name))
+            if (!tables.ContainsKey(name))
                 tables.TryAdd(name, new Table<Tid, Tentity, Tdto>(LibraryPath));
             return tables[name] as ITable<Tid, Tentity, Tdto>;
         }

@@ -100,7 +100,7 @@ namespace TableTopCrucible.Core.Database
     }
 
 
-    internal class Table<Tid, Tentity, Tdto> 
+    internal class Table<Tid, Tentity, Tdto>
         : Table, ITable<Tid, Tentity, Tdto>
         where Tid : IEntityId
         where Tentity : IEntity<Tid>

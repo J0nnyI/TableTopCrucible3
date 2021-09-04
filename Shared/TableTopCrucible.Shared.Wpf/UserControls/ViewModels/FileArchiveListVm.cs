@@ -3,20 +3,16 @@ using DynamicData.Binding;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Helpers;
+
+using Splat;
 
 using System;
-using System.IO;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
-using HelixToolkit.Wpf;
-using ReactiveUI.Validation.Abstractions;
-using ReactiveUI.Validation.Contexts;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
-using Splat;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.Repositories;
@@ -67,7 +63,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
                 _initCommands(),
 
-                FileArchivePath.RegisterValidator(this, 
+                FileArchivePath.RegisterValidator(this,
                     vm => vm.Directory,
                     true,
                     _fileArchiveRepository.TakenDirectoriesChanges

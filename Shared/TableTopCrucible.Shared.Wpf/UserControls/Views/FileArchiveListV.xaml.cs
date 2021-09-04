@@ -1,17 +1,9 @@
-﻿using ReactiveUI;
+﻿using Ookii.Dialogs.Wpf;
 
-using System;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
-using Ookii.Dialogs.Wpf;
-using ReactiveUI.Validation.Extensions;
-using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Core.Wpf.Helper;
+using ReactiveUI;
+
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
-using EventExtensions = System.Windows.EventExtensions;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 {

@@ -1,17 +1,14 @@
-﻿using System;
-using System.Globalization;
-using System.Linq.Expressions;
-using System.Reactive.Disposables;
-
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Extensions;
+
+using System;
+using System.Linq.Expressions;
+using System.Reactive.Disposables;
 
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 using ValueOf;
-
-using static TableTopCrucible.Core.Helper.FileSystemHelper;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
