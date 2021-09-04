@@ -15,12 +15,9 @@ using EventExtensions = System.Windows.EventExtensions;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 {
-    /// <summary>
-    /// Interaction logic for MasterDirectoryListV.xaml
-    /// </summary>
-    public partial class MasterDirectoryListV : ReactiveUserControl<MasterDirectoryListVm>
+    public partial class FileArchiveListV : ReactiveUserControl<FileArchiveListVm>
     {
-        public MasterDirectoryListV()
+        public FileArchiveListV()
         {
             this.DataContext = ViewModel;
 
@@ -42,7 +39,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
             });
         }
 
-        private void _SelectDirectoryClicked(object sender, RoutedEventArgs e)
+        private void _SelectArchiveClicked(object sender, RoutedEventArgs e)
         {
             VistaFolderBrowserDialog dialog = new();
             if (dialog.ShowDialog() == true)

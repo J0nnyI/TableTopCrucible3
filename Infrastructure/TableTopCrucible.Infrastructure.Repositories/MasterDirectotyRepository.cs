@@ -1,23 +1,41 @@
 ﻿
+using System;
+using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using DynamicData;
+
+using Splat;
+
 using TableTopCrucible.Core.Database;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Infrastructure.Repositories.Models.Dtos;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Repositories
 {
-    [Singleton(typeof(MasterDirectoryRepository))]
-    public interface IMasterDirectoryRepository :
-        ISourceRepository<MasterDirectoryId, MasterDirectory, MasterDirectoryDto>
+    [Singleton(typeof(FileArchiveRepository))]
+    public interface IFileArchiveRepository :
+        ISourceRepository<FileArchiveId, FileArchive, FileArchiveDto>
     {
+        IObservable<IEnumerable<FileArchivePath>> TakenDirectoriesChanges { get; }
     }
-    internal class MasterDirectoryRepository :
-        SourceRepositoryBase<MasterDirectoryId, MasterDirectory, MasterDirectoryDto>,
-        IMasterDirectoryRepository
+    internal class FileArchiveRepository :
+        SourceRepositoryBase<FileArchiveId, FileArchive, FileArchiveDto>,
+        IFileArchiveRepository
     {
-        public MasterDirectoryRepository(IDatabase database) : base(database)
+        public FileArchiveRepository(IDatabase database) : base(database)
         {
+            TakenDirectoriesChanges =
+                DataChanges
+                    .Connect()
+                    .Transform(m => m.Path)
+                    .ToCollection()
+                    .Replay(1);
         }
+        public IObservable<IEnumerable<FileArchivePath>> TakenDirectoriesChanges { get; }
+
     }
 }

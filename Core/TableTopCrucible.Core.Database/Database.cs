@@ -57,12 +57,12 @@ namespace TableTopCrucible.Core.Database
 
         public Database()
         {
-            this.StateChanges = this.WhenAnyValue(vm => vm.LibraryPath)
+            StateChanges = this.WhenAnyValue(vm => vm.LibraryPath)
                 .Select(dir => dir != null ? DatabaseState.Open : DatabaseState.Closed);
-            this._state = StateChanges
+            _state = StateChanges
                 .ToProperty(this, nameof(State));
 
-            this.New(DatabaseInitErrorBehavior.Override);
+            New(DatabaseInitErrorBehavior.Override);
         }
 
         public void Close(bool autoSave = true)

@@ -14,7 +14,9 @@ using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Contexts;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
+using Splat;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
@@ -23,14 +25,14 @@ using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Transient(typeof(MasterDirectoryListVm))]
-    public interface IMasterDirectoryList
+    [Transient(typeof(FileArchiveListVm))]
+    public interface IFileArchiveList
     {
 
     }
-    public class MasterDirectoryListVm : ReactiveValidationObject, IActivatableViewModel, IMasterDirectoryList
+    public class FileArchiveListVm : ReactiveValidationObject, IActivatableViewModel, IFileArchiveList
     {
-        private readonly IMasterDirectoryRepository _masterDirectoryRepository;
+        private readonly IFileArchiveRepository _fileArchiveRepository;
 
         [Reactive]
         public string Directory { get; set; }
@@ -38,29 +40,32 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public string Name { get; set; }
 
         public ICommand CreateDirectory { get; private set; }
-        public MasterDirectoryListVm(IMasterDirectoryRepository masterDirectoryRepository)
+        public FileArchiveListVm(IFileArchiveRepository fileArchiveRepository)
         {
-            _masterDirectoryRepository = masterDirectoryRepository;
+            _fileArchiveRepository = fileArchiveRepository;
 
 
             this.WhenActivated(() => new[]
             {
-                _masterDirectoryRepository
+                _fileArchiveRepository
                     .DataChanges
                     .Connect()
+                    .Transform(m=>
+                    {
+                        var card = Locator.Current.GetService<IFileArchiveCard>();
+                        card.FileArchive = m;
+                        return card;
+                    })
+                    .Sort()
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Bind(Directories)
                     .Subscribe(),
                 _initCommands(),
-                // bug: button has error update does not work, tb error detection after path-clear not working
-                MasterDirectoryPath.RegisterValidator(this, 
+
+                FileArchivePath.RegisterValidator(this, 
                     vm => vm.Directory,
                     true,
-                    _masterDirectoryRepository
-                        .DataChanges
-                        .Connect()
-                        .Transform(m=>m.Path)
-                        .ToCollection()
+                    _fileArchiveRepository.TakenDirectoriesChanges
                     ),
                 vtName.RegisterValidator(this, vm => vm.Name),
             });
@@ -72,9 +77,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             CreateDirectory =
                 ReactiveCommand.Create(() =>
                         Observable.Start(() =>
-                            _masterDirectoryRepository.AddOrUpdate(new MasterDirectory()
+                            _fileArchiveRepository.AddOrUpdate(new FileArchive()
                             {
-                                Path = MasterDirectoryPath.From(Directory),
+                                Path = FileArchivePath.From(Directory),
                                 Name = vtName.From(Name),
                             })), this.WhenAnyValue(v=>v.HasErrors).Do(_=>{}).Select(x=>!x)
 
@@ -82,7 +87,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 ).DisposeWith(disposables);
             return disposables;
         }
-        public ObservableCollectionExtended<MasterDirectory> Directories { get; } = new();
+        public ObservableCollectionExtended<IFileArchiveCard> Directories { get; } = new();
         public ViewModelActivator Activator { get; } = new();
     }
 }

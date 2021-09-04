@@ -1,0 +1,58 @@
+﻿<rxUi:ReactiveUserControl x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.FileArchiveV"
+                          x:TypeArguments="vm:FileArchiveCardVm"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                          xmlns:local="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.Views"
+                          xmlns:rxUi="http://reactiveui.net"
+                          xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
+                          xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                          md:RippleAssist.IsDisabled="False"
+                          mc:Ignorable="d" 
+                          d:DesignHeight="450" d:DesignWidth="800">
+    <md:Card>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="512"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBox Text="{Binding Path=Name}"
+                     md:HintAssist.Hint="Name"
+                     Grid.Column="0"
+                     Grid.Row="0"/>
+            <TextBox Text="{Binding Path=Path}"
+                     md:HintAssist.Hint="Directory"
+                     Grid.Column="0"
+                     Grid.Row="1"/>
+            <Button x:Name="UndoChanges"
+                    ToolTip="Undo Changes"
+                    Style="{StaticResource MaterialDesignIconButton}"
+                    Grid.Row="0"
+                    Grid.Column="1"
+            >
+                <md:PackIcon Kind="Undo"/>
+            </Button>
+            <Button x:Name="SaveChanges"
+                    ToolTip="Save Changes"
+                    Style="{StaticResource MaterialDesignIconButton}"
+                    Grid.Row="1"
+                    Grid.Column="1"
+            >
+                <md:PackIcon Kind="ContentSave"/>
+            </Button>
+            <Button x:Name="RemoveDirectory"
+                    Style="{StaticResource MaterialDesignIconButton}"
+                    Grid.Row="0"
+                    Grid.Column="2">
+                <md:PackIcon Kind="Delete"/>
+            </Button>
+        </Grid>
+    </md:Card>
+</rxUi:ReactiveUserControl>

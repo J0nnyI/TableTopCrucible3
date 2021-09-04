@@ -1,7 +1,10 @@
-﻿using DynamicData;
+﻿using System;
+using System.Collections.Generic;
+using DynamicData;
 
 using TableTopCrucible.Core.Database;
 using TableTopCrucible.Core.Database.Models;
+using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Repositories
 {
@@ -24,6 +27,7 @@ namespace TableTopCrucible.Infrastructure.Repositories
         private readonly ITable<Tid, Tentity, Tdto> _table;
         public IConnectableCache<Tentity, Tid> DataChanges => _table.Data;
         public IObservableCache<Tentity, Tid> Data => _table.Data;
+        public IObservable<IEnumerable<FileArchivePath>> TakenDirectoriesChanges { get; }
 
         public void AddOrUpdate(Tentity entity) => _table.AddOrUpdate(entity);
         public void Delete(Tid id)

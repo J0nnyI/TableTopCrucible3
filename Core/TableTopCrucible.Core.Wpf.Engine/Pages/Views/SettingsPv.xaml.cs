@@ -32,6 +32,11 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
                     vm=>vm.CurrentPage,
                     v=>v.SettingsList.SelectedItem),
 
+                this.OneWayBind(
+                    ViewModel,
+                    vm=>vm.CurrentPage.Title,
+                    v=>v.Title.Text),
+
                 // undo deselection
                 this.WhenAnyValue(v=>v.SettingsList.SelectedItem)
                     .Cast<ISettingsCategoryPage>()

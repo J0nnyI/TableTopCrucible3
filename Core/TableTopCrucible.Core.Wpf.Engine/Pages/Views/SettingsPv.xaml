@@ -30,12 +30,15 @@
             <ListView.ItemTemplate >
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Text="{Binding Title}"
-                               />
+                        <TextBlock Text="{Binding Title}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <TextBlock x:Name="Title"
+                   Style="{StaticResource ApplicationTitle}"
+                   HorizontalAlignment="Center"
+                   DockPanel.Dock="Top"/>
         <rxui:ViewModelViewHost x:Name="PageContainer"/>
     </DockPanel>
 </rxui:ReactiveUserControl>
