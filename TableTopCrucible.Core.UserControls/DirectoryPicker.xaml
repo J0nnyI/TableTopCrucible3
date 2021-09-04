@@ -9,12 +9,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid >
-        <TextBox md:TextFieldAssist.TrailingIcon="Folder"
+        <TextBox x:Name="PathText"
+                 md:TextFieldAssist.TrailingIcon="Folder"
                  md:TextFieldAssist.HasTrailingIcon="True"
                  Text="{Binding 
                     ElementName=DirPicker,
                     Path=UserText,
                     UpdateSourceTrigger=PropertyChanged}"
+                 md:ValidationAssist.Suppress="{Binding HasNoErrors}"
                  md:HintAssist.Hint="{Binding 
                     ElementName=DirPicker ,
                     Path=Hint}"/>

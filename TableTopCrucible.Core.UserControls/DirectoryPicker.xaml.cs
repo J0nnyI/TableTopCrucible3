@@ -5,11 +5,12 @@ using ReactiveUI;
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
-
+using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.UserControls
@@ -81,6 +82,11 @@ namespace TableTopCrucible.Core.UserControls
                     if(DirectoryPath.IsValid(x.userText.value) == null)
                         this.Path = DirectoryPath.From(x.userText.value);
                 }),
+                // bug: filepicker error popup visible without error
+
+                this.WhenAnyValue(v=>v.UserText)
+                    .Select(userText=>GetErrors(nameof(userText)) == null)
+                    .BindTo(this, v=>v.HasNoErrors),
 
                 this.WhenAnyValue(v=>v.UserText)
                     .Select(userText=>GetErrors(nameof(userText)) == null)
@@ -117,6 +123,8 @@ namespace TableTopCrucible.Core.UserControls
             }
         }
 
+        [Reactive]
+        public bool HasNoErrors { get; private set; }
         public bool HasErrors => GetErrors(nameof(UserText)) != null;
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
     }

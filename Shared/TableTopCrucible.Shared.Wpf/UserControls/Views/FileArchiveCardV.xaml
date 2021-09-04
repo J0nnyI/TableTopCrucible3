@@ -24,11 +24,13 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBox Text="{Binding Path=Name}"
+            <TextBox Text="{Binding 
+                Path=Name,
+                UpdateSourceTrigger=PropertyChanged}"
                      md:HintAssist.Hint="Name"
                      Grid.Column="0"
                      Grid.Row="0"/>
-            <cuc:DirectoryPicker UserText="{Binding Path=Path}"
+            <cuc:DirectoryPicker x:Name="DirectoryPicker"
                                  Grid.Column="0"
                                  Grid.Row="1"/>
             <Button x:Name="UndoChanges"

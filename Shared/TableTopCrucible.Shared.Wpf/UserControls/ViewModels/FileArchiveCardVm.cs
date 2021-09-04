@@ -3,6 +3,8 @@ using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
 
 using System;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Windows.Input;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -43,6 +45,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         {
             this.WhenActivated(() => new[]
             {
+                _initializeCommands(),
                 this.WhenAnyValue(vm=>vm.FileArchive)
                     .Subscribe(m =>
                     {
@@ -55,12 +58,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     vm=>vm.Name,
                     vm=>vm.Path,
                     (dir, Name, path) =>
-                        dir.Name.Value != Name || dir.Path.Value != path)
+                        dir?.Name?.Value != Name || dir?.Path?.Value != path)
+                    .Do(_=>{})
                     .ToProperty(this, vm=>vm.IsDirty,out _isDirty),
 
                 vtName.RegisterValidator(this, vm=>vm.Name),
                 FileArchivePath.RegisterValidator(this, vm=>vm.Path),
             });
+        }
+
+        private IDisposable _initializeCommands()
+        {
+            return new CompositeDisposable();
         }
 
         public int CompareTo(IFileArchiveCard other)

@@ -1,4 +1,8 @@
-﻿using ReactiveUI;
+﻿using System;
+using System.Reactive.Linq;
+using System.Windows;
+
+using ReactiveUI;
 
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
@@ -25,6 +29,24 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     ViewModel,
                     vm=>vm.RemoveDirectoryCommand,
                     v=>v.RemoveDirectory.Command),
+                this.Bind(
+                    ViewModel,
+                    vm=>vm.Path,
+                    v=>v.DirectoryPicker.UserText),
+                this.OneWayBind(
+                    ViewModel,
+                    vm=>vm.IsDirty,
+                    v=>v.SaveChanges.IsEnabled),
+                this.WhenAnyValue(
+                    v=>v.ViewModel.IsDirty,
+                    v=>v.ViewModel.HasErrors,
+                    (isDirty, hasErrors)=>isDirty && !hasErrors)
+                    .Do(_=>{})
+                    .BindTo(this, v=>v.SaveChanges.IsEnabled),
+                this.OneWayBind(
+                    ViewModel,
+                    vm=>vm.IsDirty,
+                    v=>v.UndoChanges.IsEnabled),
             });
         }
     }
