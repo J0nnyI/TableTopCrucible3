@@ -26,7 +26,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 
             InitializeComponent();
 
-            this.WhenActivated(() => new IDisposable[]
+            this.WhenActivated(() => new []
             {
                 this.OneWayBind(ViewModel,
                     vm=>vm.Directories,

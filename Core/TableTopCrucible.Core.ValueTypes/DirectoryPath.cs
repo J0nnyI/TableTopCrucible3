@@ -61,31 +61,36 @@ namespace TableTopCrucible.Core.ValueTypes
         }
         public static IDisposable RegisterValidator<T>(
             T vm,
-            Expression<Func<T, string>> propertyName, 
+            Expression<Func<T, string>> propertyName,
             bool includeExists = true,
             IObservable<IEnumerable<DirectoryPath<Tthis>>> blacklistChanges = null
             ) where T : ReactiveObject, IValidatableViewModel
         {
             CompositeDisposable disposables = new();
-            vm.ValidationRule(propertyName, value => !string.IsNullOrWhiteSpace(value), "The path must not be empty")
+            vm.ValidationRule(propertyName, 
+                    value => !string.IsNullOrWhiteSpace(value),
+                    "The path must not be empty")
                 .DisposeWith(disposables);
 
             if (includeExists)
-                vm.ValidationRule(propertyName, value => Directory.Exists(value), "This directory does not exist")
+                vm.ValidationRule(propertyName, 
+                        value => Directory.Exists(value), 
+                        "This directory does not exist")
                     .DisposeWith(disposables);
 
             if (blacklistChanges != null)
             {
                 vm.ValidationRule(
                     propertyName,
-                Observable.CombineLatest(
-                    vm.WhenAnyValue(propertyName),
-                    blacklistChanges,
-                    (prop, blacklist) =>
-                    {
-                        return blacklist.Select(vt => vt.Value).Contains(prop);
-                    }),"This directory has already been registered"
-                );
+                    // ReSharper disable once InvokeAsExtensionMethod
+                    Observable.CombineLatest(
+                        vm.WhenAnyValue(propertyName),
+                        blacklistChanges.StartWith(Array.Empty<DirectoryPath<Tthis>>()),
+                        (prop, blacklist) =>
+                            !blacklist.Select(vt => vt.Value).Contains(prop)
+                        ),
+                    "This directory has already been registered"
+                ).DisposeWith(disposables);
             }
 
             vm.ValidationRule(propertyName,
@@ -162,7 +167,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public static DirectoryPath operator +(DirectoryPath directory, DirectoryName subDirectory)
             => From(Path.Combine(directory.Value, subDirectory.Value));
 
-        public static DirectoryPath AppData => DirectoryPath.From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) + DirectoryName.From("TableTopCrucible");
+        public static DirectoryPath AppData => From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) + DirectoryName.From("TableTopCrucible");
 
         public static DirectoryPath GetTemporaryPath()
             => From(Path.GetTempPath());

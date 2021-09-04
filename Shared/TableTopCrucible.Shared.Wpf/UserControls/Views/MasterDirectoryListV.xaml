@@ -22,8 +22,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <ListView x:Name="DirectoryList"
-                  BorderBrush="Red"
-                  BorderThickness="2"
                   Grid.Row="0"
                   Grid.ColumnSpan="3">
             <ListView.ItemTemplate>

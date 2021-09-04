@@ -67,7 +67,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Infrastruc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Starter", "TableTopCrucible.Starter\TableTopCrucible.Starter.csproj", "{8ED853AC-6870-4EFB-A1A8-6170F4314663}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Core.Wpf.Helper", "TableTopCrucible.Core.Wpf.Helper\TableTopCrucible.Core.Wpf.Helper.csproj", "{CE2C7F2E-37A0-44A3-B1B4-6F7CE27B5368}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Wpf.Helper", "TableTopCrucible.Core.Wpf.Helper\TableTopCrucible.Core.Wpf.Helper.csproj", "{CE2C7F2E-37A0-44A3-B1B4-6F7CE27B5368}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A441084A-67A2-42D5-A7BC-C96EF7064427}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
