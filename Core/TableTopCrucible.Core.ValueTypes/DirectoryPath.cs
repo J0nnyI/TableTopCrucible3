@@ -26,7 +26,9 @@ namespace TableTopCrucible.Core.ValueTypes
     /// <summary>
     /// the path of a directory
     /// </summary>
-    public class DirectoryPath<Tthis> : ValueOf<string, Tthis> where Tthis : DirectoryPath<Tthis>, new()
+    public class DirectoryPath<Tthis> 
+        : ValueOf<string, Tthis> 
+        where Tthis : DirectoryPath<Tthis>, new()
     {
 
         public static FilePath operator +(DirectoryPath<Tthis> directory, FileName fileName)
@@ -157,6 +159,7 @@ namespace TableTopCrucible.Core.ValueTypes
             DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
         public string[] GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
             => Locator.Current.GetService<IFileSystem>().Directory.GetFiles(Value, searchPattern, searchOption);
+
 
     }
     public class DirectoryPath : DirectoryPath<DirectoryPath>

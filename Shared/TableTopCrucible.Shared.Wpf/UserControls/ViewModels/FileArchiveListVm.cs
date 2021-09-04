@@ -5,7 +5,9 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 using System;
+using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -39,6 +41,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         [Reactive]
         public string Name { get; set; }
 
+        public Interaction<Unit, FileArchivePath> GetDirectoryDialog { get; } = new();
+
         public ICommand CreateDirectory { get; private set; }
         public FileArchiveListVm(IFileArchiveRepository fileArchiveRepository)
         {
@@ -60,6 +64,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Bind(Directories)
                     .Subscribe(),
+
                 _initCommands(),
 
                 FileArchivePath.RegisterValidator(this, 
@@ -75,16 +80,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         {
             var disposables = new CompositeDisposable();
             CreateDirectory =
-                ReactiveCommand.Create(() =>
-                        Observable.Start(() =>
-                            _fileArchiveRepository.AddOrUpdate(new FileArchive()
-                            {
-                                Path = FileArchivePath.From(Directory),
-                                Name = vtName.From(Name),
-                            })), this.WhenAnyValue(v=>v.HasErrors).Do(_=>{}).Select(x=>!x)
-
-                    , RxApp.TaskpoolScheduler, RxApp.MainThreadScheduler
-                ).DisposeWith(disposables);
+                ReactiveCommand.Create(async () =>
+                {
+                    var path = await GetDirectoryDialog.Handle(Unit.Default);
+                    _fileArchiveRepository.AddOrUpdate(new FileArchive()
+                    {
+                        Path = path,
+                        Name = path.GetDirectoryName().ToName(),
+                    });
+                });
             return disposables;
         }
         public ObservableCollectionExtended<IFileArchiveCard> Directories { get; } = new();

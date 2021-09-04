@@ -18,9 +18,9 @@ using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 {
-    public partial class FileArchiveV : ReactiveUserControl<FileArchiveCardVm>, IActivatableView
+    public partial class FileArchiveCardV : ReactiveUserControl<FileArchiveCardVm>, IActivatableView
     {
-        public FileArchiveV()
+        public FileArchiveCardV()
         {
             InitializeComponent();
             this.WhenActivated(() => new[]

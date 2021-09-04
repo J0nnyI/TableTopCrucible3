@@ -8,5 +8,8 @@ namespace TableTopCrucible.Core.ValueTypes
     /// </summary>
     public class DirectoryName : ValueOf<string, DirectoryName>
     {
+
+        public Name ToName()
+            => Name.From(Value);
     }
 }
