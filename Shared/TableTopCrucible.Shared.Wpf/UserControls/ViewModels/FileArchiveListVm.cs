@@ -8,6 +8,7 @@ using ReactiveUI.Validation.Helpers;
 using Splat;
 
 using System;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -79,11 +80,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 ReactiveCommand.Create(async () =>
                 {
                     var path = await GetDirectoryDialog.Handle(Unit.Default);
-                    _fileArchiveRepository.AddOrUpdate(new FileArchive()
-                    {
-                        Path = path,
-                        Name = path.GetDirectoryName().ToName(),
-                    });
+                    if(!_fileArchiveRepository.Data.Items.Select(e => e.Path).Contains(path)){
+                        _fileArchiveRepository.AddOrUpdate(new FileArchive()
+                        {
+                            Path = path,
+                            Name = path.GetDirectoryName().ToName(),
+                        });
+                    }
                 });
             return disposables;
         }

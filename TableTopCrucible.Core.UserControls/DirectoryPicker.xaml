@@ -16,7 +16,6 @@
                     ElementName=DirPicker,
                     Path=UserText,
                     UpdateSourceTrigger=PropertyChanged}"
-                 md:ValidationAssist.Suppress="{Binding HasNoErrors}"
                  md:HintAssist.Hint="{Binding 
                     ElementName=DirPicker ,
                     Path=Hint}"/>

@@ -85,7 +85,7 @@ namespace TableTopCrucible.Core.UserControls
                 // bug: filepicker error popup visible without error
 
                 this.WhenAnyValue(v=>v.UserText)
-                    .Select(userText=>GetErrors(nameof(userText)) == null)
+                    .Select(_=>GetErrors(nameof(UserText)) == null)
                     .BindTo(this, v=>v.HasNoErrors),
 
                 this.WhenAnyValue(v=>v.UserText)
@@ -104,8 +104,8 @@ namespace TableTopCrucible.Core.UserControls
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             VistaFolderBrowserDialog dialog = new();
-            dialog.ShowDialog();
-            UserText = dialog.SelectedPath;
+            if(dialog.ShowDialog() == true)
+                UserText = dialog.SelectedPath;
         }
 
 
