@@ -33,20 +33,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     ViewModel,
                     vm=>vm.Path,
                     v=>v.DirectoryPicker.UserText),
-                this.OneWayBind(
+                this.Bind(
                     ViewModel,
-                    vm=>vm.IsDirty,
-                    v=>v.SaveChanges.IsEnabled),
-                this.WhenAnyValue(
-                    v=>v.ViewModel.IsDirty,
-                    v=>v.ViewModel.HasErrors,
-                    (isDirty, hasErrors)=>isDirty && !hasErrors)
-                    .Do(_=>{})
-                    .BindTo(this, v=>v.SaveChanges.IsEnabled),
-                this.OneWayBind(
+                    vm=>vm.RemoveDirectoryCommand,
+                    v=>v.RemoveDirectory.Command),
+                this.Bind(
                     ViewModel,
-                    vm=>vm.IsDirty,
-                    v=>v.UndoChanges.IsEnabled),
+                    vm=>vm.UndoChangesCommand,
+                    v=>v.UndoChanges.Command),
+                this.Bind(
+                    ViewModel,
+                    vm=>vm.SaveChangesCommand,
+                    v=>v.SaveChanges.Command),
             });
         }
     }

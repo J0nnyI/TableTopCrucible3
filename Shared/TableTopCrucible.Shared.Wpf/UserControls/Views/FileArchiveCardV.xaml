@@ -50,6 +50,7 @@
                 <md:PackIcon Kind="ContentSave"/>
             </Button>
             <Button x:Name="RemoveDirectory"
+                    ToolTip="Remove Directory"
                     Style="{StaticResource MaterialDesignIconButton}"
                     Grid.Row="0"
                     Grid.Column="2">

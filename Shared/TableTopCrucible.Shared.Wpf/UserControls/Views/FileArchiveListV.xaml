@@ -17,53 +17,13 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <ListBox x:Name="DirectoryList"
-                  md:RippleAssist.IsDisabled="True"
                   HorizontalAlignment="Center"
+                  Style="{StaticResource MaterialDesignCardsListBox}"
                   Grid.Row="0"
                   Grid.ColumnSpan="3">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem"
-                       BasedOn="{StaticResource MaterialDesignCardsListBoxItem}">
-                    <Setter Property="IsTabStop" Value="False" />
-                </Style>
-            </ListBox.ItemContainerStyle>
         </ListBox>
         <Button x:Name="CreateDirectory"
                 Grid.Row="1"
                 Content="Add Directory"/>
-        <!--<Grid Grid.Row="1"
-              Margin="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="Directory"
-                     Grid.Column="0"
-                     Width="200"
-                     Text="{Binding Path=Directory, UpdateSourceTrigger=PropertyChanged}"
-                     Style="{StaticResource DirectoryPickerTextBox}"
-                     md:ValidationAssist.UsePopup="True"
-                     md:HintAssist.Hint="Path"
-                     md:HintAssist.IsFloating="True">
-            </TextBox>
-            <Button Click="_SelectDirectoryClicked"
-                    Grid.Column="0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Style="{StaticResource DirectoryPickerButton}"
-                    Margin="0 0 6 0"/>
-            <TextBox x:Name="Name"
-                     Grid.Column="1"
-                     Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
-                     Width="200"/>
-            <Button x:Name="CreateDirectory"
-                    Grid.Column="2">Add Directory</Button>
-        </Grid>-->
     </Grid>
 </rxui:ReactiveUserControl>

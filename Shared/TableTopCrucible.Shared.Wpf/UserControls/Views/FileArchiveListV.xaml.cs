@@ -29,17 +29,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     v=>v.CreateDirectory.Command
                     ),
 
-                this.OneWayBind(ViewModel,
-                    vm=>vm.CreateDirectory,
-                    v=>v.CreateDirectory.Command),
-
                 ViewModel!.GetDirectoryDialog.RegisterHandler(async interaction =>
                 {
                     VistaFolderBrowserDialog dialog = new();
-                    if( dialog.ShowDialog() == true)
-                       interaction.SetOutput( FileArchivePath.From(dialog.SelectedPath));
-                    else
-                       interaction.SetOutput( null);
+                    interaction.SetOutput(dialog.ShowDialog() == true 
+                        ? FileArchivePath.From(dialog.SelectedPath) 
+                        : null);
                 })
             });
         }

@@ -13,7 +13,9 @@
         <rx:ViewModelViewHost x:Name="MainContainer"/>
         <rx:ViewModelViewHost x:Name="NotificationList"
                               VerticalAlignment="Top"
-                              HorizontalAlignment="Center"/>
+                              HorizontalAlignment="Center"
+                              MinWidth="700"
+                              MaxWidth="1000"/>
         <!--<Rectangle Fill="Blue" Stroke="Blue"/>-->
     </Grid>
 </rx:ReactiveUserControl>

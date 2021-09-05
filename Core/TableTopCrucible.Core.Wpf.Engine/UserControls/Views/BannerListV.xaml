@@ -11,6 +11,7 @@
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
             <ListView x:Name="Notifications"
-                      HorizontalContentAlignment="Center"/>
+                      Style="{StaticResource MaterialDesignCardsListBox}"
+                      HorizontalContentAlignment="Stretch"/>
     </Grid>
 </rxui:ReactiveUserControl>

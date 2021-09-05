@@ -36,12 +36,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     {
         private readonly IFileArchiveRepository _fileArchiveRepository;
         private readonly INotificationService _notificationService;
-
-        [Reactive]
-        public string Directory { get; set; }
-        [Reactive]
-        public string Name { get; set; }
-
+        
         public Interaction<Unit, FileArchivePath> GetDirectoryDialog { get; } = new();
 
         public ICommand CreateDirectory { get; private set; }
@@ -68,13 +63,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Subscribe(),
 
                 _initCommands(),
-
-                FileArchivePath.RegisterValidator(this,
-                    vm => vm.Directory,
-                    true,
-                    _fileArchiveRepository.TakenDirectoriesChanges
-                    ),
-                vtName.RegisterValidator(this, vm => vm.Name),
             });
         }
 
@@ -90,11 +78,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     var takenItem = _fileArchiveRepository.Data.Items.FirstOrDefault(e => e.Path == path);
                     if (takenItem == null)
                     {
-                        var newArchive = new FileArchive()
-                        {
-                            Path = path,
-                            Name = path.GetDirectoryName().ToName(),
-                        };
+                        var newArchive = new FileArchive(path.GetDirectoryName().ToName(), path);
                         _fileArchiveRepository.AddOrUpdate(newArchive);
                         _notificationService.AddNotification(
                             "Archive added successfully", 

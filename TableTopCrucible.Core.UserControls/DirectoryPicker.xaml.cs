@@ -10,17 +10,34 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using FluentValidation;
 using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Contexts;
+using ReactiveUI.Validation.Helpers;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.UserControls
 {
-
-
-
-    public partial class DirectoryPicker : UserControl, IActivatableView, INotifyDataErrorInfo
+    public class DirectoryPickerVm : ReactiveValidationObject, IActivatableViewModel
     {
+        [Reactive]
+        public string UserText { get; set; }
+        public DirectoryPickerVm()
+        {
+            this.WhenActivated(()=>new []
+            {
+                
+                DirectoryPath.RegisterValidator(this, vm=>vm.UserText, true)
+            });
+        }
 
+        public ViewModelActivator Activator { get; } = new();
+    }
+
+
+    public partial class DirectoryPicker : ReactiveUserControl<DirectoryPickerVm>, IActivatableView, INotifyDataErrorInfo
+    {
         public string Hint
         {
             get => (string)GetValue(HintProperty);
@@ -61,10 +78,12 @@ namespace TableTopCrucible.Core.UserControls
 
         public DirectoryPicker()
         {
+            this.DataContext =this.ViewModel= new DirectoryPickerVm();
             InitializeComponent();
             // sync usertext and path
             this.WhenActivated(() => new[]
             {
+                //sync UserText (raw input) and Path (validated input)
                 Observable.CombineLatest(
                     this.WhenAnyValue(v => v.Path)
                         .Select(value => new {value, timeStamp = DateTime.Now}),
@@ -82,22 +101,16 @@ namespace TableTopCrucible.Core.UserControls
                     if(DirectoryPath.IsValid(x.userText.value) == null)
                         this.Path = DirectoryPath.From(x.userText.value);
                 }),
+                // custom 2-way bind between vm.UserText and v.UserText to prevent loosing the initial value (initial sync vm.UserText => v.UserText)
+                this.WhenAnyValue(v=>v.UserText)
+                    .Where(text=>text != ViewModel.UserText)
+                    .BindTo(this, v=>v.ViewModel.UserText),
+                this.ObservableForProperty(v=>v.ViewModel.UserText)
+                    .Select(c=>c.Value)
+                    .Where(text=>text != this.UserText)
+                    .BindTo(this, v=>v.UserText),
+                
                 // bug: filepicker error popup visible without error
-
-                this.WhenAnyValue(v=>v.UserText)
-                    .Select(_=>GetErrors(nameof(UserText)) == null)
-                    .BindTo(this, v=>v.HasNoErrors),
-
-                this.WhenAnyValue(v=>v.UserText)
-                    .Select(userText=>GetErrors(nameof(userText)) == null)
-                    //.DistinctUntilChanged()
-                    .Subscribe(hasErrors =>
-                    {
-                        this.ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(UserText)));
-                    }, e =>
-                    {
-
-                    })
             });
         }
 
@@ -105,27 +118,20 @@ namespace TableTopCrucible.Core.UserControls
         {
             VistaFolderBrowserDialog dialog = new();
             if(dialog.ShowDialog() == true)
-                UserText = dialog.SelectedPath;
+                ViewModel.UserText = dialog.SelectedPath;
         }
-
 
         public IEnumerable GetErrors(string? propertyName)
         {
-            switch (propertyName)
-            {
-                case nameof(UserText):
-                    var err = DirectoryPath.IsValid(UserText, true)?.Message;
-                    return err == null
-                        ? null
-                        : new[] { err };
-                default:
-                    return null;
-            }
+            return ViewModel.GetErrors(propertyName);
         }
 
-        [Reactive]
-        public bool HasNoErrors { get; private set; }
-        public bool HasErrors => GetErrors(nameof(UserText)) != null;
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public bool HasErrors => ViewModel.HasErrors;
+
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged
+        {
+            add => ViewModel.ErrorsChanged += value;
+            remove => ViewModel.ErrorsChanged -= value;
+        }
     }
 }

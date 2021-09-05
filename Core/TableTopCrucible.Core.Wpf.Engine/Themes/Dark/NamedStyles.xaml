@@ -47,6 +47,10 @@
         </Style.Resources>
     </Style>
 
+    <Style x:Key="SilentListBox"
+           TargetType="ListBox"
+           BasedOn="{StaticResource listbox}"/>
+
     <Style x:Key="SecondaryButton"
            TargetType="Button"
            BasedOn="{StaticResource MaterialDesignOutlinedButton}"/>
