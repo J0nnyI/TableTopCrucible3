@@ -9,6 +9,16 @@
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            <Label>simple notification</Label>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0"
+                   x:Name="Title"/>
+        <TextBlock Grid.Row="1"
+                   x:Name="Content"/>
+        <Label Grid.Row="2"
+               Content="simple notification"/>
     </Grid>
 </rxui:ReactiveUserControl>

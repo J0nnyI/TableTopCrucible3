@@ -10,11 +10,10 @@
                    d:DataContext="{d:DesignInstance pvm:MainPageVm}">
     <Grid VerticalAlignment="Stretch"
           HorizontalAlignment="Stretch">
-        <rx:ViewModelViewHost x:Name="MainContainer" 
-                          VerticalAlignment="Stretch"
-                          HorizontalAlignment="Stretch"
-                          VerticalContentAlignment="Stretch"
-                          HorizontalContentAlignment="Stretch"></rx:ViewModelViewHost>
+        <rx:ViewModelViewHost x:Name="NotificationList"
+                              VerticalAlignment="Top"
+                              HorizontalAlignment="Center"/>
+        <rx:ViewModelViewHost x:Name="MainContainer"/>
         <!--<Rectangle Fill="Blue" Stroke="Blue"/>-->
     </Grid>
 </rx:ReactiveUserControl>

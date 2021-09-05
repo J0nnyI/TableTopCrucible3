@@ -15,14 +15,16 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
         {
             InitializeComponent();
 
-            this.InitializeComponent();
-            this.WhenActivated((CompositeDisposable disposables) =>
+            this.WhenActivated(()=>new[]
             {
                 this.OneWayBind(
                         ViewModel,
                         vm => vm.SettingsPage,
-                        v => v.MainContainer.ViewModel)
-                    .DisposeWith(disposables);
+                        v => v.MainContainer.ViewModel),
+                this.OneWayBind(
+                    ViewModel,
+                    vm=>vm.BannerList,
+                    v=>v.NotificationList.ViewModel),
             });
         }
     }
