@@ -2,6 +2,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:reactiveUi="http://reactiveui.net">
+    <!--md colors: https://material.io/design/color/the-color-system.html#tools-for-picking-colors-->
+    <SolidColorBrush x:Key="BackgroundConfirm" Color="#00C853"/>
+    <SolidColorBrush x:Key="BackgroundWarning" Color="#FFEB3B"/>
+    <SolidColorBrush x:Key="BackgroundError" Color="#E64A19"/>
+    <SolidColorBrush x:Key="BackgroundInfo" Color="#0091EA"/>
+
     <Style x:Key="ApplicationTitle"
            TargetType="TextBlock"
            BasedOn="{StaticResource MaterialDesignHeadline1TextBlock}">

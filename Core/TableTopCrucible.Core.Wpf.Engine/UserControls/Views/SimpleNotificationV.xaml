@@ -6,19 +6,83 @@
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels"
+                          xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                          xmlns:vt="clr-namespace:TableTopCrucible.Core.Wpf.Engine.ValueTypes"
                           mc:Ignorable="d" 
-                          d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0"
-                   x:Name="Title"/>
-        <TextBlock Grid.Row="1"
-                   x:Name="Content"/>
-        <Label Grid.Row="2"
-               Content="simple notification"/>
-    </Grid>
+                          d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance vm:SimpleNotificationVm}">
+    <UserControl.Resources>
+        <Style TargetType="md:Card">
+            <Style.Triggers >
+                <DataTrigger Binding="{Binding Path=Type}"
+                             Value="{x:Static vt:NotificationType.Confirmation}">
+                    <Setter Property="Background"
+                            Value="{StaticResource BackgroundConfirm}"/>
+                    <Setter Property="Foreground"
+                            Value="{StaticResource MaterialDesignLightForeground}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Type}"
+                             Value="{x:Static vt:NotificationType.Error}">
+                    <Setter Property="Background"
+                            Value="{StaticResource BackgroundError}"/>
+                    <Setter Property="Foreground"
+                            Value="{StaticResource MaterialDesignLightForeground}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Type}"
+                             Value="{x:Static vt:NotificationType.Info}">
+                    <Setter Property="Background"
+                            Value="{StaticResource BackgroundInfo}"/>
+                    <Setter Property="Foreground"
+                            Value="{StaticResource MaterialDesignLightForeground}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Type}"
+                             Value="{x:Static vt:NotificationType.Warning}">
+                    <Setter Property="Background"
+                            Value="{StaticResource BackgroundWarning}"/>
+                    <Setter Property="Foreground"
+                            Value="{StaticResource MaterialDesignLightForeground}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <md:Card>
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       Foreground="{StaticResource MaterialDesignLightForeground}"
+                       x:Name="Title"/>
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       Foreground="{StaticResource MaterialDesignLightForeground}"
+                       x:Name="Content"/>
+            <Grid Grid.Column="1"
+                  Grid.RowSpan="2"
+                  Grid.Row="0"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Margin="0 -15 -20 0">
+                <ProgressBar x:Name="DeleteCountdown"
+                             Style="{StaticResource MaterialDesignCircularProgressBar}"
+                             Width="30"
+                             Height="30"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch"/>
+                <Button x:Name="CloseNotification"
+                        ToolTip="Close Notification"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource MaterialDesignIconButton}">
+                    <md:PackIcon Kind="Close"/>
+                </Button>
+
+            </Grid>
+        </Grid>
+    </md:Card>
 </rxui:ReactiveUserControl>

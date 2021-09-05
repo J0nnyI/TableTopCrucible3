@@ -10,6 +10,7 @@ namespace TableTopCrucible.Core.Helper
     public static class SettingsHelper
     {
         public static TimeSpan NotificationDelay => new (0, 0, 0, 5);
-        public static bool AutocloseEnabled => false;
+        public static int NotificationResolution => 100;
+        public static bool AutocloseEnabled => true;
     }
 }

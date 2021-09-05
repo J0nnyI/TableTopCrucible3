@@ -23,8 +23,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
     [Singleton(typeof(NotificationService))]
     public interface INotificationService
     {
+        NotificationId AddNotification(string title, string content, NotificationType type);
         NotificationId AddNotification(Name title, Description content, NotificationType type);
         void RemoveNotification(NotificationId id);
+        IObservableList<INotification> Notifications { get; }
     }
     public class NotificationService : INotificationService
     {
@@ -41,17 +43,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
             this.Notifications = observableList;
 
         }
+
+        public NotificationId AddNotification(string title, string content, NotificationType type)
+            => AddNotification(Name.From(title), Description.From(content), type);
         public NotificationId AddNotification(Name title, Description content, NotificationType type)
         {
             var notification = new SimpleNotificationVm(title, content, type);
             _notifications.AddOrUpdate(notification);
-            if (type == NotificationType.Confirmation && SettingsHelper.AutocloseEnabled)
-            {
-                Observable.Start(() => _notifications.RemoveKey(notification.Id), RxApp.TaskpoolScheduler)
-                    .Take(1)
-                    .DelaySubscription(SettingsHelper.NotificationDelay)
-                    .Subscribe();
-            }
             return notification.Id;
         }
 
