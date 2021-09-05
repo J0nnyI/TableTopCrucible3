@@ -51,7 +51,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0"
@@ -61,6 +61,7 @@
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
                        Foreground="{StaticResource MaterialDesignLightForeground}"
+                       TextWrapping="Wrap"
                        x:Name="Content"/>
             <Grid Grid.Column="1"
                   Grid.RowSpan="2"

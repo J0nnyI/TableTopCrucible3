@@ -98,14 +98,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         _fileArchiveRepository.AddOrUpdate(newArchive);
                         _notificationService.AddNotification(
                             "Archive added successfully", 
-                            $"The Directory '{newArchive.Path}' has been added as Archive '{newArchive.Name}'",
+                            $"The directory '{newArchive.Path}' has been added as Archive '{newArchive.Name}'",
                             NotificationType.Confirmation);
                     }
                     else
                     {
                         _notificationService.AddNotification(
                             "Archive has already been added",
-                            $"This directory has already been registered as archive under the name {takenItem.Name.Value}",
+                            $"This directory '{takenItem.Path.Value}' has already been registered as archive under the name '{takenItem.Name.Value}'",
                             NotificationType.Info);
                     }
                 });
