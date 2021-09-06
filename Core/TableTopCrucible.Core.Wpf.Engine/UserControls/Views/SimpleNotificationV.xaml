@@ -51,19 +51,32 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
+            <md:PackIcon x:Name="Icon"
+                         Foreground="{StaticResource MaterialDesignLightForeground}"
+                         Height="20px"
+                         Width="20px"
+                         Grid.Row="0"
+                         Grid.Column="0"/>
             <TextBlock Grid.Row="0"
-                       Grid.Column="0"
+                       Grid.Column="1"
+                       Style="{StaticResource Body2}"
+                       Margin="10 0 0 10"
+                       FontFamily="Roboto"
                        Foreground="{StaticResource MaterialDesignLightForeground}"
                        x:Name="Title"/>
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
+                       Grid.ColumnSpan="3"
+                       FontFamily="Roboto"
+                       Style="{StaticResource Body1}"
                        Foreground="{StaticResource MaterialDesignLightForeground}"
                        TextWrapping="Wrap"
                        x:Name="Content"/>
-            <Grid Grid.Column="1"
+            <Grid Grid.Column="2"
                   Grid.RowSpan="2"
                   Grid.Row="0"
                   HorizontalAlignment="Right"
@@ -73,14 +86,16 @@
                              Style="{StaticResource MaterialDesignCircularProgressBar}"
                              Width="30"
                              Height="30"
+                             Foreground="{StaticResource MaterialDesignLightForeground}"
                              HorizontalAlignment="Stretch"
                              VerticalAlignment="Stretch"/>
                 <Button x:Name="CloseNotification"
                         ToolTip="Close Notification"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
+                        md:ButtonProgressAssist.IndicatorForeground="{StaticResource MaterialDesignLightForeground}"
                         Style="{StaticResource MaterialDesignIconButton}">
-                    <md:PackIcon Kind="Close"/>
+                    <md:PackIcon Kind="Close" Foreground="{StaticResource MaterialDesignLightForeground}"/>
                 </Button>
 
             </Grid>

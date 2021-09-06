@@ -10,6 +10,6 @@
                         mc:Ignorable="d" 
                         d:DesignHeight="450" d:DesignWidth="800">
     <rxui:ViewModelViewHost x:Name="FileArchiveList"
-                            MaxWidth="1300"
+                            MaxWidth="1000"
                             Margin="20"/>
 </rxui:ReactiveUserControl>

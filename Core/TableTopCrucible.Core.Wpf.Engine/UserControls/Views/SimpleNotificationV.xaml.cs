@@ -1,9 +1,13 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+
+using MaterialDesignThemes.Wpf;
 
 using ReactiveUI;
 
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 {
@@ -51,7 +55,19 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                 this.OneWayBind(
                     ViewModel,
                     vm=>vm.CloseNotificationCommand,
-                    v=>v.CloseNotification.Command)
+                    v=>v.CloseNotification.Command),
+                this.OneWayBind(
+                    ViewModel,
+                    vm=>vm.Type,
+                    v=>v.Icon.Kind,
+                    type =>type switch
+                        {
+                            NotificationType.Info => PackIconKind.InfoCircle,
+                            NotificationType.Confirmation => PackIconKind.CheckCircle, 
+                            NotificationType.Error => PackIconKind.Error,
+                            NotificationType.Warning => PackIconKind.WarningCircle,
+                            _ => throw new NotImplementedException(nameof(type) + " has not icon"),
+                        }),
             });
         }
     }

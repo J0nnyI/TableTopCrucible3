@@ -16,7 +16,7 @@
     <md:Card>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="512"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
