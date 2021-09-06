@@ -19,7 +19,7 @@ namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
     {
         public IFileArchiveList FileArchiveList { get; }
         public IFileArchiveCard NewDirectoryCard { get; }
-        public Name Title => Name.From("File Archives");
+        public Name Title => Name.From("Directory Configuration");
         public SortingOrder Position => SortingOrder.From(1);
 
         public ViewModelActivator Activator { get; } = new();

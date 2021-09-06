@@ -20,6 +20,7 @@
         <ListBox x:Name="DirectoryList"
                   HorizontalAlignment="Stretch"
                   Style="{StaticResource MaterialDesignCardsListBox}"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                   Grid.Row="0"
                   Grid.ColumnSpan="3">
             <ListBox.ItemsPanel>
@@ -30,7 +31,7 @@
             <ListBox.Resources>
                 <Style TargetType="v:FileArchiveCardV">
                     <Setter Property="Width"
-                            Value="490"/>
+                            Value="480"/>
                 </Style>
             </ListBox.Resources>
             <!--todo: min card size-->

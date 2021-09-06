@@ -36,7 +36,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     {
         private readonly IFileArchiveRepository _fileArchiveRepository;
         private readonly INotificationService _notificationService;
-        
+
         public Interaction<Unit, FileArchivePath> GetDirectoryDialog { get; } = new();
 
         public ICommand CreateDirectory { get; private set; }
@@ -51,10 +51,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 _fileArchiveRepository
                     .DataChanges
                     .Connect()
+                    .Transform(m=>m.Id)
+                    .IgnoreUpdateWhen((m1, m2)=>m1==m2)
                     .Transform(m=>
                     {
                         var card = Locator.Current.GetService<IFileArchiveCard>();
-                        card.FileArchive = m;
+                        card.FileArchiveId = m;
                         return card;
                     })
                     .Sort()
@@ -81,7 +83,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         var newArchive = new FileArchive(path.GetDirectoryName().ToName(), path);
                         _fileArchiveRepository.AddOrUpdate(newArchive);
                         _notificationService.AddNotification(
-                            "Archive added successfully", 
+                            "Archive added successfully",
                             $"The directory '{newArchive.Path}' has been added as Archive '{newArchive.Name}'",
                             NotificationType.Confirmation);
                     }

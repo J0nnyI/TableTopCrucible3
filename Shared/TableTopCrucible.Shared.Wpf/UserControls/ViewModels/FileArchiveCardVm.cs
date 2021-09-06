@@ -3,13 +3,19 @@ using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Splat;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.Wpf.Engine.Services;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
+using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
+using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 using vtName = TableTopCrucible.Core.ValueTypes.Name;
@@ -19,13 +25,16 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     [Transient(typeof(FileArchiveCardVm))]
     public interface IFileArchiveCard : IComparable<IFileArchiveCard>, IComparable
     {
-        public FileArchive FileArchive { get; set; }
+        public FileArchiveId FileArchiveId { get; set; }
+        public FileArchive FileArchive { get; }
         public bool ResetOnSave { get; set; }
     }
     public class FileArchiveCardVm : ReactiveValidationObject, IActivatableViewModel, IFileArchiveCard
     {
+        private ObservableAsPropertyHelper<FileArchive> _fileArchive;
+        public FileArchive FileArchive => _fileArchive?.Value;
         [Reactive]
-        public FileArchive FileArchive { get; set; }
+        public FileArchiveId FileArchiveId { get; set; }
 
         [Reactive]
         public bool ResetOnSave { get; set; } = false;
@@ -36,7 +45,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public string Path { get; set; }
 
         private ObservableAsPropertyHelper<bool> _isDirty;
-        private readonly IFileArchiveRepository? _fileArchiveRepository;
+
+        private readonly IFileArchiveRepository _fileArchiveRepository;
+        private readonly INotificationService _notificationService;
         public bool IsDirty => _isDirty.Value;
 
         public ICommand SaveChangesCommand { get; private set; }
@@ -46,9 +57,41 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public FileArchiveCardVm()
         {
             this._fileArchiveRepository = Locator.Current.GetService<IFileArchiveRepository>();
+            this._notificationService = Locator.Current.GetService<INotificationService>();
 
             this.WhenActivated(() => new[]
             {
+                this.WhenAnyValue(
+                    vm => vm.FileArchiveId)
+                    .Select(x=>
+                    {
+                        var res = _fileArchiveRepository.DataChanges.Watch(x);
+                        return res;
+                    })
+                    .Subscribe(x =>
+                    {
+                    }),
+                // Properties
+                this.WhenAnyValue(
+                        vm => vm.FileArchiveId,
+                        id => _fileArchiveRepository.DataChanges.Watch(id))
+                    .Do(x =>
+                    {
+
+                    })
+                    .Switch()
+                    .Select(change=>change.Current)
+                    .Do(m =>
+                    {
+                        Name = m?.Name?.Value;
+                        Path = m?.Path?.Value;
+                    })
+                    .Catch(new Func<Exception,IObservable<FileArchive>>(e =>
+                    {
+                        return Observable.Never<FileArchive>();
+                    }))
+                    .ToProperty(this, vm=>vm.FileArchive, out _fileArchive),
+
                 this.WhenAnyValue(
                         vm=>vm.FileArchive,
                         vm=>vm.Name,
@@ -57,66 +100,57 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             dir?.Name?.Value != Name || dir?.Path?.Value != path)
                     .ToProperty(this, vm=>vm.IsDirty,out _isDirty),
 
-                // todo: undo / save / delete implementations
-                _initializeCommands(),
-                this.WhenAnyValue(vm=>vm.FileArchive)
-                    .Subscribe(m =>
-                    {
-                        Name = m.Name.Value;
-                        Path = m.Path.Value;
-                    }),
-
-
+                // Validation
                 vtName.RegisterValidator(this, vm=>vm.Name),
                 FileArchivePath.RegisterValidator(this, vm=>vm.Path),
-            });
-        }
 
-        private IDisposable _initializeCommands()
-        {
-            var saveChanges = ReactiveCommand.Create(() =>
-                {
-                    _fileArchiveRepository.AddOrUpdate(new(Name, Path, FileArchive.Id));
-                },
-                this.WhenAnyValue(
-                    vm => vm.IsDirty,
-                    vm => vm.HasErrors,
-                    (isDirty, hasErrors) => isDirty && !hasErrors)
+                // Commands
+                ReactiveCommandHelper.Create(() =>
+                    {
+                        _fileArchiveRepository.AddOrUpdate(new(Name, Path, FileArchive.Id));
+                        _notificationService.AddNotification(
+                            "Directory saved successfully",
+                            $"The directory '{Name}' has been saved successfully",
+                            NotificationType.Confirmation);
+                    },
+                    this.WhenAnyValue(
+                        vm => vm.IsDirty,
+                        vm => vm.HasErrors,
+                        (isDirty, hasErrors) => isDirty && !hasErrors),
+                    c => SaveChangesCommand = c
+                ),
+                ReactiveCommandHelper.Create(() =>
+                    {
+                        Name = FileArchive.Name.Value;
+                        Path = FileArchive.Path.Value;
+                        _notificationService.AddNotification(
+                            "Directory undo successful",
+                            $"The changes in directory '{Name}' have been undone successfully",
+                            NotificationType.Confirmation);
+                    },
+                    this.WhenAnyValue(vm => vm.IsDirty),
+                    c=>UndoChangesCommand =c
+                ),
+                ReactiveCommandHelper.Create(() =>
+                    {
+                        _fileArchiveRepository.Delete(FileArchive.Id);
+                        _notificationService.AddNotification(
+                            "Remove successful",
+                            $"The Directory '{Name}' has been removed from this list",
+                            NotificationType.Confirmation);
+                    },
+                    c=>RemoveDirectoryCommand = c
+                ),
+            },
+                vm=>vm.FileArchive
             );
-            var undoChanges = ReactiveCommand.Create(() =>
-                {
-                    this.Name = FileArchive.Name.Value;
-                    this.Path = FileArchive.Path.Value;
-                },
-                this.WhenAnyValue(vm=>vm.IsDirty)
-            );
-            var removeDirectory = ReactiveCommand.Create(() =>
-                {
-                    _fileArchiveRepository.Delete(FileArchive.Id);
-                }
-            );
-
-            this.SaveChangesCommand = saveChanges;
-            this.UndoChangesCommand = undoChanges;
-            this.RemoveDirectoryCommand = removeDirectory;
-
-            return new CompositeDisposable(new IDisposable[]
-            {
-                saveChanges,
-                undoChanges,
-                removeDirectory,
-            });
         }
 
         public int CompareTo(IFileArchiveCard other)
-        {
-            return this.FileArchive.CompareTo(other?.FileArchive);
-        }
+            => this.FileArchive?.CompareTo(other?.FileArchive) ?? 1;
 
         public int CompareTo(object? obj)
-        {
-            return CompareTo(obj as IFileArchiveCard);
-        }
+            => CompareTo(obj as IFileArchiveCard);
 
         public ViewModelActivator Activator { get; } = new();
     }

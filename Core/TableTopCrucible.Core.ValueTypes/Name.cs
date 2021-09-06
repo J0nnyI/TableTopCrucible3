@@ -32,6 +32,6 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public int CompareTo(Name other)
-            => Value.CompareTo(other.Value);
+            => Value?.CompareTo(other?.Value) ?? 0;
     }
 }
