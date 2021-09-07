@@ -22,14 +22,14 @@ namespace ReactiveUI
             => Create(execute, null, out result, outputScheduler, canExecuteScheduler);
         public static ReactiveCommand<Unit, Unit> Create(
             Action execute,
-            [AllowNull] IObservable<bool>? canExecute,
+            [AllowNull] IObservable<bool> canExecute,
             out ReactiveCommand<Unit, Unit> result,
             IScheduler outputScheduler = null,
             IScheduler canExecuteScheduler = null)
             => result = ReactiveCommand.Create(execute, canExecute, outputScheduler, canExecuteScheduler);
         public static ReactiveCommand<Unit, Unit> Create(
             Action execute,
-            IObservable<bool>? canExecute = null,
+            IObservable<bool> canExecute = null,
             Action<ReactiveCommand<Unit, Unit>> resultWriter = null,
             IScheduler outputScheduler = null,
             IScheduler canExecuteScheduler = null)

@@ -10,13 +10,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
     }
     public class MainPageVm : IMainPage
     {
-        public ISettingsPage SettingsPage { get; }
         public IBannerList BannerList { get; }
+        public INavigationList NavigationList { get; }
 
-        public MainPageVm(ISettingsPage settingsPage, IBannerList bannerList)
+        public MainPageVm( IBannerList bannerList, INavigationList navigationList)
         {
-            SettingsPage = settingsPage;
             BannerList = bannerList;
+            NavigationList = navigationList;
         }
     }
 }

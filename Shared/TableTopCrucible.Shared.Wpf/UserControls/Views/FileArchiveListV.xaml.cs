@@ -29,7 +29,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     v=>v.CreateDirectory.Command
                     ),
 
-                ViewModel!.GetDirectoryDialog.RegisterHandler(async interaction =>
+                ViewModel!.GetDirectoryDialog.RegisterHandler(interaction =>
                 {
                     VistaFolderBrowserDialog dialog = new();
                     interaction.SetOutput(dialog.ShowDialog() == true 

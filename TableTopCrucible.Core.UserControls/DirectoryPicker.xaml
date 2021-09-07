@@ -25,7 +25,7 @@
                 Style="{StaticResource MaterialDesignIconButton}"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Right"
-                Click="ButtonBase_OnClick">
+                Click="_buttonBase_OnClick">
             <md:PackIcon Kind="Folder"/>
         </Button>
     </Grid>

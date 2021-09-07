@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Splat;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -29,6 +30,10 @@ namespace TableTopCrucible.Core.Helper
 
         public static IEnumerable<Type> GetSolutionTypesByAttribute<T>() where T : Attribute
             => GetSolutionTypes().Where(t => t.HasCustomAttribute<T>());
+
+        public static IEnumerable<Type> GetSolutionClassesOfType<T>()
+            => GetSolutionTypes()
+                !.Where(t => t.IsAssignableTo(typeof(T)) && t.IsClass);
 
     }
 }

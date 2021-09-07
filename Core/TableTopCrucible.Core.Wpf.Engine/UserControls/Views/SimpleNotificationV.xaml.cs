@@ -66,7 +66,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                             NotificationType.Confirmation => PackIconKind.CheckCircle, 
                             NotificationType.Error => PackIconKind.Error,
                             NotificationType.Warning => PackIconKind.WarningCircle,
-                            _ => throw new NotImplementedException(nameof(type) + " has not icon"),
+                            _ => throw new NotImplementedException(nameof(type) + " has no icon"),
                         }),
             });
         }

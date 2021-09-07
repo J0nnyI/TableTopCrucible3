@@ -1,4 +1,5 @@
 ﻿
+using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -10,21 +11,23 @@ using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
 {
-    [Transient(typeof(FileArchiveSettingsCategoryPvm))]
-    public interface IFileArchiveSettingsCategoryPage : ISettingsCategoryPage
+    [Transient(typeof(FileArchiveNavigationPvm))]
+    public interface IFileArchiveNavigationPage : INavigationPage
     {
 
     }
-    public class FileArchiveSettingsCategoryPvm : IActivatableViewModel, IFileArchiveSettingsCategoryPage
+    public class FileArchiveNavigationPvm : IActivatableViewModel, IFileArchiveNavigationPage
     {
         public IFileArchiveList FileArchiveList { get; }
         public IFileArchiveCard NewDirectoryCard { get; }
+        public PackIconKind? Icon => PackIconKind.ArchiveSettings;
         public Name Title => Name.From("Directory Configuration");
+        public NavigationPageLocation PageLocation => NavigationPageLocation.Lower;
         public SortingOrder Position => SortingOrder.From(1);
 
         public ViewModelActivator Activator { get; } = new();
 
-        public FileArchiveSettingsCategoryPvm(
+        public FileArchiveNavigationPvm(
             IFileArchiveList fileArchiveList,
             IFileArchiveCard newDirectoryCard)
         {

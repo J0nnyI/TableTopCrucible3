@@ -4,6 +4,7 @@ using ReactiveUI.Validation.Helpers;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -45,10 +46,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public string Path { get; set; }
 
         private ObservableAsPropertyHelper<bool> _isDirty;
+        public bool IsDirty => _isDirty.Value;
 
+        public Interaction<Unit, bool> ConfirmDeletionInteraction { get; }= new();
+        
         private readonly IFileArchiveRepository _fileArchiveRepository;
         private readonly INotificationService _notificationService;
-        public bool IsDirty => _isDirty.Value;
 
         public ICommand SaveChangesCommand { get; private set; }
         public ICommand UndoChangesCommand { get; private set; }
@@ -61,24 +64,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
             this.WhenActivated(() => new[]
             {
-                this.WhenAnyValue(
-                    vm => vm.FileArchiveId)
-                    .Select(x=>
-                    {
-                        var res = _fileArchiveRepository.DataChanges.Watch(x);
-                        return res;
-                    })
-                    .Subscribe(x =>
-                    {
-                    }),
                 // Properties
                 this.WhenAnyValue(
                         vm => vm.FileArchiveId,
                         id => _fileArchiveRepository.DataChanges.Watch(id))
-                    .Do(x =>
-                    {
-
-                    })
                     .Switch()
                     .Select(change=>change.Current)
                     .Do(m =>
@@ -86,10 +75,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         Name = m?.Name?.Value;
                         Path = m?.Path?.Value;
                     })
-                    .Catch(new Func<Exception,IObservable<FileArchive>>(e =>
-                    {
-                        return Observable.Never<FileArchive>();
-                    }))
                     .ToProperty(this, vm=>vm.FileArchive, out _fileArchive),
 
                 this.WhenAnyValue(
@@ -98,6 +83,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         vm=>vm.Path,
                         (dir, Name, path) =>
                             dir?.Name?.Value != Name || dir?.Path?.Value != path)
+                    .OutputObservable(out var isDirtyChanges)
                     .ToProperty(this, vm=>vm.IsDirty,out _isDirty),
 
                 // Validation
@@ -128,16 +114,22 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             $"The changes in directory '{Name}' have been undone successfully",
                             NotificationType.Confirmation);
                     },
-                    this.WhenAnyValue(vm => vm.IsDirty),
+                    isDirtyChanges,
                     c=>UndoChangesCommand =c
                 ),
                 ReactiveCommandHelper.Create(() =>
                     {
-                        _fileArchiveRepository.Delete(FileArchive.Id);
-                        _notificationService.AddNotification(
-                            "Remove successful",
-                            $"The Directory '{Name}' has been removed from this list",
-                            NotificationType.Confirmation);
+                        this.ConfirmDeletionInteraction.Handle(Unit.Default)
+                            .Take(1)
+                            .Where(confirmed => confirmed)
+                            .Subscribe(_ =>
+                            {
+                                _fileArchiveRepository.Delete(FileArchive.Id);
+                                _notificationService.AddNotification(
+                                    "Remove successful",
+                                    $"The Directory '{Name}' has been removed from this list",
+                                    NotificationType.Confirmation);
+                            });
                     },
                     c=>RemoveDirectoryCommand = c
                 ),
@@ -149,7 +141,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public int CompareTo(IFileArchiveCard other)
             => this.FileArchive?.CompareTo(other?.FileArchive) ?? 1;
 
-        public int CompareTo(object? obj)
+        public int CompareTo(object obj)
             => CompareTo(obj as IFileArchiveCard);
 
         public ViewModelActivator Activator { get; } = new();

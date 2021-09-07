@@ -25,8 +25,8 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBox Text="{Binding 
-                Path=Name,
-                UpdateSourceTrigger=PropertyChanged}"
+                     Path=Name,
+                     UpdateSourceTrigger=PropertyChanged}"
                      md:HintAssist.Hint="Name"
                      Grid.Column="0"
                      Grid.Row="0"/>

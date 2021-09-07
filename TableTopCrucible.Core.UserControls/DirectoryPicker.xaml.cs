@@ -114,21 +114,21 @@ namespace TableTopCrucible.Core.UserControls
             });
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private void _buttonBase_OnClick(object sender, RoutedEventArgs e)
         {
             VistaFolderBrowserDialog dialog = new();
             if(dialog.ShowDialog() == true)
                 ViewModel.UserText = dialog.SelectedPath;
         }
 
-        public IEnumerable GetErrors(string? propertyName)
+        public IEnumerable GetErrors(string propertyName)
         {
             return ViewModel.GetErrors(propertyName);
         }
 
         public bool HasErrors => ViewModel.HasErrors;
 
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged
         {
             add => ViewModel.ErrorsChanged += value;
             remove => ViewModel.ErrorsChanged -= value;

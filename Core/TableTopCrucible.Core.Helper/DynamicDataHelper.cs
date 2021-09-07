@@ -17,13 +17,13 @@ namespace TableTopCrucible.Core.Helper
         #region sort
         private class Sorter<T> : IComparer<T>
         {
-            private readonly Func<T, T, int> comparer;
+            private readonly Func<T, T, int> _comparer;
 
             public Sorter(Func<T, T, int> comparer)
             {
-                this.comparer = comparer;
+                _comparer = comparer;
             }
-            public int Compare([AllowNull] T x, [AllowNull] T y) => comparer(x, y);
+            public int Compare([AllowNull] T x, [AllowNull] T y) => _comparer(x, y);
         }
 
         public static IObservable<ISortedChangeSet<TObject, TKey>> Sort<TObject, TKey>(
@@ -72,18 +72,18 @@ namespace TableTopCrucible.Core.Helper
         #endregion
 
         #region adapt
-        private class remoteChangeSetAdaptor<TObject, TKey> : IChangeSetAdaptor<TObject, TKey>
+        private class RemoteChangeSetAdapter<TObject, TKey> : IChangeSetAdaptor<TObject, TKey>
         {
-            private readonly Action<IChangeSet<TObject, TKey>> action;
+            private readonly Action<IChangeSet<TObject, TKey>> _action;
 
-            public remoteChangeSetAdaptor(Action<IChangeSet<TObject, TKey>> action)
-                => this.action = action;
+            public RemoteChangeSetAdapter(Action<IChangeSet<TObject, TKey>> action)
+                => this._action = action;
             public void Adapt(IChangeSet<TObject, TKey> change)
-                => action(change);
+                => _action(change);
         }
 
         public static IObservable<IChangeSet<TObject, TKey>> Adapt<TObject, TKey>(this IObservable<IChangeSet<TObject, TKey>> source, Action<IChangeSet<TObject, TKey>> adaptor)
-            => source.Adapt(new remoteChangeSetAdaptor<TObject, TKey>(adaptor));
+            => source.Adapt(new RemoteChangeSetAdapter<TObject, TKey>(adaptor));
 
         #endregion
 

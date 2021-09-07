@@ -18,13 +18,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
             this.WhenActivated(()=>new[]
             {
                 this.OneWayBind(
-                        ViewModel,
-                        vm => vm.SettingsPage,
-                        v => v.MainContainer.ViewModel),
-                this.OneWayBind(
                     ViewModel,
                     vm=>vm.BannerList,
                     v=>v.NotificationList.ViewModel),
+                this.OneWayBind(
+                    ViewModel,
+                    vm=>vm.NavigationList,
+                    v=>v.NavigationList.ViewModel),
             });
         }
     }

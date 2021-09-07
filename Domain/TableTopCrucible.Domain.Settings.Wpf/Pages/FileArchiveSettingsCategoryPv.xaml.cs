@@ -5,7 +5,7 @@ using TableTopCrucible.Domain.Settings.Wpf.PageViewModels;
 
 namespace TableTopCrucible.Domain.Settings.Wpf.Pages
 {
-    public partial class FileArchiveSettingsCategoryPv : ReactiveUserControl<FileArchiveSettingsCategoryPvm>, IActivatableView
+    public partial class FileArchiveSettingsCategoryPv : ReactiveUserControl<FileArchiveNavigationPvm>, IActivatableView
     {
         public FileArchiveSettingsCategoryPv()
         {
