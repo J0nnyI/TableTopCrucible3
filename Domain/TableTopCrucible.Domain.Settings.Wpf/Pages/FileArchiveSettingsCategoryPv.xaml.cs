@@ -14,7 +14,10 @@ namespace TableTopCrucible.Domain.Settings.Wpf.Pages
             {
                 this.Bind(ViewModel,
                     vm=>vm.FileArchiveList,
-                    v=>v.FileArchiveList.ViewModel)
+                    v=>v.FileArchiveList.ViewModel),
+                this.Bind(ViewModel,
+                    vm=>vm.Title.Value,
+                    v=>v.Title.Text),
             });
         }
     }

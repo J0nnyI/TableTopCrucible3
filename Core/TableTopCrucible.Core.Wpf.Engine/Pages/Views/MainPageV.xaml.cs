@@ -25,6 +25,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
                     ViewModel,
                     vm=>vm.NavigationList,
                     v=>v.NavigationList.ViewModel),
+                this.OneWayBind(
+                    ViewModel,
+                    vm=>vm.CurrentPage,
+                    v=>v.MainContainer.ViewModel),
             });
         }
     }

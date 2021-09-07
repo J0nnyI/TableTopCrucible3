@@ -28,10 +28,19 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                 this.OneWayBind(ViewModel,
                     vm=>vm.LowerList,
                     v=>v.LowerList.ItemsSource),
+                this.WhenAnyValue(
+                        v=>v.UpperList.SelectedItem
+                        )
+                    .BindTo(this, v=>v.ViewModel.SelectedItem),
+                this.WhenAnyValue(
+                        v=>v.LowerList.SelectedItem
+                    )
+                    .BindTo(this, v=>v.ViewModel.SelectedItem),
+
                 this.ToggleMenuItem
                     .Events()
                     .MouseUp
-                    .Subscribe(_=>ViewModel.ToggleExpansionCommand.Execute(null)),
+                    .Subscribe(_=>ViewModel!.ToggleExpansionCommand.Execute(null)),
             });
         }
     }

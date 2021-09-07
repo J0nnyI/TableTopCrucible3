@@ -34,7 +34,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     }
     public class NavigationListVm : ReactiveObject, INavigationList, IActivatableViewModel
     {
-        private readonly INavigationService _navigationService;
 
         public ObservableCollectionExtended<INavigationPage> UpperList { get; } = new();
         public ObservableCollectionExtended<INavigationPage> LowerList { get; } = new();
@@ -43,12 +42,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
         public ICommand ToggleExpansionCommand { get; private set; }
 
+        [Reactive]
+        public INavigationPage SelectedItem { get; set; }
+
         public NavigationListVm(INavigationService navigationService)
         {
-            _navigationService = navigationService;
-
             this.WhenActivated(() => new[]{
-                _navigationService
+                navigationService
                     .Pages
                     .Connect()
                     .Filter(m=>m.PageLocation == NavigationPageLocation.Lower)
@@ -56,7 +56,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Bind(LowerList)
                     .Subscribe(),
 
-                _navigationService
+                navigationService
                     .Pages
                     .Connect()
                     .Filter(m=>m.PageLocation == NavigationPageLocation.Upper)
@@ -66,8 +66,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
                 ReactiveCommandHelper.Create(
                     () =>IsExpanded = !IsExpanded,
-                    cmd=>ToggleExpansionCommand = cmd)
-            }, vm => vm.IsExpanded);
+                    cmd=>ToggleExpansionCommand = cmd),
+
+                this.WhenAnyValue(vm=>vm.SelectedItem)
+                    .Where(x=>x!=null)
+                    .Subscribe(page =>navigationService.CurrentPage = page)
+
+            });
         }
 
         public ViewModelActivator Activator { get; } = new();

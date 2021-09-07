@@ -9,7 +9,18 @@
                         xmlns:pvm="clr-namespace:TableTopCrucible.Domain.Settings.Wpf.PageViewModels"
                         mc:Ignorable="d" 
                         d:DesignHeight="450" d:DesignWidth="800">
-    <rxui:ViewModelViewHost x:Name="FileArchiveList"
-                            MaxWidth="1000"
-                            Margin="20"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="Title"
+                   Style="{StaticResource ApplicationTitle}"
+                   HorizontalAlignment="Center"
+                   Grid.Row="0"/>
+        <rxui:ViewModelViewHost x:Name="FileArchiveList"
+                                MaxWidth="1000"
+                                Margin="20"
+                                Grid.Row="1"/>
+    </Grid>
 </rxui:ReactiveUserControl>
