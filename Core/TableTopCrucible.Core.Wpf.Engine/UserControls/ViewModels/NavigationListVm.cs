@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
+using System.Windows.Input;
 
 using DynamicData;
 using DynamicData.Binding;
@@ -12,6 +14,7 @@ using DynamicData.Binding;
 using MaterialDesignThemes.Wpf;
 
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 using Splat;
 
@@ -20,6 +23,7 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.Services;
+using TableTopCrucible.Core.Wpf.Helper;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
@@ -34,6 +38,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
         public ObservableCollectionExtended<INavigationPage> UpperList { get; } = new();
         public ObservableCollectionExtended<INavigationPage> LowerList { get; } = new();
+        [Reactive]
+        public bool IsExpanded { get; set; }
+
+        public ICommand ToggleExpansionCommand { get; private set; }
 
         public NavigationListVm(INavigationService navigationService)
         {
@@ -55,7 +63,11 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Sort(m=>m.Position.Value)
                     .Bind(UpperList)
                     .Subscribe(),
-            });
+
+                ReactiveCommandHelper.Create(
+                    () =>IsExpanded = !IsExpanded,
+                    cmd=>ToggleExpansionCommand = cmd)
+            }, vm => vm.IsExpanded);
         }
 
         public ViewModelActivator Activator { get; } = new();

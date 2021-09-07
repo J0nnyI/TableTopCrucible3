@@ -8,12 +8,101 @@
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           xmlns:vm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels"
+                          xmlns:m="clr-namespace:TableTopCrucible.Core.Wpf.Engine.Models"
                           xmlns:v="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.Views"
+                          xmlns:sys="clr-namespace:System;assembly=mscorlib"
                           mc:Ignorable="d" 
-                          d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance vm:INavigationList}">
+                          x:Name="Self"
+                          d:DesignHeight="450" 
+                          d:DesignWidth="800" 
+                          d:DataContext="{d:DesignInstance vm:INavigationList}">
+    <UserControl.Resources>
+        <sys:Double x:Key="ButtonSize">50</sys:Double>
+        <sys:Double x:Key="IconSize">30</sys:Double>
+        <sys:Double x:Key="ExpandedWidth">250</sys:Double>
+        <Style x:Key="ItemStyle"
+               TargetType="ListBoxItem"
+               BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Height" Value="{StaticResource ButtonSize}"/>
+            <Style.Resources>
+                <Style TargetType="md:PackIcon">
+                    <Setter Property="Width"  Value="{StaticResource IconSize}"/>
+                    <Setter Property="Height" Value="{StaticResource IconSize}"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="10"/>
+                </Style>
+            </Style.Resources>
+            <Style.Triggers>
+                <DataTrigger  Binding="{Binding 
+                                ElementName=Self,
+                                Path=ViewModel.IsExpanded}"
+                              Value="false">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="Width"
+                                    Duration="{StaticResource ExpandDuration}"
+                                    From="{StaticResource ExpandedWidth}"
+                                    To="{StaticResource ButtonSize}"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="Width"
+                                    Duration="{StaticResource ExpandDuration}"
+                                    From="{StaticResource ButtonSize}"
+                                    To="{StaticResource ExpandedWidth}"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+
+
+
+
+
+        </Style>
+        <DataTemplate x:Key="ItemTemplate"
+                      DataType="m:INavigationPage">
+            <StackPanel Orientation="Horizontal">
+                <md:PackIcon Kind="{Binding Icon}"/>
+                    <TextBlock Text="{Binding Title}"
+                               Style="{StaticResource Subtitle1}"
+                               VerticalAlignment="Center"/>
+            </StackPanel>
+
+        </DataTemplate>
+
+    </UserControl.Resources>
     <Grid>
-        <Label Content="navlist"/>
-        <ListBox x:Name="TopList"/>
-        <ListBox x:Name="BottomList"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListBoxItem x:Name="ToggleMenuItem" Grid.Row="0"
+                     VerticalContentAlignment="Stretch"
+                     HorizontalAlignment="Left"
+                     Style="{StaticResource ItemStyle}">
+            <md:PackIcon Kind="Menu"/>
+        </ListBoxItem>
+        <ListBox x:Name="UpperList"
+                 Grid.Row="1"
+                 ItemContainerStyle="{StaticResource ItemStyle}"
+                 ItemTemplate="{StaticResource ItemTemplate}"/>
+        <ListBox x:Name="LowerList"
+                 Grid.Row="2"
+                 ItemContainerStyle="{StaticResource ItemStyle}"
+                 ItemTemplate="{StaticResource ItemTemplate}">
+        </ListBox>
     </Grid>
 </rxui:ReactiveUserControl>

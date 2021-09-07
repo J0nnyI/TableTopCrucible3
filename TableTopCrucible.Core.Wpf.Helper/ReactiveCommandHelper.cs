@@ -30,7 +30,7 @@ namespace ReactiveUI
         public static ReactiveCommand<Unit, Unit> Create(
             Action execute,
             IObservable<bool> canExecute = null,
-            Action<ReactiveCommand<Unit, Unit>> resultWriter = null,
+            [NotNull] Action<ReactiveCommand<Unit, Unit>> resultWriter = null,
             IScheduler outputScheduler = null,
             IScheduler canExecuteScheduler = null)
         {
@@ -40,7 +40,7 @@ namespace ReactiveUI
         }
         public static ReactiveCommand<Unit, Unit> Create(
             Action execute,
-            Action<ReactiveCommand<Unit, Unit>> resultWriter = null,
+            [NotNull] Action<ReactiveCommand<Unit, Unit>> resultWriter = null,
             IScheduler outputScheduler = null,
             IScheduler canExecuteScheduler = null)
             => Create(execute, null, resultWriter, outputScheduler, canExecuteScheduler);
