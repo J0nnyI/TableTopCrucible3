@@ -97,11 +97,13 @@
         <ListBox x:Name="UpperList"
                  Grid.Row="1"
                  ItemContainerStyle="{StaticResource ItemStyle}"
-                 ItemTemplate="{StaticResource ItemTemplate}"/>
+                 ItemTemplate="{StaticResource ItemTemplate}"
+                 PreviewMouseDown="BlockOnControl"/>
         <ListBox x:Name="LowerList"
                  Grid.Row="2"
                  ItemContainerStyle="{StaticResource ItemStyle}"
-                 ItemTemplate="{StaticResource ItemTemplate}">
+                 ItemTemplate="{StaticResource ItemTemplate}"
+                 PreviewMouseDown="BlockOnControl">
         </ListBox>
     </Grid>
 </rxui:ReactiveUserControl>

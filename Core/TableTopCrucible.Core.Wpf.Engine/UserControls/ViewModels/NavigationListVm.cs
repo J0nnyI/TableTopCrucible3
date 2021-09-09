@@ -59,6 +59,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public SortingOrder Position => Page?.Position;
 
         public bool HasContent => Page != null;
+
+        public override string ToString()
+            => $"{Title}  |  cbu:{ChangedByUser}  |  {PageLocation}";
     }
 
     [Transient(typeof(NavigationListVm))]
@@ -128,7 +131,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                         {
                             previous = lower.Previous.Value,
                             current = lower.Current.Value
-                        }}
+                        }
+                    }
                 )
                     .Select(p =>
                     {
@@ -176,8 +180,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                             m.PageLocation == NavigationPageLocation.Lower
                             ? m
                             : new FlaggedNavigationItem(NavigationPageLocation.Lower, false);
-                        UpperSelection = upper;
-                        LowerSelection = lower;
+                        if(upper != UpperSelection)
+                            UpperSelection = upper;
+                        if(lower != LowerSelection)
+                            LowerSelection = lower;
                     }),
 
                 Observable.Merge(
@@ -195,12 +201,12 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     {
                         if (selection.PageLocation == NavigationPageLocation.Upper)
                         {
-                            if (this.UpperSelection != selection)
+                            if (this.UpperSelection.Page != selection)
                                 this.UpperSelection = this.UpperList.First(m => m.Page == selection);
                         }
                         else
                         {
-                            if (this.LowerSelection != selection)
+                            if (this.LowerSelection.Page != selection)
                                 this.LowerSelection = this.LowerList.First(m => m.Page == selection);
                         }
                     }),
