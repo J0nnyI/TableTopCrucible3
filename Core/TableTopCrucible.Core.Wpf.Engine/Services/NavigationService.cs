@@ -31,7 +31,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
         public NavigationService()
         {
             _pages.AddRange(
-                DependencyInjectionHelper.GetServicesByType<INavigationPage>()
+                DependencyInjectionHelper.GetServicesByType<INavigationPage>().Where(s=>s != null)// filter vm utilities
             );
             CurrentPage = _pages.Items.OrderBy(m=>m.Position.Value).First();
         }

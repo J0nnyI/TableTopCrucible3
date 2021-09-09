@@ -80,9 +80,7 @@
                                Style="{StaticResource Subtitle1}"
                                VerticalAlignment="Center"/>
             </StackPanel>
-
         </DataTemplate>
-
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>

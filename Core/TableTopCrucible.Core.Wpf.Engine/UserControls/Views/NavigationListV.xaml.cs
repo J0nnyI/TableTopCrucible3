@@ -41,34 +41,27 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     v=>v.LowerList.ItemsSource),
 
                 this.Bind(ViewModel,
-                    vm=>vm.SelectedBufferItem,
+                    vm=>vm.UpperSelection,
                     v=>v.UpperList.SelectedItem,
-                    m=>m,// set
-                    m=>m as INavigationPage// get
-                    ),
+                    m=>m.HasContent?m:null,
+                    m =>
+                         m as FlaggedNavigationItem ?? new FlaggedNavigationItem(NavigationPageLocation.Upper, true)),
                 this.Bind(ViewModel,
-                    vm=>vm.SelectedBufferItem,
+                    vm=>vm.LowerSelection,
                     v=>v.LowerList.SelectedItem,
-                    m=>m,// set
-                    m=>m as INavigationPage// get
-                    ),
-                this.WhenAnyValue(
-                    v=>v.ViewModel.SelectedBufferItem)
-                    .BindTo(this, v=>v.UpperList.SelectedItem),
-                this.WhenAnyValue(
-                        v=>v.ViewModel.SelectedBufferItem)
-                    .BindTo(this, v=>v.LowerList.SelectedItem),
+                    m=>m.HasContent?m:null,
+                    m=>m as FlaggedNavigationItem ?? new FlaggedNavigationItem(NavigationPageLocation.Lower, true)),
 
                 this.ToggleMenuItem
                     .Events()
                     .MouseUp
-                    .Subscribe(_=>ViewModel!.ToggleExpansionCommand.Execute(null)),
+                    .Subscribe(_ => ViewModel!.ToggleExpansionCommand.Execute(null)),
 
                 this.OneWayBind(ViewModel,
-                    vm=>vm.IsExpanded,
-                    v=>v.ToggleMenuItem.ToolTip,
-                    (bool isExpanded)=> isExpanded ? "Collapse Sidebar" : "Expand Sidebar"
-                    )
+                    vm => vm.IsExpanded,
+                    v => v.ToggleMenuItem.ToolTip,
+                    (bool isExpanded) => isExpanded ? "Collapse Sidebar" : "Expand Sidebar"
+                    ),
             });
         }
     }

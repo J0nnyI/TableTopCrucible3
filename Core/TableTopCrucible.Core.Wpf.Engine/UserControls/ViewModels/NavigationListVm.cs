@@ -3,9 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Security.Permissions;
 using System.Windows.Input;
 
 using DynamicData;
@@ -23,10 +25,42 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.Services;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
+    public class FlaggedNavigationItem
+    {
+        public FlaggedNavigationItem(INavigationPage page, bool changedByUser)
+        {
+            Page = page;
+            this.PageLocation = page.PageLocation;
+            this.ChangedByUser = changedByUser;
+        }
+        // used for deselection
+        public FlaggedNavigationItem(NavigationPageLocation location, bool changedByUser)
+        {
+            this.PageLocation = location;
+            this.ChangedByUser = changedByUser;
+        }
+
+        public DateTime TimeStamp { get; private set; } = DateTime.Now;
+        public void OnSelected() => TimeStamp = DateTime.Now;
+        public INavigationPage Page { get; }
+        public PackIconKind? Icon => Page?.Icon;
+
+        public Name Title => Page?.Title;
+
+        public bool ChangedByUser { get; }
+
+        public NavigationPageLocation? PageLocation { get; }
+
+        public SortingOrder Position => Page?.Position;
+
+        public bool HasContent => Page != null;
+    }
+
     [Transient(typeof(NavigationListVm))]
     public interface INavigationList
     {
@@ -36,72 +70,130 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     {
         private readonly INavigationService _navigationService;
 
-        public ObservableCollectionExtended<INavigationPage> UpperList { get; } = new();
-        public ObservableCollectionExtended<INavigationPage> LowerList { get; } = new();
+        public ObservableCollectionExtended<FlaggedNavigationItem> UpperList { get; } = new();
+        public ObservableCollectionExtended<FlaggedNavigationItem> LowerList { get; } = new();
         [Reactive]
         public bool IsExpanded { get; set; }
 
         public ICommand ToggleExpansionCommand { get; private set; }
 
         [Reactive]
-        public INavigationPage SelectedBufferItem { get; set; }
+        public FlaggedNavigationItem UpperSelection { get; set; }
+            = new(NavigationPageLocation.Upper, false);
+
+        [Reactive]
+        public FlaggedNavigationItem LowerSelection { get; set; }
+            = new(NavigationPageLocation.Lower, false);
 
         public NavigationListVm(INavigationService navigationService)
         {
             _navigationService = navigationService;
             this.WhenActivated(() => new[]{
-                // bind v selection to buffer
-                navigationService
-                    .Pages
-                    .Connect()
-                    .Filter(m=>m.PageLocation == NavigationPageLocation.Lower)
-                    .Sort(m=>m.Position.Value)
-                    .Bind(LowerList)
-                    .Subscribe(),
+                // bind listContent
                 navigationService
                     .Pages
                     .Connect()
                     .Filter(m=>m.PageLocation == NavigationPageLocation.Upper)
+                    .Transform(m=>new FlaggedNavigationItem(m, true))
                     .Sort(m=>m.Position.Value)
                     .Bind(UpperList)
                     .Subscribe(),
-                // revert on null
-                this.WhenAnyValue(vm=>vm.SelectedBufferItem)
-                    .DistinctUntilChanged()
-                    .Pairwise()
-                    .Where(m=>!m.Current.HasValue)
-                    .Select(m=>m.Previous.Value)
-                    .Where(m=>m != SelectedBufferItem)
-                    .BindTo(this, vm=>vm.SelectedBufferItem),
-                // bind buffer to live selection
-                this.WhenAnyValue(vm=>vm.SelectedBufferItem)
-                    .Where(m=>m != null)
-                    .BindTo(this, vm=>vm._navigationService.CurrentPage),
-                // bind live selection to buffer
-                this.WhenAnyValue(vm=>vm._navigationService.CurrentPage)
-                .Where(m=>m != null && m != SelectedBufferItem)
-                .BindTo(this, vm=>vm.SelectedBufferItem),
+                navigationService
+                    .Pages
+                    .Connect()
+                    .Filter(m=>m.PageLocation == NavigationPageLocation.Lower)
+                    .Transform(m=>new FlaggedNavigationItem(m, true))
+                    .Sort(m=>m.Position.Value)
+                    .Bind(LowerList)
+                    .Subscribe(),
 
+                // handle selection
+                Observable.CombineLatest(
+                    this.WhenAnyValue(vm=>vm.UpperSelection)
+                        .Do(m=>m.OnSelected())
+                        .Pairwise(false)
+                        .Where(m=>m.Current.Value.ChangedByUser),
+                    this.WhenAnyValue(vm=>vm.LowerSelection)
+                        .Do(m=>m.OnSelected())
+                        .Pairwise(false)
+                        .Where(m=>m.Current.Value.ChangedByUser),
+                    (upper, lower)=>new
+                    {
+                        upper=new
+                        {
+                            previous = upper.Previous.Value,
+                            current = upper.Current.Value,
+                        },
+                        lower = new
+                        {
+                            previous = lower.Previous.Value,
+                            current = lower.Current.Value
+                        }}
+                )
+                    .Select(p =>
+                    {
+                        FlaggedNavigationItem upper = p.upper.current;
+                        FlaggedNavigationItem lower = p.lower.current;
+                        FlaggedNavigationItem result = null;
+                        // upper <=> lower
+                        if (upper.HasContent && lower.HasContent)
+                        {
+                            result = upper.TimeStamp > lower.TimeStamp
+                                ? upper
+                                : lower;
+                        }
+                        // same => same
+                        else if (upper.HasContent)
+                            result = upper;
+                        else if (lower.HasContent)
+                            result = lower;
+                        // deselect
+                        else if (!lower.HasContent && !upper.HasContent)
+                        {
+                            var previousUpper = p.upper.previous;
+                            var previousLower = p.lower.previous;
+
+                            result = previousUpper.TimeStamp > previousLower.TimeStamp
+                                ? previousUpper
+                                : previousLower;
+                        }
+                        else
+                            Debugger.Break();
+                        return result;
+                    })
+                    .Catch((Exception e) =>
+                    {
+                        Debugger.Break();
+                        return Observable.Never<FlaggedNavigationItem>();
+                    })
+                    .Subscribe(m =>
+                    {
+                        var upper = 
+                            m.PageLocation == NavigationPageLocation.Upper
+                            ? m
+                            : new FlaggedNavigationItem(NavigationPageLocation.Upper, false);
+                        var lower= 
+                            m.PageLocation == NavigationPageLocation.Lower
+                            ? m
+                            : new FlaggedNavigationItem(NavigationPageLocation.Lower, false);
+                        UpperSelection = upper;
+                        LowerSelection = lower;
+                    }),
+
+                Observable.Merge(
+                        this.WhenAnyValue(vm=>vm.UpperSelection),
+                        this.WhenAnyValue(vm => vm.LowerSelection)
+                    )
+                    .WhereNotNull()
+                    .Select(m=>m.Page)
+                    .BindTo(navigationService, srv=>srv.CurrentPage),
+                
+                // commands
                 ReactiveCommandHelper.Create(
                     () =>IsExpanded = !IsExpanded,
                     cmd=>ToggleExpansionCommand = cmd),
 
-                this.WhenAnyValue(vm=>vm.SelectedBufferItem)
-                    .Where(x=>x!=null)
-                    .Subscribe(page =>navigationService.CurrentPage = page),
 
-                this.WhenAnyValue(vm=>vm._navigationService.CurrentPage)
-                    .WhereNotNull()
-                    .Subscribe(m =>
-                    {
-
-                    }),
-                this.WhenAnyValue(vm=>vm.SelectedBufferItem)
-                    .WhereNotNull()
-                    .Subscribe(m =>
-                    {
-
-                    }),
 
             });
         }
