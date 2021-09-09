@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TableTopCrucible.Core.Database.Models;
-using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
-using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos
 {
-    public class DirectorySetupDto : IEntityDto<DirectorySetupId, DirectorySetup>
+    public class ScannedFileDataDto:IEntityDto<ScannedFileDataId, ScannedFileData>
     {
-        public string Name { get; }
-        public string Path { get; }
-        public DateTime LastSync { get; }
         public Guid IdValue { get; set; }
+        public string FileLocationValue { get; set; }
     }
 }
