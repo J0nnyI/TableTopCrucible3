@@ -6,7 +6,7 @@ on:
             - "TTC/v*"
 
 env:
-    PROJECT_PATH: TableTopCrucible.App.WPF/TableTopCrucible.App.WPF.csproj
+    PROJECT_PATH: TableTopCrucible.Starter/TableTopCrucible.Starter.csproj
 
 jobs:
     deploy: 
@@ -36,5 +36,5 @@ jobs:
         - uses: csexton/release-asset-action@v2
           with: 
             github-token: ${{ secrets.GITHUB_TOKEN }}
-            pattern: TableTopCrucible.App.WPF/bin/Release/netcoreapp3.1/win-x64/publish/*.exe
+            pattern: TableTopCrucible.Starter/bin/Release/netcoreapp3.1/win-x64/publish/*.exe
             release-url: ${{ steps.create_release.outputs.upload_url }}/release/executable
