@@ -1,28 +1,26 @@
-﻿using ReactiveUI;
+﻿using DynamicData;
+
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Abstractions;
-using ReactiveUI.Validation.Contexts;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
 using TableTopCrucible.Core.ValueTypes;
-using DirectoryPathVT = TableTopCrucible.Core.ValueTypes.DirectoryPath;
-using TableTopCrucible.Data.Models.Sources;
-using ReactiveUI.Validation.Helpers;
-using System.ComponentModel;
 using TableTopCrucible.Core.WPF.ViewModels;
-using ReactiveUI.Validation.Extensions;
-using System.Reactive.Disposables;
-using TableTopCrucible.Data.Library.Models.ValueTypes.General;
+using TableTopCrucible.Data.Library.Models.DataSource;
+using TableTopCrucible.Data.Library.Models.Values;
 using TableTopCrucible.Data.Library.Services.Sources;
 using TableTopCrucible.Data.Library.ValueTypes.IDs;
-using DynamicData;
+
+using DirectoryPathVT = TableTopCrucible.Core.ValueTypes.DirectoryPath;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
 {
@@ -30,12 +28,10 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
     public interface IDirectoryCard
     {
         SourceDirectoryId Id { get; }
+        string Name { get; }
 
         IDirectoryCard SetSourceModel(SourceDirectory model);
         SourceDirectory ToModel();
-        void SetEditMode(bool isEnabled);
-
-        public IObservable<bool> EditModeChanges { get; }
     }
     public class DirectoryCardVM : ReactiveValidationObject, IActivatableViewModel, IDirectoryCard, IValidatableViewModel, INotifyDataErrorInfo
     {
@@ -43,35 +39,38 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
         public string Name { get; set; }
         [Reactive]
         public string Directory { get; set; }
+        [Reactive]
+        public string ThumbnailDirectory { get; set; }
 
         public SourceDirectoryId Id { get; private set; } = SourceDirectoryId.New();
         public IObservable<Unit> OnDirectorySelected { get; }
+        public Interaction<string, bool> UserConfirmationInteraction { get; } = new Interaction<string, bool>();
         [Reactive]
-        private SourceDirectory _originalData { get; set; }
+        public SourceDirectory? OriginalData { get; private set; }
         private readonly ISourceDirectoryService _sourceDirectoryService;
 
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
         public IEditSelector EditSelector { get; }
-
-        public IObservable<bool> EditModeChanges => this.WhenAnyValue(vm => vm.EditSelector.EditModeEnabled).DistinctUntilChanged();
 
         public DirectoryCardVM(
             IEditSelector editSelector,
             ISourceDirectoryService sourceDirectoryService)
         {
             DirectoryPathVT.RegisterValidator(this, vm => vm.Directory, true);
+            DirectoryPathVT.RegisterValidator(this, vm => vm.ThumbnailDirectory, false);
             EditSelector = editSelector;
             _sourceDirectoryService = sourceDirectoryService;
 
-            this.WhenActivated(disposables =>
+            this.WhenActivated((CompositeDisposable disposables)=>
             {
                 EditSelector.SetCommands(
                     revertChanges: ReactiveCommand.Create(
                         () =>
                         {
                             EditSelector.EditModeEnabled = false;
-                            Name = _originalData.Name?.Value;
-                            Directory = _originalData.Directory?.Value;
+                            Name = OriginalData?.Name?.Value;
+                            Directory = OriginalData?.Directory?.Value;
+                            ThumbnailDirectory = OriginalData?.ThumbnailPath?.Value;
                         },
                         this._sourceDirectoryService
                             .Directories
@@ -89,8 +88,15 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
                     deleteChanges: ReactiveCommand.Create(
                         () =>
                         {
-                            editSelector.EditModeEnabled = false;// triggers the removal from the temporary list
-                            this._sourceDirectoryService.RemoveSourceDirectory(this.Id);
+                            this.UserConfirmationInteraction.Handle("Do you really want to remove this directory form the registration?")
+                                .Take(1)
+                                .Where(x => x == true)
+                                .Subscribe(_ =>
+                                {
+                                    editSelector.EditModeEnabled = false;// triggers the removal from the temporary list
+                                    this._sourceDirectoryService.RemoveSourceDirectory(this.Id);
+                                });
+
                         })
                     );
 
@@ -100,19 +106,19 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
         {
             Name = newPath.GetDirectoryName().Value;
             Directory = newPath.Value;
+            ThumbnailDirectory = (newPath + DirectoryName.From("Thumbnails")).Value;
         }
         public IDirectoryCard SetSourceModel(SourceDirectory model)
         {
             this.Name = model.Name.Value;
             this.Directory = model.Directory.Value;
             this.Id = model.Id;
-            this._originalData = model;
+            this.ThumbnailDirectory = model.ThumbnailPath.Value;
+            this.OriginalData = model;
             return this;
         }
         public SourceDirectory ToModel()
-            => new SourceDirectory(Id, DirectoryPathVT.From(Directory), null, DirectorySetupName.From(Name));
+            => new SourceDirectory(Id, DirectoryPathVT.From(Directory), DirectoryPathVT.From(ThumbnailDirectory), DirectorySetupName.From(Name));
 
-        public void SetEditMode(bool isEnabled)
-            => EditSelector.EditModeEnabled = isEnabled;
     }
 }

@@ -1,14 +1,7 @@
 ﻿using ReactiveUI;
 
-using Splat;
-
-using System;
-using System.Collections.Generic;
 using System.Reactive;
-using System.Reactive.Disposables;
-using System.Text;
 
-using TableTopCrucible.App.WpfTestApp.Pages;
 using TableTopCrucible.App.WpfTestApp.PageViewModels;
 using TableTopCrucible.Core.DI.Attributes;
 
@@ -31,7 +24,7 @@ namespace TableTopCrucible.App.WpfTestApp.ViewModels
 
         public MainVM()
         {
-            GoNext = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute( new FirstViewModel()));
+            GoNext = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(new FirstViewModel()));
             GoBack = Router.NavigateBack;
         }
 

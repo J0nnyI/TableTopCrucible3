@@ -1,25 +1,23 @@
 ﻿using DynamicData;
-using DynamicData.Binding;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Contexts;
-using ReactiveUI.Validation.Extensions;
 
 using Splat;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
+using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Data.Library.Services.Sources;
-using TableTopCrucible.Data.Library.ValueTypes.IDs;
+using TableTopCrucible.Data.Models.Sources;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
 {
@@ -36,21 +34,21 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
         [Reactive]
         public ReadOnlyObservableCollection<IDirectoryCard> DirectoryCards { get; private set; }
 
-        private SourceCache<IDirectoryCard, SourceDirectoryId> _temporaryDirectoryCards { get; }
-            = new SourceCache<IDirectoryCard, SourceDirectoryId>(card => card.Id);
+        public Interaction<Unit, DirectoryPath> GetDirectoryFromUser { get; private set; } = new Interaction<Unit, DirectoryPath>();
+
         public DirectoryListVM(ISourceDirectoryService sourceDirectoryService)
         {
             this.WhenActivated(disposables =>
             {
                 AddDirectory = ReactiveCommand.Create(
-                    () => {
-                        var card = Locator.Current.GetService<IDirectoryCard>();
-                        card.SetEditMode(true);
-                        card.EditModeChanges
-                            .Where(x => x == false)
+                    () =>
+                    {
+                        GetDirectoryFromUser.Handle(Unit.Default)
                             .Take(1)
-                            .Subscribe(_ => _temporaryDirectoryCards.RemoveKey(card.Id));
-                        _temporaryDirectoryCards.AddOrUpdate(card);
+                            .WhereNotNull()
+                            .Subscribe(dir =>
+                                sourceDirectoryService.AddOrUpdateDirectory(new SourceDirectory(dir))
+                            );
                     }
                 );
 
@@ -60,11 +58,12 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
                     .Transform(model =>
                         Locator.Current.GetService<IDirectoryCard>()
                             .SetSourceModel(model)
-                    ).FullJoin(
-                        _temporaryDirectoryCards.Connect(),
-                        x => x.Id,
-                        (saved, temp) => saved.HasValue ? saved.Value : temp.Value
-                    ) // basically a concat
+                    )
+                    .Filter(
+                        this.WhenAnyValue(vm => vm.Filter)
+                            .ToFilter((IDirectoryCard vm, string filter)
+                                => vm.Name?.Contains(filter ?? "") ?? true))
+                    .Sort(vm => vm.Name)
                     .Bind(out var directoryCards)
                     .Subscribe()
                     .DisposeWith(disposables);

@@ -3,14 +3,9 @@ using ReactiveUI.Fody.Helpers;
 
 using Splat;
 
-using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-
-using TableTopCrucible.App.WpfTestApp.Pages;
 
 namespace TableTopCrucible.App.WpfTestApp.PageViewModels
 {

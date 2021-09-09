@@ -14,8 +14,29 @@
                           d:DesignHeight="450" d:DesignWidth="800"
                           d:DataContext="{d:DesignInstance Type=vm:DirectoryCardVM}">
     <md:Card Padding="20px">
+        <md:Card.Resources>
+            
+        </md:Card.Resources>
         <Grid>
+            <Grid.Resources>
+                <Style TargetType="TextBox"
+                       x:Key="FileSelector"
+                       BasedOn="{StaticResource DefaultTextbox}">
+                    <Style.Resources>
+                        <Style TargetType="AdornerDecorator">
+                            <Style.Resources>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Margin"
+                                            Value="0 0 15 0"/>
+                                </Style>
+                            </Style.Resources>
+                            
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </Grid.Resources>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
@@ -23,13 +44,18 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
+            
             <TextBox x:Name="Description"
                      IsEnabled="{Binding EditSelector.EditModeEnabled}"
+                     FontWeight="Bold"
+                     FontSize="20"
                      md:HintAssist.Hint="Description"
                      Margin="10"
                      Grid.Row="0"/>
-            <TextBox Text="{Binding Directory, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox x:Name="Directory"
+                     Text="{Binding Directory, UpdateSourceTrigger=PropertyChanged}"
                      IsEnabled="{Binding EditSelector.EditModeEnabled}"
+                     Style="{StaticResource FileSelector}"
                      md:HintAssist.Hint="Directory"
                      Margin="10"
                      Grid.Row="1"/>
@@ -37,6 +63,22 @@
                     IsEnabled="{Binding EditSelector.EditModeEnabled}"
                     Style="{StaticResource MaterialDesignIconButton}"
                     Grid.Row="1"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    Margin="0 0 8 0">
+                <md:PackIcon Kind="FolderEdit"/>
+            </Button>
+            <TextBox x:Name="ThumbnailDirectory"
+                     Text="{Binding ThumbnailDirectory, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding EditSelector.EditModeEnabled}"
+                     Style="{StaticResource FileSelector}"
+                     md:HintAssist.Hint="Thumbnail Directory"
+                     Margin="10"
+                     Grid.Row="2"/>
+            <Button x:Name="PickThumbnailDirBtn"
+                    IsEnabled="{Binding EditSelector.EditModeEnabled}"
+                    Style="{StaticResource MaterialDesignIconButton}"
+                    Grid.Row="2"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Right"
                     Margin="0 0 8 0">

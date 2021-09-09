@@ -1,6 +1,5 @@
 ﻿
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.Domain.WPF.Library.PageViews;
 using TableTopCrucible.Domain.WPF.Library.ViewModels;
 using TableTopCrucible.DomainCore.WPF.ItemList.ViewModels;
 

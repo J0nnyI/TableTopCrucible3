@@ -1,26 +1,9 @@
 ﻿using ReactiveUI;
 
-using Splat;
-
-using System;
-using System.Collections.Generic;
-using System.Reactive;
 using System.Reactive.Disposables;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-using TableTopCrucible.App.WpfTestApp.Pages;
-using TableTopCrucible.App.WpfTestApp.PageViewModels;
 using TableTopCrucible.App.WpfTestApp.ViewModels;
-using TableTopCrucible.Core.DI.Attributes;
 
 namespace TableTopCrucible.App.WpfTestApp.Views
 {
@@ -50,6 +33,6 @@ namespace TableTopCrucible.App.WpfTestApp.Views
         }
 
         public MainVM ViewModel { get; set; }
-        object IViewFor.ViewModel { get=>ViewModel; set=>ViewModel = value as MainVM; }
+        object IViewFor.ViewModel { get => ViewModel; set => ViewModel = value as MainVM; }
     }
 }

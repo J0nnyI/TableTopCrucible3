@@ -1,30 +1,34 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TableTopCrucible.Data.Library.DataTransfer.Models;
+﻿using AutoMapper;
+
+using FluentAssertions;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using NUnit.Framework;
+
+using Splat;
+
 using System;
 using System.Collections.Generic;
-using System.Text;
-using AutoMapper;
-using TableTopCrucible.Core.ValueTypes;
-using System.Text.Json;
-using ValueOf;
-using TableTopCrucible.Data.Models.Sources;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
-using AutoMapper.Configuration.Annotations;
+using System.Text.Json;
+
+using TableTopCrucible.App.Shared;
+using TableTopCrucible.Core.BaseUtils;
+using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Data.Library.DataTransfer.Services;
+using TableTopCrucible.Data.Models.Sources;
 
 namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
 {
-
-    [AutoMap(typeof(TestData), ReverseMap = true)]
-    public class TestDTO
-    {
-        public string ContentValue { get; set; }
-    }
-
     public class TestData
     {
         public TestData()
         {
-                
+
         }
         public TestData(FilePath content)
         {
@@ -47,23 +51,18 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
 
 
 
-    [TestClass()]
+    [TestFixture]
     public class FileDataDTOTests
     {
         public FileDataDTOTests()
         {
-            _mapperConfig = new Lazy<MapperConfiguration>(
-                () => new MapperConfiguration(cfg =>
-                {
-                    cfg.AddMaps("TableTopCrucible.Data.Library.DataTransfer");
-                    cfg.AddMaps("TableTopCrucible.Data.Library.DataTransferTests");
-                }));
-            _mapper = new Lazy<IMapper>(() => mapperConfig.CreateMapper());
         }
-        private readonly Lazy<MapperConfiguration> _mapperConfig;
-        private MapperConfiguration mapperConfig => _mapperConfig.Value;
-        private readonly Lazy<IMapper> _mapper;
-        private IMapper mapper => _mapper.Value;
+        [SetUp]
+        public void BeforeEach()
+            => di = DependencyBuilder.GetTestProvider(srv => srv.AddSingleton<IFileSystem, MockFileSystem>());
+        private IServiceProvider di;
+
+        private IMapperService mapperService;
 
 
         private string getJson<T>(params (string, T)[] objs) =>
@@ -89,7 +88,7 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
                                     "\"data\": ",
                                     JsonSerializer.Serialize(obj.Item2),
                                     "\"dto\": ",
-                                    JsonSerializer.Serialize(mapper.Map<Tdto>(obj.Item2))
+                                    JsonSerializer.Serialize(mapperService.Map<Tdto>(obj.Item2))
                                 ) + ","
                             )) +
                     Environment.NewLine + "},"
@@ -105,30 +104,37 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
         /// <param name="mapper"></param>
         public void TestMap<Tdata, Tdto>(Tdata data)
         {
-            var dtoIn = mapper.Map<Tdto>(data);
+            var dtoIn = mapperService.Map<Tdto>(data);
             var file = JsonSerializer.Serialize(dtoIn);
             var dtoOut = JsonSerializer.Deserialize<Tdto>(file);
-            var dataOut = mapper.Map<Tdata>(dtoOut);
-            Assert.AreEqual(data, dataOut, "testmap failed" + Environment.NewLine +
+            var dataOut = mapperService.Map<Tdata>(dtoOut);
+            data.Should().Be(dataOut, "testmap failed" + Environment.NewLine +
                 getJson<Tdata, Tdto>(("dataIn", data), ("dataOut", dataOut))
                 );
         }
+        [Test]
+        public void test_FS_Provider()
+        {
+            Locator.Current.GetService<IFileSystem>()
+                .Should().BeAssignableTo<MockFileSystem>("a mock file system should be used by splat")
+                .And.BeSameAs(FileSystemHelper.FileSystem, "it should be the helper instance");
+            di.GetRequiredService<IFileSystem>()
+                .Should().BeAssignableTo<MockFileSystem>("a mock file system should be used by MS DI");
 
-        [TestMethod]
+        }
+        [Test]
         public void IsConfigValid()
         {
-            mapperConfig.AssertConfigurationIsValid();
+            new MapperConfiguration(cfg =>
+            {
+                IMapperService.RegisteredAssemblies
+                    .ToList()
+                    .ForEach(lib => cfg.AddMaps(lib));
+            }).AssertConfigurationIsValid();
 
         }
 
-        [TestMethod]
-        public void TestDto()
-        {
-            var data = new TestData(FilePath.From("tester"));
-            TestMap<TestData, TestDTO>(data);
-        }
-
-        [TestMethod]
+        [Test]
         public void TestHashKey()
         {
 
@@ -147,15 +153,15 @@ namespace TableTopCrucible.Data.Library.DataTransfer.Models.Tests
         }
         private FileHash buildHash()
             => FileHash.From(Enumerable.Range(1, 64).Select(i => Convert.ToByte(i)).ToArray());
-        [TestMethod]
+        [Test]
         public void TestFileDataEquals()
         {
             var a = buildDemoFileData();
             var b = buildDemoFileData();
-            Assert.AreEqual(a, a,"same instance");
-            Assert.AreEqual(a, b, "same value");
+            a.Should().Be(a);
+            a.Should().Be(b);
         }
-        [TestMethod]
+        [Test]
         public void TestFileDataDTO()
         {
             TestMap<FileData, FileDataDTO>(

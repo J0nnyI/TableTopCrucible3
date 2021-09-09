@@ -5,20 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DynamicData" Version="7.1.16" />
+    <PackageReference Include="DynamicData" Version="7.3.1" />
     <PackageReference Include="DynamicData.ReactiveUI" Version="6.11.0.2613" />
-    <PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-    <PackageReference Include="ReactiveUI" Version="13.3.2" />
-    <PackageReference Include="ReactiveUI.Fody" Version="13.3.2" />
+    <PackageReference Include="ReactiveUI" Version="16.2.1" />
+    <PackageReference Include="ReactiveUI.Fody" Version="16.2.1" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
-    <ProjectReference Include="..\TableTopcrucible.Data.Library.Models.Sources\TableTopCrucible.Data.Library.Models.Sources.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models.ValueTypes\TableTopCrucible.Data.Library.Models.ValueTypes.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.DataTransfer\TableTopCrucible.Data.Library.DataTransfer.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Data.Library.Models\TableTopCrucible.Data.Library.Models.csproj" />
     <ProjectReference Include="..\TableTopcrucible.Data.Library.ValueTypes.IDs\TableTopCrucible.Data.Library.ValueTypes.IDs.csproj" />
   </ItemGroup>
 

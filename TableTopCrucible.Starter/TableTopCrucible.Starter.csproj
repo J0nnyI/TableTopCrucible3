@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <StartupObject>TableTopCrucible.Starter.App</StartupObject>
+    <Version>0.0.10</Version>
+    <PackageProjectUrl>https://github.com/J0nnyI/TableTopCrucible3</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/J0nnyI/TableTopCrucible3</RepositoryUrl>
+    <Authors>Marcel Rehkemper</Authors>
+    <Company>CrucibleSoftware</Company>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.Database\TableTopCrucible.Core.Database.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.Wpf.Engine\TableTopCrucible.Core.Wpf.Engine.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.WPF.Packages.csproj" />
+    <ProjectReference Include="..\Domain\TableTopCrucible.Domain.Automation.Wpf\TableTopCrucible.Domain.Automation.Wpf.csproj" />
+    <ProjectReference Include="..\Domain\TableTopCrucible.Domain.Library.Wpf\TableTopCrucible.Domain.Library.Wpf.csproj" />
+    <ProjectReference Include="..\Domain\TableTopCrucible.Domain.Settings.Wpf\TableTopCrucible.Domain.Settings.Wpf.csproj" />
+    <ProjectReference Include="..\Infrastructure\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
+    <ProjectReference Include="..\Infrastructure\TableTopCrucible.Infrastructure.Wpf.Commands\TableTopCrucible.Infrastructure.Wpf.Commands.csproj" />
+    <ProjectReference Include="..\Shared\TableTopCrucible.Shared.Wpf\TableTopCrucible.Shared.Wpf.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.UserControls\TableTopCrucible.Core.UserControls.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.Wpf.Helper\TableTopCrucible.Core.Wpf.Helper.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="ReactiveUI.Fody" Version="16.2.1" />
+  </ItemGroup>
+</Project>

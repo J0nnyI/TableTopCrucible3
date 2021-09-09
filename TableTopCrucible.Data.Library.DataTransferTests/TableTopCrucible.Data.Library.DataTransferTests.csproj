@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -6,16 +6,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="10.2.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.4" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.4" />
     <PackageReference Include="coverlet.collector" Version="3.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="NUnit" Version="3.13.2" />
+    <PackageReference Include="NUnit.Console" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+    <PackageReference Include="ReactiveUI.Testing" Version="14.1.1" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.38" />
+    <PackageReference Include="Splat" Version="11.1.1" />
+    <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="11.1.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TableTopCrucible.App.Shared\TableTopCrucible.App.Shared.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Data.Library.DataTransfer\TableTopCrucible.Data.Library.DataTransfer.csproj" />
   </ItemGroup>
 

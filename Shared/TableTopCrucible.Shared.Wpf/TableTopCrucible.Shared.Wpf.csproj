@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReactiveUI.Fody" Version="16.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Database\TableTopCrucible.Core.Database.csproj" />
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Wpf.Engine\TableTopCrucible.Core.Wpf.Engine.csproj" />
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.WPF.Packages.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\TableTopCrucible.Infrastructure.Wpf.Commands\TableTopCrucible.Infrastructure.Wpf.Commands.csproj" />
+    <ProjectReference Include="..\..\TableTopCrucible.Core.UserControls\TableTopCrucible.Core.UserControls.csproj" />
+    <ProjectReference Include="..\..\TableTopCrucible.Core.Wpf.Helper\TableTopCrucible.Core.Wpf.Helper.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DummyApp.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="DummyApp.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+</Project>

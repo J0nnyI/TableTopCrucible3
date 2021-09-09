@@ -1,23 +1,17 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.EventLog;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 using ReactiveUI;
+
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
 
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using TableTopCrucible.App.Shared;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using TableTopCrucible.App.WpfTestApp.ViewModels;
 using System.Reflection;
-using TableTopCrucible.App.WpfTestApp.PageViewModels;
+using System.Windows;
+using TableTopCrucible.App.WpfTestApp.ViewModels;
+using TableTopCrucible.Core.DI;
 
 namespace TableTopCrucible.App.WpfTestApp
 {
@@ -57,9 +51,10 @@ namespace TableTopCrucible.App.WpfTestApp
             new Window()
             {
                 Title = "TTC Tester",
-                Content = new ViewModelViewHost() { 
-                    ViewModel = value, 
-                    VerticalContentAlignment = VerticalAlignment.Stretch ,
+                Content = new ViewModelViewHost()
+                {
+                    ViewModel = value,
+                    VerticalContentAlignment = VerticalAlignment.Stretch,
                     HorizontalContentAlignment = HorizontalAlignment.Stretch
                 },
                 VerticalContentAlignment = VerticalAlignment.Stretch,

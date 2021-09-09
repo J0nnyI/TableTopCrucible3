@@ -2,10 +2,8 @@
 using ReactiveUI.Fody.Helpers;
 
 using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
-using System.Text;
 
 using TableTopCrucible.Core.DI.Attributes;
 

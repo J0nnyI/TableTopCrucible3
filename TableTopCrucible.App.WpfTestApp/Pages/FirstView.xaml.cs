@@ -1,20 +1,9 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-using System;
-using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using TableTopCrucible.App.WpfTestApp.PageViewModels;
 
@@ -54,7 +43,7 @@ namespace TableTopCrucible.App.WpfTestApp.Pages
                     .Select(txt => !string.IsNullOrWhiteSpace(txt))
                     .BindTo(ViewModel, vm => vm.SuffixFills)
                     .DisposeWith(disposables);
-                
+
             });
 
         }

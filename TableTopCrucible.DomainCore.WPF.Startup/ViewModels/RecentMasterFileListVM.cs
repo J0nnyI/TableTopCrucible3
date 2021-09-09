@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 using TableTopCrucible.Core.DI.Attributes;
-using TableTopCrucible.DomainCore.WPF.Startup.Views;
 
 namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
 {
@@ -12,7 +8,7 @@ namespace TableTopCrucible.DomainCore.WPF.Startup.ViewModels
     {
 
     }
-    public class RecentMasterFileListVM:IRecentMasterFileList
+    public class RecentMasterFileListVM : IRecentMasterFileList
     {
     }
 }

@@ -6,12 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI.Events.WPF" Version="13.3.2" />
+    <PackageReference Include="ReactiveUI.Events.WPF" Version="14.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.DI\TableTopCrucible.Core.DI.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.DomainCore.WPF.ItemList\TableTopCrucible.DomainCore.WPF.ItemList.csproj" />
   </ItemGroup>
 
 </Project>
