@@ -2,7 +2,7 @@
 
 namespace TableTopCrucible.Infrastructure.Repositories.Models.EntityIds
 {
-    public class FileArchiveId : EntityIdBase<FileArchiveId>
+    public class DirectorySetupId : EntityIdBase<DirectorySetupId>
     {
     }
 }

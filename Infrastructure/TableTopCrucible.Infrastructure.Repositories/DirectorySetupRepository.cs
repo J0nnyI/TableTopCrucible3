@@ -14,17 +14,17 @@ using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Repositories
 {
-    [Singleton(typeof(FileArchiveRepository))]
-    public interface IFileArchiveRepository :
-        ISourceRepository<FileArchiveId, FileArchive, FileArchiveDto>
+    [Singleton(typeof(DirectorySetupRepository))]
+    public interface IDirectorySetupRepository :
+        ISourceRepository<DirectorySetupId, DirectorySetup, DirectorySetupDto>
     {
-        IObservable<IEnumerable<FileArchivePath>> TakenDirectoriesChanges { get; }
+        IObservable<IEnumerable<DirectorySetupPath>> TakenDirectoriesChanges { get; }
     }
-    internal class FileArchiveRepository :
-        SourceRepositoryBase<FileArchiveId, FileArchive, FileArchiveDto>,
-        IFileArchiveRepository
+    internal class DirectorySetupRepository :
+        SourceRepositoryBase<DirectorySetupId, DirectorySetup, DirectorySetupDto>,
+        IDirectorySetupRepository
     {
-        public FileArchiveRepository(IDatabase database) : base(database)
+        public DirectorySetupRepository(IDatabase database) : base(database)
         {
             TakenDirectoriesChanges =
                 DataChanges
@@ -33,7 +33,7 @@ namespace TableTopCrucible.Infrastructure.Repositories
                     .ToCollection()
                     .Replay(1);
         }
-        public IObservable<IEnumerable<FileArchivePath>> TakenDirectoriesChanges { get; }
+        public IObservable<IEnumerable<DirectorySetupPath>> TakenDirectoriesChanges { get; }
 
     }
 }

@@ -6,10 +6,10 @@ using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos
 {
-    public class FileArchiveDto : IEntityDto<FileArchiveId, FileArchive>
+    public class DirectorySetupDto : IEntityDto<DirectorySetupId, DirectorySetup>
     {
         public Name Name { get; }
-        public FileArchivePath Path { get; }
+        public DirectorySetupPath Path { get; }
         public SynchronizationTime LastSync { get; }
     }
 }
