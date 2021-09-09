@@ -184,9 +184,27 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                         this.WhenAnyValue(vm=>vm.UpperSelection),
                         this.WhenAnyValue(vm => vm.LowerSelection)
                     )
-                    .WhereNotNull()
                     .Select(m=>m.Page)
+                    .WhereNotNull()
                     .BindTo(navigationService, srv=>srv.CurrentPage),
+
+                this.WhenAnyValue(vm=>vm._navigationService.CurrentPage)
+                    .Do(_=>{})
+                    .WhereNotNull()
+                    .Subscribe(selection =>
+                    {
+                        if (selection.PageLocation == NavigationPageLocation.Upper)
+                        {
+                            if (this.UpperSelection != selection)
+                                this.UpperSelection = this.UpperList.First(m => m.Page == selection);
+                        }
+                        else
+                        {
+                            if (this.LowerSelection != selection)
+                                this.LowerSelection = this.LowerList.First(m => m.Page == selection);
+                        }
+                    }),
+                    
                 
                 // commands
                 ReactiveCommandHelper.Create(
