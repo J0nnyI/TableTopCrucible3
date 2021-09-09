@@ -7,9 +7,9 @@ using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 {
-    public partial class FileArchiveListV : ReactiveUserControl<FileArchiveListVm>
+    public partial class DirectorySetupListV : ReactiveUserControl<DirectorySetupListVm>
     {
-        public FileArchiveListV()
+        public DirectorySetupListV()
         {
             this.DataContext = ViewModel;
 
@@ -33,7 +33,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 {
                     VistaFolderBrowserDialog dialog = new();
                     interaction.SetOutput(dialog.ShowDialog() == true 
-                        ? FileArchivePath.From(dialog.SelectedPath) 
+                        ? DirectorySetupPath.From(dialog.SelectedPath) 
                         : null);
                 })
             });

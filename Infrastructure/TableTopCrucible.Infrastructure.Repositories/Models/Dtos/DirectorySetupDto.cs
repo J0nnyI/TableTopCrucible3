@@ -7,7 +7,7 @@ using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos
 {
-    public class FileArchiveDto : IEntityDto<FileArchiveId, FileArchive>
+    public class DirectorySetupDto : IEntityDto<DirectorySetupId, DirectorySetup>
     {
         public string Name { get; }
         public string Path { get; }
