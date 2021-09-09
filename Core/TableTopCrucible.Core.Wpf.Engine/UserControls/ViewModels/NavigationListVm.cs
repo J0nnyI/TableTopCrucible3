@@ -34,6 +34,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     }
     public class NavigationListVm : ReactiveObject, INavigationList, IActivatableViewModel
     {
+        private readonly INavigationService _navigationService;
 
         public ObservableCollectionExtended<INavigationPage> UpperList { get; } = new();
         public ObservableCollectionExtended<INavigationPage> LowerList { get; } = new();
@@ -43,11 +44,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public ICommand ToggleExpansionCommand { get; private set; }
 
         [Reactive]
-        public INavigationPage SelectedItem { get; set; }
+        public INavigationPage SelectedBufferItem { get; set; }
 
         public NavigationListVm(INavigationService navigationService)
         {
+            _navigationService = navigationService;
             this.WhenActivated(() => new[]{
+                // bind v selection to buffer
                 navigationService
                     .Pages
                     .Connect()
@@ -55,7 +58,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Sort(m=>m.Position.Value)
                     .Bind(LowerList)
                     .Subscribe(),
-
                 navigationService
                     .Pages
                     .Connect()
@@ -63,14 +65,43 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Sort(m=>m.Position.Value)
                     .Bind(UpperList)
                     .Subscribe(),
+                // revert on null
+                this.WhenAnyValue(vm=>vm.SelectedBufferItem)
+                    .DistinctUntilChanged()
+                    .Pairwise()
+                    .Where(m=>!m.Current.HasValue)
+                    .Select(m=>m.Previous.Value)
+                    .Where(m=>m != SelectedBufferItem)
+                    .BindTo(this, vm=>vm.SelectedBufferItem),
+                // bind buffer to live selection
+                this.WhenAnyValue(vm=>vm.SelectedBufferItem)
+                    .Where(m=>m != null)
+                    .BindTo(this, vm=>vm._navigationService.CurrentPage),
+                // bind live selection to buffer
+                this.WhenAnyValue(vm=>vm._navigationService.CurrentPage)
+                .Where(m=>m != null && m != SelectedBufferItem)
+                .BindTo(this, vm=>vm.SelectedBufferItem),
 
                 ReactiveCommandHelper.Create(
                     () =>IsExpanded = !IsExpanded,
                     cmd=>ToggleExpansionCommand = cmd),
 
-                this.WhenAnyValue(vm=>vm.SelectedItem)
+                this.WhenAnyValue(vm=>vm.SelectedBufferItem)
                     .Where(x=>x!=null)
-                    .Subscribe(page =>navigationService.CurrentPage = page)
+                    .Subscribe(page =>navigationService.CurrentPage = page),
+
+                this.WhenAnyValue(vm=>vm._navigationService.CurrentPage)
+                    .WhereNotNull()
+                    .Subscribe(m =>
+                    {
+
+                    }),
+                this.WhenAnyValue(vm=>vm.SelectedBufferItem)
+                    .WhereNotNull()
+                    .Subscribe(m =>
+                    {
+
+                    }),
 
             });
         }

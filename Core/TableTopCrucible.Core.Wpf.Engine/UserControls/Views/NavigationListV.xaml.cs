@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Windows;
+
 using DynamicData;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using Splat;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.Services;
@@ -16,31 +21,54 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
     /// </summary>
     public partial class NavigationListV : ReactiveUserControl<NavigationListVm>, IActivatableView
     {
+        [Reactive]
+        public INavigationPage Selection { get; set; }
+
         public NavigationListV()
         {
             InitializeComponent();
             this.WhenActivated(() => new[]
             {
-                this.WhenAnyValue(v=>v.ViewModel).BindTo(this, v=>v.DataContext),
+                this.WhenAnyValue(v=>v.ViewModel)
+                    .BindTo(this, v=>v.DataContext),
+
                 this.OneWayBind(ViewModel,
                     vm=>vm.UpperList,
                     v=>v.UpperList.ItemsSource),
+
                 this.OneWayBind(ViewModel,
                     vm=>vm.LowerList,
                     v=>v.LowerList.ItemsSource),
+
+                this.Bind(ViewModel,
+                    vm=>vm.SelectedBufferItem,
+                    v=>v.UpperList.SelectedItem,
+                    m=>m,// set
+                    m=>m as INavigationPage// get
+                    ),
+                this.Bind(ViewModel,
+                    vm=>vm.SelectedBufferItem,
+                    v=>v.LowerList.SelectedItem,
+                    m=>m,// set
+                    m=>m as INavigationPage// get
+                    ),
                 this.WhenAnyValue(
-                        v=>v.UpperList.SelectedItem
-                        )
-                    .BindTo(this, v=>v.ViewModel.SelectedItem),
+                    v=>v.ViewModel.SelectedBufferItem)
+                    .BindTo(this, v=>v.UpperList.SelectedItem),
                 this.WhenAnyValue(
-                        v=>v.LowerList.SelectedItem
-                    )
-                    .BindTo(this, v=>v.ViewModel.SelectedItem),
+                        v=>v.ViewModel.SelectedBufferItem)
+                    .BindTo(this, v=>v.LowerList.SelectedItem),
 
                 this.ToggleMenuItem
                     .Events()
                     .MouseUp
                     .Subscribe(_=>ViewModel!.ToggleExpansionCommand.Execute(null)),
+
+                this.OneWayBind(ViewModel,
+                    vm=>vm.IsExpanded,
+                    v=>v.ToggleMenuItem.ToolTip,
+                    (bool isExpanded)=> isExpanded ? "Collapse Sidebar" : "Expand Sidebar"
+                    )
             });
         }
     }
