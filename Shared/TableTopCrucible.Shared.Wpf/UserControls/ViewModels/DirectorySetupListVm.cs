@@ -27,36 +27,36 @@ using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Transient(typeof(FileArchiveListVm))]
-    public interface IFileArchiveList
+    [Transient(typeof(DirectorySetupListVm))]
+    public interface IDirectorySetupList
     {
 
     }
-    public class FileArchiveListVm : ReactiveValidationObject, IActivatableViewModel, IFileArchiveList
+    public class DirectorySetupListVm : ReactiveValidationObject, IActivatableViewModel, IDirectorySetupList
     {
-        private readonly IFileArchiveRepository _fileArchiveRepository;
+        private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
 
-        public Interaction<Unit, FileArchivePath> GetDirectoryDialog { get; } = new();
+        public Interaction<Unit, DirectorySetupPath> GetDirectoryDialog { get; } = new();
 
         public ICommand CreateDirectory { get; private set; }
-        public FileArchiveListVm(IFileArchiveRepository fileArchiveRepository, INotificationService notificationService)
+        public DirectorySetupListVm(IDirectorySetupRepository directorySetupRepository, INotificationService notificationService)
         {
-            _fileArchiveRepository = fileArchiveRepository;
+            _directorySetupRepository = directorySetupRepository;
             _notificationService = notificationService;
 
 
             this.WhenActivated(() => new[]
             {
-                _fileArchiveRepository
+                _directorySetupRepository
                     .DataChanges
                     .Connect()
                     .Transform(m=>m.Id)
                     .IgnoreUpdateWhen((m1, m2)=>m1==m2)
                     .Transform(m=>
                     {
-                        var card = Locator.Current.GetService<IFileArchiveCard>();
-                        card.FileArchiveId = m;
+                        var card = Locator.Current.GetService<IDirectorySetupCard>();
+                        card.DirectorySetupId = m;
                         return card;
                     })
                     .Sort()
@@ -77,11 +77,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     var path = await GetDirectoryDialog.Handle(Unit.Default);
                     if (path == null)
                         return;
-                    var takenItem = _fileArchiveRepository.Data.Items.FirstOrDefault(e => e.Path == path);
+                    var takenItem = _directorySetupRepository.Data.Items.FirstOrDefault(e => e.Path == path);
                     if (takenItem == null)
                     {
-                        var newArchive = new FileArchive(path.GetDirectoryName().ToName(), path);
-                        _fileArchiveRepository.AddOrUpdate(newArchive);
+                        var newArchive = new DirectorySetup(path.GetDirectoryName().ToName(), path);
+                        _directorySetupRepository.AddOrUpdate(newArchive);
                         _notificationService.AddNotification(
                             "Archive added successfully",
                             $"The directory '{newArchive.Path}' has been added as Archive '{newArchive.Name}'",
@@ -97,7 +97,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 });
             return disposables;
         }
-        public ObservableCollectionExtended<IFileArchiveCard> Directories { get; } = new();
+        public ObservableCollectionExtended<IDirectorySetupCard> Directories { get; } = new();
         public ViewModelActivator Activator { get; } = new();
     }
 }

@@ -8,9 +8,9 @@ using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 {
-    public partial class FileArchiveCardV : ReactiveUserControl<FileArchiveCardVm>, IActivatableView
+    public partial class DirectorySetupCardV : ReactiveUserControl<DirectorySetupCardVm>, IActivatableView
     {
-        public FileArchiveCardV()
+        public DirectorySetupCardV()
         {
             InitializeComponent();
             this.WhenActivated(() => new[]

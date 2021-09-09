@@ -11,15 +11,15 @@ using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
 {
-    [Transient(typeof(FileArchiveNavigationPvm))]
-    public interface IFileArchiveNavigationPage : INavigationPage
+    [Transient(typeof(DirectorySetupPageVm))]
+    public interface IDirectorySetupPage : INavigationPage
     {
 
     }
-    public class FileArchiveNavigationPvm : IActivatableViewModel, IFileArchiveNavigationPage
+    public class DirectorySetupPageVm : IActivatableViewModel, IDirectorySetupPage
     {
-        public IFileArchiveList FileArchiveList { get; }
-        public IFileArchiveCard NewDirectoryCard { get; }
+        public IDirectorySetupList DirectorySetupList { get; }
+        public IDirectorySetupCard NewDirectoryCard { get; }
         public PackIconKind? Icon => PackIconKind.FolderSearch;
         public Name Title => Name.From("Directory Configuration");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Lower;
@@ -27,11 +27,11 @@ namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
 
         public ViewModelActivator Activator { get; } = new();
 
-        public FileArchiveNavigationPvm(
-            IFileArchiveList fileArchiveList,
-            IFileArchiveCard newDirectoryCard)
+        public DirectorySetupPageVm(
+            IDirectorySetupList directorySetupList,
+            IDirectorySetupCard newDirectoryCard)
         {
-            FileArchiveList = fileArchiveList;
+            DirectorySetupList = directorySetupList;
             NewDirectoryCard = newDirectoryCard;
             NewDirectoryCard.ResetOnSave = true;
         }

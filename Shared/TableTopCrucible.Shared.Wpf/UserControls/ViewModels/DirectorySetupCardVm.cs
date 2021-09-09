@@ -23,19 +23,19 @@ using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Transient(typeof(FileArchiveCardVm))]
-    public interface IFileArchiveCard : IComparable<IFileArchiveCard>, IComparable
+    [Transient(typeof(DirectorySetupCardVm))]
+    public interface IDirectorySetupCard : IComparable<IDirectorySetupCard>, IComparable
     {
-        public FileArchiveId FileArchiveId { get; set; }
-        public FileArchive FileArchive { get; }
+        public DirectorySetupId DirectorySetupId { get; set; }
+        public DirectorySetup DirectorySetup { get; }
         public bool ResetOnSave { get; set; }
     }
-    public class FileArchiveCardVm : ReactiveValidationObject, IActivatableViewModel, IFileArchiveCard
+    public class DirectorySetupCardVm : ReactiveValidationObject, IActivatableViewModel, IDirectorySetupCard
     {
-        private ObservableAsPropertyHelper<FileArchive> _fileArchive;
-        public FileArchive FileArchive => _fileArchive?.Value;
+        private ObservableAsPropertyHelper<DirectorySetup> _directorySetup;
+        public DirectorySetup DirectorySetup => _directorySetup?.Value;
         [Reactive]
-        public FileArchiveId FileArchiveId { get; set; }
+        public DirectorySetupId DirectorySetupId { get; set; }
 
         [Reactive]
         public bool ResetOnSave { get; set; } = false;
@@ -50,24 +50,24 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
         public Interaction<Unit, bool> ConfirmDeletionInteraction { get; }= new();
         
-        private readonly IFileArchiveRepository _fileArchiveRepository;
+        private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
 
         public ICommand SaveChangesCommand { get; private set; }
         public ICommand UndoChangesCommand { get; private set; }
         public ICommand RemoveDirectoryCommand { get; private set; }
 
-        public FileArchiveCardVm()
+        public DirectorySetupCardVm()
         {
-            this._fileArchiveRepository = Locator.Current.GetService<IFileArchiveRepository>();
+            this._directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
             this._notificationService = Locator.Current.GetService<INotificationService>();
 
             this.WhenActivated(() => new[]
             {
                 // Properties
                 this.WhenAnyValue(
-                        vm => vm.FileArchiveId,
-                        id => _fileArchiveRepository.DataChanges.Watch(id))
+                        vm => vm.DirectorySetupId,
+                        id => _directorySetupRepository.DataChanges.Watch(id))
                     .Switch()
                     .Select(change=>change.Current)
                     .Do(m =>
@@ -75,10 +75,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         Name = m?.Name?.Value;
                         Path = m?.Path?.Value;
                     })
-                    .ToProperty(this, vm=>vm.FileArchive, out _fileArchive),
+                    .ToProperty(this, vm=>vm.DirectorySetup, out _directorySetup),
 
                 this.WhenAnyValue(
-                        vm=>vm.FileArchive,
+                        vm=>vm.DirectorySetup,
                         vm=>vm.Name,
                         vm=>vm.Path,
                         (dir, Name, path) =>
@@ -88,12 +88,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
                 // Validation
                 vtName.RegisterValidator(this, vm=>vm.Name),
-                FileArchivePath.RegisterValidator(this, vm=>vm.Path),
+                DirectorySetupPath.RegisterValidator(this, vm=>vm.Path),
 
                 // Commands
                 ReactiveCommandHelper.Create(() =>
                     {
-                        _fileArchiveRepository.AddOrUpdate(new(Name, Path, FileArchive.Id));
+                        _directorySetupRepository.AddOrUpdate(new(Name, Path, DirectorySetup.Id));
                         _notificationService.AddNotification(
                             "Directory saved successfully",
                             $"The directory '{Name}' has been saved successfully",
@@ -107,8 +107,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 ),
                 ReactiveCommandHelper.Create(() =>
                     {
-                        Name = FileArchive.Name.Value;
-                        Path = FileArchive.Path.Value;
+                        Name = DirectorySetup.Name.Value;
+                        Path = DirectorySetup.Path.Value;
                         _notificationService.AddNotification(
                             "Directory undo successful",
                             $"The changes in directory '{Name}' have been undone successfully",
@@ -124,7 +124,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             .Where(confirmed => confirmed)
                             .Subscribe(_ =>
                             {
-                                _fileArchiveRepository.Delete(FileArchive.Id);
+                                _directorySetupRepository.Delete(DirectorySetup.Id);
                                 _notificationService.AddNotification(
                                     "Remove successful",
                                     $"The Directory '{Name}' has been removed from this list",
@@ -134,15 +134,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     c=>RemoveDirectoryCommand = c
                 ),
             },
-                vm=>vm.FileArchive
+                vm=>vm.DirectorySetup
             );
         }
 
-        public int CompareTo(IFileArchiveCard other)
-            => this.FileArchive?.CompareTo(other?.FileArchive) ?? 1;
+        public int CompareTo(IDirectorySetupCard other)
+            => this.DirectorySetup?.CompareTo(other?.DirectorySetup) ?? 1;
 
         public int CompareTo(object obj)
-            => CompareTo(obj as IFileArchiveCard);
+            => CompareTo(obj as IDirectorySetupCard);
 
         public ViewModelActivator Activator { get; } = new();
     }

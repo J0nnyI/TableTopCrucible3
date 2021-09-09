@@ -9,20 +9,20 @@ using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Models.Entities
 {
-    public class FileArchive : EntityBase<FileArchiveId>, IComparable<FileArchive>
+    public class DirectorySetup : EntityBase<DirectorySetupId>, IComparable<DirectorySetup>
     {
         [NotNull] public Name Name { get; init; }
-        [NotNull] public FileArchivePath Path { get; init; }
+        [NotNull] public DirectorySetupPath Path { get; init; }
 
 
-        public int CompareTo(FileArchive other)
+        public int CompareTo(DirectorySetup other)
             => Name.CompareTo(other?.Name);
 
-        public FileArchive(string name, string path, FileArchiveId Id = null):this(vtName.From(name), FileArchivePath.From(path), Id)
+        public DirectorySetup(string name, string path, DirectorySetupId Id = null):this(vtName.From(name), DirectorySetupPath.From(path), Id)
         { }
-        public FileArchive(vtName name, FileArchivePath path, FileArchiveId Id = null)
+        public DirectorySetup(vtName name, DirectorySetupPath path, DirectorySetupId Id = null)
         {
-            this.Id = Id ?? FileArchiveId.New();
+            this.Id = Id ?? DirectorySetupId.New();
             this.Name = name;
             this.Path = path;
         }
