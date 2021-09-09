@@ -1,4 +1,6 @@
-﻿namespace TableTopCrucible.Core.Database.Models
+﻿using System;
+
+namespace TableTopCrucible.Core.Database.Models
 {
     public interface IEntity<Tid>
         where Tid : IEntityId
@@ -11,7 +13,11 @@
         : IEntity<Tid>
         where Tid : IEntityId
     {
-        public Tid Id { get; init; }
+        public Tid Id { get; }
 
+        protected EntityBase(Tid id)
+        {
+            this.Id = id ?? throw new ArgumentNullException(nameof(id));
+        }
     }
 }

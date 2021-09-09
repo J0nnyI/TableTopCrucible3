@@ -76,9 +76,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.UserControls", "TableTopCrucible.Core.UserControls\TableTopCrucible.Core.UserControls.csproj", "{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Domain.Library.Wpf", "Domain\TableTopCrucible.Domain.Library.Wpf\TableTopCrucible.Domain.Library.Wpf.csproj", "{6F43138A-0D8D-4B50-BB66-72BBDDAB07B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Domain.Library.Wpf", "Domain\TableTopCrucible.Domain.Library.Wpf\TableTopCrucible.Domain.Library.Wpf.csproj", "{6F43138A-0D8D-4B50-BB66-72BBDDAB07B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Domain.Automation.Wpf", "Domain\TableTopCrucible.Domain.Automation.Wpf\TableTopCrucible.Domain.Automation.Wpf.csproj", "{78BF17B1-C760-4B56-A95D-5B6418FD58EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Domain.Automation.Wpf", "Domain\TableTopCrucible.Domain.Automation.Wpf\TableTopCrucible.Domain.Automation.Wpf.csproj", "{78BF17B1-C760-4B56-A95D-5B6418FD58EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Infrastructure.Repositories.Tests", "Infrastructure\TableTopCrucible.Infrastructure.Repositories.Tests\TableTopCrucible.Infrastructure.Repositories.Tests.csproj", "{C3B87823-9A01-4876-AECA-8DA91125FC80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -434,6 +436,26 @@ Global
 		{78BF17B1-C760-4B56-A95D-5B6418FD58EF}.Release|x64.Build.0 = Release|Any CPU
 		{78BF17B1-C760-4B56-A95D-5B6418FD58EF}.Release|x86.ActiveCfg = Release|Any CPU
 		{78BF17B1-C760-4B56-A95D-5B6418FD58EF}.Release|x86.Build.0 = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|ARM.Build.0 = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|x64.Build.0 = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Debug|x86.Build.0 = Debug|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|ARM.ActiveCfg = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|ARM.Build.0 = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|ARM64.Build.0 = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|x64.ActiveCfg = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|x64.Build.0 = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|x86.ActiveCfg = Release|Any CPU
+		{C3B87823-9A01-4876-AECA-8DA91125FC80}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -461,6 +483,7 @@ Global
 		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A} = {24FDC793-9F76-4F81-86F3-26F1AEDF31FD}
 		{6F43138A-0D8D-4B50-BB66-72BBDDAB07B5} = {D5DACF3B-57D3-46F3-93CD-ABC02A403AAD}
 		{78BF17B1-C760-4B56-A95D-5B6418FD58EF} = {D5DACF3B-57D3-46F3-93CD-ABC02A403AAD}
+		{C3B87823-9A01-4876-AECA-8DA91125FC80} = {62C65F8F-761F-48C2-B9BB-23FA95E9084C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {339A61EA-C5C5-4D0C-BBBD-073C2CCC4A53}
