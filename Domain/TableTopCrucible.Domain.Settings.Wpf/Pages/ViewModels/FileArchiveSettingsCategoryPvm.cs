@@ -20,7 +20,7 @@ namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
     {
         public IFileArchiveList FileArchiveList { get; }
         public IFileArchiveCard NewDirectoryCard { get; }
-        public PackIconKind? Icon => PackIconKind.ArchiveSettings;
+        public PackIconKind? Icon => PackIconKind.FolderSearch;
         public Name Title => Name.From("Directory Configuration");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Lower;
         public SortingOrder Position => SortingOrder.From(1);

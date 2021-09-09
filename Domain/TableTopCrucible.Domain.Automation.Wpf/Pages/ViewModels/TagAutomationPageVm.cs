@@ -22,7 +22,7 @@ namespace TableTopCrucible.Domain.Automation.Wpf.Pages.ViewModels
     public class TagAutomationPageVm : ReactiveObject, IActivatableViewModel, ITagAutomationPage
     {
         public ViewModelActivator Activator { get; } = new();
-        public PackIconKind? Icon => null;
+        public PackIconKind? Icon => PackIconKind.Tags;
         public Name Title => Name.From("Tagging Automation");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
         public SortingOrder Position => SortingOrder.From(2);

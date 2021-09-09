@@ -11,6 +11,7 @@
                           xmlns:m="clr-namespace:TableTopCrucible.Core.Wpf.Engine.Models"
                           xmlns:v="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.Views"
                           xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                          md:RippleAssist.IsDisabled="True"
                           mc:Ignorable="d" 
                           x:Name="Self"
                           d:DesignHeight="450" 
