@@ -13,11 +13,11 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 {
     [Singleton(typeof(LibraryPageVm))]
-    public interface ILibraryPage
+    public interface ILibraryPage: INavigationPage
     {
 
     }
-    public class LibraryPageVm:ReactiveObject, IActivatableViewModel, ILibraryPage, INavigationPage
+    public class LibraryPageVm:ReactiveObject, IActivatableViewModel, ILibraryPage
     {
         public ViewModelActivator Activator { get; } = new();
         public PackIconKind? Icon => PackIconKind.Bookshelf;
