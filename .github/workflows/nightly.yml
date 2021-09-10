@@ -1,40 +1,40 @@
-name: "deploy .NET Core Desktop"
+#name: "deploy .NET Core Desktop"
 
-on:
-    push:
-        tags:
-            - "TTC/v*"
+#on:
+#    push:
+#        tags:
+#            - "TTC/v*"
 
-env:
-    PROJECT_PATH: TableTopCrucible.App.WPF/TableTopCrucible.App.WPF.csproj
+#env:
+#    PROJECT_PATH: TableTopCrucible.App.WPF/TableTopCrucible.App.WPF.csproj
 
-jobs:
-    deploy: 
-        runs-on: windows-latest
-        steps: 
-        - uses: actions/checkout@v2
+#jobs:
+#    deploy: 
+#        runs-on: windows-latest
+#        steps: 
+#        - uses: actions/checkout@v2
 
-        - uses: actions/setup-dotnet@v1
-          with: 
-            dotnet-version: 3.1.x
+#        - uses: actions/setup-dotnet@v1
+#          with: 
+#            dotnet-version: 3.1.x
         
-        - run: dotnet clean ${{ env.PROJECT_PATH }} --configuration Release && dotnet nuget locals all --clear
+#        - run: dotnet clean ${{ env.PROJECT_PATH }} --configuration Release && dotnet nuget locals all --clear
 
-        - run: dotnet restore ${{ env.PROJECT_PATH }} -r win-x64
+#        - run: dotnet restore ${{ env.PROJECT_PATH }} -r win-x64
 
-        - run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore -r win-x64
+#        - run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore -r win-x64
 
-        - run: dotnet publish ${{ env.PROJECT_PATH }} -p:PublishProfile=ClickOnce --no-build
+#        - run: dotnet publish ${{ env.PROJECT_PATH }} -p:PublishProfile=ClickOnce --no-build
 
-        - uses: actions/create-release@v1
-          id: create_release
-          env: 
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            tag_name: ${{ github.ref }}
-            release_name: ${{ github.ref }}
-        - uses: csexton/release-asset-action@v2
-          with: 
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            pattern: TableTopCrucible.App.WPF/bin/Release/netcoreapp3.1/win-x64/publish/*.exe
-            release-url: ${{ steps.create_release.outputs.upload_url }}/release/executable
+#        - uses: actions/create-release@v1
+#          id: create_release
+#          env: 
+#            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          with:
+#            tag_name: ${{ github.ref }}
+#            release_name: ${{ github.ref }}
+#        - uses: csexton/release-asset-action@v2
+#          with: 
+#            github-token: ${{ secrets.GITHUB_TOKEN }}
+#            pattern: TableTopCrucible.App.WPF/bin/Release/netcoreapp3.1/win-x64/publish/*.exe
+#            release-url: ${{ steps.create_release.outputs.upload_url }}/release/executable
