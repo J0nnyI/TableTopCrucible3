@@ -67,19 +67,26 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             return new CompositeDisposable(new IDisposable[]
             {
                 deleteCountdownActiveChanges
+                    .ObserveOn(RxApp.TaskpoolScheduler)
                     .Where(s=>s)
                     .Select(_=>
                         Observable.Interval(SettingsHelper.NotificationDelay / SettingsHelper.NotificationResolution))
                     .Switch()
                     .Scan(SettingsHelper.NotificationResolution, (a,b)=>a-1)
                     .Take(SettingsHelper.NotificationResolution)
-                    .ObserveOn(RxApp.MainThreadScheduler)
                     .Do(current=>
                     {
-                        if(current == 0)
-                            _notificationService.RemoveNotification(Id);
+                        if (current == 0)
+                        {
+                            Observable.Start(() =>
+                                {
+                                    _notificationService.RemoveNotification(Id);
+                                }, RxApp.MainThreadScheduler)
+                                .Take(1)
+                                .Subscribe();
+                        }
                     })
-                    .ToProperty(this, v=>v.DeleteCountdownProgress, out _deleteCountdownProgress),
+                    .ToProperty(this, v=>v.DeleteCountdownProgress, out _deleteCountdownProgress,false, RxApp.MainThreadScheduler),
                 deleteCountdownActiveChanges
                     .ToProperty(
                         this, 
