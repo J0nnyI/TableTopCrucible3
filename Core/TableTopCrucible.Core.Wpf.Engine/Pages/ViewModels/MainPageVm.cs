@@ -22,7 +22,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
         private ObservableAsPropertyHelper<INavigationPage> _currentPage;
         public INavigationPage CurrentPage => _currentPage.Value;
 
-        public MainPageVm( IBannerList bannerList, INavigationList navigationList, INavigationService navigationService)
+        public MainPageVm( 
+            IBannerList bannerList, 
+            INavigationList navigationList,
+            INavigationService navigationService)
         {
             _navigationService = navigationService;
             BannerList = bannerList;
