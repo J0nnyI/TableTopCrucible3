@@ -20,9 +20,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Entities
 
         public DirectorySetup(string name, string path, DirectorySetupId Id = null):this(vtName.From(name), DirectorySetupPath.From(path), Id)
         { }
-        public DirectorySetup(vtName name, DirectorySetupPath path, DirectorySetupId Id = null)
+        public DirectorySetup(vtName name, DirectorySetupPath path, DirectorySetupId Id = null):base(Id??DirectorySetupId.New())
         {
-            this.Id = Id ?? DirectorySetupId.New();
             this.Name = name;
             this.Path = path;
         }
