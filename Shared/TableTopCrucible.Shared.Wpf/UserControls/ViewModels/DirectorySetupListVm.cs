@@ -80,18 +80,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     var takenItem = _directorySetupRepository.Data.Items.FirstOrDefault(e => e.Path == path);
                     if (takenItem == null)
                     {
-                        var newArchive = new DirectorySetup(path.GetDirectoryName().ToName(), path);
-                        _directorySetupRepository.AddOrUpdate(newArchive);
+                        var directorySetup = new DirectorySetup(path.GetDirectoryName().ToName(), path);
+                        _directorySetupRepository.AddOrUpdate(directorySetup);
                         _notificationService.AddNotification(
-                            "Archive added successfully",
-                            $"The directory '{newArchive.Path}' has been added as Archive '{newArchive.Name}'",
+                            "Directory added successfully",
+                            $"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
                             NotificationType.Confirmation);
                     }
                     else
                     {
                         _notificationService.AddNotification(
-                            "Archive has already been added",
-                            $"This directory '{takenItem.Path.Value}' has already been registered as archive under the name '{takenItem.Name.Value}'",
+                            "Directory has already been added",
+                            $"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
                             NotificationType.Info);
                     }
                 });
