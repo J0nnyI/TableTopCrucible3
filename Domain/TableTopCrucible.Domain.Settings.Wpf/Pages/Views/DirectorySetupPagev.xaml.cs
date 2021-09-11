@@ -15,9 +15,6 @@ namespace TableTopCrucible.Domain.Settings.Wpf.Pages
                 this.Bind(ViewModel,
                     vm=>vm.DirectorySetupList,
                     v=>v.DirectorySetupList.ViewModel),
-                this.Bind(ViewModel,
-                    vm=>vm.Title.Value,
-                    v=>v.Title.Text),
             });
         }
     }

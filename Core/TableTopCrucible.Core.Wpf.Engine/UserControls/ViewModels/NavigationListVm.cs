@@ -75,11 +75,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
         public ObservableCollectionExtended<FlaggedNavigationItem> UpperList { get; } = new();
         public ObservableCollectionExtended<FlaggedNavigationItem> LowerList { get; } = new();
-        [Reactive]
-        public bool IsExpanded { get; set; }
-
-        public ICommand ToggleExpansionCommand { get; private set; }
-
+        private ObservableAsPropertyHelper<bool> _isExpanded;
+        public bool IsExpanded => _isExpanded.Value;
+        
         [Reactive]
         public FlaggedNavigationItem UpperSelection { get; set; }
             = new(NavigationPageLocation.Upper, false);
@@ -92,6 +90,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         {
             _navigationService = navigationService;
             this.WhenActivated(() => new[]{
+                this.WhenAnyValue(vm=>vm._navigationService.IsSidebarExpanded)
+                    .ToProperty(this, vm=>vm.IsExpanded, out _isExpanded),
+
                 // bind listContent
                 navigationService
                     .Pages
@@ -210,15 +211,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                                 this.LowerSelection = this.LowerList.First(m => m.Page == selection);
                         }
                     }),
-                    
-                
-                // commands
-                ReactiveCommandHelper.Create(
-                    () =>IsExpanded = !IsExpanded,
-                    cmd=>ToggleExpansionCommand = cmd),
-
-
-
             });
         }
 

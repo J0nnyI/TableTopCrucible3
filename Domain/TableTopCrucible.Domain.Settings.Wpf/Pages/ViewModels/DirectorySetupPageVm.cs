@@ -21,7 +21,7 @@ namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
         public IDirectorySetupList DirectorySetupList { get; }
         public IDirectorySetupCard NewDirectoryCard { get; }
         public PackIconKind? Icon => PackIconKind.FolderSearch;
-        public Name Title => Name.From("Directory Configuration");
+        public Name Title => Name.From("Directory Setup");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Lower;
         public SortingOrder Position => SortingOrder.From(1);
 

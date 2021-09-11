@@ -6,6 +6,8 @@
         Image,
         Library,
         Table,
-        Other
+        Other,
+        SlicerProject,
+        Archive
     }
 }

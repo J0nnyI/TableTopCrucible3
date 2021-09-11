@@ -8,7 +8,7 @@
                           xmlns:rxUi="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-                          xmlns:cuc="clr-namespace:TableTopCrucible.Core.UserControls;assembly=TableTopCrucible.Core.UserControls"
+                          xmlns:cuc="clr-namespace:TableTopCrucible.Core.UserControls;assembly=TableTopCrucible.Core.Wpf.UserControls"
                           md:RippleAssist.IsDisabled="False"
                           mc:Ignorable="d" 
                           d:DataContext="{d:DesignInstance vm:DirectorySetupCardVm}"

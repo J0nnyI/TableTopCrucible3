@@ -19,11 +19,14 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
     {
         INavigationPage CurrentPage { get; set; }
         IObservableList<INavigationPage> Pages { get; }
+        bool IsSidebarExpanded { get; set; }
     }
     internal class NavigationService :ReactiveObject, INavigationService
     {
         private readonly SourceList<INavigationPage> _pages = new();
         public IObservableList<INavigationPage> Pages => _pages;
+        [Reactive] public bool IsSidebarExpanded { get; set; } = true;
+
         [Reactive]
         public INavigationPage CurrentPage { get; set; }
 

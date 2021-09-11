@@ -6,6 +6,7 @@ using Splat;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
@@ -160,9 +161,19 @@ namespace TableTopCrucible.Core.ValueTypes
         public void Move(Tthis newLocation) => Directory.Move(Value, newLocation.Value);
         public DirectoryName GetDirectoryName() =>
             DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
-        public string[] GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
-            => Locator.Current.GetService<IFileSystem>().Directory.GetFiles(Value, searchPattern, searchOption);
 
+        public IEnumerable<FilePath> EnumerateFiles()
+            => Directory.EnumerateFiles(Value).Select(FilePath.From);
+
+        public IEnumerable<FilePath> GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
+            => Directory
+                .GetFiles(Value, searchPattern, searchOption)
+                .Select(FilePath.From)
+                .ToImmutableArray();
+
+        public IEnumerable<FilePath> GetFiles(params FileType[] types)
+            => this.EnumerateFiles()
+                .Where(f => types.Contains(f.GetFileType()));
 
     }
     public class DirectoryPath : DirectoryPath<DirectoryPath>

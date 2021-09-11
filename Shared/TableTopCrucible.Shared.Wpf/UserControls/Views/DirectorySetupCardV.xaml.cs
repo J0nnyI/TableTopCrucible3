@@ -50,14 +50,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     v=>v.ViewModel)
                     .Subscribe(vm =>
                     {
-                        vm.ConfirmDeletionInteraction.RegisterHandler(interaction =>
+                        vm.ConfirmDeletionInteraction.RegisterHandler(async interaction =>
                         {
-                            var res = MessageBox.Show($"Do you really want to remove the directory '{ViewModel.Name}' form the List?" +Environment.NewLine+
-                                                      $"This will neither delete your local files not will you loose the data you attached to the files in this directory." +Environment.NewLine+
-                                                      $"You can link the data again by adding a directory with the same files.",
-                                                      "Warning",
-                                MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
-                            interaction.SetOutput(res);
+                            var res = await MaterialDesignThemes.Wpf.DialogHost.Show(
+                                $"This will neither delete your local files not will you loose the data you attached to the files in this directory." +
+                                Environment.NewLine +
+                                $"You can link the data again by adding a directory with the same files.");
+       
+                            interaction.SetOutput(true);
                         });
                     })
             });

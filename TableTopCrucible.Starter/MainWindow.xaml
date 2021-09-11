@@ -6,17 +6,15 @@
         xmlns:local="clr-namespace:TableTopCrucible.Starter"
         xmlns:rxui="http://reactiveui.net"
         mc:Ignorable="d"
-        Background="{StaticResource MaterialDesignDarkBackground}"
-        Foreground="{StaticResource MaterialDesignDarkForeground}"
         WindowState="Maximized"
         Title="Table Top Crucible" Height="450" Width="800"
-        FontFamily="roboto"
+        FontFamily="Roboto"
         MinWidth="600"
-        MinHeight="400">
+        MinHeight="400"
+        Style="{StaticResource MaterialDesignWindow}">
     <Grid VerticalAlignment="Stretch"
           HorizontalAlignment="Stretch">
 
         <rxui:ViewModelViewHost x:Name="MainPageContainer"/>
-    <!--<Button Style="{StaticResource MaterialDesignIconForegroundButton}"></Button>-->
     </Grid>
 </Window>

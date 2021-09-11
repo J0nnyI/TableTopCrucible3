@@ -18,15 +18,21 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
         private readonly INavigationService _navigationService;
         public IBannerList BannerList { get; }
         public INavigationList NavigationList { get; }
+        public IAppHeader AppHeader { get; }
 
         private ObservableAsPropertyHelper<INavigationPage> _currentPage;
         public INavigationPage CurrentPage => _currentPage.Value;
 
-        public MainPageVm( IBannerList bannerList, INavigationList navigationList, INavigationService navigationService)
+        public MainPageVm( 
+            IBannerList bannerList, 
+            INavigationList navigationList,
+            INavigationService navigationService,
+            IAppHeader appHeader)
         {
             _navigationService = navigationService;
             BannerList = bannerList;
             NavigationList = navigationList;
+            AppHeader = appHeader;
 
             this.WhenActivated(()=> new []
             {

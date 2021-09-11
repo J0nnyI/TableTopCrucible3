@@ -15,7 +15,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
         {
             InitializeComponent();
 
-            this.WhenActivated(()=>new[]
+            this.WhenActivated(() => new[]
             {
                 this.OneWayBind(
                     ViewModel,
@@ -29,6 +29,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
                     ViewModel,
                     vm=>vm.CurrentPage,
                     v=>v.MainContainer.ViewModel),
+                this.OneWayBind(
+                    ViewModel,
+                    vm=>vm.AppHeader,
+                    v=>v.AppHeader.ViewModel),
             });
         }
     }

@@ -15,12 +15,12 @@
                           mc:Ignorable="d" 
                           x:Name="Self"
                           d:DesignHeight="450" 
-                          d:DesignWidth="800" 
+                          d:DesignWidth="210" 
                           d:DataContext="{d:DesignInstance vm:INavigationList}">
     <UserControl.Resources>
         <sys:Double x:Key="ButtonSize">50</sys:Double>
         <sys:Double x:Key="IconSize">30</sys:Double>
-        <sys:Double x:Key="ExpandedWidth">250</sys:Double>
+        <sys:Double x:Key="ExpandedWidth">210</sys:Double>
         <Style x:Key="ItemStyle"
                TargetType="ListBoxItem"
                BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
@@ -28,6 +28,8 @@
                     Value="Hand"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Height" Value="{StaticResource ButtonSize}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignLightForeground}"/>
+            <Setter Property="Width" Value="{StaticResource ExpandedWidth}"/>
             <Style.Resources>
                 <Style TargetType="md:PackIcon">
                     <Setter Property="Width"  Value="{StaticResource IconSize}"/>
@@ -74,36 +76,32 @@
         </Style>
         <DataTemplate x:Key="ItemTemplate"
                       DataType="m:INavigationPage">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal"
+                        ToolTip="{Binding Title}">
                 <md:PackIcon Kind="{Binding Icon}"/>
                     <TextBlock Text="{Binding Title}"
-                               Style="{StaticResource Subtitle1}"
+                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
                                VerticalAlignment="Center"/>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <ListBoxItem x:Name="ToggleMenuItem" Grid.Row="0"
-                     VerticalContentAlignment="Stretch"
-                     HorizontalAlignment="Left"
-                     Style="{StaticResource ItemStyle}">
-            <md:PackIcon Kind="Menu"/>
-        </ListBoxItem>
-        <ListBox x:Name="UpperList"
-                 Grid.Row="1"
-                 ItemContainerStyle="{StaticResource ItemStyle}"
-                 ItemTemplate="{StaticResource ItemTemplate}"
-                 PreviewMouseDown="BlockOnControl"/>
-        <ListBox x:Name="LowerList"
-                 Grid.Row="2"
-                 ItemContainerStyle="{StaticResource ItemStyle}"
-                 ItemTemplate="{StaticResource ItemTemplate}"
-                 PreviewMouseDown="BlockOnControl">
-        </ListBox>
-    </Grid>
+
+    <md:ColorZone md:ShadowAssist.ShadowDepth="Depth2"
+                  md:ShadowAssist.ShadowEdges="Right"
+                  Mode="PrimaryMid"
+                  VerticalAlignment="Stretch">
+        <DockPanel VerticalAlignment="Stretch">
+            <ListBox x:Name="UpperList"
+                     DockPanel.Dock="Top"
+                     ItemContainerStyle="{StaticResource ItemStyle}"
+                     ItemTemplate="{StaticResource ItemTemplate}"
+                     PreviewMouseDown="BlockOnControl"/>
+            <ListBox x:Name="LowerList"
+                     DockPanel.Dock="Bottom"
+                     ItemContainerStyle="{StaticResource ItemStyle}"
+                     ItemTemplate="{StaticResource ItemTemplate}"
+                     PreviewMouseDown="BlockOnControl"/>
+            <Rectangle/>
+        </DockPanel>
+    </md:ColorZone>
 </rxui:ReactiveUserControl>

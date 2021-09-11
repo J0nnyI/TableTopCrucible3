@@ -12,39 +12,34 @@
                           d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance vm:SimpleNotificationVm}">
     <UserControl.Resources>
         <Style TargetType="md:Card">
+            <Setter Property="Foreground"
+                    Value="{StaticResource MaterialDesignLightForeground}"/>
             <Style.Triggers >
                 <DataTrigger Binding="{Binding Path=Type}"
                              Value="{x:Static vt:NotificationType.Confirmation}">
                     <Setter Property="Background"
                             Value="{StaticResource BackgroundConfirm}"/>
-                    <Setter Property="Foreground"
-                            Value="{StaticResource MaterialDesignLightForeground}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Path=Type}"
                              Value="{x:Static vt:NotificationType.Error}">
                     <Setter Property="Background"
                             Value="{StaticResource BackgroundError}"/>
-                    <Setter Property="Foreground"
-                            Value="{StaticResource MaterialDesignLightForeground}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Path=Type}"
                              Value="{x:Static vt:NotificationType.Info}">
                     <Setter Property="Background"
                             Value="{StaticResource BackgroundInfo}"/>
-                    <Setter Property="Foreground"
-                            Value="{StaticResource MaterialDesignLightForeground}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Path=Type}"
                              Value="{x:Static vt:NotificationType.Warning}">
                     <Setter Property="Background"
                             Value="{StaticResource BackgroundWarning}"/>
-                    <Setter Property="Foreground"
-                            Value="{StaticResource MaterialDesignLightForeground}"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <md:Card>
+    <md:Card md:ShadowAssist.ShadowDepth="Depth3"
+             md:ShadowAssist.ShadowEdges="Bottom,Left">
         <Grid Margin="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -63,42 +58,33 @@
                          Grid.Column="0"/>
             <TextBlock Grid.Row="0"
                        Grid.Column="1"
-                       Style="{StaticResource Body2}"
+                       Style="{StaticResource MaterialDesignBody2TextBlock}"
                        Margin="10 0 0 10"
                        FontFamily="Roboto"
-                       Foreground="{StaticResource MaterialDesignLightForeground}"
                        x:Name="Title"/>
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
                        Grid.ColumnSpan="3"
                        FontFamily="Roboto"
-                       Style="{StaticResource Body1}"
-                       Foreground="{StaticResource MaterialDesignLightForeground}"
+                       Style="{StaticResource MaterialDesignBody1TextBlock}"
                        TextWrapping="Wrap"
                        x:Name="Content"/>
             <Button x:Name="CloseNotification"
                     ToolTip="Close Notification"
                     Grid.Column="2"
-                    Grid.RowSpan="2"
                     Grid.Row="0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
-                    Margin="0 -15 -20 0"
-                    md:ButtonProgressAssist.IndicatorForeground="{StaticResource MaterialDesignLightForeground}"
-                    Style="{StaticResource MaterialDesignIconButton}">
-                <Grid>
-                    <ProgressBar x:Name="DeleteCountdown"
-                                 Style="{StaticResource MaterialDesignCircularProgressBar}"
-                                 Foreground="{StaticResource MaterialDesignLightForeground}"
-                                 HorizontalAlignment="Stretch"
-                                 VerticalAlignment="Stretch"
-                                 Margin="-25"
-                                 Width="30"
-                                 Height="30"/>
-                    <md:PackIcon Kind="Close" Foreground="{StaticResource MaterialDesignLightForeground}"/>
-                </Grid>
+                    ClipToBounds="false"
+                    BorderThickness="0"
+                    md:ButtonProgressAssist.IsIndicatorVisible="{Binding DeleteCountdownRunning}"
+                    md:ButtonProgressAssist.Maximum="{Binding DeleteCountdownTotal}"
+                    md:ButtonProgressAssist.Value="{Binding DeleteCountdownProgress}"
+                    md:ButtonProgressAssist.IndicatorForeground="{DynamicResource SecondaryHueLightBrush}"
+                    md:ButtonProgressAssist.IndicatorBackground="Transparent"
+                    Content="{md:PackIcon Close}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniDarkButton}">
             </Button>
-
         </Grid>
     </md:Card>
 </rxui:ReactiveUserControl>

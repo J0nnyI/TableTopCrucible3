@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using MaterialDesignThemes.Wpf;
 
 using ReactiveUI;
-
+using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
@@ -22,6 +22,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 
             this.WhenActivated(() => new[]
             {
+                this.WhenAnyValue(v=>v.ViewModel)
+                    .BindTo(this, v=>v.DataContext),
                 this.Bind(
                     ViewModel,
                     vm=>vm.Title.Value,
@@ -31,27 +33,11 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     vm=>vm.Content.Value,
                     v=>v.Content.Text),
                 this.WhenAnyValue(
-                    v=>v.ViewModel)
-                    .BindTo(this, v=>v.DataContext),
-                this.WhenAnyValue(
                     v=>v.ViewModel.Content,
                     c=>string.IsNullOrWhiteSpace(c.Value)
                         ?Visibility.Collapsed
                         :Visibility.Visible)
                     .BindTo(this, v=>v.Content.Visibility),
-                this.OneWayBind(
-                    ViewModel,
-                    vm=>vm.DeleteCountdownTotal,
-                    v=>v.DeleteCountdown.Maximum),
-                this.OneWayBind(
-                    ViewModel,
-                    vm=>vm.DeleteCountdownProgress,
-                    v=>v.DeleteCountdown.Value),
-                this.OneWayBind(
-                    ViewModel,
-                    vm=>vm.DeleteCountdownRunning,
-                    v=>v.DeleteCountdown.Visibility,
-                    running=>running?Visibility.Visible:Visibility.Collapsed),
                 this.OneWayBind(
                     ViewModel,
                     vm=>vm.CloseNotificationCommand,
