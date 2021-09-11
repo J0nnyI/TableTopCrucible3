@@ -10,24 +10,12 @@
     <!--
         <Setter Property="Background" Value="{StaticResource MaterialDesignDarkBackground}"/>
     </Style>-->
-    <Style TargetType="TextBlock">
-        <Setter Property="Foreground"
-                Value="{StaticResource MaterialDesignDarkForeground}"/>
-    </Style>
-
-    <Style TargetType="md:PackIcon">
-        <Setter Property="Foreground"
-                Value="{StaticResource MaterialDesignDarkForeground}"/>
-    </Style>
-
-
 
     <Style TargetType="rxui:ViewModelViewHost">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
     </Style>
-
     <Style TargetType="ToolTip" BasedOn="{StaticResource MaterialDesignToolTip}">
         <Setter Property="Foreground" Value="{StaticResource MaterialDesignDarkForeground}"/>
         <Setter Property="Background" Value="#474747"/>

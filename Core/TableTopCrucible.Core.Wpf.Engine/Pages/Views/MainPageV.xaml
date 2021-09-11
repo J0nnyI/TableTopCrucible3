@@ -6,20 +6,27 @@
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:rx="http://reactiveui.net"
                    xmlns:pvm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels"
+                   xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                    mc:Ignorable="d"
                    d:DataContext="{d:DesignInstance pvm:MainPageVm}">
     <DockPanel VerticalAlignment="Stretch"
-          HorizontalAlignment="Stretch">
+               HorizontalAlignment="Stretch">
+        <rx:ViewModelViewHost x:Name="AppHeader"
+                              md:ShadowAssist.ShadowEdges="Bottom"
+                              md:ShadowAssist.Darken="True"
+                              md:ShadowAssist.ShadowDepth="Depth3"
+                              DockPanel.Dock="Top"/>
         <rx:ViewModelViewHost x:Name="NavigationList"
                               DockPanel.Dock="Left"/>
         <Grid>
             <rx:ViewModelViewHost x:Name="MainContainer"/>
             <rx:ViewModelViewHost x:Name="NotificationList"
                                   VerticalAlignment="Top"
-                                  HorizontalAlignment="Center"
+                                  HorizontalAlignment="Right"
                                   Margin="0 16 0 0"
                                   MinWidth="700"
-                                  MaxWidth="1000"/>
+                                  MaxWidth="500"
+                                  Opacity=".7"/>
         </Grid>
     </DockPanel>
 </rx:ReactiveUserControl>

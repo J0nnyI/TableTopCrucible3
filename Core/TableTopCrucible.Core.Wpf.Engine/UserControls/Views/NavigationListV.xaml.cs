@@ -52,17 +52,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     v=>v.LowerList.SelectedItem,
                     m=>m.HasContent?m:null,
                     m=>m as FlaggedNavigationItem ?? new FlaggedNavigationItem(NavigationPageLocation.Lower, true)),
-
-                this.ToggleMenuItem
-                    .Events()
-                    .MouseUp
-                    .Subscribe(_ => ViewModel!.ToggleExpansionCommand.Execute(null)),
-
-                this.OneWayBind(ViewModel,
-                    vm => vm.IsExpanded,
-                    v => v.ToggleMenuItem.ToolTip,
-                    (bool isExpanded) => isExpanded ? "Collapse Sidebar" : "Expand Sidebar"
-                    ),
+                
             });
         }
 

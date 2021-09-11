@@ -47,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Value
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Test.Packages", "Core\TableTopCrucible.Core.Test.Packages\TableTopCrucible.Core.Test.Packages.csproj", "{1BE2F657-E677-405E-B4F2-DABDC8D02424}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.WPF.Packages", "Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.WPF.Packages.csproj", "{43EBA02D-C384-4FBD-B5BF-308C59B8A78B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Wpf.Packages", "Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj", "{43EBA02D-C384-4FBD-B5BF-308C59B8A78B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Domain.Settings.Wpf", "Domain\TableTopCrucible.Domain.Settings.Wpf\TableTopCrucible.Domain.Settings.Wpf.csproj", "{DDDF42A9-0491-4A99-847E-EB73C554BAAB}"
 EndProject
@@ -74,8 +74,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.UserControls", "TableTopCrucible.Core.UserControls\TableTopCrucible.Core.UserControls.csproj", "{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Domain.Library.Wpf", "Domain\TableTopCrucible.Domain.Library.Wpf\TableTopCrucible.Domain.Library.Wpf.csproj", "{6F43138A-0D8D-4B50-BB66-72BBDDAB07B5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Domain.Automation.Wpf", "Domain\TableTopCrucible.Domain.Automation.Wpf\TableTopCrucible.Domain.Automation.Wpf.csproj", "{78BF17B1-C760-4B56-A95D-5B6418FD58EF}"
@@ -86,7 +84,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Surface", "Surface", "{7903
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Background", "Background", "{822665D6-4706-45D5-BAB3-42DE3DEBB7FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Shared.ItemSync", "Shared\TableTopCrucible.Shared.ItemSync\TableTopCrucible.Shared.ItemSync.csproj", "{31F1674F-D710-4CA1-A2ED-CF806780083C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Shared.ItemSync", "Shared\TableTopCrucible.Shared.ItemSync\TableTopCrucible.Shared.ItemSync.csproj", "{31F1674F-D710-4CA1-A2ED-CF806780083C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Wpf.UserControls", "Core\TableTopCrucible.Core.Wpf.UserControls\TableTopCrucible.Core.Wpf.UserControls.csproj", "{DC4F1011-B48C-4B92-8E79-9A0209854D39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -382,26 +382,6 @@ Global
 		{CE2C7F2E-37A0-44A3-B1B4-6F7CE27B5368}.Release|x64.Build.0 = Release|Any CPU
 		{CE2C7F2E-37A0-44A3-B1B4-6F7CE27B5368}.Release|x86.ActiveCfg = Release|Any CPU
 		{CE2C7F2E-37A0-44A3-B1B4-6F7CE27B5368}.Release|x86.Build.0 = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|ARM.Build.0 = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|x64.Build.0 = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Debug|x86.Build.0 = Debug|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|ARM.ActiveCfg = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|ARM.Build.0 = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|ARM64.Build.0 = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|x64.ActiveCfg = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|x64.Build.0 = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|x86.ActiveCfg = Release|Any CPU
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A}.Release|x86.Build.0 = Release|Any CPU
 		{6F43138A-0D8D-4B50-BB66-72BBDDAB07B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F43138A-0D8D-4B50-BB66-72BBDDAB07B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F43138A-0D8D-4B50-BB66-72BBDDAB07B5}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -482,6 +462,26 @@ Global
 		{31F1674F-D710-4CA1-A2ED-CF806780083C}.Release|x64.Build.0 = Release|Any CPU
 		{31F1674F-D710-4CA1-A2ED-CF806780083C}.Release|x86.ActiveCfg = Release|Any CPU
 		{31F1674F-D710-4CA1-A2ED-CF806780083C}.Release|x86.Build.0 = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|ARM.Build.0 = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|x64.Build.0 = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Debug|x86.Build.0 = Debug|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|ARM.ActiveCfg = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|ARM.Build.0 = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|ARM64.Build.0 = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|x64.ActiveCfg = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|x64.Build.0 = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|x86.ActiveCfg = Release|Any CPU
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -506,13 +506,13 @@ Global
 		{B434E8EF-06C8-4B14-8171-1839AC151152} = {C543A906-59EF-437F-BF4F-1F0459BD7C96}
 		{13016D8F-D81E-45ED-A599-F72EDA236238} = {62C65F8F-761F-48C2-B9BB-23FA95E9084C}
 		{CE2C7F2E-37A0-44A3-B1B4-6F7CE27B5368} = {24FDC793-9F76-4F81-86F3-26F1AEDF31FD}
-		{B7C3DB3E-19C5-4461-A802-26B48ADBB00A} = {24FDC793-9F76-4F81-86F3-26F1AEDF31FD}
 		{6F43138A-0D8D-4B50-BB66-72BBDDAB07B5} = {D5DACF3B-57D3-46F3-93CD-ABC02A403AAD}
 		{78BF17B1-C760-4B56-A95D-5B6418FD58EF} = {D5DACF3B-57D3-46F3-93CD-ABC02A403AAD}
 		{C3B87823-9A01-4876-AECA-8DA91125FC80} = {62C65F8F-761F-48C2-B9BB-23FA95E9084C}
 		{7903F0E4-BA29-4CCE-87E9-6C317B27494A} = {26FC3771-00F2-441B-84DD-875F2E374E6D}
 		{822665D6-4706-45D5-BAB3-42DE3DEBB7FE} = {26FC3771-00F2-441B-84DD-875F2E374E6D}
 		{31F1674F-D710-4CA1-A2ED-CF806780083C} = {822665D6-4706-45D5-BAB3-42DE3DEBB7FE}
+		{DC4F1011-B48C-4B92-8E79-9A0209854D39} = {24FDC793-9F76-4F81-86F3-26F1AEDF31FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {339A61EA-C5C5-4D0C-BBBD-073C2CCC4A53}

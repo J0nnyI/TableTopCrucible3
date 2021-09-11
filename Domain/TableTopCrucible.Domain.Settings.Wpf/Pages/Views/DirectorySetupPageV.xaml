@@ -15,10 +15,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock x:Name="Title"
-                   Style="{StaticResource ApplicationTitle}"
-                   HorizontalAlignment="Center"
-                   Grid.Row="0"/>
         <md:DialogHost Grid.Row="0"
                        Grid.RowSpan="2"/>
         <rxui:ViewModelViewHost x:Name="DirectorySetupList"
