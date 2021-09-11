@@ -39,13 +39,14 @@
                               md:ToggleButtonAssist.OnContent="{md:PackIcon ArrowLeft}"
                               Cursor="Hand"
                               Content="{md:PackIcon Menu}"/>
+
                 <Button Content="{md:PackIcon ContentSave}"
-                        ToolTip="Save Data"/>
+                        ToolTip="Save Data - Coming Soon"/>
             </StackPanel>
             <!--   Right   -->
             <StackPanel Orientation="Horizontal"
                         DockPanel.Dock="right">
-                <Button ToolTip="Show Jobs"
+                <Button ToolTip="Show Jobs - Coming Soon"
                         md:ButtonProgressAssist.Maximum="100"
                         md:ButtonProgressAssist.Value="70"
                         md:ButtonProgressAssist.IsIndicatorVisible="True"
@@ -53,10 +54,10 @@
                     <md:PackIcon Kind="clock" />
                 </Button>
                 <md:Badged x:Name="NotificationBadge"
-                           ToolTip="Notifications"
+                           ToolTip="Notifications - Coming Soon"
                            BadgePlacementMode="BottomRight"
                            Padding="0 0 -20 -10"
-                           Margin="-20 5 20 0">
+                           Margin="-20 5 0 0">
                     <Button Content="{md:PackIcon Bell}"
                     />
                 </md:Badged>

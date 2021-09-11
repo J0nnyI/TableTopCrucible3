@@ -11,4 +11,17 @@
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
     <ProjectReference Include="..\..\TableTopCrucible.Core.Wpf.Helper\TableTopCrucible.Core.Wpf.Helper.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DummyApp.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="DummyApp.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>

@@ -15,12 +15,12 @@
                           mc:Ignorable="d" 
                           x:Name="Self"
                           d:DesignHeight="450" 
-                          d:DesignWidth="800" 
+                          d:DesignWidth="210" 
                           d:DataContext="{d:DesignInstance vm:INavigationList}">
     <UserControl.Resources>
         <sys:Double x:Key="ButtonSize">50</sys:Double>
         <sys:Double x:Key="IconSize">30</sys:Double>
-        <sys:Double x:Key="ExpandedWidth">250</sys:Double>
+        <sys:Double x:Key="ExpandedWidth">210</sys:Double>
         <Style x:Key="ItemStyle"
                TargetType="ListBoxItem"
                BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
@@ -28,6 +28,8 @@
                     Value="Hand"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Height" Value="{StaticResource ButtonSize}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignLightForeground}"/>
+            <Setter Property="Width" Value="{StaticResource ExpandedWidth}"/>
             <Style.Resources>
                 <Style TargetType="md:PackIcon">
                     <Setter Property="Width"  Value="{StaticResource IconSize}"/>
@@ -35,7 +37,6 @@
                     <Setter Property="VerticalAlignment" Value="Center"/>
                     <Setter Property="HorizontalAlignment" Value="Center"/>
                     <Setter Property="Margin" Value="10"/>
-                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignLightForeground}"/>
                 </Style>
             </Style.Resources>
             <Style.Triggers>

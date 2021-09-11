@@ -25,8 +25,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
     {
         private readonly SourceList<INavigationPage> _pages = new();
         public IObservableList<INavigationPage> Pages => _pages;
-        [Reactive]
-        public bool IsSidebarExpanded { get; set; }
+        [Reactive] public bool IsSidebarExpanded { get; set; } = true;
 
         [Reactive]
         public INavigationPage CurrentPage { get; set; }

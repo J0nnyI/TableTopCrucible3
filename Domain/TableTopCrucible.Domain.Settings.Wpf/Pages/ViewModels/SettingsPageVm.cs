@@ -9,9 +9,9 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
 {
-    [Transient(typeof(ApplicationBehaviorPvm))]
-    public interface IApplicationBehaviorSettingsPage : INavigationPage { }
-    public class ApplicationBehaviorPvm : ReactiveObject, IActivatableViewModel, IApplicationBehaviorSettingsPage
+    [Transient(typeof(SettingsPageVm))]
+    public interface ISettingsPage : INavigationPage { }
+    public class SettingsPageVm : ReactiveObject, IActivatableViewModel, ISettingsPage
     {
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
         public PackIconKind? Icon => PackIconKind.Settings;
