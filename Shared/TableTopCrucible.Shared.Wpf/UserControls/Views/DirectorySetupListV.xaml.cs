@@ -1,7 +1,10 @@
-﻿using Ookii.Dialogs.Wpf;
+﻿using System.Reactive;
+using System.Reactive.Linq;
+using System.Windows;
+using Ookii.Dialogs.Wpf;
 
 using ReactiveUI;
-
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
@@ -20,6 +23,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 this.OneWayBind(ViewModel,
                     vm=>vm.Directories,
                     v=>v.DirectoryList.ItemsSource),
+
+                this.ViewModel.HintOpacity
+                    .Do(_=>{})
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .BindTo(this, v=>v.EmptyListText.Opacity),
 
                 this.WhenAnyValue(v=>v.ViewModel)
                     .BindTo(this, v=>v.DataContext),

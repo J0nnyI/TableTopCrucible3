@@ -38,9 +38,10 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <md:Card md:ShadowAssist.ShadowDepth="Depth3"
-             md:ShadowAssist.ShadowEdges="Bottom,Left">
-        <Grid Margin="16">
+    <md:Card md:ShadowAssist.ShadowEdges="None"
+             UseLayoutRounding="True">
+        <Grid Margin="16"
+              UseLayoutRounding="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -70,6 +71,7 @@
                        TextWrapping="Wrap"
                        x:Name="Content"/>
             <Button x:Name="CloseNotification"
+                    UseLayoutRounding="True"
                     ToolTip="Close Notification"
                     Grid.Column="2"
                     Grid.Row="0"
@@ -78,7 +80,7 @@
                     ClipToBounds="false"
                     BorderThickness="0"
                     md:ButtonProgressAssist.IsIndicatorVisible="{Binding DeleteCountdownRunning}"
-                    md:ButtonProgressAssist.Maximum="{Binding DeleteCountdownTotal}"
+                    md:ButtonProgressAssist.Maximum="100"
                     md:ButtonProgressAssist.Value="{Binding DeleteCountdownProgress}"
                     md:ButtonProgressAssist.IndicatorForeground="{DynamicResource SecondaryHueLightBrush}"
                     md:ButtonProgressAssist.IndicatorBackground="Transparent"

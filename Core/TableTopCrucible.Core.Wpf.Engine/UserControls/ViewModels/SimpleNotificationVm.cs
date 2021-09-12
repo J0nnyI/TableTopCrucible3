@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+
 using ReactiveUI;
 
 using Splat;
@@ -30,14 +31,23 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public NotificationType Type { get; }
 
         public ViewModelActivator Activator { get; } = new();
-        public int DeleteCountdownTotal => SettingsHelper.NotificationResolution;
-        private ObservableAsPropertyHelper<int> _deleteCountdownProgress;
-        public int DeleteCountdownProgress => _deleteCountdownProgress.Value;
+
+        public double DeleteCountdownTotal => SettingsHelper.NotificationResolution;
+
+        private ObservableAsPropertyHelper<double> _deleteCountdownProgress;
+        public double DeleteCountdownProgress => _deleteCountdownProgress.Value;
+
+        private ObservableAsPropertyHelper<double> _cardOpacity;
+        public double CardOpacity => _cardOpacity.Value;
+
         private ObservableAsPropertyHelper<bool> _deleteCountdownRunning;
         public bool DeleteCountdownRunning => _deleteCountdownRunning.Value;
+
         private ObservableAsPropertyHelper<bool> _closable;
-        private readonly INotificationService _notificationService;
         public bool Closable => _closable.Value;
+        
+
+        private readonly INotificationService _notificationService;
         public ICommand CloseNotificationCommand { get; private set; }
 
 
@@ -60,39 +70,43 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         {
             if (!SettingsHelper.AutocloseEnabled)
                 return new CompositeDisposable();
-
-            var deleteCountdownActiveChanges = this.WhenAnyValue(v => v.Type)
-                .Select(t => t == NotificationType.Confirmation);
-
+            
             return new CompositeDisposable(new IDisposable[]
             {
-                deleteCountdownActiveChanges
-                    .ObserveOn(RxApp.TaskpoolScheduler)
-                    .Where(s=>s)
-                    .Select(_=>
-                        Observable.Interval(SettingsHelper.NotificationDelay / SettingsHelper.NotificationResolution))
-                    .Switch()
-                    .Scan(SettingsHelper.NotificationResolution, (a,b)=>a-1)
-                    .Take(SettingsHelper.NotificationResolution)
-                    .Do(current=>
-                    {
-                        if (current == 0)
-                        {
-                            Observable.Start(() =>
-                                {
-                                    _notificationService.RemoveNotification(Id);
-                                }, RxApp.MainThreadScheduler)
-                                .Take(1)
-                                .Subscribe();
-                        }
-                    })
-                    .ToProperty(this, v=>v.DeleteCountdownProgress, out _deleteCountdownProgress,false, RxApp.MainThreadScheduler),
-                deleteCountdownActiveChanges
+                // timer enabled
+                this.WhenAnyValue(v => v.Type)
+                    .Select(t => t == NotificationType.Confirmation)
+                    .OutputObservable(out var deleteCountdownActiveChanges)
                     .ToProperty(
-                        this, 
+                        this,
                         v=>v.DeleteCountdownRunning,
                         out _deleteCountdownRunning,
                         false,RxApp.MainThreadScheduler),
+
+                // timer countdown
+                deleteCountdownActiveChanges
+                    .ObserveOn(RxApp.TaskpoolScheduler)
+                    .Where(s => s)
+                    .Take(1)
+                    .Select(_ =>
+                        ObservableHelper.AnimateValue(100, 0,
+                            SettingsHelper.NotificationDelay)
+                    )
+                    .Switch()
+                    .OutputObservable(out var deleteCountdownProgressChanges)
+                    .ToProperty(this, vm=>vm.DeleteCountdownProgress, out _deleteCountdownProgress),
+
+                // card fadeout
+                deleteCountdownProgressChanges
+                    .Select(_ => 1.0) // ignore all updates
+                    .DistinctUntilChanged()
+                    .Concat(ObservableHelper.AnimateValue(1, .3))// when countdown
+                    .Finally(() =>
+                    {
+                        _notificationService.RemoveNotification(Id);
+                    })
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .ToProperty(this, vm => vm.CardOpacity, out _cardOpacity),
             });
         }
         private IDisposable _initCommands()

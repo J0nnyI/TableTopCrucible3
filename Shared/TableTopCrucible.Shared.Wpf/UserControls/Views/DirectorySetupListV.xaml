@@ -17,6 +17,15 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+
+        <TextBlock x:Name="EmptyListText"
+                   Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   TextAlignment="Center"
+                   Text="Add the directories with your models to get started"
+                   Grid.Row="0"/>
+
         <ListBox x:Name="DirectoryList"
                   HorizontalAlignment="Stretch"
                   Style="{StaticResource MaterialDesignCardsListBox}"

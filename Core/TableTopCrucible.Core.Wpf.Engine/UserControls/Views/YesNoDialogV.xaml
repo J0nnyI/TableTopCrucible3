@@ -1,0 +1,37 @@
+﻿<rxui:ReactiveUserControl x:TypeArguments="vm:YesNoDialogVm"
+                          x:Class="TableTopCrucible.Core.Wpf.Engine.UserControls.Views.YesNoDialogV"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                          xmlns:local="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.Views"
+                          xmlns:rxui="http://reactiveui.net"
+                          xmlns:vm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels"
+                          mc:Ignorable="d" 
+                          d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="8px">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="Text"
+                   Margin="8px"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="2"/>
+        <Button x:Name="YesButton"
+                Margin="8px"
+                Content="Yes" 
+                Grid.Row="1"
+                Grid.Column="0"/>
+        <Button x:Name="NoButton"
+                Margin="8px"
+                Content="No"  
+                Grid.Row="1"
+                Grid.Column="1"/>
+    </Grid>
+</rxui:ReactiveUserControl>
