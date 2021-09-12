@@ -119,7 +119,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 ),
                 ReactiveCommandHelper.Create(() =>
                     {
-                        this.ConfirmDeletionInteraction.Handle(Unit.Default)
+                        ConfirmDeletionInteraction.Handle(Unit.Default)
                             .Take(1)
                             .Where(confirmed => confirmed)
                             .Subscribe(_ =>

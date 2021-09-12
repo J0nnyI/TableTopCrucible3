@@ -10,8 +10,14 @@
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            <ListView x:Name="Notifications"
-                      Style="{StaticResource MaterialDesignCardsListBox}"
-                      HorizontalContentAlignment="Stretch"/>
+        <ListView x:Name="Notifications"
+                  Style="{StaticResource MaterialDesignCardsListBox}"
+                  HorizontalContentAlignment="Stretch">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListBoxItem"
+                       BasedOn="{StaticResource MaterialDesignCardsListBoxItem}">
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
     </Grid>
 </rxui:ReactiveUserControl>

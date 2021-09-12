@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -42,6 +43,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     ViewModel,
                     vm=>vm.CloseNotificationCommand,
                     v=>v.CloseNotification.Command),
+                this.OneWayBind(ViewModel,
+                    vm=>vm.CardOpacity,
+                    v=>v.Opacity),
                 this.OneWayBind(
                     ViewModel,
                     vm=>vm.Type,
@@ -54,6 +58,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                             NotificationType.Warning => PackIconKind.WarningCircle,
                             _ => throw new NotImplementedException(nameof(type) + " has no icon"),
                         }),
+                
             });
         }
     }

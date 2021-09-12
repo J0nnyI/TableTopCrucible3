@@ -40,11 +40,26 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public Interaction<Unit, DirectorySetupPath> GetDirectoryDialog { get; } = new();
 
         public ICommand CreateDirectory { get; private set; }
+        public IObservable<double> HintOpacity { get; }
         public DirectorySetupListVm(IDirectorySetupRepository directorySetupRepository, INotificationService notificationService)
         {
             _directorySetupRepository = directorySetupRepository;
             _notificationService = notificationService;
 
+            this.HintOpacity =
+                this.WhenAnyValue(vm => vm.Directories.Count)
+                    .Select(c => c == 0)
+                    .DistinctUntilChanged()
+                    .Do(_ => { })
+                    .Select(show =>
+                        Observable
+                            .Interval(SettingsHelper.AnimationResolution)
+                            .Do(_ => { })
+                            //.Take(MathHelper.FloorInt(SettingsHelper.AnimationFrames))
+                            .Scan(0.0, (acc, item) => acc + (1 / SettingsHelper.AnimationFrames))
+                            .Select(opacity => show ? opacity : 1 - opacity)
+                    )
+                    .Switch();
 
             this.WhenActivated(() => new[]
             {

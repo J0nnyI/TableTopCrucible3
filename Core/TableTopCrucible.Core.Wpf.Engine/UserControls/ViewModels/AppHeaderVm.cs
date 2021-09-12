@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,8 +25,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         private readonly INotificationService _notificationService;
         public ViewModelActivator Activator { get; } = new();
 
-        private ObservableAsPropertyHelper<Name> _currentPageTitle;
-        public Name CurrentPageTitle => _currentPageTitle.Value;
+        private ObservableAsPropertyHelper<string> _currentPageTitle;
+        public string CurrentPageTitle => _currentPageTitle.Value;
         public IObservable<int> NotificationCountChanges { get; private set; }
 
         private ObservableAsPropertyHelper<bool> _isNavigationbarExpanded;
@@ -47,10 +48,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             _notificationService = notificationService;
             this.WhenActivated(() =>
             {
-                this.NotificationCountChanges = _notificationService.Notifications.CountChanged;
+                this.NotificationCountChanges = _notificationService.Notifications.CountChanged.ObserveOn(RxApp.MainThreadScheduler);
                 return new IDisposable[]
                 {
-                    this.WhenAnyValue(vm => vm._navigationService.CurrentPage.Title)
+                    this.WhenAnyValue(vm => vm._navigationService.CurrentPage.Title.Value)
                         .ToProperty(this, vm => vm.CurrentPageTitle, out _currentPageTitle),
                     this.WhenAnyValue(vm => vm._navigationService.IsSidebarExpanded)
                         .ToProperty(this, vm => vm.IsNavigationbarExpanded, out _isNavigationbarExpanded),

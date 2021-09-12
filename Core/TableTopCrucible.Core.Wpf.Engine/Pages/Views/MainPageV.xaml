@@ -9,24 +9,26 @@
                    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                    mc:Ignorable="d"
                    d:DataContext="{d:DesignInstance pvm:MainPageVm}">
-    <DockPanel VerticalAlignment="Stretch"
-               HorizontalAlignment="Stretch">
-        <rx:ViewModelViewHost x:Name="AppHeader"
-                              md:ShadowAssist.ShadowEdges="Bottom"
-                              md:ShadowAssist.Darken="True"
-                              md:ShadowAssist.ShadowDepth="Depth3"
-                              DockPanel.Dock="Top"/>
-        <rx:ViewModelViewHost x:Name="NavigationList"
-                              DockPanel.Dock="Left"/>
-        <Grid>
-            <rx:ViewModelViewHost x:Name="MainContainer"/>
-            <rx:ViewModelViewHost x:Name="NotificationList"
-                                  VerticalAlignment="Top"
-                                  HorizontalAlignment="Right"
-                                  Margin="0 16 0 0"
-                                  MinWidth="700"
-                                  MaxWidth="500"
-                                  Opacity=".7"/>
-        </Grid>
-    </DockPanel>
+    <md:DialogHost Identifier="{Binding}">
+        <DockPanel VerticalAlignment="Stretch"
+                   HorizontalAlignment="Stretch">
+            <rx:ViewModelViewHost x:Name="AppHeader"
+                                  md:ShadowAssist.ShadowEdges="Bottom"
+                                  md:ShadowAssist.Darken="True"
+                                  md:ShadowAssist.ShadowDepth="Depth3"
+                                  DockPanel.Dock="Top"/>
+            <rx:ViewModelViewHost x:Name="NavigationList"
+                                  DockPanel.Dock="Left"/>
+            <Grid>
+                <rx:ViewModelViewHost x:Name="MainContainer"/>
+                <rx:ViewModelViewHost x:Name="NotificationList"
+                                      VerticalAlignment="Top"
+                                      HorizontalAlignment="Right"
+                                      Margin="0 16 0 0"
+                                      MinWidth="700"
+                                      MaxWidth="500"
+                                      Opacity=".7"/>
+            </Grid>
+        </DockPanel>
+    </md:DialogHost>
 </rx:ReactiveUserControl>

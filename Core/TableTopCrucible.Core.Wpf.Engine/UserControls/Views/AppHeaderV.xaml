@@ -27,26 +27,29 @@
         </Style>
     </UserControl.Resources>
     <md:ColorZone Padding="16 0"
+                  UseLayoutRounding="True"
                   VerticalAlignment="Stretch"
                   md:ShadowAssist.ShadowDepth="Depth2"
                   Mode="PrimaryMid">
-        <DockPanel>
+        <DockPanel UseLayoutRounding="True">
             <!--   Left   -->
             <StackPanel Orientation="Horizontal"
                         DockPanel.Dock="Left">
                 <ToggleButton x:Name="IsNavigationBarExpanded"
-                              Style="{StaticResource MaterialDesignHamburgerToggleButton}"
-                              md:ToggleButtonAssist.OnContent="{md:PackIcon ArrowLeft}"
+                              Style="{StaticResource MaterialDesignActionToggleButton}"
+                              md:ToggleButtonAssist.OnContent="{md:PackIcon Backburger, Size=25}"
                               Cursor="Hand"
-                              Content="{md:PackIcon Menu}"/>
+                              Content="{md:PackIcon Menu, Size=25}"/>
 
                 <Button Content="{md:PackIcon ContentSave}"
                         ToolTip="Save Data - Coming Soon"/>
             </StackPanel>
             <!--   Right   -->
             <StackPanel Orientation="Horizontal"
+                        UseLayoutRounding="True"
                         DockPanel.Dock="right">
                 <Button ToolTip="Show Jobs - Coming Soon"
+                        UseLayoutRounding="True"
                         md:ButtonProgressAssist.Maximum="100"
                         md:ButtonProgressAssist.Value="70"
                         md:ButtonProgressAssist.IsIndicatorVisible="True"

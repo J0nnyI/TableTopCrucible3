@@ -29,6 +29,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             {
                 notificationService.Notifications
                     .Connect()
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .Bind(_notificationList)
                     .Subscribe(),
             });

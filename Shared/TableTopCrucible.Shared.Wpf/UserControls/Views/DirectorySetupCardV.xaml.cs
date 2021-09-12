@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Windows;
-
+using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
@@ -52,7 +52,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     {
                         vm.ConfirmDeletionInteraction.RegisterHandler(async interaction =>
                         {
-                            var res = await MaterialDesignThemes.Wpf.DialogHost.Show(
+                            var res = await DialogHost.Show(
                                 $"This will neither delete your local files not will you loose the data you attached to the files in this directory." +
                                 Environment.NewLine +
                                 $"You can link the data again by adding a directory with the same files.");

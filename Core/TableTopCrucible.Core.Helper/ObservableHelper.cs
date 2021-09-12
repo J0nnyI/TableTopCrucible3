@@ -38,7 +38,7 @@ namespace TableTopCrucible.Core.Helper
         // returns the previous and then current value, waiting for the 2nd update to push values
         public static IObservable<PreviousAndCurrentValue<T>> Pairwise<T>(this IObservable<T> src, bool skipInitial = true)
         {
-            return src.Scan(new PreviousAndCurrentValue<T> {Type = PCValueType.Seed},
+            return src.Scan(new PreviousAndCurrentValue<T> { Type = PCValueType.Seed },
                     (previous, current) =>
                         new PreviousAndCurrentValue<T>(previous.Current, current, previous.Type))
                 .Where(x =>
@@ -52,5 +52,20 @@ namespace TableTopCrucible.Core.Helper
             return src;
         }
 
+        public static IObservable<T> AnimateValue<T>(T seed, Func<T, T> accumulator, TimeSpan? duration = null)
+            => Observable.Interval(SettingsHelper.AnimationResolution)
+                .Take(MathHelper.CeilingInt(
+                    (duration ?? SettingsHelper.AnimationDuration) /
+                    SettingsHelper.AnimationResolution
+                ))
+                .Scan(seed, (acc, _) => accumulator(acc));
+        public static IObservable<double> AnimateValue(double from, double to, TimeSpan? duration = null)
+        {
+            var frameCount = (duration ?? SettingsHelper.AnimationDuration) /
+                             SettingsHelper.AnimationResolution;
+            double stepSize = (to - from) / frameCount;
+
+            return AnimateValue(from, v => v + stepSize, duration);
+        }
     }
 }
