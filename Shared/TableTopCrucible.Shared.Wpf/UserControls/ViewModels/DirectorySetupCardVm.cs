@@ -12,6 +12,7 @@ using Splat;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Engine.Services;
+using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Repositories;
@@ -48,7 +49,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         private ObservableAsPropertyHelper<bool> _isDirty;
         public bool IsDirty => _isDirty.Value;
 
-        public Interaction<Unit, bool> ConfirmDeletionInteraction { get; }= new();
+        public Interaction<Unit, YesNoDialogResult> ConfirmDeletionInteraction { get; }= new();
         
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
@@ -121,7 +122,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     {
                         ConfirmDeletionInteraction.Handle(Unit.Default)
                             .Take(1)
-                            .Where(confirmed => confirmed)
+                            .Where(confirmed => confirmed == YesNoDialogResult.Yes)
                             .Subscribe(_ =>
                             {
                                 _directorySetupRepository.Delete(DirectorySetup.Id);

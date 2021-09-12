@@ -3,7 +3,8 @@ using System.Reactive.Linq;
 using System.Windows;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-
+using Splat;
+using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
@@ -52,12 +53,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     {
                         vm.ConfirmDeletionInteraction.RegisterHandler(async interaction =>
                         {
-                            var res = await DialogHost.Show(
-                                $"This will neither delete your local files not will you loose the data you attached to the files in this directory." +
-                                Environment.NewLine +
-                                $"You can link the data again by adding a directory with the same files.");
-       
-                            interaction.SetOutput(true);
+                            var dialog = Locator.Current
+                                .GetService<IDialogService>()
+                                .OpenYesNoDialog("Do you really want to remove this directory?" +Environment.NewLine +
+                                                          "No Data will be lost.");
+                            interaction.SetOutput(await dialog.Result);
                         });
                     })
             });
