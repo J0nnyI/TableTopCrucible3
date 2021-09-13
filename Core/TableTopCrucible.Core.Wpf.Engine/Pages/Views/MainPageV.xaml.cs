@@ -1,7 +1,5 @@
 ﻿using ReactiveUI;
 
-using System.Reactive.Disposables;
-
 using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views

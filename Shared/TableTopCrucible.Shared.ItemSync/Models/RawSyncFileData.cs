@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
-
-using static TableTopCrucible.Core.Helper.FileSystemHelper;
 
 namespace TableTopCrucible.Shared.ItemSync.Models
 {
@@ -33,7 +28,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         private FileState GetFilestate()
         {
             if (FoundFile == null && KnownFile == null)
-                throw new ArgumentNullException(nameof(FoundFile),"at least one file must be set");
+                throw new ArgumentNullException(nameof(FoundFile), "at least one file must be set");
             if (FoundFile == null && KnownFile != null)
                 return FileState.New;
             if (FoundFile != null && KnownFile == null)

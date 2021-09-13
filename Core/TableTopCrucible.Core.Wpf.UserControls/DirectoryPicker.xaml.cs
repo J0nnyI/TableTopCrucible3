@@ -1,23 +1,18 @@
 ﻿using Ookii.Dialogs.Wpf;
 
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Helpers;
 
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using FluentValidation;
-using ReactiveUI.Fody.Helpers;
-using ReactiveUI.Validation.Abstractions;
-using ReactiveUI.Validation.Contexts;
-using ReactiveUI.Validation.Helpers;
+
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.UserControls
+namespace TableTopCrucible.Core.Wpf.UserControls
 {
     public class DirectoryPickerVm : ReactiveValidationObject, IActivatableViewModel
     {
@@ -25,9 +20,9 @@ namespace TableTopCrucible.Core.UserControls
         public string UserText { get; set; }
         public DirectoryPickerVm()
         {
-            this.WhenActivated(()=>new []
+            this.WhenActivated(() => new[]
             {
-                
+
                 DirectoryPath.RegisterValidator(this, vm=>vm.UserText, true)
             });
         }
@@ -78,7 +73,7 @@ namespace TableTopCrucible.Core.UserControls
 
         public DirectoryPicker()
         {
-            this.DataContext =this.ViewModel= new DirectoryPickerVm();
+            this.DataContext = this.ViewModel = new DirectoryPickerVm();
             InitializeComponent();
             // sync usertext and path
             this.WhenActivated(() => new[]
@@ -117,7 +112,7 @@ namespace TableTopCrucible.Core.UserControls
         private void _buttonBase_OnClick(object sender, RoutedEventArgs e)
         {
             VistaFolderBrowserDialog dialog = new();
-            if(dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() == true)
                 ViewModel.UserText = dialog.SelectedPath;
         }
 

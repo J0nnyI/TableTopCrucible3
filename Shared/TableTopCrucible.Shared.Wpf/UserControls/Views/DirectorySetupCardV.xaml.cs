@@ -1,9 +1,10 @@
-﻿using System;
-using System.Reactive.Linq;
-using System.Windows;
-using MaterialDesignThemes.Wpf;
-using ReactiveUI;
+﻿using ReactiveUI;
+
 using Splat;
+
+using System;
+using System.Reactive.Linq;
+
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 

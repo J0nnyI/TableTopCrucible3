@@ -2,13 +2,13 @@
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
 
+using Splat;
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
-using Splat;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Engine.Services;
@@ -49,8 +49,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         private ObservableAsPropertyHelper<bool> _isDirty;
         public bool IsDirty => _isDirty.Value;
 
-        public Interaction<Unit, YesNoDialogResult> ConfirmDeletionInteraction { get; }= new();
-        
+        public Interaction<Unit, YesNoDialogResult> ConfirmDeletionInteraction { get; } = new();
+
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
 
@@ -135,7 +135,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     c=>RemoveDirectoryCommand = c
                 ),
             },
-                vm=>vm.DirectorySetup
+                vm => vm.DirectorySetup
             );
         }
 

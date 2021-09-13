@@ -1,18 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Windows;
-using System.Windows.Input;
-using DynamicData;
+﻿using DynamicData;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-using Splat;
+using System.Windows.Input;
 
-using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Engine.Models;
-using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
@@ -52,7 +45,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     v=>v.LowerList.SelectedItem,
                     m=>m.HasContent?m:null,
                     m=>m as FlaggedNavigationItem ?? new FlaggedNavigationItem(NavigationPageLocation.Lower, true)),
-                
+
             });
         }
 

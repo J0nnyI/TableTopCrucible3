@@ -1,6 +1,5 @@
-﻿using System;
-using System.Reactive.Linq;
-using ReactiveUI;
+﻿using ReactiveUI;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.Services;
@@ -23,8 +22,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
         private ObservableAsPropertyHelper<INavigationPage> _currentPage;
         public INavigationPage CurrentPage => _currentPage.Value;
 
-        public MainPageVm( 
-            IBannerList bannerList, 
+        public MainPageVm(
+            IBannerList bannerList,
             INavigationList navigationList,
             INavigationService navigationService,
             IAppHeader appHeader)
@@ -34,7 +33,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
             NavigationList = navigationList;
             AppHeader = appHeader;
 
-            this.WhenActivated(()=> new []
+            this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(
                     vm=>vm._navigationService.CurrentPage)

@@ -2,8 +2,6 @@
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Extensions;
 
-using Splat;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

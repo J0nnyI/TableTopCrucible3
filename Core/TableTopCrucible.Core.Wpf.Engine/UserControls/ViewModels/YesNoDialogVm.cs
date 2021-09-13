@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
+
 using ReactiveUI;
+
+using System;
+using System.Reactive.Subjects;
+using System.Windows.Input;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
@@ -41,7 +38,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         {
             Text = text;
 
-            this.WhenActivated(()=>new[]
+            this.WhenActivated(() => new[]
             {
                 ReactiveCommandHelper.Create(
                     () =>
@@ -64,7 +61,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         }
 
         private bool closed = false;
-        
+
         private Subject<YesNoDialogResult> _dialogResult = new();
         public IObservable<YesNoDialogResult> Result => _dialogResult;
     }

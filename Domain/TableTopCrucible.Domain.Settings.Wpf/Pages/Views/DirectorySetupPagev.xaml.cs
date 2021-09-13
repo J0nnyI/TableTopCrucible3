@@ -1,9 +1,8 @@
-﻿
-using ReactiveUI;
+﻿using ReactiveUI;
 
-using TableTopCrucible.Domain.Settings.Wpf.PageViewModels;
+using TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels;
 
-namespace TableTopCrucible.Domain.Settings.Wpf.Pages
+namespace TableTopCrucible.Domain.Settings.Wpf.Pages.Views
 {
     public partial class DirectorySetupPageV : ReactiveUserControl<DirectorySetupPageVm>, IActivatableView
     {

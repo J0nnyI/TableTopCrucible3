@@ -2,8 +2,6 @@
 
 using System;
 using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
-using HelixToolkit.Wpf;
 
 namespace TableTopCrucible.Core.Helper
 {

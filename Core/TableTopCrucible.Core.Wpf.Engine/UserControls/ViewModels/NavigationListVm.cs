@@ -1,15 +1,5 @@
 ﻿
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Security.Permissions;
-using System.Windows.Input;
-
 using DynamicData;
 using DynamicData.Binding;
 
@@ -18,7 +8,10 @@ using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-using Splat;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Reactive.Linq;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
@@ -77,7 +70,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public ObservableCollectionExtended<FlaggedNavigationItem> LowerList { get; } = new();
         private ObservableAsPropertyHelper<bool> _isExpanded;
         public bool IsExpanded => _isExpanded.Value;
-        
+
         [Reactive]
         public FlaggedNavigationItem UpperSelection { get; set; }
             = new(NavigationPageLocation.Upper, false);
@@ -173,11 +166,11 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     })
                     .Subscribe(m =>
                     {
-                        var upper = 
+                        var upper =
                             m.PageLocation == NavigationPageLocation.Upper
                             ? m
                             : new FlaggedNavigationItem(NavigationPageLocation.Upper, false);
-                        var lower= 
+                        var lower=
                             m.PageLocation == NavigationPageLocation.Lower
                             ? m
                             : new FlaggedNavigationItem(NavigationPageLocation.Lower, false);

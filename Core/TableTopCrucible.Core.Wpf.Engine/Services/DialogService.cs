@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
+
 using ReactiveUI;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
@@ -21,7 +18,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
         public IYesNoDialog OpenYesNoDialog(string text)
         {
             var dialog = new YesNoDialogVm(text);
-            DialogHost.Show(new ViewModelViewHost(){ViewModel = dialog},"List",
+            DialogHost.Show(new ViewModelViewHost() { ViewModel = dialog }, "List",
                 (sender, args) =>
                 {
                     dialog.Session = args.Session;
