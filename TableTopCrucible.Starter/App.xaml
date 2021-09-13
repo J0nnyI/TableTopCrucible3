@@ -9,7 +9,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <md:BundledTheme BaseTheme="Dark" 
                                  PrimaryColor="BlueGrey" 
-                                 SecondaryColor="DeepOrange"
+                                 SecondaryColor="Cyan"
                                  ColorAdjustment="{md:ColorAdjustment}" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/TableTopCrucible.Core.Wpf.Engine;component/Themes/Dark.xaml" />

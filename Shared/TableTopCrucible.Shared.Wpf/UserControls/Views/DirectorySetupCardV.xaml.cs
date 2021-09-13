@@ -57,7 +57,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                             var dialog = Locator.Current
                                 .GetService<IDialogService>()
                                 .OpenYesNoDialog("Do you really want to remove this directory?" +Environment.NewLine +
-                                                          "No Data will be lost.");
+                                                          "No data will be lost.");
                             interaction.SetOutput(await dialog.Result);
                         });
                     })

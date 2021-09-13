@@ -46,6 +46,7 @@
             <!--todo: min card size-->
         </ListBox>
         <Button x:Name="CreateDirectory"
+                Style="{StaticResource MaterialDesignRaisedAccentButton}"
                 Grid.Row="1"
                 Content="Add Directory"/>
     </Grid>
