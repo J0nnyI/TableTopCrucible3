@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using DynamicData;
+﻿using DynamicData;
 using DynamicData.Binding;
 
-using ReactiveUI;
+using System;
+using System.Reactive.Linq;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;

@@ -1,10 +1,9 @@
-﻿using System.Reactive;
-using System.Reactive.Linq;
-using System.Windows;
-using Ookii.Dialogs.Wpf;
+﻿using Ookii.Dialogs.Wpf;
 
 using ReactiveUI;
-using TableTopCrucible.Core.Helper;
+
+using System.Reactive.Linq;
+
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
@@ -40,8 +39,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 ViewModel!.GetDirectoryDialog.RegisterHandler(interaction =>
                 {
                     VistaFolderBrowserDialog dialog = new();
-                    interaction.SetOutput(dialog.ShowDialog() == true 
-                        ? DirectorySetupPath.From(dialog.SelectedPath) 
+                    interaction.SetOutput(dialog.ShowDialog() == true
+                        ? DirectorySetupPath.From(dialog.SelectedPath)
                         : null);
                 })
             });

@@ -1,5 +1,4 @@
-﻿using System.Reactive.Linq;
-using Splat;
+﻿using Splat;
 
 using System.Windows;
 
@@ -24,7 +23,7 @@ namespace TableTopCrucible.Starter
 
             var navigationService = Locator.Current.GetService<INavigationService>();
             var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
-            
+
             if (directorySetupRepository.Data.Count == 0)
                 navigationService.CurrentPage = Locator.Current.GetService<IDirectorySetupPage>();
             else

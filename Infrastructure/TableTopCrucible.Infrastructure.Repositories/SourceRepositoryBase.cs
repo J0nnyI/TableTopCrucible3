@@ -1,11 +1,7 @@
 ﻿using DynamicData;
 
-using System;
-using System.Collections.Generic;
-
 using TableTopCrucible.Core.Database;
 using TableTopCrucible.Core.Database.Models;
-using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Repositories
 {

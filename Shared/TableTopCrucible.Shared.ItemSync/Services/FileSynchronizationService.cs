@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MoreLinq;
+
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Shared.ItemSync.Models;
-using MoreLinq;
 
 namespace TableTopCrucible.Shared.ItemSync.Services
 {
@@ -48,7 +46,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 found => new RawSyncFileData(null, found),
                 known => new RawSyncFileData(known, null),
                 (found, known) => new RawSyncFileData(known, found))
-                .GroupBy(file=>file.State);
+                .GroupBy(file => file.State);
 
             var newFiles = files.FirstOrDefault(g => g.Key == FileState.New);
             var deletedFiles = files.FirstOrDefault(g => g.Key == FileState.Deleted);

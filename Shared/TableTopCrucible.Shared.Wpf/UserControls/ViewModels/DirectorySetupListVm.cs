@@ -2,7 +2,6 @@
 using DynamicData.Binding;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
 
 using Splat;
@@ -12,7 +11,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Windows.Forms;
 using System.Windows.Input;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -22,8 +20,6 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
-
-using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {

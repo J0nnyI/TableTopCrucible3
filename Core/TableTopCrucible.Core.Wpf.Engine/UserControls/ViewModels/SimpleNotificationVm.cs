@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
-using ReactiveUI;
+﻿using ReactiveUI;
 
 using Splat;
 
-using TableTopCrucible.Core.DependencyInjection.Attributes;
+using System;
+using System.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Windows.Input;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
@@ -45,7 +40,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
         private ObservableAsPropertyHelper<bool> _closable;
         public bool Closable => _closable.Value;
-        
+
 
         private readonly INotificationService _notificationService;
         public ICommand CloseNotificationCommand { get; private set; }
@@ -70,7 +65,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         {
             if (!SettingsHelper.AutocloseEnabled)
                 return new CompositeDisposable();
-            
+
             return new CompositeDisposable(new IDisposable[]
             {
                 // timer enabled

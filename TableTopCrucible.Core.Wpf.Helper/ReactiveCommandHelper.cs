@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
-using System.Text;
-using System.Threading.Tasks;
-
-using ReactiveUI;
 
 // ReSharper disable once CheckNamespace
 namespace ReactiveUI
@@ -49,7 +43,7 @@ namespace ReactiveUI
             [NotNull] Action<ReactiveCommand<T, Unit>> resultWriter = null,
             IScheduler outputScheduler = null,
             IScheduler canExecuteScheduler = null)
-        { 
+        {
             var res = ReactiveCommand.Create(execute, null, outputScheduler, canExecuteScheduler);
             resultWriter!.Invoke(res);
             return res;

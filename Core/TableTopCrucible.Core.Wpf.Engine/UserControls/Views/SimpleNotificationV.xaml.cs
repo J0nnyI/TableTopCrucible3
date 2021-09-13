@@ -1,12 +1,10 @@
-﻿using System;
-using System.Reactive.Linq;
-using System.Windows;
-using System.Windows.Controls;
-
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+
+using System;
+using System.Windows;
+
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
@@ -53,12 +51,12 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     type =>type switch
                         {
                             NotificationType.Info => PackIconKind.InfoCircle,
-                            NotificationType.Confirmation => PackIconKind.CheckCircle, 
+                            NotificationType.Confirmation => PackIconKind.CheckCircle,
                             NotificationType.Error => PackIconKind.Error,
                             NotificationType.Warning => PackIconKind.WarningCircle,
                             _ => throw new NotImplementedException(nameof(type) + " has no icon"),
                         }),
-                
+
             });
         }
     }
