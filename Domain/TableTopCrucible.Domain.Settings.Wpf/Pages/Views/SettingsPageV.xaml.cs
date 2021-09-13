@@ -1,8 +1,7 @@
 ﻿using ReactiveUI;
+using TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels;
 
-using TableTopCrucible.Domain.Settings.Wpf.PageViewModels;
-
-namespace TableTopCrucible.Domain.Settings.Wpf.Pages
+namespace TableTopCrucible.Domain.Settings.Wpf.Pages.Views
 {
     public partial class SettingsPageV : ReactiveUserControl<SettingsPageVm>
     {

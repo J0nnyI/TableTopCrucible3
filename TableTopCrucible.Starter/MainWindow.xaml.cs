@@ -6,7 +6,7 @@ using System.Windows;
 using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels;
-using TableTopCrucible.Domain.Settings.Wpf.PageViewModels;
+using TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels;
 using TableTopCrucible.Infrastructure.Repositories;
 
 namespace TableTopCrucible.Starter

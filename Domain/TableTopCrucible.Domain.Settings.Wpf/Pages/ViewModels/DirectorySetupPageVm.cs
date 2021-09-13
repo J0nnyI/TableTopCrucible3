@@ -1,15 +1,12 @@
-﻿
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
-
-namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
+namespace TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels
 {
     [Singleton(typeof(DirectorySetupPageVm))]
     public interface IDirectorySetupPage : INavigationPage

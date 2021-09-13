@@ -8,7 +8,7 @@
                           xmlns:rxUi="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-                          xmlns:cuc="clr-namespace:TableTopCrucible.Core.UserControls;assembly=TableTopCrucible.Core.Wpf.UserControls"
+                          xmlns:userControls="clr-namespace:TableTopCrucible.Core.Wpf.UserControls;assembly=TableTopCrucible.Core.Wpf.UserControls"
                           md:RippleAssist.IsDisabled="False"
                           mc:Ignorable="d" 
                           d:DataContext="{d:DesignInstance vm:DirectorySetupCardVm}"
@@ -30,7 +30,7 @@
                      md:HintAssist.Hint="Name"
                      Grid.Column="0"
                      Grid.Row="0"/>
-            <cuc:DirectoryPicker x:Name="DirectoryPicker"
+            <userControls:DirectoryPicker x:Name="DirectoryPicker"
                                  Grid.Column="0"
                                  Grid.Row="1"/>
             <Button x:Name="UndoChanges"

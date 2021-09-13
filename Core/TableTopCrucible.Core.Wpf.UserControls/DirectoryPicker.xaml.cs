@@ -1,23 +1,15 @@
-﻿using Ookii.Dialogs.Wpf;
-
-using ReactiveUI;
-
-using System;
+﻿using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using FluentValidation;
+using Ookii.Dialogs.Wpf;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using ReactiveUI.Validation.Abstractions;
-using ReactiveUI.Validation.Contexts;
 using ReactiveUI.Validation.Helpers;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.UserControls
+namespace TableTopCrucible.Core.Wpf.UserControls
 {
     public class DirectoryPickerVm : ReactiveValidationObject, IActivatableViewModel
     {

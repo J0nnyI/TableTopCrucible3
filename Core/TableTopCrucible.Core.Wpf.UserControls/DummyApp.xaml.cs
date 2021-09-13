@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace TableTopCrucible.Core.Wpf.Engine
+namespace TableTopCrucible.Core.Wpf.UserControls
 {
     /// <summary>
     /// Interaction logic for DummyApp.xaml

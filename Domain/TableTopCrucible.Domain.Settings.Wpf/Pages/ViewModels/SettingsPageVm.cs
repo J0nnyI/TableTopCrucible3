@@ -1,13 +1,11 @@
-﻿
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
-namespace TableTopCrucible.Domain.Settings.Wpf.PageViewModels
+namespace TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels
 {
     [Transient(typeof(SettingsPageVm))]
     public interface ISettingsPage : INavigationPage { }
