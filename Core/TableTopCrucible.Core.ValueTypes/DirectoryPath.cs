@@ -161,7 +161,7 @@ namespace TableTopCrucible.Core.ValueTypes
             DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
 
         public IEnumerable<FilePath> EnumerateFiles()
-            => Directory.EnumerateFiles(Value).Select(FilePath.From);
+            => Directory.EnumerateFiles(Value,"*",SearchOption.AllDirectories).Select(FilePath.From);
 
         public IEnumerable<FilePath> GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
             => Directory

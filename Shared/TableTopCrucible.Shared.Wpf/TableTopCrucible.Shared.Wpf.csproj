@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\Infrastructure\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
     <ProjectReference Include="..\..\Infrastructure\TableTopCrucible.Infrastructure.Wpf.Commands\TableTopCrucible.Infrastructure.Wpf.Commands.csproj" />
     <ProjectReference Include="..\..\TableTopCrucible.Core.Wpf.Helper\TableTopCrucible.Core.Wpf.Helper.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Shared.ItemSync\TableTopCrucible.Shared.ItemSync.csproj" />
   </ItemGroup>
 
   <ItemGroup>
