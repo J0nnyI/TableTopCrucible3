@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 
 namespace TableTopCrucible.Core.ValueTypes.Tests
 {
@@ -14,7 +15,11 @@ namespace TableTopCrucible.Core.ValueTypes.Tests
         [Test]
         public void GetFileTypeTest()
         {
-            Assert.Fail();
+            FileExtension.From(".stl").GetFileType().Should().Be(FileType.Model);
+            FileExtension.From(".obj").GetFileType().Should().Be(FileType.Model);
+            FileExtension.From(".3mf").GetFileType().Should().Be(FileType.SlicerProject);
+            FileExtension.From(".gcode").GetFileType().Should().Be(FileType.SlicedFile);
+            FileExtension.From(".photon").GetFileType().Should().Be(FileType.SlicedFile);
         }
     }
 }

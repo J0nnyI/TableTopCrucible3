@@ -8,6 +8,7 @@
         Table,
         Other,
         SlicerProject,
-        Archive
+        Archive,
+        SlicedFile
     }
 }
