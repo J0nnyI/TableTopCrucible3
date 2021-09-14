@@ -109,7 +109,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 ReactiveCommandHelper.Create(() =>
                     {
                         Name = DirectorySetup.Name.Value;
-                        Path = DirectorySetup.Path.Value;
+                        Path = DirectorySetup.Path.Value; 
                         _notificationService.AddNotification(
                             "Directory undo successful",
                             $"The changes in directory '{Name}' have been undone successfully",
