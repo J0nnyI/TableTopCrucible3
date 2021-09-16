@@ -15,7 +15,7 @@ using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 
 namespace TableTopCrucible.Shared.ItemSync.Models
 {
-    enum FileState
+    internal enum FileState
     {
         New,
         Deleted,
@@ -32,7 +32,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             FoundFile = foundFile;
             State = GetFileState();
 
-            this.foundFileInfo = FoundFile.GetFileInfo();
+            this.foundFileInfo = FoundFile.GetInfo();
         }
         public ScannedFileData KnownFile { get; }
         public FilePath FoundFile { get; }

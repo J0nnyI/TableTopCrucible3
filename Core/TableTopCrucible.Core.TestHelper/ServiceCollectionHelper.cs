@@ -1,17 +1,15 @@
-﻿using AutoMapper;
-
+﻿using System.IO.Abstractions;
+using System.Linq;
+using System.Reflection;
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-using System.IO.Abstractions;
-using System.Linq;
-using System.Reflection;
-
-namespace TableTopCrucible.Core.DependencyInjection
+namespace TableTopCrucible.Core.TestHelper
 {
     public static class ServiceCollectionHelper
     {
-        public static void ReplaceFileSystem<T>(this ServiceCollection srv) where T : class, IFileSystem
+        public static void ReplaceFileSystem<T>(this IServiceCollection srv) where T : class, IFileSystem
         {
             srv.RemoveAll<IFileSystem>();
             srv.AddSingleton<IFileSystem, T>();

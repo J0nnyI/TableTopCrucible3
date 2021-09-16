@@ -29,18 +29,6 @@ namespace TableTopCrucible.Core.DependencyInjection
             GetServices(services);
             return services;
         }
-        public static IServiceProvider GetTestProvider(Action<ServiceCollection> serviceModifier = null)
-        {
-
-            var services = new ServiceCollection();
-            GetServices(services);
-            serviceModifier?.Invoke(services);
-            services.UseMicrosoftDependencyResolver();
-            Locator.CurrentMutable.InitializeSplat();
-            Locator.CurrentMutable.InitializeReactiveUI();
-
-            return services.BuildServiceProvider();
-        }
         public static void GetServices(IServiceCollection services)
         {
             services.AddSingleton<IFileSystem, FileSystem>();

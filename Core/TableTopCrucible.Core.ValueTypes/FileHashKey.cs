@@ -10,6 +10,8 @@ namespace TableTopCrucible.Core.ValueTypes
         public FileSize FileSize => Value.Item2;
         public static FileHashKey From(FileHash hash, FileSize fileSize)
             => From((hash, fileSize));
+        public static FileHashKey Create(FilePath file)
+            => From((FileHash.Create(file), file.GetSize()));
         public override bool Equals(object obj)
         {
             return obj is FileHashKey key &&

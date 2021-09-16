@@ -62,7 +62,26 @@ namespace TableTopCrucible.Core.ValueTypes
         }
         public BareFileName GetFilenameWithoutExtension() => BareFileName.From(Path.GetFileNameWithoutExtension(Value));
         public DirectoryPath GetDirectoryPath() => DirectoryPath.From(Path.GetDirectoryName(Value));
-        public IFileInfo GetFileInfo() => FileInfo.FromFileName(Value);
+
+        public void SetCreationTime(DateTime time)
+            => File.SetCreationTime(Value, time);
+
+        public IFileInfo GetInfo() => FileInfo.FromFileName(Value);
+        // uses GetInfo, if you need other properties use that method instead
+        public FileSize GetSize() => FileSize.From(GetInfo().Length);
+
+        public override int GetHashCode()
+            =>Value.ToLower().GetHashCode();
+
+        public override bool Equals(object obj)
+            => obj is FilePath<Tthis> other && 
+               Value.ToLower().Equals(other.Value.ToLower());
+
+        public static bool operator ==(FilePath<Tthis> a, Tthis b)
+            => a.Equals(b);
+
+        public static bool operator !=(FilePath<Tthis> a, Tthis b)
+            => !a.Equals(b);
     }
     /// <summary>
     /// the path of a file including its name

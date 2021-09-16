@@ -24,7 +24,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
     [Singleton(typeof(FileSynchronizationService))]
     public interface IFileSynchronizationService
     {
-        void StartScan();
+        IObservable<Unit> StartScan();
         ICommand StartScanCommand { get; }
     }
     public class FileSynchronizationService : IFileSynchronizationService
@@ -46,7 +46,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     .Select(x => !x));
         }
 
-        public void StartScan()
+        public IObservable<Unit> StartScan()
         {
             this.ScanRunning = true;
 
@@ -70,12 +70,13 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 {
                     _fileRepository.Delete(fileGroups.DeletedFiles.Select(file => file.KnownFile.Id));
                 }, RxApp.TaskpoolScheduler)
-            ).Subscribe(_ => { }, () =>
+            )
+                .Subscribe(_ => { }, () =>
             {
                 this.ScanRunning = false;
             });
 
-
+            return Observable.Never<Unit>();
 
         }
 
