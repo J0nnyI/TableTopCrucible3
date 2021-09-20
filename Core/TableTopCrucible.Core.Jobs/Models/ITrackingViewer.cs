@@ -12,7 +12,11 @@ namespace TableTopCrucible.Core.Jobs.Models
     public interface ITrackingViewer
     {
         IObservable<CurrentProgress> CurrentProgressChanges { get; }
-        IObservable<TargetProgress> TargetProgressChanges { get; }
+        IObservable<TrackingTarget> TargetProgressChanges { get; }
         Name Title { get; }
+    }
+    public interface IWeightedTrackingViewer:ITrackingViewer
+    {
+        TrackingWeight Weight { get; }
     }
 }

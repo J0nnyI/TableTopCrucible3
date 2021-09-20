@@ -11,9 +11,8 @@ namespace TableTopCrucible.Core.Jobs.Models
     // dispose completes the tracking, regardless of the current progress
     public interface ISourceTrackerController:IDisposable, ITrackingViewer
     {
-        public void SetTarget(TargetProgress target);
-        public void Set(CurrentProgress target);
-        public void Increment();
-        public void Complete();
+        public void SetTarget(TrackingTarget trackingTarget);
+        // default = 1
+        public void Increment(ProgressIncrement increment = null);
     }
 }

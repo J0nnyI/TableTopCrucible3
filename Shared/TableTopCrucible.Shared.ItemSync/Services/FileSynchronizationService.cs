@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using MoreLinq;
 
 using System.Linq;
@@ -11,6 +12,8 @@ using System.Windows.Input;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Jobs.Services;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
@@ -31,14 +34,17 @@ namespace TableTopCrucible.Shared.ItemSync.Services
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IScannedFileRepository _fileRepository;
+        private readonly IProgressTrackingService _progressTrackingService;
         [Reactive] public bool ScanRunning { get; private set; } = false;
 
         public FileSynchronizationService(
             IDirectorySetupRepository directorySetupRepository,
-            IScannedFileRepository fileRepository)
+            IScannedFileRepository fileRepository,
+            IProgressTrackingService progressTrackingService)
         {
             _directorySetupRepository = directorySetupRepository;
             _fileRepository = fileRepository;
+            _progressTrackingService = progressTrackingService;
 
             this.StartScanCommand = ReactiveCommand.Create(
                 StartScan,
@@ -50,25 +56,33 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         {
             this.ScanRunning = true;
 
+            var mainTracker = _progressTrackingService.CreateNewCompositeTracker("File Synchronization");
+
+            using var prepTracker = mainTracker.AddSingle((Name)"Preparation", (TrackingTarget)1);
+            var deleteTracker = mainTracker.AddSingle((Name)"Delete Tracker", (TrackingTarget)1);
+            var updateTracker = mainTracker.AddSingle((Name) "update Tracker", (TrackingTarget) 1, (TrackingWeight) 10);
+
             var fileGroups = getFileGroups(_directorySetupRepository.Data.Items);
             fileGroups.UpdateFileHashes();
-
-            Subject<Unit> hashingDone = new();
-            Subject<Unit> deletingDone = new();
+            prepTracker.Increment();
+            prepTracker.Dispose();
 
             Observable.CombineLatest(
                 Observable.Start(() =>
                 {
                     fileGroups.GetFileHashUpdateFeed()
                         .Buffer(new TimeSpan(0, 0, 0, 10))
-                        .Do(hashedFile =>
+                        .Do(hashedFiles =>
                         {
-                            _fileRepository.AddOrUpdate(hashedFile.Select(file => file.GetNewEntity()));
+                            _fileRepository.AddOrUpdate(hashedFiles.Select(file => file.GetNewEntity()));
+                            updateTracker.Increment();
                         });
                 }, RxApp.TaskpoolScheduler),
                 Observable.Start(() =>
                 {
                     _fileRepository.Delete(fileGroups.DeletedFiles.Select(file => file.KnownFile.Id));
+                    deleteTracker.Increment();
+                    deleteTracker.Dispose();
                 }, RxApp.TaskpoolScheduler)
             )
                 .Subscribe(_ => { }, () =>
@@ -98,7 +112,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
         private FileSyncListGrouping getFileGroups(IEnumerable<DirectorySetup> directorySetups)
         {
-            return new (directorySetups
+            return new(directorySetups
                 .SelectMany(dir => startScanForDirectory(dir)));
         }
 

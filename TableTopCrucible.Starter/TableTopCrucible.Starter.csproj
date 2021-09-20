@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Core\TableTopCrucible.Core.Database\TableTopCrucible.Core.Database.csproj" />
     <ProjectReference Include="..\Core\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
     <ProjectReference Include="..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
     <ProjectReference Include="..\Core\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
     <ProjectReference Include="..\Core\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
     <ProjectReference Include="..\Core\TableTopCrucible.Core.Wpf.Engine\TableTopCrucible.Core.Wpf.Engine.csproj" />

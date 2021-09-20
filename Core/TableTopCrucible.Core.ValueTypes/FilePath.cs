@@ -46,6 +46,12 @@ namespace TableTopCrucible.Core.ValueTypes
             }
         }
 
+        protected override void Validate()
+        {
+            if(Value == null)
+                throw new InvalidValueException(nameof(Value));
+        }
+
         public void WriteObject(object data, bool createDirectory = true)
         {
             this.GetDirectoryPath().Create();
@@ -71,17 +77,17 @@ namespace TableTopCrucible.Core.ValueTypes
         public FileSize GetSize() => FileSize.From(GetInfo().Length);
 
         public override int GetHashCode()
-            =>Value.ToLower().GetHashCode();
+            => Value.ToLower().GetHashCode();
 
         public override bool Equals(object obj)
-            => obj is FilePath<Tthis> other && 
+            => obj is FilePath<Tthis> other &&
                Value.ToLower().Equals(other.Value.ToLower());
 
         public static bool operator ==(FilePath<Tthis> a, Tthis b)
-            => a.Equals(b);
+            => (a is null && b is null) || a?.Equals(b) == true;
 
         public static bool operator !=(FilePath<Tthis> a, Tthis b)
-            => !a.Equals(b);
+            => !(a==b);
     }
     /// <summary>
     /// the path of a file including its name

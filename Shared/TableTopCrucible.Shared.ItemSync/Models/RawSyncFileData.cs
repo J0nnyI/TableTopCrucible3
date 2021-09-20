@@ -40,10 +40,13 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         private BehaviorSubject<FileHashKey> _newHashKey { get; } = new(null);
         public IObservable<FileHashKey> NewHashKeyChanges => _newHashKey.WhereNotNull();
 
-        public FileHashKey CreateNewHashkey(HashAlgorithm algorithm)
+        public FileHashKey CreateNewHashkey(HashAlgorithm algorithm = null)
         {
+            if (this._newHashKey.Value != null)
+                return _newHashKey.Value;
+
             var hash = FileHashKey.From(
-                FileHash.Create(FoundFile, algorithm),
+                FileHash.Create(FoundFile, algorithm ?? new SHA512Managed()),
                 FileSize.From(foundFileInfo.Length));
             this._newHashKey.OnNext(hash);
             this._newHashKey.OnCompleted();
@@ -67,7 +70,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         }
 
         public ScannedFileData GetNewEntity()
-            => new (_newHashKey.Value, FoundFile, foundFileInfo.LastWriteTime, KnownFile?.Id);
+            => new(_newHashKey.Value, FoundFile, foundFileInfo.LastWriteTime, KnownFile?.Id);
     }
 
     internal class FileSyncListGrouping
@@ -108,8 +111,11 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 
         public IObservable<RawSyncFileData> GetFileHashUpdateFeed()
         {
-            return Observable.Merge(NewFiles.Concat(UpdatedFiles).ToList()
-                .Select(file => file.NewHashKeyChanges.Select(hash => file)));
+            return NewFiles
+                .Concat(UpdatedFiles)
+                .ToArray()
+                .ToObservable()
+                .Do(data => data.CreateNewHashkey());
         }
     }
 }

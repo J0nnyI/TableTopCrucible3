@@ -5,9 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using ValueOf;
 
+
 namespace TableTopCrucible.Core.Jobs.ValueTypes
 {
-    public class TargetProgress:ValueOf<decimal,TargetProgress>
+    public class ProgressIncrement:ValueOf<double, ProgressIncrement>
     {
+        public static explicit operator ProgressIncrement(double value)
+            => From(value);
     }
 }

@@ -5,13 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicData;
 using TableTopCrucible.Core.Jobs.ValueTypes;
+using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Models
 {
     // interface for managing a tracking collection
     public interface ICompositeTrackerController: ITrackingViewer
     {
-        ITrackingViewer AddTracker(ITrackingViewer tracker, TrackingWeight weight);
-        IObservableList<ITrackingViewer> Children { get; }
+        ICompositeTrackerController AddComposite(Name name, TrackingWeight weight = null);
+        ISourceTrackerController AddSingle(Name name, TrackingTarget trackingTarget, TrackingWeight weight = null);
+        IObservable<IWeightedTrackingViewer> Tracker { get; }
     }
 }
