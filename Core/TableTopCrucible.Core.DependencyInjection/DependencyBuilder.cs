@@ -29,10 +29,11 @@ namespace TableTopCrucible.Core.DependencyInjection
             GetServices(services);
             return services;
         }
-        public static void GetServices(IServiceCollection services)
+        public static void GetServices(IServiceCollection services, bool includeAutomapper = true)
         {
             services.AddSingleton<IFileSystem, FileSystem>();
             services.TryAddEnumerable(DiAttributeCollector.GenerateServiceProvider());
+            if(includeAutomapper)
             configureAutomapper(services);
             services.AddSingleton(typeof(ILoggerFactory), buildLoggingFactory());
 

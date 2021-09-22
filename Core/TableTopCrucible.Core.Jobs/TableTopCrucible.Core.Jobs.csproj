@@ -11,4 +11,8 @@
     <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ReactiveUI.Fody" Version="16.2.1" />
+  </ItemGroup>
+
 </Project>

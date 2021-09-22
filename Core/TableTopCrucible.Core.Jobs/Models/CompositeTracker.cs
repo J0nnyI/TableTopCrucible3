@@ -18,7 +18,7 @@ namespace TableTopCrucible.Core.Jobs.Models
     internal class CompositeTracker : ICompositeTrackerController, ITrackingViewer
     {
         IObservable<CurrentProgress> ITrackingViewer.CurrentProgressChanges =>
-            CurrentProgressChanges.Select(prog => (CurrentProgress) prog);
+            CurrentProgressChanges.Select(prog => (CurrentProgress)prog);
         public IObservable<WeightedCurrentProgress> CurrentProgressChanges { get; }
 
         IObservable<TrackingTarget> ITrackingViewer.TargetProgressChanges =>
@@ -26,52 +26,79 @@ namespace TableTopCrucible.Core.Jobs.Models
         public IObservable<WeightedTrackingTarget> TargetProgressChanges { get; }
 
         public Name Title { get; }
+        public IObservable<JobState> JobStateChanges { get; }
 
         public ICompositeTrackerController AddComposite(Name name, TrackingWeight weight = null)
         {
             var tracker = new WeightedCompositeTracker(name, weight);
-            trackerSource.OnNext(tracker);
+            _trackerStack.OnNext(tracker);
             return tracker;
         }
 
         public ISourceTrackerController AddSingle(Name name, TrackingTarget trackingTarget, TrackingWeight weight = null)
         {
             var tracker = new WeightedSourceTracker(name, trackingTarget, weight);
-            trackerSource.OnNext(tracker);
+            _trackerStack.OnNext(tracker);
             return tracker;
         }
         // each pushed item represents one tracker
-        private readonly ReplaySubject<IWeightedTrackingViewer> trackerSource = new();
-        public IObservable<IWeightedTrackingViewer> Tracker => trackerSource;
+        private readonly ReplaySubject<IWeightedTrackingViewer> _trackerStack = new();
+        public IObservable<IWeightedTrackingViewer> TrackerStack => _trackerStack;
+
+        private IObservable<IEnumerable<IWeightedTrackingViewer>> trackerListChanges { get; }
 
         public CompositeTracker(Name title)
         {
             this.Title = title;
 
-            CurrentProgressChanges = trackerSource.Select(tracker =>
-                tracker
-                    .CurrentProgressChanges
-                    .Select(progress => progress * tracker.Weight))
-                .Merge()
-                .Scan((WeightedCurrentProgress)0, (current, acc) => current + acc);
 
-            TargetProgressChanges = trackerSource
-                // collect all pushed observables in a flat list
+            trackerListChanges = _trackerStack
                 .Scan(
-                    new List<IObservable<WeightedTrackingTarget>>(),
+                    new List<IWeightedTrackingViewer>(),
                     (list, tracker) =>
                     {
-                        list.Add(tracker.TargetProgressChanges.Select(total => total * tracker.Weight));
+                        list.Add(tracker);
                         return list;
-                    })
-                // combine that list into a observable which pushes updates for that list
-                .Select(trackers => Observable.CombineLatest(trackers.ToArray()))
-                .Switch()
-                // summiere alle sub-tracker
-                .Select(trackers =>
-                    (WeightedTrackingTarget)trackers.Select(total => total.Value)
-                        .Sum());
+                    });
 
+            CurrentProgressChanges = _trackerStack.SelectMany(src =>
+                    src.CurrentProgressChanges.Select(current => current * src.Weight))
+                .Scan((WeightedCurrentProgress)0, (acc, cur) => acc + cur);
+
+            TargetProgressChanges = trackerListChanges.Select(trackerList =>
+                Observable.CombineLatest(// get the weight of all trackers parallel as list
+                    trackerList.Select(tracker =>
+                        tracker.TargetProgressChanges.Select(target =>
+                            target * tracker.Weight)
+                    ),// sum the content of the list
+                    targets => (WeightedTrackingTarget)targets
+                        .Select(target => target.Value)
+                        .Sum())
+                ).Switch();// and flatten the observables so that it is updated when there is a new tracker and when a target changes
+
+            trackerListChanges.Select(trackerList =>
+                Observable.CombineLatest(
+                     trackerList.Select(
+                        tracker => tracker.JobStateChanges),
+                     jobStates =>
+                     {
+                         // any job in progress? => InProgress
+                         if(jobStates.Contains(JobState.InProgress))
+                            return JobState.InProgress;
+
+                         // all jobs done? => Done
+                         if(jobStates.All(state=>state==JobState.Done))
+                             return JobState.Done;
+
+                         // all jobs todo? => todo
+                         if(jobStates.All(state=>state==JobState.ToDo))
+                            return JobState.ToDo;
+
+                         //remainder: (some todo, some done) => inProgress
+                         return JobState.InProgress;
+                     }
+                )
+            );
         }
     }
 
