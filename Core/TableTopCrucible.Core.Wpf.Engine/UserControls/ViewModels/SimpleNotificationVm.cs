@@ -4,8 +4,10 @@ using Splat;
 
 using System;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows.Input;
 
 using TableTopCrucible.Core.Helper;
@@ -41,6 +43,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         private ObservableAsPropertyHelper<bool> _closable;
         public bool Closable => _closable.Value;
 
+        private readonly Subject<Unit> _closedByUser = new();
+
 
         private readonly INotificationService _notificationService;
         public ICommand CloseNotificationCommand { get; private set; }
@@ -55,7 +59,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             this.WhenActivated(() => new[]
             {
                 _initDeleteCountdown(),
-                _initCommands(),
+                ReactiveCommandHelper.Create(() =>_closedByUser.OnNext(Unit.Default)
+                    , cmd=>CloseNotificationCommand = cmd),
                 this.WhenAnyValue(vm=>vm.Type, type=>type != NotificationType.Error)
                     .ToProperty(this, vm=>vm.Closable, out _closable)
             });
@@ -95,24 +100,12 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 deleteCountdownProgressChanges
                     .Select(_ => 1.0) // ignore all updates
                     .DistinctUntilChanged()
+                    .TakeUntil(_closedByUser) // start last closing animation once the button is clicked
                     .Concat(ObservableHelper.AnimateValue(1, .3))// when countdown
-                    .Finally(() =>
-                    {
-                        _notificationService.RemoveNotification(Id);
-                    })
+                    .Finally(() =>_notificationService.RemoveNotification(Id))
                     .ObserveOn(RxApp.MainThreadScheduler)
+                    .StartWith(1)
                     .ToProperty(this, vm => vm.CardOpacity, out _cardOpacity),
-            });
-        }
-        private IDisposable _initCommands()
-        {
-            var close = ReactiveCommand.Create(() =>
-                _notificationService.RemoveNotification(Id)
-            );
-            this.CloseNotificationCommand = close;
-            return new CompositeDisposable(new[]
-            {
-                close
             });
         }
 
