@@ -24,7 +24,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     v=>v.DirectoryList.ItemsSource),
 
                 this.ViewModel.HintOpacity
-                    .Do(_=>{})
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.EmptyListText.Opacity),
 

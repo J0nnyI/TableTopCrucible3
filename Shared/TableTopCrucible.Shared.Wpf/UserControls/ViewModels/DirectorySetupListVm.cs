@@ -46,14 +46,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 this.WhenAnyValue(vm => vm.Directories.Count)
                     .Select(c => c == 0)
                     .DistinctUntilChanged()
-                    .Do(_ => { })
                     .Select(show =>
-                        Observable
-                            .Interval(SettingsHelper.AnimationResolution)
-                            .Do(_ => { })
-                            //.Take(MathHelper.FloorInt(SettingsHelper.AnimationFrames))
-                            .Scan(0.0, (acc, item) => acc + (1 / SettingsHelper.AnimationFrames))
-                            .Select(opacity => show ? opacity : 1 - opacity)
+                        ObservableHelper.AnimateValue(0,1)
+                            .Select(opacity => show ? opacity : 1 - opacity) // invert animation direction depending on the toggle
                     )
                     .Switch();
 
