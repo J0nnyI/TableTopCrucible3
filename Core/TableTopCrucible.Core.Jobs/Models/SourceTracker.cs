@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
-
+using ReactiveUI;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
@@ -20,6 +21,19 @@ namespace TableTopCrucible.Core.Jobs.Models
             this.Title = title;
             if (trackingTarget != null)
                 SetTarget(trackingTarget);
+
+            _accumulatedProgressChanges =
+                _increments
+                    .Scan((CurrentProgress)0, (acc, inc) => acc + inc)
+                    .StartWith((CurrentProgress)0);
+
+            CurrentProgressChanges =
+                Observable.CombineLatest(
+                    _accumulatedProgressChanges,
+                    TargetProgressChanges,
+                    _completedChanges,
+                    (current, target, completed) => completed ? (CurrentProgress)target : current
+                );
         }
 
         public Name Title { get; }
@@ -45,30 +59,23 @@ namespace TableTopCrucible.Core.Jobs.Models
         private readonly BehaviorSubject<bool> _completedChanges = new(false);
 
         public IObservable<JobState> JobStateChanges => Observable.CombineLatest(
-            _currentProgressChanges,
-            _targetProgressChanges,
+            _accumulatedProgressChanges,
+            TargetProgressChanges,
             _completedChanges,
             (current, target, completed) =>
             {
                 if (current == (TrackingTarget) 0)
                     return JobState.ToDo;
-                if (current == target || completed)
+                if (current >= target || completed)
                     return JobState.Done;
                 return JobState.InProgress;
-            });
+            })
+            .DistinctUntilChanged();
 
         private readonly ReplaySubject<ProgressIncrement> _increments = new();
-        private IObservable<CurrentProgress> _currentProgressChanges =>
-            _increments
-                .Scan((CurrentProgress)0, (acc, inc) => acc + inc)
-                .StartWith((CurrentProgress)0);
+        private IObservable<CurrentProgress> _accumulatedProgressChanges { get; }
 
-        public IObservable<CurrentProgress> CurrentProgressChanges => // set progress = target if disposed
-            Observable.CombineLatest(
-                _currentProgressChanges,
-                TargetProgressChanges,
-                _completedChanges,
-                (current, target, completed) => completed ? (CurrentProgress)target : current);
+        public IObservable<CurrentProgress> CurrentProgressChanges { get; }
 
         private readonly BehaviorSubject<TrackingTarget> _targetProgressChanges = new((TrackingTarget)1);
         public IObservable<TrackingTarget> TargetProgressChanges => _targetProgressChanges.AsObservable();

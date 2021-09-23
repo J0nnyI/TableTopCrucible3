@@ -29,5 +29,14 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
             => (cur?.Value ?? 0) == (target?.Value ?? 0);
         public static bool operator !=(CurrentProgress cur, TrackingTarget target)
             => (cur?.Value ?? 0) != (target?.Value ?? 0);
+
+        public static bool operator >(CurrentProgress cur, TrackingTarget target)
+            => (cur?.Value ?? 0) > (target?.Value ?? 0);
+        public static bool operator <(CurrentProgress cur, TrackingTarget target)
+            => (cur?.Value ?? 0) < (target?.Value ?? 0);
+        public static bool operator >=(CurrentProgress cur, TrackingTarget target)
+            => (cur?.Value ?? 0) >= (target?.Value ?? 0);
+        public static bool operator <=(CurrentProgress cur, TrackingTarget target)
+            => (cur?.Value ?? 0) <= (target?.Value ?? 0);
     }
 }

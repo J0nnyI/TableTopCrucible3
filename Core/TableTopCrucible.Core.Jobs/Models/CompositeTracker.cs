@@ -35,7 +35,7 @@ namespace TableTopCrucible.Core.Jobs.Models
             return tracker;
         }
 
-        public ISourceTrackerController AddSingle(Name name, TrackingTarget trackingTarget, TrackingWeight weight = null)
+        public ISourceTrackerController AddSingle(Name name, TrackingTarget trackingTarget = null, TrackingWeight weight = null)
         {
             var tracker = new WeightedSourceTracker(name, trackingTarget, weight);
             _trackerStack.OnNext(tracker);
@@ -74,31 +74,35 @@ namespace TableTopCrucible.Core.Jobs.Models
                     targets => (WeightedTrackingTarget)targets
                         .Select(target => target.Value)
                         .Sum())
-                ).Switch();// and flatten the observables so that it is updated when there is a new tracker and when a target changes
-
-            trackerListChanges.Select(trackerList =>
+                ).Switch()
+                .StartWith((WeightedTrackingTarget)1);// and flatten the observables so that it is updated when there is a new tracker and when a target changes
+            // todo compositetracker: child-updates müssen prozentual betrachtet werden
+            this.JobStateChanges = trackerListChanges.Select(trackerList =>
                 Observable.CombineLatest(
                      trackerList.Select(
                         tracker => tracker.JobStateChanges),
                      jobStates =>
                      {
                          // any job in progress? => InProgress
-                         if(jobStates.Contains(JobState.InProgress))
-                            return JobState.InProgress;
+                         if (jobStates.Contains(JobState.InProgress))
+                             return JobState.InProgress;
 
                          // all jobs done? => Done
-                         if(jobStates.All(state=>state==JobState.Done))
+                         if (jobStates.All(state => state == JobState.Done))
                              return JobState.Done;
 
                          // all jobs todo? => todo
-                         if(jobStates.All(state=>state==JobState.ToDo))
-                            return JobState.ToDo;
+                         if (jobStates.All(state => state == JobState.ToDo))
+                             return JobState.ToDo;
 
-                         //remainder: (some todo, some done) => inProgress
+                         // remainder: (some todo, some done) => inProgress
                          return JobState.InProgress;
                      }
                 )
-            );
+            )
+                .Switch()
+            .StartWith(JobState.ToDo)
+                .DistinctUntilChanged();
         }
     }
 

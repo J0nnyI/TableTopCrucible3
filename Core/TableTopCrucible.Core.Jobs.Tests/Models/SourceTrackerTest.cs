@@ -19,7 +19,7 @@ using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Models.Tests
 {
-    [TestFixture()]
+    [TestFixture]
     public class SourceTrackerTest : ReactiveObject
     {
         private IProgressTrackingService? progressService;
@@ -31,7 +31,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
 
         private ObservableAsPropertyHelper<CurrentProgress> _currentProgress;
         public CurrentProgress CurrentProgress => _currentProgress.Value;
-        
+
         private ObservableAsPropertyHelper<TrackingTarget> _targetProgress;
         public TrackingTarget TargetProgress => _targetProgress.Value;
 
@@ -39,7 +39,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         private CompositeDisposable _disposables;
 
 
-        Func<Exception, IObservable<T>> Catcher<T>(string observable=null)
+        Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
         {
             return new(ex =>
             {
@@ -82,36 +82,72 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             TargetProgress.Value.Should().Be(1);
             TrackerJobState.Should().Be(JobState.ToDo);
         }
+
         [Test]
-        public void DefaultTrackingWithManualComplete()
+        public void Increment()
         {
-
             Tracker.SetTarget((TrackingTarget)5);
-            TargetProgress.Value.Should().Be(5,"new");
-            TrackerJobState.Should().Be(JobState.ToDo);
 
-            CurrentProgress.Value.Should().Be(0,"init (0)");
+            CurrentProgress.Value.Should().Be(0, "init (0)");
             Tracker.Increment();
             CurrentProgress.Value.Should().Be(1, "0 => 1");
             TrackerJobState.Should().Be(JobState.InProgress);
 
             Tracker.Increment((ProgressIncrement)2);
             TrackerJobState.Should().Be(JobState.InProgress);
-            CurrentProgress.Value.Should().Be(3,"1 => 3");
+            CurrentProgress.Value.Should().Be(3, "1 => 3");
+        }
+        [Test]
+        public void UnderFillScenario()
+        {
+
+            Tracker.SetTarget((TrackingTarget)5);
+
+            Tracker.Increment();
 
             Tracker.OnCompleted();
             TrackerJobState.Should().Be(JobState.Done);
-            CurrentProgress.Value.Should().Be(TargetProgress.Value, "3 => complete (disposed)");
+            CurrentProgress.Value.Should().Be(TargetProgress.Value);
         }
 
+
+
         [Test]
-        public void DefaultTrackingWithAutoComplete()
+        public void FlushFillScenario()
         {
             Tracker.SetTarget((TrackingTarget)5);
             Tracker.Increment((ProgressIncrement)5);
-            TargetProgress.Should().Be((TrackingTarget) 5);
-            CurrentProgress.Should().Be((CurrentProgress) 5);
             TrackerJobState.Should().Be(JobState.Done);
+            Tracker.OnCompleted();
+        }
+
+        [Test]
+        public void OverFillScenario()
+        {
+            Tracker.SetTarget((TrackingTarget)5);
+            Tracker.Increment((ProgressIncrement)6);
+            TrackerJobState.Should().Be(JobState.Done);
+            Tracker.OnCompleted();
+        }
+
+        [Test]
+        public void LateSubscriptions()
+        {
+            Tracker.SetTarget((TrackingTarget)5);
+            Tracker.Increment();
+            Tracker.Increment();
+            Tracker.Increment();
+            CurrentProgress lateProgress = null;
+            Tracker
+                .CurrentProgressChanges
+                .Subscribe(x => lateProgress = x)
+                .DisposeWith(_disposables);
+
+            lateProgress.Should().Be(CurrentProgress).And.Be((CurrentProgress)3);
+
+            Tracker.Increment();
+
+            lateProgress.Should().Be(CurrentProgress).And.Be((CurrentProgress) 4);
         }
     }
 }
