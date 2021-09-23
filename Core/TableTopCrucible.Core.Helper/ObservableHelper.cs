@@ -1,7 +1,9 @@
 ﻿using DynamicData.Kernel;
 
 using System;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -50,20 +52,20 @@ namespace TableTopCrucible.Core.Helper
             return src;
         }
 
-        public static IObservable<T> AnimateValue<T>(T seed, Func<T, T> accumulator, TimeSpan? duration = null)
-            => Observable.Interval(SettingsHelper.AnimationResolution)
+        public static IObservable<T> AnimateValue<T>(T seed, Func<T, T> accumulator, TimeSpan? duration = null, IScheduler scheduler = null)
+            => Observable.Interval(SettingsHelper.AnimationResolution, scheduler ?? Scheduler.CurrentThread)
                 .Take(MathHelper.CeilingInt(
                     (duration ?? SettingsHelper.AnimationDuration) /
                     SettingsHelper.AnimationResolution
                 ))
                 .Scan(seed, (acc, _) => accumulator(acc));
-        public static IObservable<double> AnimateValue(double from, double to, TimeSpan? duration = null)
+        public static IObservable<double> AnimateValue(double from, double to, TimeSpan? duration = null, IScheduler scheduler = null)
         {
             var frameCount = (duration ?? SettingsHelper.AnimationDuration) /
                              SettingsHelper.AnimationResolution;
             double stepSize = (to - from) / frameCount;
 
-            return AnimateValue(from, v => v + stepSize, duration);
+            return AnimateValue(from, v => v + stepSize, duration, scheduler);
         }
     }
 }

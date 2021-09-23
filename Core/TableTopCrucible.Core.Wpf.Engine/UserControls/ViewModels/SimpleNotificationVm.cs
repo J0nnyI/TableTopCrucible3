@@ -89,23 +89,32 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Where(s => s)
                     .Take(1)
                     .Select(_ =>
-                        ObservableHelper.AnimateValue(100, 0,
-                            SettingsHelper.NotificationDelay)
+                        ObservableHelper.AnimateValue(
+                            100, 
+                            0,
+                            SettingsHelper.NotificationDelay,
+                            RxApp.TaskpoolScheduler)
                     )
                     .Switch()
                     .OutputObservable(out var deleteCountdownProgressChanges)
-                    .ToProperty(this, vm=>vm.DeleteCountdownProgress, out _deleteCountdownProgress),
+                    .ToProperty(this, vm=>vm.DeleteCountdownProgress, out _deleteCountdownProgress, false, RxApp.MainThreadScheduler),
 
                 // card fadeout
                 deleteCountdownProgressChanges
                     .Select(_ => 1.0) // ignore all updates
                     .DistinctUntilChanged()
                     .TakeUntil(_closedByUser) // start last closing animation once the button is clicked
-                    .Concat(ObservableHelper.AnimateValue(1, .3))// when countdown
+                    .Concat(
+                        ObservableHelper.AnimateValue(
+                            1,
+                            .1,
+                            SettingsHelper.AnimationDuration, 
+                            RxApp.TaskpoolScheduler)
+                    )
                     .Finally(() =>_notificationService.RemoveNotification(Id))
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .StartWith(1)
-                    .ToProperty(this, vm => vm.CardOpacity, out _cardOpacity),
+                    .ToProperty(this, vm => vm.CardOpacity, out _cardOpacity, false, RxApp.MainThreadScheduler),
             });
         }
 
