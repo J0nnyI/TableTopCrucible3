@@ -10,9 +10,9 @@ namespace TableTopCrucible.Infrastructure.Repositories.Tests
         }
 
         [Test]
+        [Ignore("not implemented yet")]
         public void Test1()
         {
-            Assert.Pass();
         }
     }
 }

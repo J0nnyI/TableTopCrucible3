@@ -189,8 +189,9 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
         }
 
         [Test]
+        [Ignore("not implemented yet")]
         public void UpdateFileHashesTest()
-        {
+        { // feature not implemented yet
             new TestSetup
             {
                 Directories = new[]
