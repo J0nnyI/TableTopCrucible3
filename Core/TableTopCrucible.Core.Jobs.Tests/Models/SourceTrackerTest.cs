@@ -12,6 +12,7 @@ using FluentAssertions;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Splat;
+using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
@@ -23,17 +24,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
     public class SourceTrackerTest : ReactiveObject
     {
         private IProgressTrackingService? progressService;
-        [Reactive]
         public ISourceTrackerController Tracker { get; set; }
-
-        private ObservableAsPropertyHelper<JobState> _trackerJobState;
-        public JobState TrackerJobState => _trackerJobState.Value;
-
-        private ObservableAsPropertyHelper<CurrentProgress> _currentProgress;
-        public CurrentProgress CurrentProgress => _currentProgress.Value;
-
-        private ObservableAsPropertyHelper<TrackingTarget> _targetProgress;
-        public TrackingTarget TargetProgress => _targetProgress.Value;
+        public ISubscribedTrackingViewer Viewer { get; set; }
 
 
         private CompositeDisposable _disposables;
@@ -55,17 +47,10 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             this.progressService = Locator.Current.GetService<IProgressTrackingService>();
 
             this.Tracker = progressService.CreateSourceTracker((Name)"testTracker");
+            this.Viewer = Tracker.Subscribe();
             _disposables = new CompositeDisposable(
                 Tracker,
-                this.Tracker.CurrentProgressChanges
-                    .Catch(Catcher<CurrentProgress>())
-                    .ToProperty(this, t => t.CurrentProgress, out _currentProgress),
-                this.Tracker.TargetProgressChanges
-                    .Catch(Catcher<TrackingTarget>())
-                    .ToProperty(this, t => t.TargetProgress, out _targetProgress),
-                this.Tracker.JobStateChanges
-                    .Catch(Catcher<JobState>())
-                    .ToProperty(this, t => t.TrackerJobState, out _trackerJobState)
+                Viewer
             );
         }
 
@@ -79,8 +64,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         public void InitialValues()
         {
             Tracker.Title.Value.Should().Be("testTracker");
-            TargetProgress.Value.Should().Be(1);
-            TrackerJobState.Should().Be(JobState.ToDo);
+            Viewer.TargetProgress.Value.Should().Be(1);
+            Viewer.JobState.Should().Be(JobState.ToDo);
         }
 
         [Test]
@@ -88,14 +73,14 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         {
             Tracker.SetTarget((TrackingTarget)5);
 
-            CurrentProgress.Value.Should().Be(0, "init (0)");
+            Viewer.CurrentProgress.Value.Should().Be(0, "init (0)");
             Tracker.Increment();
-            CurrentProgress.Value.Should().Be(1, "0 => 1");
-            TrackerJobState.Should().Be(JobState.InProgress);
+            Viewer.CurrentProgress.Value.Should().Be(1, "0 => 1");
+            Viewer.JobState.Should().Be(JobState.InProgress);
 
             Tracker.Increment((ProgressIncrement)2);
-            TrackerJobState.Should().Be(JobState.InProgress);
-            CurrentProgress.Value.Should().Be(3, "1 => 3");
+            Viewer.JobState.Should().Be(JobState.InProgress);
+            Viewer.CurrentProgress.Value.Should().Be(3, "1 => 3");
         }
         [Test]
         public void UnderFillScenario()
@@ -106,8 +91,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Tracker.Increment();
 
             Tracker.OnCompleted();
-            TrackerJobState.Should().Be(JobState.Done);
-            CurrentProgress.Value.Should().Be(TargetProgress.Value);
+            Viewer.JobState.Should().Be(JobState.Done);
+            Viewer.CurrentProgress.Value.Should().Be(Viewer.TargetProgress.Value);
         }
 
 
@@ -117,7 +102,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         {
             Tracker.SetTarget((TrackingTarget)5);
             Tracker.Increment((ProgressIncrement)5);
-            TrackerJobState.Should().Be(JobState.Done);
+            Viewer.JobState.Should().Be(JobState.Done);
             Tracker.OnCompleted();
         }
 
@@ -126,7 +111,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         {
             Tracker.SetTarget((TrackingTarget)5);
             Tracker.Increment((ProgressIncrement)6);
-            TrackerJobState.Should().Be(JobState.Done);
+            Viewer.JobState.Should().Be(JobState.Done);
             Tracker.OnCompleted();
         }
 
@@ -143,11 +128,11 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
                 .Subscribe(x => lateProgress = x)
                 .DisposeWith(_disposables);
 
-            lateProgress.Should().Be(CurrentProgress).And.Be((CurrentProgress)3);
+            lateProgress.Should().Be(Viewer.CurrentProgress).And.Be((CurrentProgress)3);
 
             Tracker.Increment();
 
-            lateProgress.Should().Be(CurrentProgress).And.Be((CurrentProgress) 4);
+            lateProgress.Should().Be(Viewer.CurrentProgress).And.Be((CurrentProgress) 4);
         }
     }
 }

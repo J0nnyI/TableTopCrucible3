@@ -11,6 +11,7 @@ using FluentAssertions;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Splat;
+using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
@@ -22,17 +23,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
     public class CompositeTrackerTests:ReactiveObject
     {
         private IProgressTrackingService? progressService;
-        [Reactive]
         public ICompositeTrackerController Tracker { get; set; }
-
-        private ObservableAsPropertyHelper<JobState> _trackerJobState;
-        public JobState TrackerJobState => _trackerJobState.Value;
-
-        private ObservableAsPropertyHelper<CurrentProgress> _currentProgress;
-        public CurrentProgress CurrentProgress => _currentProgress.Value;
-
-        private ObservableAsPropertyHelper<TrackingTarget> _targetProgress;
-        public TrackingTarget TargetProgress => _targetProgress.Value;
+        public ISubscribedTrackingViewer Viewer { get; set; }
 
 
         private CompositeDisposable _disposables;
@@ -53,18 +45,9 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Prepare.ApplicationEnvironment();
             this.progressService = Locator.Current.GetService<IProgressTrackingService>();
 
-            this.Tracker = progressService.CreateNewCompositeTracker((Name)"testTracker");
-            _disposables = new CompositeDisposable(
-                this.Tracker.CurrentProgressChanges
-                    .Catch(Catcher<CurrentProgress>())
-                    .ToProperty(this, t => t.CurrentProgress, out _currentProgress),
-                this.Tracker.TargetProgressChanges
-                    .Catch(Catcher<TrackingTarget>())
-                    .ToProperty(this, t => t.TargetProgress, out _targetProgress),
-                this.Tracker.JobStateChanges
-                    .Catch(Catcher<JobState>())
-                    .ToProperty(this, t => t.TrackerJobState, out _trackerJobState)
-            );
+            this.Tracker = progressService!.CreateNewCompositeTracker((Name)"testTracker");
+            Viewer = Tracker.Subscribe();
+            _disposables = new CompositeDisposable(Viewer);
         }
 
         [TearDown]
@@ -77,13 +60,43 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         public void InitialValues()
         {
             Tracker.Title.Value.Should().Be("testTracker");
-            TargetProgress.Value.Should().Be(1);
-            TrackerJobState.Should().Be(JobState.ToDo);
+            Viewer.TargetProgress.Value.Should().Be(1);
+            Viewer.JobState.Should().Be(JobState.ToDo);
         }
         [Test]
-        public void SingleChildTest()
+        public async Task SingleChildTest()
         {
-            Tracker.AddSingle((Name) "firstChild");
+            var child = Tracker.AddSingle((Name) "firstChild");
+            Viewer.CurrentProgress.Should()
+                .Be(await child.CurrentProgressChanges.Timeout(TimeSpan.FromMilliseconds(10)).FirstAsync());
+        }
+
+        [Test]
+        [Ignore("todo")]
+        public void Todo_Done()
+        {
+
+        }
+
+        [Test]
+        [Ignore("todo")]
+        public void Todo_InProgress()
+        {
+
+        }
+
+        [Test]
+        [Ignore("todo")]
+        public void InProgress_Done()
+        {
+
+        }
+
+        [Test]
+        [Ignore("todo")]
+        public void Todo_InProgress_Done()
+        {
+
         }
     }
 }
