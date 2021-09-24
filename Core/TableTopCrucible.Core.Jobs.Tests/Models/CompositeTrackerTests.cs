@@ -212,10 +212,118 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         }
 
         [Test]
-        [Ignore("todo")]
         public void NestedComposite()
         {
+            var upperChild = Tracker.AddSingle(null, (TrackingTarget)2);
+            var upperChildViewer = upperChild.Subscribe().DisposeWith(_disposables);
 
+            var nestedComp = Tracker.AddComposite();
+            var nestedCompViewer = nestedComp.Subscribe().DisposeWith(_disposables);
+
+            var lowerChild = nestedComp.AddSingle(null, (TrackingTarget)2);
+            var lowerChildViewer = lowerChild.Subscribe().DisposeWith(_disposables);
+
+            // ( 0%)    
+            // -   0%   0   2
+            // -(  0%)  
+            //   -   0% 0   2
+            Viewer.JobState
+                .Should().Be(upperChildViewer.JobState)
+                .And.Be(nestedCompViewer.JobState)
+                .And.Be(lowerChildViewer.JobState)
+                .And.Be(JobState.ToDo);
+
+            Viewer.CurrentProgress
+                .Should().Be(upperChildViewer.CurrentProgress)
+                .And.Be(nestedCompViewer.CurrentProgress)
+                .And.Be(lowerChildViewer.CurrentProgress)
+                .And.Be((CurrentProgress)0);
+
+            // ( 25%)   
+            // -   0%   0   2
+            // -( 50%)  
+            //   -  50% 1   2
+            lowerChild.Increment();
+
+            Viewer.JobState
+                .Should().Be(nestedCompViewer.JobState)
+                .And.Be(lowerChildViewer.JobState)
+                .And.Be(JobState.InProgress);
+            upperChildViewer.JobState
+                .Should().Be(JobState.ToDo);
+
+            Viewer.CurrentProgress.Value
+                .Should().Be(CompositeTracker.Target.Value * .25);
+            upperChildViewer.CurrentProgress.Value
+                .Should().Be(0);
+            nestedCompViewer.CurrentProgress.Value
+                .Should().Be(CompositeTracker.Target.Value * .5);
+            lowerChildViewer.CurrentProgress.Value
+                .Should().Be(1);
+
+            // ( 50%)
+            // -  50%   1   2
+            // -( 50%)
+            //   -  50% 1   2
+            upperChild.Increment();
+
+            Viewer.JobState
+                .Should().Be(nestedCompViewer.JobState)
+                .And.Be(lowerChildViewer.JobState)
+                .And.Be(upperChildViewer.JobState)
+                .And.Be(JobState.InProgress);
+
+            Viewer.CurrentProgress.Value
+                .Should().Be(CompositeTracker.Target.Value * .5);
+            upperChildViewer.CurrentProgress.Value
+                .Should().Be(1);
+            nestedCompViewer.CurrentProgress.Value
+                .Should().Be(CompositeTracker.Target.Value * .5);
+            lowerChildViewer.CurrentProgress.Value
+                .Should().Be(1);
+
+
+            // ( 75%)
+            // -  50%   1   2
+            // -(100%)
+            //   - 100% 2   2
+            lowerChild.Increment();
+
+            Viewer.JobState
+                .Should().Be(upperChildViewer.JobState)
+                .And.Be(JobState.InProgress);
+            nestedCompViewer.JobState
+                .Should().Be(lowerChildViewer.JobState)
+                .And.Be(JobState.Done);
+
+            Viewer.CurrentProgress.Value
+                .Should().Be(CompositeTracker.Target.Value * .75);
+            upperChildViewer.CurrentProgress.Value
+                .Should().Be(1);
+            nestedCompViewer.CurrentProgress.Value
+                .Should().Be(CompositeTracker.Target.Value * 1.0);
+            lowerChildViewer.CurrentProgress.Value
+                .Should().Be(2);
+
+            // (100%)
+            // -  100%  2   2
+            // -(100%)
+            //   - 100% 2   2
+            upperChild.Increment();
+
+            Viewer.JobState
+                .Should().Be(nestedCompViewer.JobState)
+                .And.Be(lowerChildViewer.JobState)
+                .And.Be(upperChildViewer.JobState)
+                .And.Be(JobState.Done);
+
+            Viewer.CurrentProgress.Value
+                .Should().Be(nestedCompViewer.CurrentProgress.Value)
+                .And.Be(CompositeTracker.Target.Value * 1.0);
+            
+            lowerChildViewer.CurrentProgress.Value
+                .Should().Be(upperChildViewer.CurrentProgress.Value)
+                .And.Be(2);
         }
 
         [Test]

@@ -96,6 +96,20 @@ namespace TableTopCrucible.Core.Jobs.Helper
                 return;
             _permanentDisposables.Dispose();
         }
+
+        public override string ToString()
+        {
+            string type = "";
+            if (Source is WeightedCompositeTracker)
+                type = "Weighted Composite";
+            if (Source is CompositeTracker)
+                type = "Composite";
+            if (Source is WeightedSourceTracker)
+                type = "Weighted Source";
+            if (Source is SourceTracker)
+                type = "Source";
+            return $"{CurrentProgress} / {TargetProgress} ({CurrentProgress.Value / TargetProgress.Value * 100}%) - " + type;
+        }
     }
     public static class TrackingViewerHelper
     {
