@@ -88,7 +88,7 @@
 
     <md:ColorZone md:ShadowAssist.ShadowDepth="Depth2"
                   md:ShadowAssist.ShadowEdges="Right"
-                  Mode="PrimaryMid"
+                  Mode="PrimaryDark"
                   VerticalAlignment="Stretch">
         <DockPanel VerticalAlignment="Stretch">
             <ListBox x:Name="UpperList"

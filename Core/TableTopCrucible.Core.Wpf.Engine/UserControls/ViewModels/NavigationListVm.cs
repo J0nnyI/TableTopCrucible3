@@ -189,7 +189,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .BindTo(navigationService, srv=>srv.CurrentPage),
 
                 this.WhenAnyValue(vm=>vm._navigationService.CurrentPage)
-                    .Do(_=>{})
                     .WhereNotNull()
                     .Subscribe(selection =>
                     {

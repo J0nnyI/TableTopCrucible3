@@ -11,7 +11,7 @@
                           d:DesignHeight="450" 
                           d:DesignWidth="800"
                           Background="{DynamicResource PrimaryHueDarkBrush}"
-                          Height="50px">
+                          Height="58px">
     <UserControl.Resources>
         <Style TargetType="md:PackIcon">
             <Setter Property="Width"
@@ -48,21 +48,24 @@
             <StackPanel Orientation="Horizontal"
                         UseLayoutRounding="True"
                         DockPanel.Dock="right">
+                <!--Show Jobs-->
                 <Button ToolTip="Show Jobs - Coming Soon"
                         UseLayoutRounding="True"
                         md:ButtonProgressAssist.Maximum="100"
                         md:ButtonProgressAssist.Value="70"
                         md:ButtonProgressAssist.IsIndicatorVisible="True"
-                        >
+                        md:ButtonProgressAssist.IndicatorForeground="{StaticResource MaterialDesignLightForeground}"
+                >
                     <md:PackIcon Kind="clock" />
                 </Button>
+                <!--notifications-->
                 <md:Badged x:Name="NotificationBadge"
                            ToolTip="Notifications - Coming Soon"
                            BadgePlacementMode="BottomRight"
-                           Padding="0 0 -20 -10"
-                           Margin="-20 5 0 0">
-                    <Button Content="{md:PackIcon Bell}"
-                    />
+                           VerticalAlignment="Center"
+                           Padding="0 -10 -20 -10"
+                           Margin="-20 0 0 0">
+                    <Button Content="{md:PackIcon Bell}"/>
                 </md:Badged>
 
             </StackPanel>

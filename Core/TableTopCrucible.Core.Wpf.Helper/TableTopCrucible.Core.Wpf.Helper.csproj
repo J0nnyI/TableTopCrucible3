@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
+  </ItemGroup>
+</Project>

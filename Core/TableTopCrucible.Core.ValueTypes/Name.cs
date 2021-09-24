@@ -33,5 +33,8 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public int CompareTo(Name other)
             => Value?.CompareTo(other?.Value) ?? 0;
+
+        public static explicit operator Name(string value)
+            => From(value);
     }
 }

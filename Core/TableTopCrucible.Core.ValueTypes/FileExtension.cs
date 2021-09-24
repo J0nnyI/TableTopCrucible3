@@ -10,7 +10,7 @@ namespace TableTopCrucible.Core.ValueTypes
     {
         public static readonly FileExtension JSON = From(".json");
         public static readonly IEnumerable<FileExtension> SlicerProject = FromList(".3mf");
-        public static readonly IEnumerable<FileExtension> SlicedFile = FromList(".photon", ".stl");
+        public static readonly IEnumerable<FileExtension> SlicedFile = FromList(".photon", ".gcode");
         public static readonly IEnumerable<FileExtension> Archive = FromList(".zip");
         public static readonly IEnumerable<FileExtension> Model = FromList(".stl", ".obj", ".off", ".objz", ".lwo", ".3ds");
         public static readonly IEnumerable<FileExtension> Image = FromList(".png", ".jpg", ".jpeg", ".bmp", ".gif", ".hdp", ".jp2", ".pbm", ".psd", ".tga", ".tiff", ".img");
@@ -49,7 +49,7 @@ namespace TableTopCrucible.Core.ValueTypes
             if (IsSlicerProject())
                 return FileType.SlicerProject;
             if (IsSlicedFile())
-                return FileType.SlicerProject;
+                return FileType.SlicedFile;
             if (IsArchive())
                 return FileType.Archive;
 

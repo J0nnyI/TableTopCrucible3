@@ -94,7 +94,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 // Commands
                 ReactiveCommandHelper.Create(() =>
                     {
-                        _directorySetupRepository.AddOrUpdate(new(Name, Path, DirectorySetup.Id));
+                        _directorySetupRepository.AddOrUpdate(new DirectorySetup(Name, Path, DirectorySetup.Id));
                         _notificationService.AddNotification(
                             "Directory saved successfully",
                             $"The directory '{Name}' has been saved successfully",
@@ -109,7 +109,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 ReactiveCommandHelper.Create(() =>
                     {
                         Name = DirectorySetup.Name.Value;
-                        Path = DirectorySetup.Path.Value;
+                        Path = DirectorySetup.Path.Value; 
                         _notificationService.AddNotification(
                             "Directory undo successful",
                             $"The changes in directory '{Name}' have been undone successfully",

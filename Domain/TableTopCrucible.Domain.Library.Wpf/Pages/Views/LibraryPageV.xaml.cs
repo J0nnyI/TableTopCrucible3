@@ -1,4 +1,6 @@
-﻿using ReactiveUI;
+﻿using System;
+
+using ReactiveUI;
 
 using TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels;
 
@@ -12,6 +14,12 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.Views
         public LibraryPageV()
         {
             InitializeComponent();
+            this.WhenActivated(() => new IDisposable[]
+            {
+                this.Bind(ViewModel,
+                    vm => vm.ItemList,
+                    v => v.ItemList.ViewModel)
+            });
         }
     }
 }

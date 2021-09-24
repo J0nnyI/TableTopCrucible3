@@ -54,7 +54,8 @@ namespace TableTopCrucible.Core.Database
         IObservable<Tentity> WatchValue(Tid entityId);
         IConnectableCache<Tentity, Tid> DataChanges { get; }
         IObservableCache<Tentity, Tid> Data { get; }
-        public void Remove(Tid id);
+        void Remove(Tid id);
+        void Remove(IEnumerable<Tid> id);
     }
 
 
@@ -132,6 +133,8 @@ namespace TableTopCrucible.Core.Database
 
 
         public void Remove(Tid id)
+            => _data.Remove(id);
+        public void Remove(IEnumerable<Tid> id)
             => _data.Remove(id);
 
         public override int Count => _data.Count;
