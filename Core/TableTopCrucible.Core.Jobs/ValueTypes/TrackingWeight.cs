@@ -14,5 +14,7 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
 
         public static WeightedTrackingTarget operator *(TrackingTarget trackingTarget, TrackingWeight weight)
             => (WeightedTrackingTarget) (trackingTarget.Value * weight.Value);
+
+        public static TrackingWeight Default { get; } = From(1);
     }
 }

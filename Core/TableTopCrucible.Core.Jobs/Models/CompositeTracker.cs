@@ -17,13 +17,16 @@ namespace TableTopCrucible.Core.Jobs.Models
     // tracks a composite progress and returns the weighted total progress
     internal class CompositeTracker : ICompositeTrackerController, ITrackingViewer
     {
+        public static readonly WeightedTrackingTarget Target = (WeightedTrackingTarget)100;
+
         IObservable<CurrentProgress> ITrackingViewer.CurrentProgressChanges =>
             CurrentProgressChanges.Select(prog => (CurrentProgress)prog);
         public IObservable<WeightedCurrentProgress> CurrentProgressChanges { get; }
 
         IObservable<TrackingTarget> ITrackingViewer.TargetProgressChanges =>
             TargetProgressChanges.Select(target => (TrackingTarget)target);
-        public IObservable<WeightedTrackingTarget> TargetProgressChanges { get; }
+
+        public IObservable<WeightedTrackingTarget> TargetProgressChanges { get; } = Observable.Return(Target);
 
         public Name Title { get; }
         public IObservable<JobState> JobStateChanges { get; }
@@ -54,28 +57,58 @@ namespace TableTopCrucible.Core.Jobs.Models
 
             trackerListChanges = _trackerStack
                 .Scan(
-                    new List<IWeightedTrackingViewer>(),
+                    Enumerable.Empty<IWeightedTrackingViewer>(),
                     (list, tracker) =>
-                    {
-                        list.Add(tracker);
-                        return list;
-                    });
+                        list.Append(tracker)
+                    );
 
             CurrentProgressChanges = _trackerStack.SelectMany(src =>
                     src.CurrentProgressChanges.Select(current => current * src.Weight))
                 .Scan((WeightedCurrentProgress)0, (acc, cur) => acc + cur);
 
-            TargetProgressChanges = trackerListChanges.Select(trackerList =>
-                Observable.CombineLatest(// get the weight of all trackers parallel as list
-                    trackerList.Select(tracker =>
-                        tracker.TargetProgressChanges.Select(target =>
-                            target * tracker.Weight)
-                    ),// sum the content of the list
-                    targets => (WeightedTrackingTarget)targets
-                        .Select(target => target.Value)
-                        .Sum())
+
+
+            CurrentProgressChanges = trackerListChanges.Select(trackerList =>
+                    {
+                        var totalTrackerWeight = (TrackingWeight)trackerList.Sum(tracker => tracker.Weight.Value);
+
+                        return Observable.CombineLatest( // get the weight of all trackers parallel as list
+                            trackerList.Select(tracker =>
+                                Observable.CombineLatest(
+                                    tracker.CurrentProgressChanges,
+                                    tracker.TargetProgressChanges,
+                                    tracker.JobStateChanges,
+                                    (current, target, state) =>
+                                    {
+                                        // target value relative to the others
+                                        var targetFraction = tracker.Weight.Value / totalTrackerWeight.Value;
+                                        var targetPercent = Target.Value * targetFraction; // how much of the composite progress is from this tracker?
+
+                                        // catch over / under / miss fill
+                                        switch (state)
+                                        {
+                                            case JobState.ToDo:
+                                                return (WeightedCurrentProgress)0;
+                                            case JobState.Done:
+                                                return (WeightedCurrentProgress)(Target.Value * targetFraction);
+                                        }
+
+                                        // current value
+                                        var filledPercent = current.Value / target.Value;
+                                        if (filledPercent > 1) // catch overfill
+                                            filledPercent = 1;
+
+                                        return (WeightedCurrentProgress)(targetPercent * filledPercent);
+                                    }
+                                )
+                            ), // sum the content of the list
+                            targets => (WeightedCurrentProgress)targets
+                                .Select(target => target.Value)
+                                .Sum());
+                    }
                 ).Switch()
-                .StartWith((WeightedTrackingTarget)1);// and flatten the observables so that it is updated when there is a new tracker and when a target changes
+                    .StartWith((WeightedCurrentProgress)0);
+
             // todo compositetracker: child-updates müssen prozentual betrachtet werden
             this.JobStateChanges = trackerListChanges.Select(trackerList =>
                 Observable.CombineLatest(
@@ -83,6 +116,11 @@ namespace TableTopCrucible.Core.Jobs.Models
                         tracker => tracker.JobStateChanges),
                      jobStates =>
                      {
+                         // for more performance and maybe reliability compare current to target value instead
+                         // no children? todo
+                         if (!jobStates.Any())
+                             return JobState.ToDo;
+
                          // any job in progress? => InProgress
                          if (jobStates.Contains(JobState.InProgress))
                              return JobState.InProgress;
@@ -104,15 +142,20 @@ namespace TableTopCrucible.Core.Jobs.Models
             .StartWith(JobState.ToDo)
                 .DistinctUntilChanged();
         }
+        public override string ToString()
+            => $"C {Title}";
     }
 
     internal class WeightedCompositeTracker : CompositeTracker, IWeightedTrackingViewer
     {
         public WeightedCompositeTracker(Name title, TrackingWeight weight) : base(title)
         {
-            this.Weight = weight;
+            this.Weight = weight ?? TrackingWeight.Default;
         }
 
         public TrackingWeight Weight { get; }
+
+        public override string ToString()
+            => $"WC {Title} - {Weight}";
     }
 }

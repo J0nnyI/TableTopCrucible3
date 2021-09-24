@@ -14,6 +14,5 @@ namespace TableTopCrucible.Core.Jobs.Models
     {
         ICompositeTrackerController AddComposite(Name name, TrackingWeight weight = null);
         ISourceTrackerController AddSingle(Name name, TrackingTarget trackingTarget = null, TrackingWeight weight = null);
-        IObservable<IWeightedTrackingViewer> TrackerStack { get; }
     }
 }

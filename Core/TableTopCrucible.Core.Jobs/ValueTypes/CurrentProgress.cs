@@ -30,6 +30,16 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
         public static bool operator !=(CurrentProgress cur, TrackingTarget target)
             => (cur?.Value ?? 0) != (target?.Value ?? 0);
 
+        public override bool Equals(object obj)
+        {
+            if (obj is CurrentProgress other)
+                return this == other;
+            return false;
+        }
+
+        public override int GetHashCode()
+            => Value.GetHashCode();
+
         public static bool operator >(CurrentProgress cur, TrackingTarget target)
             => (cur?.Value ?? 0) > (target?.Value ?? 0);
         public static bool operator <(CurrentProgress cur, TrackingTarget target)

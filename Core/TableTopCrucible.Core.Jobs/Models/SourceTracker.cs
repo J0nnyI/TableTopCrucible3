@@ -85,14 +85,18 @@ namespace TableTopCrucible.Core.Jobs.Models
 
         public void Increment(ProgressIncrement increment)
             => _increments.OnNext(increment ?? (ProgressIncrement)1);
+        public override string ToString()
+            => $"S {Title}";
     }
 
     internal class WeightedSourceTracker : SourceTracker, IWeightedTrackingViewer
     {
         public WeightedSourceTracker(Name title, TrackingTarget trackingTarget, TrackingWeight weight) : base(title, trackingTarget)
         {
-            this.Weight = weight;
+            this.Weight = weight ?? TrackingWeight.Default;
         }
         public TrackingWeight Weight { get; }
+        public override string ToString()
+            => $"WS {Title} - {Weight}";
     }
 }
