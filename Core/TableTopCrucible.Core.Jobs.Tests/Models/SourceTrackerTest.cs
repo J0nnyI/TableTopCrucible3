@@ -116,6 +116,16 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         }
 
         [Test]
+        public void InstantClose()
+        {
+            Tracker.OnCompleted();
+            Viewer.JobState
+                .Should().Be(JobState.Done);
+            Viewer.CurrentProgress
+                .Should().Be((CurrentProgress) 1);
+        }
+
+        [Test]
         public void LateSubscriptions()
         {
             Tracker.SetTarget((TrackingTarget)5);

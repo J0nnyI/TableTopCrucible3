@@ -32,7 +32,7 @@ namespace TableTopCrucible.Core.Jobs.Models
                     _accumulatedProgressChanges,
                     TargetProgressChanges,
                     _completedChanges,
-                    (current, target, completed) => completed ? (CurrentProgress)target : current
+                    (current, target, completed) => completed || current > target ? (CurrentProgress)target : current
                 );
         }
 
@@ -59,14 +59,16 @@ namespace TableTopCrucible.Core.Jobs.Models
         private readonly BehaviorSubject<bool> _completedChanges = new(false);
 
         public IObservable<JobState> JobStateChanges => Observable.CombineLatest(
-            _accumulatedProgressChanges,
-            TargetProgressChanges,
-            _completedChanges,
+            _accumulatedProgressChanges.Do(x=>{}),
+            TargetProgressChanges.Do(x => { }),
+            _completedChanges.Do(x => { }),
             (current, target, completed) =>
             {
+                if (completed)
+                    return JobState.Done;
                 if (current == (TrackingTarget) 0)
                     return JobState.ToDo;
-                if (current >= target || completed)
+                if (current >= target)
                     return JobState.Done;
                 return JobState.InProgress;
             })

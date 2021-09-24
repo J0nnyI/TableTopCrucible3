@@ -178,9 +178,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
 
         [Test]
         [TestCase(10.0, 200.0, 30.0, 324.0)]
-        //[TestCase(nextrand, 200.0, 30.0, 324.0)]
-        [Repeat(5)]
-        public void MultiChild_Weighted([Random(1, 199, 1)] double weightA, [Random(1, 199, 1)] double targetA, [Random(1, 199, 1)] double weightB, [Random(1, 199, 1)] double targetB)
+        [TestCase(32465.45, 43265.32, 1234.13, 54678.45)]
+        public void MultiChild_Weighted(double weightA, double targetA, double weightB, double targetB)
         {
             var target = CompositeTracker.Target.Value;
             var totalWeight = weightA + weightB;
@@ -214,29 +213,83 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
 
         [Test]
         [Ignore("todo")]
+        public void NestedComposite()
+        {
+
+        }
+
+        [Test]
+        public void Todo_Todo()
+        {
+            var childA = Tracker.AddSingle();
+            var childB = Tracker.AddSingle();
+            Viewer.JobState
+                .Should().Be(JobState.ToDo);
+        }
+        [Test]
+        public void InProgress_InProgress()
+        {
+            var childA = Tracker.AddSingle(null, (TrackingTarget)2);
+            var childB = Tracker.AddSingle(null, (TrackingTarget)2);
+            childA.Increment();
+            childB.Increment();
+            Viewer.JobState
+                .Should().Be(JobState.InProgress);
+        }
+        [Test]
+        public void Done_Done()
+        {
+            var childA = Tracker.AddSingle();
+            var childB = Tracker.AddSingle();
+            childA.OnCompleted();
+            childB.OnCompleted();
+            Viewer.JobState
+                .Should().Be(JobState.Done);
+        }
+
+        [Test]
         public void Todo_Done()
         {
+            var childA = Tracker.AddSingle();
+            var childB = Tracker.AddSingle();
+            childA.OnCompleted();
+            childB.OnCompleted();
+            Viewer.JobState
+                .Should().Be(JobState.Done);
         }
 
         [Test]
-        [Ignore("todo")]
         public void Todo_InProgress()
         {
-
+            var childA = Tracker.AddSingle(null, (TrackingTarget)2);
+            var childB = Tracker.AddSingle();
+            childA.Increment();
+            Viewer.JobState
+                .Should().Be(JobState.InProgress);
         }
 
+
         [Test]
-        [Ignore("todo")]
         public void InProgress_Done()
         {
-
+            var childA = Tracker.AddSingle(null, (TrackingTarget)2);
+            var childB = Tracker.AddSingle();
+            childA.Increment();
+            childB.OnCompleted();
+            Viewer.JobState
+                .Should().Be(JobState.InProgress);
         }
 
         [Test]
-        [Ignore("todo")]
         public void Todo_InProgress_Done()
         {
-
+            var childA = Tracker.AddSingle();
+            var childB = Tracker.AddSingle();
+            var childC = Tracker.AddSingle();
+            childB.Increment();
+            childC.OnCompleted();
+            Viewer.JobState
+                .Should().Be(JobState.InProgress);
         }
     }
 }

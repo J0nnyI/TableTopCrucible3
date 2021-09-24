@@ -31,14 +31,14 @@ namespace TableTopCrucible.Core.Jobs.Models
         public Name Title { get; }
         public IObservable<JobState> JobStateChanges { get; }
 
-        public ICompositeTrackerController AddComposite(Name name, TrackingWeight weight = null)
+        public ICompositeTrackerController AddComposite(Name name = null, TrackingWeight weight = null)
         {
             var tracker = new WeightedCompositeTracker(name, weight);
             _trackerStack.OnNext(tracker);
             return tracker;
         }
 
-        public ISourceTrackerController AddSingle(Name name, TrackingTarget trackingTarget = null, TrackingWeight weight = null)
+        public ISourceTrackerController AddSingle(Name name = null, TrackingTarget trackingTarget = null, TrackingWeight weight = null)
         {
             var tracker = new WeightedSourceTracker(name, trackingTarget, weight);
             _trackerStack.OnNext(tracker);

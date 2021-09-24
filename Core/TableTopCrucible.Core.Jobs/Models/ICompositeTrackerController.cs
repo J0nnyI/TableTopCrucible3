@@ -12,7 +12,7 @@ namespace TableTopCrucible.Core.Jobs.Models
     // interface for managing a tracking collection
     public interface ICompositeTrackerController: ITrackingViewer
     {
-        ICompositeTrackerController AddComposite(Name name, TrackingWeight weight = null);
-        ISourceTrackerController AddSingle(Name name, TrackingTarget trackingTarget = null, TrackingWeight weight = null);
+        ICompositeTrackerController AddComposite(Name name = null, TrackingWeight weight = null);
+        ISourceTrackerController AddSingle(Name name = null, TrackingTarget trackingTarget = null, TrackingWeight weight = null);
     }
 }
