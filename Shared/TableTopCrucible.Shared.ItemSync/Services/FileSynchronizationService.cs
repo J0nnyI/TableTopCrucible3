@@ -56,7 +56,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         {
             this.ScanRunning = true;
 
-            var mainTracker = _progressTrackingService.CreateNewCompositeTracker((Name)"File Synchronization");
+            var mainTracker = _progressTrackingService.CreateCompositeTracker((Name)"File Synchronization");
 
             using var prepTracker = mainTracker.AddSingle((Name)"Preparation", (TrackingTarget)1);
             var deleteTracker = mainTracker.AddSingle((Name)"Delete Tracker", (TrackingTarget)1);

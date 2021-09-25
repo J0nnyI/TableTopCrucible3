@@ -51,7 +51,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Prepare.ApplicationEnvironment();
             this.progressService = Locator.Current.GetService<IProgressTrackingService>();
 
-            this.Tracker = progressService!.CreateNewCompositeTracker((Name)"testTracker");
+            this.Tracker = progressService!.CreateCompositeTracker((Name)"testTracker");
             Viewer = Tracker.Subscribe();
             _disposables = new CompositeDisposable(Viewer);
         }

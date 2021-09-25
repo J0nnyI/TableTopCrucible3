@@ -48,7 +48,7 @@ namespace TableTopCrucible.Core.Jobs.Models
         private readonly ReplaySubject<IWeightedTrackingViewer> _trackerStack = new();
         public IObservable<IWeightedTrackingViewer> TrackerStack => _trackerStack;
 
-        private IObservable<IEnumerable<IWeightedTrackingViewer>> trackerListChanges { get; }
+        private IObservable<IWeightedTrackingViewer[]> trackerListChanges { get; }
 
         public CompositeTracker(Name title)
         {
@@ -57,9 +57,9 @@ namespace TableTopCrucible.Core.Jobs.Models
 
             trackerListChanges = _trackerStack
                 .Scan(
-                    Enumerable.Empty<IWeightedTrackingViewer>(),
+                    Array.Empty<IWeightedTrackingViewer>(),
                     (list, tracker) =>
-                        list.Append(tracker)
+                        list.Append(tracker).ToArray()
                     );
 
             CurrentProgressChanges = _trackerStack.SelectMany(src =>
@@ -72,7 +72,7 @@ namespace TableTopCrucible.Core.Jobs.Models
                     {
                         var totalTrackerWeight = (TrackingWeight)trackerList.Sum(tracker => tracker.Weight.Value);
 
-                        return Observable.CombineLatest( // get the weight of all trackers parallel as list
+                        return // get the weight of all trackers parallel as list
                             trackerList.Select(tracker =>
                                 Observable.CombineLatest(
                                     tracker.CurrentProgressChanges,
@@ -101,7 +101,7 @@ namespace TableTopCrucible.Core.Jobs.Models
                                         return (WeightedCurrentProgress)(targetPercent * filledPercent);
                                     }
                                 )
-                            ), // sum the content of the list
+                            ).CombineLatest( // sum the content of the list
                             targets => (WeightedCurrentProgress)targets
                                 .Select(target => target.Value)
                                 .Sum());
@@ -111,31 +111,29 @@ namespace TableTopCrucible.Core.Jobs.Models
 
             // todo compositetracker: child-updates müssen prozentual betrachtet werden
             this.JobStateChanges = trackerListChanges.Select(trackerList =>
-                Observable.CombineLatest(
-                     trackerList.Select(
-                        tracker => tracker.JobStateChanges),
-                     jobStates =>
-                     {
-                         // for more performance and maybe reliability compare current to target value instead
-                         // no children? todo
-                         if (!jobStates.Any())
-                             return JobState.ToDo;
+                trackerList.Select(tracker => tracker.JobStateChanges)
+                    .CombineLatest(jobStates =>
+                    {
+                        // for more performance and maybe reliability compare current to target value instead
+                        // no children? todo
+                        if (!jobStates.Any())
+                            return JobState.ToDo;
 
-                         // any job in progress? => InProgress
-                         if (jobStates.Contains(JobState.InProgress))
-                             return JobState.InProgress;
+                        // any job in progress? => InProgress
+                        if (jobStates.Contains(JobState.InProgress))
+                            return JobState.InProgress;
 
-                         // all jobs done? => Done
-                         if (jobStates.All(state => state == JobState.Done))
-                             return JobState.Done;
+                        // all jobs done? => Done
+                        if (jobStates.All(state => state == JobState.Done))
+                            return JobState.Done;
 
-                         // all jobs todo? => todo
-                         if (jobStates.All(state => state == JobState.ToDo))
-                             return JobState.ToDo;
+                        // all jobs todo? => todo
+                        if (jobStates.All(state => state == JobState.ToDo))
+                            return JobState.ToDo;
 
-                         // remainder: (some todo, some done) => inProgress
-                         return JobState.InProgress;
-                     }
+                        // remainder: (some todo, some done) => inProgress
+                        return JobState.InProgress;
+                    }
                 )
             )
                 .Switch()
