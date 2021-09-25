@@ -1,9 +1,11 @@
-﻿using System.IO.Abstractions;
-using System.Linq;
-using System.Reflection;
-using AutoMapper;
+﻿using AutoMapper;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+
+using System.IO.Abstractions;
+using System.Linq;
+using System.Reflection;
 
 namespace TableTopCrucible.Core.TestHelper
 {

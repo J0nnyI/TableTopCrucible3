@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 using ValueOf;
 
 namespace TableTopCrucible.Core.Jobs.ValueTypes
@@ -12,8 +6,8 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
     // the current progress in percent (0.0 to 100.0)
     public class CurrentProgressPercent : ValueOf<double, CurrentProgressPercent>
     {
-        public static CurrentProgressPercent Min = new() {Value = 0};// cant use from since it runs through the validator which uses these constants
-        public static CurrentProgressPercent Max = new() {Value = 100};
+        public static CurrentProgressPercent Min = new() { Value = 0 };// cant use from since it runs through the validator which uses these constants
+        public static CurrentProgressPercent Max = new() { Value = 100 };
 
         public static explicit operator CurrentProgressPercent(double value)
             => From(value);

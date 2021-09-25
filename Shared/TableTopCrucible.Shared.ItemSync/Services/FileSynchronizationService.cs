@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices;
-using MoreLinq;
+﻿using MoreLinq;
 
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Security.Cryptography;
 using System.Windows.Input;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
@@ -60,7 +59,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
             using var prepTracker = mainTracker.AddSingle((Name)"Preparation", (TrackingTarget)1);
             var deleteTracker = mainTracker.AddSingle((Name)"Delete Tracker", (TrackingTarget)1);
-            var updateTracker = mainTracker.AddSingle((Name) "update Tracker", (TrackingTarget) 1, (TrackingWeight) 10);
+            var updateTracker = mainTracker.AddSingle((Name)"update Tracker", (TrackingTarget)1, (TrackingWeight)10);
 
             var fileGroups = getFileGroups(_directorySetupRepository.Data.Items);
             fileGroups.UpdateFileHashes();

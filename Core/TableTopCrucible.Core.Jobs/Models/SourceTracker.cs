@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
-using ReactiveUI;
+
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
@@ -59,14 +54,14 @@ namespace TableTopCrucible.Core.Jobs.Models
         private readonly BehaviorSubject<bool> _completedChanges = new(false);
 
         public IObservable<JobState> JobStateChanges => Observable.CombineLatest(
-            _accumulatedProgressChanges.Do(x=>{}),
+            _accumulatedProgressChanges.Do(x => { }),
             TargetProgressChanges.Do(x => { }),
             _completedChanges.Do(x => { }),
             (current, target, completed) =>
             {
                 if (completed)
                     return JobState.Done;
-                if (current == (TrackingTarget) 0)
+                if (current == (TrackingTarget)0)
                     return JobState.ToDo;
                 if (current >= target)
                     return JobState.Done;

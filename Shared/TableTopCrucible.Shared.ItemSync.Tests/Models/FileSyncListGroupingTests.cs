@@ -1,20 +1,17 @@
-﻿using NUnit.Framework;
-using TableTopCrucible.Shared.ItemSync.Models;
+﻿using FluentAssertions;
+
+using MoreLinq.Extensions;
+
+using NUnit.Framework;
+
+using Splat;
+
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Printing;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Navigation;
-using FluentAssertions;
-using Microsoft.Xaml.Behaviors.Core;
-using MoreLinq.Extensions;
-using Splat;
+
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
@@ -102,11 +99,11 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                     output.LastWrite.Should().Be(TargetLastWrite);
                     output.Id.Should().Be(OriginalId);
                 }
-                
+
                 return Unit.Default;
             }
 
-            
+
         }
 
 

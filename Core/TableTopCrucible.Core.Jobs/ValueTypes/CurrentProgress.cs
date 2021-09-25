@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.VisualBasic.CompilerServices;
-
+﻿
 using ValueOf;
 
 namespace TableTopCrucible.Core.Jobs.ValueTypes
@@ -22,7 +15,7 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
             => (WeightedCurrentProgress)((current?.Value ?? 0) * (weight?.Value ?? 0));
         public static explicit operator CurrentProgress(WeightedCurrentProgress current)
             => (CurrentProgress)current.Value;
-        public static explicit operator CurrentProgress( TrackingTarget current)
+        public static explicit operator CurrentProgress(TrackingTarget current)
             => (CurrentProgress)current.Value;
 
         public static bool operator ==(CurrentProgress cur, TrackingTarget target)

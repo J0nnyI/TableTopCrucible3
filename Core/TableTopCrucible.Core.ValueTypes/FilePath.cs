@@ -48,7 +48,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         protected override void Validate()
         {
-            if(Value == null)
+            if (Value == null)
                 throw new InvalidValueException(nameof(Value));
         }
 
@@ -87,7 +87,7 @@ namespace TableTopCrucible.Core.ValueTypes
             => (a is null && b is null) || a?.Equals(b) == true;
 
         public static bool operator !=(FilePath<Tthis> a, Tthis b)
-            => !(a==b);
+            => !(a == b);
     }
     /// <summary>
     /// the path of a file including its name

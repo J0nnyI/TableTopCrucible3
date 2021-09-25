@@ -2,14 +2,11 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
-using ReactiveUI;
-
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
 
 using Splat;
-using Splat.Microsoft.Extensions.DependencyInjection;
 
 using System;
 using System.IO;
@@ -33,8 +30,8 @@ namespace TableTopCrucible.Core.DependencyInjection
         {
             services.AddSingleton<IFileSystem, FileSystem>();
             services.TryAddEnumerable(DiAttributeCollector.GenerateServiceProvider());
-            if(includeAutomapper)
-            configureAutomapper(services);
+            if (includeAutomapper)
+                configureAutomapper(services);
             services.AddSingleton(typeof(ILoggerFactory), buildLoggingFactory());
 
         }

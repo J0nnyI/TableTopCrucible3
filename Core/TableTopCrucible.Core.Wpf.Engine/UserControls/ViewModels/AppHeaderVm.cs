@@ -2,6 +2,7 @@
 
 using System;
 using System.Reactive.Linq;
+using System.Windows.Shell;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
@@ -17,6 +18,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly INotificationService _notificationService;
+        private readonly TaskbarItemProgressState _progressService;
         public ViewModelActivator Activator { get; } = new();
 
         private ObservableAsPropertyHelper<string> _currentPageTitle;
@@ -36,10 +38,12 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
         public AppHeaderVm(
             INavigationService navigationService,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            TaskbarItemProgressState progressService)
         {
             _navigationService = navigationService;
             _notificationService = notificationService;
+            _progressService = progressService;
             this.WhenActivated(() =>
             {
                 this.NotificationCountChanges = _notificationService.Notifications.CountChanged.ObserveOn(RxApp.MainThreadScheduler);

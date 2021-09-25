@@ -90,7 +90,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Take(1)
                     .Select(_ =>
                         ObservableHelper.AnimateValue(
-                            100, 
+                            100,
                             0,
                             SettingsHelper.NotificationDelay,
                             RxApp.TaskpoolScheduler)
@@ -108,7 +108,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                         ObservableHelper.AnimateValue(
                             1,
                             .1,
-                            SettingsHelper.AnimationDuration, 
+                            SettingsHelper.AnimationDuration,
                             RxApp.TaskpoolScheduler)
                     )
                     .Finally(() =>_notificationService.RemoveNotification(Id))

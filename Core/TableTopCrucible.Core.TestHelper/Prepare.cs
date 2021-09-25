@@ -1,13 +1,15 @@
 ﻿
-using System.IO.Abstractions.TestingHelpers;
 using Microsoft.Extensions.Hosting;
+
 using ReactiveUI;
+
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
-using TableTopCrucible.Core.Database;
+
+using System.IO.Abstractions.TestingHelpers;
+
 using TableTopCrucible.Core.DependencyInjection;
-using TableTopCrucible.Core.Wpf.Engine;
 
 namespace TableTopCrucible.Core.TestHelper
 {

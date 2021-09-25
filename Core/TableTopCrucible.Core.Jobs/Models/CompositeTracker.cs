@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DynamicData;
+using DynamicData.Aggregation;
+
+using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
-
-using DynamicData;
-using DynamicData.Aggregation;
 
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;

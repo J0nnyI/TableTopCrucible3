@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Printing;
+﻿using ReactiveUI;
+
+using System;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-
-using ReactiveUI;
 
 using TableTopCrucible.Core.Jobs.Models;
 using TableTopCrucible.Core.Jobs.ValueTypes;

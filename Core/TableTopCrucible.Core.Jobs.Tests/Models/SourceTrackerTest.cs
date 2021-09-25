@@ -1,17 +1,15 @@
-﻿using NUnit.Framework;
-using TableTopCrucible.Core.Jobs.Models;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
+
+using ReactiveUI;
+
+using Splat;
+
 using System;
-using System.Collections.Generic;
-using System.IO.Packaging;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Splat;
+
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
@@ -122,7 +120,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Viewer.JobState
                 .Should().Be(JobState.Done);
             Viewer.CurrentProgress
-                .Should().Be((CurrentProgress) 1);
+                .Should().Be((CurrentProgress)1);
         }
 
         [Test]
@@ -142,7 +140,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
 
             Tracker.Increment();
 
-            lateProgress.Should().Be(Viewer.CurrentProgress).And.Be((CurrentProgress) 4);
+            lateProgress.Should().Be(Viewer.CurrentProgress).And.Be((CurrentProgress)4);
         }
     }
 }

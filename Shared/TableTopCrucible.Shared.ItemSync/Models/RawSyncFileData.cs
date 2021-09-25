@@ -1,14 +1,14 @@
-﻿using System;
+﻿using MoreLinq.Extensions;
+
+using ReactiveUI;
+
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Security.Cryptography;
-
-using MoreLinq.Extensions;
-
-using ReactiveUI;
 
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;

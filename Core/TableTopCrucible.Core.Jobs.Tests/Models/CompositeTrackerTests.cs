@@ -1,21 +1,16 @@
-﻿using NUnit.Framework;
-using TableTopCrucible.Core.Jobs.Models;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
+using NUnit.Framework.Internal;
+
+using ReactiveUI;
+
+using Splat;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Runtime;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Media.Animation;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using NUnit.Framework.Internal;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Splat;
+
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
@@ -320,7 +315,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Viewer.CurrentProgress.Value
                 .Should().Be(nestedCompViewer.CurrentProgress.Value)
                 .And.Be(CompositeTracker.Target.Value * 1.0);
-            
+
             lowerChildViewer.CurrentProgress.Value
                 .Should().Be(upperChildViewer.CurrentProgress.Value)
                 .And.Be(2);

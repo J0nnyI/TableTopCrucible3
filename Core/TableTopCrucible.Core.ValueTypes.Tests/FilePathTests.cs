@@ -1,15 +1,11 @@
-﻿using NUnit.Framework;
-using TableTopCrucible.Core.ValueTypes;
-using System;
-using System.Collections.Generic;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
+
+using Splat;
+
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Splat;
-using TableTopCrucible.Core.Helper;
 
 namespace TableTopCrucible.Core.ValueTypes.Tests
 {
@@ -19,7 +15,7 @@ namespace TableTopCrucible.Core.ValueTypes.Tests
         [SetUp]
         public void BeforeEach()
         {
-            Locator.CurrentMutable.Register< IFileSystem>(()=>new MockFileSystem());
+            Locator.CurrentMutable.Register<IFileSystem>(() => new MockFileSystem());
         }
 
         [Test()]

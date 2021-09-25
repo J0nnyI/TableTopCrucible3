@@ -1,16 +1,15 @@
-﻿using NUnit.Framework;
-using TableTopCrucible.Core.Jobs.Models;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
+
+using ReactiveUI;
+
+using Splat;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Splat;
+
 using TableTopCrucible.Core.Jobs.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
@@ -23,7 +22,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         private IProgressTrackingService? progressService;
 
         private CompositeDisposable _disposables;
-        
+
 
         [SetUp]
         public void BeforeEach()

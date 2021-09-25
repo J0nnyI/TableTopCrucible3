@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using DynamicData;
+﻿using DynamicData;
 using DynamicData.Binding;
+
 using ReactiveUI;
+
+using System;
+using System.Reactive.Linq;
+using System.Windows.Input;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Infrastructure.Repositories;
@@ -36,7 +34,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             _fileRepository = fileRepository;
             _fileSynchronizationService = fileSynchronizationService;
 
-            this.WhenActivated(()=>new []{
+            this.WhenActivated(() => new[]{
 
                 fileRepository
                     .DataChanges
