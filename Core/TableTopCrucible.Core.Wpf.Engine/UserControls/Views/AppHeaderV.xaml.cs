@@ -26,6 +26,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     .BindTo(this, v=>v.NotificationBadge.Badge),
 
                 ViewModel!.JobCountChanges
+                    .Select(c=>
+                        c > 0
+                        ? c.ToString()
+                        : string.Empty)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.JobBadge.Badge),
 
