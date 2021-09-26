@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Models;
 using TableTopCrucible.Core.Jobs.ValueTypes;
@@ -27,6 +28,18 @@ namespace TableTopCrucible.Core.Jobs.Services
     {
         public ProgressTrackingService()
         {
+            trackerList
+                .Connect()
+                .DisposeMany()
+                .Transform(tracker=>tracker
+                    .JobStateChanges
+                    .Where(state=>state == JobState.Done)
+                    .Delay(SettingsHelper.NotificationDelay)
+                    .Subscribe(_=>this.trackerList.Remove(tracker))
+                )
+                .DisposeMany()
+                .Subscribe();
+
             TotalProgress = trackerList.Connect()
                 .ToCollection()
                 .Select(trackers => trackers
