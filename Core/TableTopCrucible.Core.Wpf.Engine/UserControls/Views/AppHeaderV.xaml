@@ -49,15 +49,21 @@
                         UseLayoutRounding="True"
                         DockPanel.Dock="right">
                 <!--Show Jobs-->
-                <Button ToolTip="Show Jobs - Coming Soon"
-                        UseLayoutRounding="True"
-                        md:ButtonProgressAssist.Maximum="100"
-                        md:ButtonProgressAssist.Value="70"
-                        md:ButtonProgressAssist.IsIndicatorVisible="True"
-                        md:ButtonProgressAssist.IndicatorForeground="{StaticResource MaterialDesignLightForeground}"
-                >
-                    <md:PackIcon Kind="clock" />
-                </Button>
+                <md:Badged x:Name="JobBadge"
+                           BadgePlacementMode="BottomRight"
+                           ToolTip="Show Jobs - Coming Soon"
+                           Padding="0 -10 -20 -10"
+                           Margin="-20 0 20 0"
+                           VerticalAlignment="Center">
+                    <Button UseLayoutRounding="True"
+                            md:ButtonProgressAssist.Maximum="100"
+                            md:ButtonProgressAssist.Value="{Binding GlobalJobProgress.Value}"
+                            md:ButtonProgressAssist.IsIndicatorVisible="True"
+                            md:ButtonProgressAssist.IndicatorForeground="{StaticResource MaterialDesignLightForeground}"
+                    >
+                        <md:PackIcon Kind="clock" />
+                    </Button>
+                </md:Badged>
                 <!--notifications-->
                 <md:Badged x:Name="NotificationBadge"
                            ToolTip="Notifications - Coming Soon"

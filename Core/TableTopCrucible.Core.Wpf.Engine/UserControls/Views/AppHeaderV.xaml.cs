@@ -19,12 +19,20 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
             {
                 this.WhenAnyValue(v=>v.ViewModel)
                     .BindTo(this, v=>v.DataContext),
-                this.ViewModel.NotificationCountChanges
+
+                ViewModel!.NotificationCountChanges
                     .Select(count => count<=0?string.Empty:count.ToString())
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.NotificationBadge.Badge),
+
+                ViewModel!.JobCountChanges
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .BindTo(this, v=>v.JobBadge.Badge),
+
                 this.OneWayBind(ViewModel,
                     vm=>vm.CurrentPageTitle,
                     v=>v.CurrentPageTitle.Text),
+
                 this.Bind(ViewModel,
                     vm=>vm.IsNavigationbarExpanded,
                     v=>v.IsNavigationBarExpanded.IsChecked),
@@ -33,7 +41,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     vm => vm.IsNavigationbarExpanded,
                     v => v.IsNavigationBarExpanded.ToolTip,
                     (bool isExpanded) => isExpanded ? "Collapse Sidebar" : "Expand Sidebar"
-                ),
+                )
             });
         }
     }

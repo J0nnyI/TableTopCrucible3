@@ -16,18 +16,18 @@ namespace TableTopCrucible.Core.Jobs.Services
     public interface IProgressTrackingService
     {
         // creates a new tracker and adds it to the collection
-        public ICompositeTrackerController CreateCompositeTracker(Name title = null);
+        ICompositeTrackerController CreateCompositeTracker(Name title = null);
         // creates a new tracker and adds it to the collection
-        public ISourceTrackerController CreateSourceTracker(Name title = null, TrackingTarget target = null);
-        public IObservableList<ITrackingViewer> TrackerList { get; }
+        ISourceTrackerController CreateSourceTracker(Name title = null, TrackingTarget target = null);
+        IObservableList<ITrackingViewer> TrackerList { get; }
 
-        public IObservable<CurrentProgressPercent> CurrentProgress { get; }
+        IObservable<CurrentProgressPercent> TotalProgress { get; }
     }
     internal class ProgressTrackingService : IProgressTrackingService
     {
         public ProgressTrackingService()
         {
-            CurrentProgress = trackerList.Connect()
+            TotalProgress = trackerList.Connect()
                 .ToCollection()
                 .Select(trackers => trackers
                     .Select(tracker => tracker.GetCurrentProgressInPercent())
@@ -57,6 +57,6 @@ namespace TableTopCrucible.Core.Jobs.Services
 
         private readonly SourceList<ITrackingViewer> trackerList = new();
         public IObservableList<ITrackingViewer> TrackerList => trackerList.AsObservableList();
-        public IObservable<CurrentProgressPercent> CurrentProgress { get; }
+        public IObservable<CurrentProgressPercent> TotalProgress { get; }
     }
 }

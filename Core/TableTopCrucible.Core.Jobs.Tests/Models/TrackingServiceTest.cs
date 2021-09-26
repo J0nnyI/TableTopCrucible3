@@ -45,7 +45,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             var srcB = progressService!.CreateSourceTracker(null, (TrackingTarget)2);
 
             CurrentProgressPercent progress = null;
-            progressService.CurrentProgress.Subscribe(prog => progress = prog).DisposeWith(_disposables);
+            progressService.TotalProgress.Subscribe(prog => progress = prog).DisposeWith(_disposables);
 
             progress.Should().Be((CurrentProgressPercent)0);
             srcA.Increment();
@@ -63,7 +63,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             var srcA = progressService!.CreateSourceTracker(null, (TrackingTarget)2);
 
             CurrentProgressPercent progress = null;
-            progressService.CurrentProgress.Subscribe(prog => progress = prog).DisposeWith(_disposables);
+            progressService.TotalProgress.Subscribe(prog => progress = prog).DisposeWith(_disposables);
 
             progress.Should().Be((CurrentProgressPercent)0);
             srcA.Increment();
