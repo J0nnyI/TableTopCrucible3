@@ -84,7 +84,8 @@ namespace TableTopCrucible.Core.ValueTypes
                Value.ToLower().Equals(other.Value.ToLower());
 
         public static bool operator ==(FilePath<Tthis> a, Tthis b)
-            => (a is null && b is null) || a?.Equals(b) == true;
+            => (a is null && b is null) || // both null
+               (a is not null && b is not null && a.Equals(b)); // both filled
 
         public static bool operator !=(FilePath<Tthis> a, Tthis b)
             => !(a == b);

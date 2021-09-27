@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-
+using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
@@ -59,9 +59,9 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                 // create local file
                 if (FileState != FileState.Deleted)
                 {
-                    File.SetCreationTime(LastWrite);
                     File.GetDirectoryPath().Create();
                     File.WriteAllText(Content);
+                    File.SetCreationTime(LastWrite);
                 }
 
                 // new files do not have a model
@@ -125,7 +125,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             private void prepare()
             {
                 directorySetupRepository.AddOrUpdate(Directories.Select(dir => new DirectorySetup(dir, dir)));
-                fileRepository.AddOrUpdate(FileData.Select(file => file.Prepare()).ToArray());
+                fileRepository.AddOrUpdate(FileData.Select(file => file.Prepare()).Where(file=>file != null).ToArray());
             }
 
             private void evaluateResult()
@@ -165,11 +165,10 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
 
                 fileSyncService
                     .StartScan()
-                    .Select(_ => true)
-                    .Timeout(TestTimeout, Observable.Return(false))
-                    .Wait()
-                    .Should()
-                    .BeTrue("test run into timeout of " + TestTimeout);
+                    .OnDone()
+                    .Take(1)
+                    .Timeout(TestTimeout)
+                    .Wait();
 
                 evaluateResult();
             }
@@ -186,7 +185,6 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
         }
 
         [Test]
-        [Ignore("not implemented yet")]
         public void UpdateFileHashesTest()
         { // feature not implemented yet
             new TestSetup

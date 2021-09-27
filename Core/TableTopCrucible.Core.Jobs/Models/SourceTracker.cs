@@ -32,11 +32,13 @@ namespace TableTopCrucible.Core.Jobs.Models
         }
 
         public Name Title { get; }
-
+        private bool disposed = false;
         public void Dispose()
         {
-            if (!_completedChanges.Value)
-                OnCompleted();
+            if (disposed)
+                return;
+            disposed = true;
+            OnCompleted();
             _completedChanges.Dispose();
             _targetProgressChanges.Dispose();
             _increments.Dispose();
@@ -81,7 +83,10 @@ namespace TableTopCrucible.Core.Jobs.Models
             => _targetProgressChanges.OnNext(trackingTarget);
 
         public void Increment(ProgressIncrement increment)
-            => _increments.OnNext(increment ?? (ProgressIncrement)1);
+        {
+            lock (_increments)
+                _increments.OnNext(increment ?? (ProgressIncrement)1);
+        }
         public override string ToString()
             => $"S {Title}";
     }

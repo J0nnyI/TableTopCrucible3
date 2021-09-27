@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 
 using System;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -121,6 +122,9 @@ namespace TableTopCrucible.Core.Jobs.Helper
                 viewer.CurrentProgressChanges,
                 viewer.TargetProgressChanges,
                 CurrentProgressPercent.From);
+
+        public static IObservable<Unit> OnDone(this ITrackingViewer viewer)
+            => viewer.JobStateChanges.Where(x => x == JobState.Done).Select(_ => Unit.Default);
 
     }
 }

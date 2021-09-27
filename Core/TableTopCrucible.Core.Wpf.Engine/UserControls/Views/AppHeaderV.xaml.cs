@@ -21,7 +21,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     .BindTo(this, v=>v.DataContext),
 
                 ViewModel!.NotificationCountChanges
-                    .Select(count => count<=0?string.Empty:count.ToString())
+                    .Select(count => 
+                        count<=0 || count >= 100
+                            ? string.Empty
+                            : count.ToString())
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.NotificationBadge.Badge),
 

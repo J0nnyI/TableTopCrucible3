@@ -23,7 +23,9 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Path" DisplayMemberBinding="{Binding FileLocation}"/>
-                    <GridViewColumn Header="HashKey" DisplayMemberBinding="{Binding HashKey}"/>
+                    <GridViewColumn Header="HashKey"
+                                    DisplayMemberBinding="{Binding HashKey}"
+                                    Width="300"/>
                     <GridViewColumn Header="Last Write" DisplayMemberBinding="{Binding LastWrite}"/>
                 </GridView>
             </ListView.View>

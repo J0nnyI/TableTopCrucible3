@@ -23,6 +23,10 @@ namespace TableTopCrucible.Core.ValueTypes
         {
             return HashCode.Combine(base.GetHashCode(), Value.Item1, Value.Item2);
         }
+
+        public override string ToString()
+            => $"S: {FileSize} | H: {Hash}";
+
     }
 
 }

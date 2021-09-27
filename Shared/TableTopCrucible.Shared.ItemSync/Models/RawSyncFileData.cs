@@ -30,26 +30,23 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         {
             this.KnownFile = knownFile;
             FoundFile = foundFile;
+            this.foundFileInfo = FoundFile?.GetInfo();
             State = GetFileState();
-
-            this.foundFileInfo = FoundFile.GetInfo();
         }
         public ScannedFileData KnownFile { get; }
         public FilePath FoundFile { get; }
 
-        private BehaviorSubject<FileHashKey> _newHashKey { get; } = new(null);
-        public IObservable<FileHashKey> NewHashKeyChanges => _newHashKey.WhereNotNull();
+        public FileHashKey NewHashKey { get; private set; }
 
-        public FileHashKey CreateNewHashkey(HashAlgorithm algorithm = null)
+        public FileHashKey CreateNewHashKey(HashAlgorithm algorithm = null)
         {
-            if (this._newHashKey.Value != null)
-                return _newHashKey.Value;
+            if (this.NewHashKey!= null)
+                return NewHashKey;
 
             var hash = FileHashKey.From(
                 FileHash.Create(FoundFile, algorithm ?? new SHA512Managed()),
                 FileSize.From(foundFileInfo.Length));
-            this._newHashKey.OnNext(hash);
-            this._newHashKey.OnCompleted();
+            NewHashKey = hash;
             return hash;
         }
 
@@ -69,8 +66,8 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             return FileState.Updated;
         }
 
-        public ScannedFileData GetNewEntity()
-            => new(_newHashKey.Value, FoundFile, foundFileInfo.LastWriteTime, KnownFile?.Id);
+        public ScannedFileData GetNewFileEntity()
+            => new(NewHashKey, FoundFile, foundFileInfo.LastWriteTime, KnownFile?.Id);
     }
 
     internal class FileSyncListGrouping
@@ -78,6 +75,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         public IEnumerable<RawSyncFileData> NewFiles { get; }
         public IEnumerable<RawSyncFileData> UpdatedFiles { get; }
         public IEnumerable<RawSyncFileData> DeletedFiles { get; }
+        public IEnumerable<RawSyncFileData> UnchangedFiles { get; }
 
         public FileSyncListGrouping(IEnumerable<RawSyncFileData> files)
         {
@@ -97,25 +95,10 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             UpdatedFiles = groups.FirstOrDefault(g => g.Key == FileState.Updated)
                 ?.DistinctBy(dir => dir.FoundFile)
                 ?.ToArray() ?? Array.Empty<RawSyncFileData>();
-        }
 
-        public void UpdateFileHashes()
-        {
-            using var algorithm = new SHA512Managed();
-
-            NewFiles.Concat(UpdatedFiles).ToList().ForEach(file =>
-            {
-                file.CreateNewHashkey(algorithm);
-            });
-        }
-
-        public IObservable<RawSyncFileData> GetFileHashUpdateFeed()
-        {
-            return NewFiles
-                .Concat(UpdatedFiles)
-                .ToArray()
-                .ToObservable()
-                .Do(data => data.CreateNewHashkey());
+            UnchangedFiles = groups.FirstOrDefault(g => g.Key == FileState.Unchanged)
+                ?.DistinctBy(dir => dir.FoundFile)
+                ?.ToArray() ?? Array.Empty<RawSyncFileData>();
         }
     }
 }

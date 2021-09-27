@@ -17,7 +17,7 @@ namespace TableTopCrucible.Core.Jobs.Services
     public interface IProgressTrackingService
     {
         // creates a new tracker and adds it to the collection
-        ICompositeTrackerController CreateCompositeTracker(Name title = null);
+        ICompositeTrackerController CreateCompositeTracker(Name title);
         // creates a new tracker and adds it to the collection
         ISourceTrackerController CreateSourceTracker(Name title = null, TrackingTarget target = null);
         IObservableList<ITrackingViewer> TrackerList { get; }

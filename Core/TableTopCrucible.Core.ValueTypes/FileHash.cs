@@ -39,5 +39,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public override int GetHashCode()
             => HashCode.Combine(base.GetHashCode(), Value);
 
+        public override string ToString()
+            => BitConverter.ToString(Value, 0);
     }
 }
