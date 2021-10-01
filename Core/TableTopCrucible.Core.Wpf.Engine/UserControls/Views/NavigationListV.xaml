@@ -28,7 +28,6 @@
                     Value="Hand"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Height" Value="{StaticResource ButtonSize}"/>
-            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignLightForeground}"/>
             <Setter Property="Width" Value="{StaticResource ExpandedWidth}"/>
             <Style.Resources>
                 <Style TargetType="md:PackIcon">
@@ -88,7 +87,8 @@
 
     <md:ColorZone md:ShadowAssist.ShadowDepth="Depth2"
                   md:ShadowAssist.ShadowEdges="Right"
-                  Mode="PrimaryDark"
+                  Mode="Dark"
+                  Background="#FF3C3B3A"
                   VerticalAlignment="Stretch">
         <DockPanel VerticalAlignment="Stretch">
             <ListBox x:Name="UpperList"

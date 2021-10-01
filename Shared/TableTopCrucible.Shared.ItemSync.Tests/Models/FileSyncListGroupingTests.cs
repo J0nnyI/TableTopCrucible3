@@ -191,20 +191,20 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             {
                 Directories = new[]
                 {
-                    @"C:\first",
-                    @"C:\first\Unchanged",
+                    @"C:\First",
+                    @"C:\First\Unchanged",
                     @"C:\second",
                 },
                 FileData = new FileSetupData[]
                 {
-                    new(@"C:\first\New\A.stl", FileState.New),
-                    new(@"C:\first\New\B.stl", FileState.New),
-                    new(@"C:\first\Unchanged\A.stl", FileState.Unchanged),
-                    new(@"C:\first\Unchanged\B.stl", FileState.Unchanged),
-                    new(@"C:\first\Deleted\A.stl", FileState.Deleted),
-                    new(@"C:\first\Deleted\B.stl", FileState.Deleted),
-                    new(@"C:\first\Updated\A.stl", FileState.Updated),
-                    new(@"C:\first\Updated\B.stl", FileState.Updated),
+                    new(@"C:\First\New\A.stl", FileState.New),
+                    new(@"C:\First\New\B.stl", FileState.New),
+                    new(@"C:\First\Unchanged\A.stl", FileState.Unchanged),
+                    new(@"C:\First\Unchanged\B.stl", FileState.Unchanged),
+                    new(@"C:\First\Deleted\A.stl", FileState.Deleted),
+                    new(@"C:\First\Deleted\B.stl", FileState.Deleted),
+                    new(@"C:\First\Updated\A.stl", FileState.Updated),
+                    new(@"C:\First\Updated\B.stl", FileState.Updated),
                     new(@"C:\second\A.stl", FileState.New),
                     new(@"C:\second\B.stl", FileState.New),
                 },

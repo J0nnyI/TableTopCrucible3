@@ -7,10 +7,9 @@
         <!--<ResourceDictionary Source="pack://application:,,,/TableTopCrucible.Core.Wpf.Engine;component/ApplicationResources.xaml"/>-->
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <md:BundledTheme BaseTheme="Dark" 
-                                 PrimaryColor="BlueGrey" 
-                                 SecondaryColor="Cyan"
-                                 ColorAdjustment="{md:ColorAdjustment}" />
+                <md:CustomColorTheme PrimaryColor="#FFF19E27"
+                                     SecondaryColor="#FFF18528"
+                                     BaseTheme="Dark"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/TableTopCrucible.Core.Wpf.Engine;component/Themes/Dark.xaml" />
             </ResourceDictionary.MergedDictionaries>

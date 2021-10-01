@@ -21,7 +21,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     .BindTo(this, v=>v.DataContext),
 
                 ViewModel!.NotificationCountChanges
-                    .Select(count => 
+                    .Select(count =>
                         count<=0 || count >= 100
                             ? string.Empty
                             : count.ToString())
@@ -36,19 +36,22 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.JobBadge.Badge),
 
-                this.OneWayBind(ViewModel,
-                    vm=>vm.CurrentPageTitle,
-                    v=>v.CurrentPageTitle.Text),
+                ViewModel!.CurrentPageTitleChanges
+                    .Select(title=>title.Value)
+                    .BindTo(this, v=>v.CurrentPageTitle.Text),
 
                 this.Bind(ViewModel,
                     vm=>vm.IsNavigationbarExpanded,
                     v=>v.IsNavigationBarExpanded.IsChecked),
 
+                ViewModel!.GlobalJobProgressChanges
+                    .Select(progress=>progress.Value)
+                    .BindTo(this, v=>v.JobProgress.Value),
+
                 this.OneWayBind(ViewModel,
                     vm => vm.IsNavigationbarExpanded,
                     v => v.IsNavigationBarExpanded.ToolTip,
-                    (bool isExpanded) => isExpanded ? "Collapse Sidebar" : "Expand Sidebar"
-                )
+                    (bool isExpanded) => isExpanded ? "Collapse Sidebar" : "Expand Sidebar"),
             });
         }
     }

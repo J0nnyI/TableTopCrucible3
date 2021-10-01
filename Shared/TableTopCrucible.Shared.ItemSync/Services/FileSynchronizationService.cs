@@ -127,7 +127,6 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                                 item.CreateNewHashKey();
                                 hashingTracker.Increment();
                                 updatePipeline.OnNext(item);
-                                Thread.Sleep(TimeSpan.FromSeconds(2));
                             });
                     }
                     else
