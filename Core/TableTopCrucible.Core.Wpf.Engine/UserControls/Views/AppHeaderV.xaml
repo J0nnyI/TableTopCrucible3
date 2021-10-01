@@ -66,7 +66,7 @@
                 <!--Show Jobs-->
                 <md:Badged x:Name="JobBadge"
                            BadgePlacementMode="BottomRight"
-                           ToolTip="Show Jobs - Coming Soon"
+                           ToolTip="Show Jobs"
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 20 0"
                            VerticalAlignment="Center"
@@ -82,7 +82,8 @@
                                      Height="50"
                                      Maximum="100"
                                      UseLayoutRounding="True"/>
-                        <Button UseLayoutRounding="True"
+                        <Button x:Name="ShowJobSidebar"
+                                UseLayoutRounding="True"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 md:RippleAssist.IsDisabled="False"
@@ -94,12 +95,13 @@
                 </md:Badged>
                     <!--notifications-->
                 <md:Badged x:Name="NotificationBadge"
-                           ToolTip="Notifications - Coming Soon"
+                           ToolTip="Notifications"
                            BadgePlacementMode="BottomRight"
                            VerticalAlignment="Center"
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 0 0">
-                        <Button Content="{md:PackIcon Bell}"/>
+                        <Button Content="{md:PackIcon Bell}"
+                                x:Name="ShowNotificationSidebar"/>
                     </md:Badged>
 
             </StackPanel>

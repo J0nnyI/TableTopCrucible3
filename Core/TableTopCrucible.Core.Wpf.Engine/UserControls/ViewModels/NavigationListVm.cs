@@ -83,7 +83,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         {
             _navigationService = navigationService;
             this.WhenActivated(() => new[]{
-                this.WhenAnyValue(vm=>vm._navigationService.IsSidebarExpanded)
+                this.WhenAnyValue(vm=>vm._navigationService.IsNavigationExpanded)
                     .ToProperty(this, vm=>vm.IsExpanded, out _isExpanded),
 
                 // bind listContent
@@ -186,9 +186,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     )
                     .Select(m=>m.Page)
                     .WhereNotNull()
-                    .BindTo(navigationService, srv=>srv.CurrentPage),
+                    .BindTo(navigationService, srv=>srv.ActiveWorkarea),
 
-                this.WhenAnyValue(vm=>vm._navigationService.CurrentPage)
+                this.WhenAnyValue(vm=>vm._navigationService.ActiveWorkarea)
                     .WhereNotNull()
                     .Subscribe(selection =>
                     {

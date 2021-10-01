@@ -19,20 +19,54 @@
                                   DockPanel.Dock="Top"/>
             <rx:ViewModelViewHost x:Name="NavigationList"
                                   DockPanel.Dock="Left"/>
-            <md:ColorZone VerticalAlignment="Stretch"
-                          Background="{DynamicResource WorkspaceBackground}"
-                          >
-                <Grid>
-                    <rx:ViewModelViewHost x:Name="MainContainer"/>
-                    <rx:ViewModelViewHost x:Name="NotificationList"
-                                          VerticalAlignment="Top"
-                                          HorizontalAlignment="Right"
-                                          Margin="0 16 0 0"
-                                          MinWidth="700"
-                                          MaxWidth="500"
-                                          Opacity=".7"/>
-                </Grid>
-            </md:ColorZone>
+            <md:DrawerHost x:Name="DrawerHost"
+                           OpenMode="Standard">
+                <md:DrawerHost.RightDrawerContent>
+                    <Grid x:Name="SidebarGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Name="SidebarTitle"
+                                   Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                                   Margin="24 12 0 24"
+                                   Grid.Row="0"
+                                   Grid.Column="0"/>
+                        <Button x:Name="CloseSidebar"
+                                Content="{md:PackIcon Kind=Close}"
+                                Style="{StaticResource MaterialDesignIconButton}"
+                                Margin="12"
+                                VerticalAlignment="Center"
+                                Grid.Row="0"
+                                Grid.Column="1"/>
+                        <rx:ViewModelViewHost x:Name="SidebarContainer"
+                                              Grid.Row="1"
+                                              Grid.Column="0"
+                                              Grid.ColumnSpan="2"
+                                              Margin="8 0 0 0"/>
+                    </Grid>
+                </md:DrawerHost.RightDrawerContent>
+
+
+                <md:ColorZone VerticalAlignment="Stretch"
+                              Background="{DynamicResource WorkspaceBackground}"
+                >
+                    <Grid>
+                        <rx:ViewModelViewHost x:Name="MainContainer"/>
+                        <rx:ViewModelViewHost x:Name="NotificationList"
+                                              VerticalAlignment="Top"
+                                              HorizontalAlignment="Right"
+                                              Margin="0 16 0 0"
+                                              MinWidth="700"
+                                              MaxWidth="500"
+                                              Opacity=".7"/>
+                    </Grid>
+                </md:ColorZone>
+            </md:DrawerHost>
         </DockPanel>
     </md:DialogHost>
 </rx:ReactiveUserControl>

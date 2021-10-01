@@ -48,20 +48,28 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.JobProgress.Visibility),
 
-                this.Bind(ViewModel,
-                    vm=>vm.IsNavigationbarExpanded,
-                    v=>v.IsNavigationBarExpanded.IsChecked,
-                    RxApp.MainThreadScheduler),
-
                 ViewModel!.GlobalJobProgressChanges
                     .Select(progress=>progress.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.JobProgress.Value),
 
+                this.Bind(ViewModel,
+                    vm=>vm.IsNavigationbarExpanded,
+                    v=>v.IsNavigationBarExpanded.IsChecked,
+                    RxApp.MainThreadScheduler),
+
                 this.OneWayBind(ViewModel,
                     vm => vm.IsNavigationbarExpanded,
                     v => v.IsNavigationBarExpanded.ToolTip,
                     isExpanded => isExpanded ? "Collapse Sidebar" : "Expand Sidebar"),
+
+                this.OneWayBind(ViewModel,
+                    vm=>vm.ShowJobSidebarCommand,
+                    v=>v.ShowJobSidebar.Command),
+
+                this.OneWayBind(ViewModel,
+                    vm=>vm.ShowNotificationSidebar,
+                    v=>v.ShowNotificationSidebar.Command),
             });
         }
     }

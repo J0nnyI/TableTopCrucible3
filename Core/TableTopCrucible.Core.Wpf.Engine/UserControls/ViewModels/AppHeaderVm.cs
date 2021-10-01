@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Windows.Input;
 using System.Windows.Shell;
 using DynamicData;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -34,10 +35,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 .TrackerList
                 .Connect()
                 .ToCollection()
-                .Select(jobs=>jobs
-                    .Select(job=>job.JobStateChanges).CombineLatest())
+                .Select(jobs => jobs
+                    .Select(job => job.JobStateChanges).CombineLatest())
                 .Switch()
-                .Select(states=>states.Count(state=>state != JobState.Done));
+                .Select(states => states.Count(state => state != JobState.Done));
 
         private ObservableAsPropertyHelper<bool> _isNavigationbarExpanded;
         public bool IsNavigationbarExpanded
@@ -45,28 +46,37 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             get => _isNavigationbarExpanded.Value;
             set
             {
-                if (_navigationService.IsSidebarExpanded != value)
-                    _navigationService.IsSidebarExpanded = value;
+                if (_navigationService.IsNavigationExpanded != value)
+                    _navigationService.IsNavigationExpanded = value;
             }
         }
+
+        public ICommand ShowJobSidebarCommand { get; private set; }
+        public ICommand ShowNotificationSidebar { get; private set; }
 
         public AppHeaderVm(
             INavigationService navigationService,
             INotificationService notificationService,
-            IProgressTrackingService progressService)
+            IProgressTrackingService progressService,
+            INotificationList notificationList,
+            IJobQueue jobQueue)
         {
             _navigationService = navigationService;
             _notificationService = notificationService;
             _progressService = progressService;
-            CurrentPageTitleChanges = this.WhenAnyValue(vm => vm._navigationService.CurrentPage.Title);
+            CurrentPageTitleChanges = this.WhenAnyValue(vm => vm._navigationService.ActiveWorkarea.Title);
 
             this.WhenActivated(() =>
             {
                 this.NotificationCountChanges = _notificationService.Notifications.CountChanged.ObserveOn(RxApp.MainThreadScheduler);
                 return new IDisposable[]
                 {
-                    this.WhenAnyValue(vm => vm._navigationService.IsSidebarExpanded)
-                        .ToProperty(this, vm => vm.IsNavigationbarExpanded, out _isNavigationbarExpanded)
+                    this.WhenAnyValue(vm => vm._navigationService.IsNavigationExpanded)
+                        .ToProperty(this, vm => vm.IsNavigationbarExpanded, out _isNavigationbarExpanded),
+                    ReactiveCommandHelper.Create(()=>_navigationService.ActiveSidebar = notificationList,
+                        cmd=>ShowNotificationSidebar = cmd),
+                    ReactiveCommandHelper.Create(()=>_navigationService.ActiveSidebar = jobQueue,
+                        cmd=>ShowJobSidebarCommand = cmd),
                 };
             });
         }

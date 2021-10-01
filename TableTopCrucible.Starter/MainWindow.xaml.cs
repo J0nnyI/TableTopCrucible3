@@ -25,9 +25,9 @@ namespace TableTopCrucible.Starter
             var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
 
             if (directorySetupRepository.Data.Count == 0)
-                navigationService.CurrentPage = Locator.Current.GetService<IDirectorySetupPage>();
+                navigationService.ActiveWorkarea = Locator.Current.GetService<IDirectorySetupPage>();
             else
-                navigationService.CurrentPage = Locator.Current.GetService<ILibraryPage>();
+                navigationService.ActiveWorkarea = Locator.Current.GetService<ILibraryPage>();
         }
     }
 }
