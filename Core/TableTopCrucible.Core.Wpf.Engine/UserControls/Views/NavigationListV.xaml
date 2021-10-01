@@ -67,11 +67,6 @@
                     </DataTrigger.ExitActions>
                 </DataTrigger>
             </Style.Triggers>
-
-
-
-
-
         </Style>
         <DataTemplate x:Key="ItemTemplate"
                       DataType="m:INavigationPage">
@@ -88,7 +83,7 @@
     <md:ColorZone md:ShadowAssist.ShadowDepth="Depth2"
                   md:ShadowAssist.ShadowEdges="Right"
                   Mode="Dark"
-                  Background="#FF3C3B3A"
+                  Background="{DynamicResource SidebarBackground}"
                   VerticalAlignment="Stretch">
         <DockPanel VerticalAlignment="Stretch">
             <ListBox x:Name="UpperList"

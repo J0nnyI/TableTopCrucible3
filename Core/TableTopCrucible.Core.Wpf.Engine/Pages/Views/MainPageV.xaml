@@ -19,16 +19,20 @@
                                   DockPanel.Dock="Top"/>
             <rx:ViewModelViewHost x:Name="NavigationList"
                                   DockPanel.Dock="Left"/>
-            <Grid>
-                <rx:ViewModelViewHost x:Name="MainContainer"/>
-                <rx:ViewModelViewHost x:Name="NotificationList"
-                                      VerticalAlignment="Top"
-                                      HorizontalAlignment="Right"
-                                      Margin="0 16 0 0"
-                                      MinWidth="700"
-                                      MaxWidth="500"
-                                      Opacity=".7"/>
-            </Grid>
+            <md:ColorZone VerticalAlignment="Stretch"
+                          Background="{DynamicResource WorkspaceBackground}"
+                          >
+                <Grid>
+                    <rx:ViewModelViewHost x:Name="MainContainer"/>
+                    <rx:ViewModelViewHost x:Name="NotificationList"
+                                          VerticalAlignment="Top"
+                                          HorizontalAlignment="Right"
+                                          Margin="0 16 0 0"
+                                          MinWidth="700"
+                                          MaxWidth="500"
+                                          Opacity=".7"/>
+                </Grid>
+            </md:ColorZone>
         </DockPanel>
     </md:DialogHost>
 </rx:ReactiveUserControl>

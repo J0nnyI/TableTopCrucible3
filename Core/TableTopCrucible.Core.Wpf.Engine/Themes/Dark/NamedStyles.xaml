@@ -7,6 +7,9 @@
     <SolidColorBrush x:Key="BackgroundWarning" Color="#FFEB3B"/>
     <SolidColorBrush x:Key="BackgroundError" Color="#E64A19"/>
     <SolidColorBrush x:Key="BackgroundInfo" Color="#0091EA"/>
+    <SolidColorBrush x:Key="HeaderBackground" Color="#242320"/>
+    <SolidColorBrush x:Key="SidebarBackground" Color="#302f2d"/>
+    <SolidColorBrush x:Key="WorkspaceBackground" Color="#3d3b39"/>
 
     <!--<Style x:Key="MainpageTitle"
            TargetType="TextBlock"

@@ -1,9 +1,10 @@
 ﻿using ReactiveUI;
 
 using System;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Shell;
-
+using DynamicData;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
@@ -28,7 +29,15 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public IObservable<Name> CurrentPageTitleChanges { get; }
         public IObservable<int> NotificationCountChanges { get; private set; }
         public IObservable<CurrentProgressPercent> GlobalJobProgressChanges => _progressService.TotalProgress;
-        public IObservable<int> JobCountChanges => _progressService.TrackerList.CountChanged;
+        public IObservable<int> JobCountChanges =>
+            _progressService
+                .TrackerList
+                .Connect()
+                .ToCollection()
+                .Select(jobs=>jobs
+                    .Select(job=>job.JobStateChanges).CombineLatest())
+                .Switch()
+                .Select(states=>states.Count(state=>state != JobState.Done));
 
         private ObservableAsPropertyHelper<bool> _isNavigationbarExpanded;
         public bool IsNavigationbarExpanded

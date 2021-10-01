@@ -10,11 +10,11 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
     internal class SourceTracker : ISourceTrackerController, ITrackingViewer
     {
 
-        public SourceTracker(Name title, TargetProgress targetProgress)
+        public SourceTracker(Name title, TargetProgress trackingTarget)
         {
             this.Title = title;
-            if (targetProgress != null)
-                SetTarget(targetProgress);
+            if (trackingTarget != null)
+                SetTarget(trackingTarget);
 
             _accumulatedProgressChanges =
                 _increments
@@ -78,8 +78,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         private readonly BehaviorSubject<TargetProgress> _targetProgressChanges = new((TargetProgress)1);
         public IObservable<TargetProgress> TargetProgressChanges => _targetProgressChanges.AsObservable();
 
-        public void SetTarget(TargetProgress targetProgress)
-            => _targetProgressChanges.OnNext(targetProgress);
+        public void SetTarget(TargetProgress trackingTarget)
+            => _targetProgressChanges.OnNext(trackingTarget);
 
         public void Increment(ProgressIncrement increment)
         {
@@ -92,7 +92,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
 
     internal class WeightedSourceTracker : SourceTracker, IWeightedTrackingViewer
     {
-        public WeightedSourceTracker(Name title, TargetProgress targetProgress, JobWeight weight) : base(title, tracktargetProgress      {
+        public WeightedSourceTracker(Name title, TargetProgress trackingTarget, JobWeight weight) : base(title, trackingTarget)
+        {
             this.Weight = weight ?? JobWeight.Default;
         }
         public JobWeight Weight { get; }

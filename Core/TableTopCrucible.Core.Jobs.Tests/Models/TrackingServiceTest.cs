@@ -54,7 +54,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             srcA.Increment();
             progress.Should().Be((CurrentProgressPercent)75);
             srcB.Increment();
-            progress.Should().Be((CurrentProgressPercent)100);
+            progress.Should().Be((CurrentProgressPercent)0);
         }
         [Test]
         public void TotalProgress_LateAdds()
@@ -76,7 +76,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             srcA.Increment();
             progress.Should().Be((CurrentProgressPercent)75);
             srcB.Increment();
-            progress.Should().Be((CurrentProgressPercent)100);
+            progress.Should().Be((CurrentProgressPercent)0);
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using ReactiveUI;
+﻿using System;
+using ReactiveUI;
 
 using System.Linq;
 using System.Reactive.Linq;
-
+using System.Windows;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
@@ -18,6 +19,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(v=>v.ViewModel)
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.DataContext),
 
                 ViewModel!.NotificationCountChanges
@@ -38,20 +40,28 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 
                 ViewModel!.CurrentPageTitleChanges
                     .Select(title=>title.Value)
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.CurrentPageTitle.Text),
+
+                ViewModel!.GlobalJobProgressChanges
+                    .Select(progress=> (progress?.Value ?? 0) < 100 ? Visibility.Visible : Visibility.Hidden)
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .BindTo(this, v=>v.JobProgress.Visibility),
 
                 this.Bind(ViewModel,
                     vm=>vm.IsNavigationbarExpanded,
-                    v=>v.IsNavigationBarExpanded.IsChecked),
+                    v=>v.IsNavigationBarExpanded.IsChecked,
+                    RxApp.MainThreadScheduler),
 
                 ViewModel!.GlobalJobProgressChanges
                     .Select(progress=>progress.Value)
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.JobProgress.Value),
 
                 this.OneWayBind(ViewModel,
                     vm => vm.IsNavigationbarExpanded,
                     v => v.IsNavigationBarExpanded.ToolTip,
-                    (bool isExpanded) => isExpanded ? "Collapse Sidebar" : "Expand Sidebar"),
+                    isExpanded => isExpanded ? "Collapse Sidebar" : "Expand Sidebar"),
             });
         }
     }

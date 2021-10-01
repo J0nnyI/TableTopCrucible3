@@ -51,7 +51,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                         )
                     )
                 )
-                .Switch();
+                .Switch()
+                .DistinctUntilChanged();
         }
         public ICompositeTrackerController CreateCompositeTracker(Name title = null)
         {

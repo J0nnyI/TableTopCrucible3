@@ -17,6 +17,8 @@
                     Value="25"/>
             <Setter Property="Height"
                     Value="25"/>
+            <Setter Property="Foreground"
+                    Value="{DynamicResource MaterialDesignDarkForeground}"/>
         </Style>
         <Style TargetType="Button" 
                BasedOn="{StaticResource MaterialDesignFloatingActionMiniButton}">
@@ -28,6 +30,12 @@
                     Value="Transparent"/>
             <Setter Property="BorderBrush"
                     Value="Transparent"/>
+            <Setter Property="Foreground"
+                    Value="{DynamicResource MaterialDesignDarkForeground}"/>
+        </Style>
+        <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignActionToggleButton}">
+            <Setter Property="Foreground"
+                    Value="{DynamicResource MaterialDesignDarkForeground}"/>
         </Style>
     </UserControl.Resources>
     <md:ColorZone Padding="16 0"
@@ -35,13 +43,13 @@
                   VerticalAlignment="Stretch"
                   md:ShadowAssist.ShadowDepth="Depth2"
                   Mode="Custom"
-                  Background="#FF2E2D2C">
+                  Background="{DynamicResource HeaderBackground}"
+                  Foreground="{DynamicResource MaterialDesignDarkForeground}">
         <DockPanel UseLayoutRounding="True">
             <!--   Left   -->
             <StackPanel Orientation="Horizontal"
                         DockPanel.Dock="Left">
                 <ToggleButton x:Name="IsNavigationBarExpanded"
-                              Style="{StaticResource MaterialDesignActionToggleButton}"
                               md:ToggleButtonAssist.OnContent="{md:PackIcon Backburger, Size=25}"
                               Cursor="Hand"
                               Background="Transparent"
@@ -61,7 +69,9 @@
                            ToolTip="Show Jobs - Coming Soon"
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 20 0"
-                           VerticalAlignment="Center">
+                           VerticalAlignment="Center"
+                           Cursor="Hand"
+                >
                     <Grid>
                         <!--using the internal button progress bars creates background color which cant be removed-->
                         <Button UseLayoutRounding="True"
