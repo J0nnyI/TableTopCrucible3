@@ -1,9 +1,8 @@
 ﻿using System;
-
-using TableTopCrucible.Core.Jobs.ValueTypes;
+using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.Models
+namespace TableTopCrucible.Core.Jobs.ProgressTracking.Models
 {
     // interface for getting the progress of a source tracker or tracker collection
     public interface ITrackingViewer

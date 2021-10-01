@@ -12,8 +12,9 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using TableTopCrucible.Core.Jobs.Helper;
-using TableTopCrucible.Core.Jobs.Services;
-using TableTopCrucible.Core.Jobs.ValueTypes;
+using TableTopCrucible.Core.Jobs.ProgressTracking.Models;
+using TableTopCrucible.Core.Jobs.ProgressTracking.Services;
+using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 

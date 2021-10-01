@@ -9,9 +9,8 @@ using Splat;
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
-using TableTopCrucible.Core.Jobs.Services;
-using TableTopCrucible.Core.Jobs.ValueTypes;
+using TableTopCrucible.Core.Jobs.ProgressTracking.Services;
+using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 
 namespace TableTopCrucible.Core.Jobs.Models.Tests

@@ -1,7 +1,7 @@
 ﻿
 using ValueOf;
 
-namespace TableTopCrucible.Core.Jobs.ValueTypes
+namespace TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes
 {
     public class CurrentProgress : ValueOf<double, CurrentProgress>
     {

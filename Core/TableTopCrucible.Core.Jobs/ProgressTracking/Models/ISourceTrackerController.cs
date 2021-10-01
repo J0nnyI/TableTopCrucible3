@@ -1,8 +1,7 @@
 ﻿using System;
+using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
 
-using TableTopCrucible.Core.Jobs.ValueTypes;
-
-namespace TableTopCrucible.Core.Jobs.Models
+namespace TableTopCrucible.Core.Jobs.ProgressTracking.Models
 {
     // controls a single source tracker
     // dispose completes the tracking, regardless of the current progress

@@ -1,6 +1,6 @@
 ﻿using ValueOf;
 
-namespace TableTopCrucible.Core.Jobs.ValueTypes
+namespace TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes
 {
     public class TrackingWeight : ValueOf<double, TrackingWeight>
     {

@@ -1,7 +1,7 @@
-﻿using TableTopCrucible.Core.Jobs.ValueTypes;
+﻿using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.Models
+namespace TableTopCrucible.Core.Jobs.ProgressTracking.Models
 {
     // interface for managing a tracking collection
     public interface ICompositeTrackerController : ITrackingViewer

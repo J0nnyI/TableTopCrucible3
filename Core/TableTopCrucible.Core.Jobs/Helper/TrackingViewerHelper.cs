@@ -5,9 +5,8 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
-using TableTopCrucible.Core.Jobs.Models;
-using TableTopCrucible.Core.Jobs.ValueTypes;
+using TableTopCrucible.Core.Jobs.ProgressTracking.Models;
+using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Helper

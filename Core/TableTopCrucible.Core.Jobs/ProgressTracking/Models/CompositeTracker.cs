@@ -1,15 +1,11 @@
-﻿using DynamicData;
-using DynamicData.Aggregation;
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-
-using TableTopCrucible.Core.Jobs.ValueTypes;
+using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.Models
+namespace TableTopCrucible.Core.Jobs.ProgressTracking.Models
 {
     // tracks a composite progress and returns the weighted total progress
     internal class CompositeTracker : ICompositeTrackerController, ITrackingViewer

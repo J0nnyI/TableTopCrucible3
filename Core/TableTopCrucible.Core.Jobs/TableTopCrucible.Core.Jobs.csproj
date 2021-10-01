@@ -15,4 +15,8 @@
     <PackageReference Include="ReactiveUI.Fody" Version="16.2.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="JobQueue\" />
+  </ItemGroup>
+
 </Project>

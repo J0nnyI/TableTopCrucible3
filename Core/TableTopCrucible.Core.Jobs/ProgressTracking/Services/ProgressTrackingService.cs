@@ -1,17 +1,15 @@
-﻿using DynamicData;
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
-
+using DynamicData;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
-using TableTopCrucible.Core.Jobs.Models;
-using TableTopCrucible.Core.Jobs.ValueTypes;
+using TableTopCrucible.Core.Jobs.ProgressTracking.Models;
+using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.Services
+namespace TableTopCrucible.Core.Jobs.ProgressTracking.Services
 {
     [Singleton(typeof(ProgressTrackingService))]
     public interface IProgressTrackingService

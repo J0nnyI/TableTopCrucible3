@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-
-using TableTopCrucible.Core.Jobs.ValueTypes;
+using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.Models
+namespace TableTopCrucible.Core.Jobs.ProgressTracking.Models
 {
     // tracks a single progress
     internal class SourceTracker : ISourceTrackerController, ITrackingViewer
