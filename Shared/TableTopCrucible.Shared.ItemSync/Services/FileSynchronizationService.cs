@@ -16,9 +16,9 @@ using System.Windows.Input;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Models;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Services;
-using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
+using TableTopCrucible.Core.Jobs.Progression.Models;
+using TableTopCrucible.Core.Jobs.Progression.Services;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
@@ -68,9 +68,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 .CreateCompositeTracker(
                     (Name)"File Synchronization"
                 );
-            var stepTracker = totalProgress.AddSingle((Name)"Total", (TrackingTarget)1, (TrackingWeight)1);
-            var hashingTracker = totalProgress.AddSingle((Name)"hashing", null, (TrackingWeight)10);
-            var updateTracker = totalProgress.AddSingle((Name)"update", null, (TrackingWeight)3);
+            var stepTracker = totalProgress.AddSingle((Name)"Total", (TargetProgress)1, (JobWeight)1);
+            var hashingTracker = totalProgress.AddSingle((Name)"hashing", null, (JobWeight)10);
+            var updateTracker = totalProgress.AddSingle((Name)"update", null, (JobWeight)3);
 
             totalProgress
                 .OnDone()
@@ -101,8 +101,8 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
                     if (filesToHash.Length > 0)
                     {
-                        hashingTracker.SetTarget((TrackingTarget)filesToHash.Length);
-                        updateTracker.SetTarget((TrackingTarget)filesToHash.Length);
+                        hashingTracker.SetTarget((TargetProgress)filesToHash.Length);
+                        updateTracker.SetTarget((TargetProgress)filesToHash.Length);
 
                         var updatePipeline = new Subject<RawSyncFileData>();
 

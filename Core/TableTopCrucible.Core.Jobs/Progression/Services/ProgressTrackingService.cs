@@ -5,11 +5,11 @@ using DynamicData;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Models;
-using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
+using TableTopCrucible.Core.Jobs.Progression.Models;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.ProgressTracking.Services
+namespace TableTopCrucible.Core.Jobs.Progression.Services
 {
     [Singleton(typeof(ProgressTrackingService))]
     public interface IProgressTrackingService
@@ -17,7 +17,7 @@ namespace TableTopCrucible.Core.Jobs.ProgressTracking.Services
         // creates a new tracker and adds it to the collection
         ICompositeTrackerController CreateCompositeTracker(Name title);
         // creates a new tracker and adds it to the collection
-        ISourceTrackerController CreateSourceTracker(Name title = null, TrackingTarget target = null);
+        ISourceTrackerController CreateSourceTracker(Name title = null, TargetProgress target = null);
         IObservableList<ITrackingViewer> TrackerList { get; }
 
         IObservable<CurrentProgressPercent> TotalProgress { get; }
@@ -59,7 +59,7 @@ namespace TableTopCrucible.Core.Jobs.ProgressTracking.Services
             trackerList.Add(tracker);
             return tracker;
         }
-        public ISourceTrackerController CreateSourceTracker(Name title = null, TrackingTarget target = null)
+        public ISourceTrackerController CreateSourceTracker(Name title = null, TargetProgress target = null)
         {
             var tracker = new SourceTracker(title, target);
             trackerList.Add(tracker);

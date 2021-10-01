@@ -1,13 +1,13 @@
 ﻿using System;
-using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.ProgressTracking.Models
+namespace TableTopCrucible.Core.Jobs.Progression.Models
 {
     // controls a single source tracker
     // dispose completes the tracking, regardless of the current progress
     public interface ISourceTrackerController : IDisposable, ITrackingViewer
     {
-        public void SetTarget(TrackingTarget trackingTarget);
+        public void SetTarget(TargetProgress targetProgress);
         // default = 1
         public void Increment(ProgressIncrement increment = null);
 

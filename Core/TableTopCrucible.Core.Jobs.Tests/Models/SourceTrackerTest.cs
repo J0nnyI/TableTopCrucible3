@@ -11,9 +11,9 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using TableTopCrucible.Core.Jobs.Helper;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Models;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Services;
-using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
+using TableTopCrucible.Core.Jobs.Progression.Models;
+using TableTopCrucible.Core.Jobs.Progression.Services;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 
@@ -70,7 +70,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void Increment()
         {
-            Tracker.SetTarget((TrackingTarget)5);
+            Tracker.SetTarget((TargetProgress)5);
 
             Viewer.CurrentProgress.Value.Should().Be(0, "init (0)");
             Tracker.Increment();
@@ -85,7 +85,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         public void UnderFillScenario()
         {
 
-            Tracker.SetTarget((TrackingTarget)5);
+            Tracker.SetTarget((TargetProgress)5);
 
             Tracker.Increment();
 
@@ -99,7 +99,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void FlushFillScenario()
         {
-            Tracker.SetTarget((TrackingTarget)5);
+            Tracker.SetTarget((TargetProgress)5);
             Tracker.Increment((ProgressIncrement)5);
             Viewer.JobState.Should().Be(JobState.Done);
             Tracker.OnCompleted();
@@ -108,7 +108,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void OverFillScenario()
         {
-            Tracker.SetTarget((TrackingTarget)5);
+            Tracker.SetTarget((TargetProgress)5);
             Tracker.Increment((ProgressIncrement)6);
             Viewer.JobState.Should().Be(JobState.Done);
             Tracker.OnCompleted();
@@ -127,7 +127,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void LateSubscriptions()
         {
-            Tracker.SetTarget((TrackingTarget)5);
+            Tracker.SetTarget((TargetProgress)5);
             Tracker.Increment();
             Tracker.Increment();
             Tracker.Increment();

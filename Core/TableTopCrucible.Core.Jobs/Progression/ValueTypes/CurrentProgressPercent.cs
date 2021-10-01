@@ -1,7 +1,7 @@
 ﻿
 using ValueOf;
 
-namespace TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes
+namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
 {
     // the current progress in percent (0.0 to 100.0)
     public class CurrentProgressPercent : ValueOf<double, CurrentProgressPercent>
@@ -12,7 +12,7 @@ namespace TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes
         public static explicit operator CurrentProgressPercent(double value)
             => From(value);
 
-        public static CurrentProgressPercent From(CurrentProgress current, TrackingTarget target)
+        public static CurrentProgressPercent From(CurrentProgress current, TargetProgress target)
             => From(current.Value / target.Value * 100);
 
         protected override void Validate()

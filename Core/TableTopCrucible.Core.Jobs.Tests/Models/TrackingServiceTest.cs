@@ -9,8 +9,8 @@ using Splat;
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Services;
-using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
+using TableTopCrucible.Core.Jobs.Progression.Services;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 
 namespace TableTopCrucible.Core.Jobs.Models.Tests
@@ -40,8 +40,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void TotalProgress_NoLateAdds()
         {
-            var srcA = progressService!.CreateSourceTracker(null, (TrackingTarget)2);
-            var srcB = progressService!.CreateSourceTracker(null, (TrackingTarget)2);
+            var srcA = progressService!.CreateSourceTracker(null, (TargetProgress)2);
+            var srcB = progressService!.CreateSourceTracker(null, (TargetProgress)2);
 
             CurrentProgressPercent progress = null;
             progressService.TotalProgress.Subscribe(prog => progress = prog).DisposeWith(_disposables);
@@ -59,7 +59,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void TotalProgress_LateAdds()
         {
-            var srcA = progressService!.CreateSourceTracker(null, (TrackingTarget)2);
+            var srcA = progressService!.CreateSourceTracker(null, (TargetProgress)2);
 
             CurrentProgressPercent progress = null;
             progressService.TotalProgress.Subscribe(prog => progress = prog).DisposeWith(_disposables);
@@ -68,7 +68,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             srcA.Increment();
             progress.Should().Be((CurrentProgressPercent)50);
 
-            var srcB = progressService!.CreateSourceTracker(null, (TrackingTarget)2);
+            var srcB = progressService!.CreateSourceTracker(null, (TargetProgress)2);
             progress.Should().Be((CurrentProgressPercent)25);
 
             srcB.Increment();

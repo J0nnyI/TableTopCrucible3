@@ -2,38 +2,38 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.ProgressTracking.Models
+namespace TableTopCrucible.Core.Jobs.Progression.Models
 {
     // tracks a composite progress and returns the weighted total progress
     internal class CompositeTracker : ICompositeTrackerController, ITrackingViewer
     {
-        public static readonly WeightedTrackingTarget Target = (WeightedTrackingTarget)100;
+        public static readonly WeightedTargetProgress Target = (WeightedTargetProgress)100;
 
         IObservable<CurrentProgress> ITrackingViewer.CurrentProgressChanges =>
             CurrentProgressChanges.Select(prog => (CurrentProgress)prog);
         public IObservable<WeightedCurrentProgress> CurrentProgressChanges { get; }
 
-        IObservable<TrackingTarget> ITrackingViewer.TargetProgressChanges =>
-            TargetProgressChanges.Select(target => (TrackingTarget)target);
+        IObservable<TargetProgress> ITrackingViewer.TargetProgressChanges =>
+            TargetProgressChanges.Select(target => (TargetProgress)target);
 
-        public IObservable<WeightedTrackingTarget> TargetProgressChanges { get; } = Observable.Return(Target);
+        public IObservable<WeightedTargetProgress> TargetProgressChanges { get; } = Observable.Return(Target);
 
         public Name Title { get; }
         public IObservable<JobState> JobStateChanges { get; }
 
-        public ICompositeTrackerController AddComposite(Name name = null, TrackingWeight weight = null)
+        public ICompositeTrackerController AddComposite(Name name = null, JobWeight weight = null)
         {
             var tracker = new WeightedCompositeTracker(name, weight);
             _trackerStack.OnNext(tracker);
             return tracker;
         }
 
-        public ISourceTrackerController AddSingle(Name name = null, TrackingTarget trackingTarget = null, TrackingWeight weight = null)
+        public ISourceTrackerController AddSingle(Name name = null, TargetProgress targetProgress = null, JobWeight weight = null)
         {
-            var tracker = new WeightedSourceTracker(name, trackingTarget, weight);
+            var tracker = new WeightedSourceTracker(name, targetProgress, weight);
             _trackerStack.OnNext(tracker);
             return tracker;
         }
@@ -63,7 +63,7 @@ namespace TableTopCrucible.Core.Jobs.ProgressTracking.Models
 
             CurrentProgressChanges = trackerListChanges.Select(trackerList =>
                     {
-                        var totalTrackerWeight = (TrackingWeight)trackerList.Sum(tracker => tracker.Weight.Value);
+                        var totalTrackerWeight = (JobWeight)trackerList.Sum(tracker => tracker.Weight.Value);
 
                         return // get the weight of all trackers parallel as list
                             trackerList.Select(tracker =>
@@ -139,12 +139,12 @@ namespace TableTopCrucible.Core.Jobs.ProgressTracking.Models
 
     internal class WeightedCompositeTracker : CompositeTracker, IWeightedTrackingViewer
     {
-        public WeightedCompositeTracker(Name title, TrackingWeight weight) : base(title)
+        public WeightedCompositeTracker(Name title, JobWeight weight) : base(title)
         {
-            this.Weight = weight ?? TrackingWeight.Default;
+            this.Weight = weight ?? JobWeight.Default;
         }
 
-        public TrackingWeight Weight { get; }
+        public JobWeight Weight { get; }
 
         public override string ToString()
             => $"WC {Title} - {Weight}";

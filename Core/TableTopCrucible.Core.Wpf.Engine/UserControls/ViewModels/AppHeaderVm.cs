@@ -5,8 +5,8 @@ using System.Reactive.Linq;
 using System.Windows.Shell;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Services;
-using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
+using TableTopCrucible.Core.Jobs.Progression.Services;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 

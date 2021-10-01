@@ -12,9 +12,9 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using TableTopCrucible.Core.Jobs.Helper;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Models;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Services;
-using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
+using TableTopCrucible.Core.Jobs.Progression.Models;
+using TableTopCrucible.Core.Jobs.Progression.Services;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 
@@ -87,7 +87,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
 
             childViewer.Title.Should().Be((Name)"firstChild");
 
-            child.SetTarget((TrackingTarget)5);
+            child.SetTarget((TargetProgress)5);
 
             // 0 => 1
             child.Increment();
@@ -134,9 +134,9 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void MultiChild_NoWeight()
         {
-            var childA = Tracker.AddSingle((Name)"first Tracker", (TrackingTarget)10);
+            var childA = Tracker.AddSingle((Name)"first Tracker", (TargetProgress)10);
             var viewerA = childA.Subscribe().DisposeWith(_disposables);
-            var childB = Tracker.AddSingle((Name)"second Tracker", (TrackingTarget)20);
+            var childB = Tracker.AddSingle((Name)"second Tracker", (TargetProgress)20);
             var viewerB = childB.Subscribe().DisposeWith(_disposables);
 
             Viewer.JobState
@@ -184,8 +184,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             var modA = fractionA * target;
             var modB = fractionB * target;
 
-            var childA = Tracker.AddSingle((Name)"first Tracker", (TrackingTarget)targetA, (TrackingWeight)weightA);
-            var childB = Tracker.AddSingle((Name)"second Tracker", (TrackingTarget)targetB, (TrackingWeight)weightB);
+            var childA = Tracker.AddSingle((Name)"first Tracker", (TargetProgress)targetA, (JobWeight)weightA);
+            var childB = Tracker.AddSingle((Name)"second Tracker", (TargetProgress)targetB, (JobWeight)weightB);
 
 
             // sum of 1 makes for easy testing and includes conversion of factor 100
@@ -210,13 +210,13 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void NestedComposite()
         {
-            var upperChild = Tracker.AddSingle(null, (TrackingTarget)2);
+            var upperChild = Tracker.AddSingle(null, (TargetProgress)2);
             var upperChildViewer = upperChild.Subscribe().DisposeWith(_disposables);
 
             var nestedComp = Tracker.AddComposite();
             var nestedCompViewer = nestedComp.Subscribe().DisposeWith(_disposables);
 
-            var lowerChild = nestedComp.AddSingle(null, (TrackingTarget)2);
+            var lowerChild = nestedComp.AddSingle(null, (TargetProgress)2);
             var lowerChildViewer = lowerChild.Subscribe().DisposeWith(_disposables);
 
             // ( 0%)    
@@ -333,8 +333,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void InProgress_InProgress()
         {
-            var childA = Tracker.AddSingle(null, (TrackingTarget)2);
-            var childB = Tracker.AddSingle(null, (TrackingTarget)2);
+            var childA = Tracker.AddSingle(null, (TargetProgress)2);
+            var childB = Tracker.AddSingle(null, (TargetProgress)2);
             childA.Increment();
             childB.Increment();
             Viewer.JobState
@@ -365,7 +365,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void Todo_InProgress()
         {
-            var childA = Tracker.AddSingle(null, (TrackingTarget)2);
+            var childA = Tracker.AddSingle(null, (TargetProgress)2);
             var childB = Tracker.AddSingle();
             childA.Increment();
             Viewer.JobState
@@ -376,7 +376,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void InProgress_Done()
         {
-            var childA = Tracker.AddSingle(null, (TrackingTarget)2);
+            var childA = Tracker.AddSingle(null, (TargetProgress)2);
             var childB = Tracker.AddSingle();
             childA.Increment();
             childB.OnCompleted();

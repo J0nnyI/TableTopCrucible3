@@ -1,6 +1,6 @@
 ﻿using ValueOf;
 
-namespace TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes
+namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
 {
 
     public class WeightedCurrentProgress : ValueOf<double, WeightedCurrentProgress>

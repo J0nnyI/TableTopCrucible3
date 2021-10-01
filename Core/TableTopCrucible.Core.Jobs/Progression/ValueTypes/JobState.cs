@@ -1,4 +1,4 @@
-﻿namespace TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes
+﻿namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
 {
     public enum JobState
     {

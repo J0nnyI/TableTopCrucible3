@@ -5,8 +5,8 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using TableTopCrucible.Core.Jobs.ProgressTracking.Models;
-using TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes;
+using TableTopCrucible.Core.Jobs.Progression.Models;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Helper
@@ -14,7 +14,7 @@ namespace TableTopCrucible.Core.Jobs.Helper
     public interface ISubscribedTrackingViewer : IDisposable, ITrackingViewer
     {
         public CurrentProgress CurrentProgress { get; }
-        public TrackingTarget TargetProgress { get; }
+        public TargetProgress TargetProgress { get; }
         public JobState JobState { get; }
     }
 
@@ -27,9 +27,9 @@ namespace TableTopCrucible.Core.Jobs.Helper
         private ObservableAsPropertyHelper<CurrentProgress> _currentProgress;
         public CurrentProgress CurrentProgress => _currentProgress.Value;
 
-        public IObservable<TrackingTarget> TargetProgressChanges => Source.TargetProgressChanges;
-        private ObservableAsPropertyHelper<TrackingTarget> _targetProgress;
-        public TrackingTarget TargetProgress => _targetProgress.Value;
+        public IObservable<TargetProgress> TargetProgressChanges => Source.TargetProgressChanges;
+        private ObservableAsPropertyHelper<TargetProgress> _targetProgress;
+        public TargetProgress TargetProgress => _targetProgress.Value;
 
         public IObservable<JobState> JobStateChanges => Source.JobStateChanges;
         private ObservableAsPropertyHelper<JobState> _jobState;

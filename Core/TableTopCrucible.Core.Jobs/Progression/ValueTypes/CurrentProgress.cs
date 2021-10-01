@@ -1,7 +1,7 @@
 ﻿
 using ValueOf;
 
-namespace TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes
+namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
 {
     public class CurrentProgress : ValueOf<double, CurrentProgress>
     {
@@ -11,16 +11,16 @@ namespace TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes
         public static CurrentProgress operator +(CurrentProgress current, ProgressIncrement increment)
             => (CurrentProgress)((current?.Value ?? 0) + (increment?.Value ?? 0));
 
-        public static WeightedCurrentProgress operator *(CurrentProgress current, TrackingWeight weight)
+        public static WeightedCurrentProgress operator *(CurrentProgress current, JobWeight weight)
             => (WeightedCurrentProgress)((current?.Value ?? 0) * (weight?.Value ?? 0));
         public static explicit operator CurrentProgress(WeightedCurrentProgress current)
             => (CurrentProgress)current.Value;
-        public static explicit operator CurrentProgress(TrackingTarget current)
+        public static explicit operator CurrentProgress(TargetProgress current)
             => (CurrentProgress)current.Value;
 
-        public static bool operator ==(CurrentProgress cur, TrackingTarget target)
+        public static bool operator ==(CurrentProgress cur, TargetProgress target)
             => (cur?.Value ?? 0) == (target?.Value ?? 0);
-        public static bool operator !=(CurrentProgress cur, TrackingTarget target)
+        public static bool operator !=(CurrentProgress cur, TargetProgress target)
             => (cur?.Value ?? 0) != (target?.Value ?? 0);
 
         public override bool Equals(object obj)
@@ -33,13 +33,13 @@ namespace TableTopCrucible.Core.Jobs.ProgressTracking.ValueTypes
         public override int GetHashCode()
             => Value.GetHashCode();
 
-        public static bool operator >(CurrentProgress cur, TrackingTarget target)
+        public static bool operator >(CurrentProgress cur, TargetProgress target)
             => (cur?.Value ?? 0) > (target?.Value ?? 0);
-        public static bool operator <(CurrentProgress cur, TrackingTarget target)
+        public static bool operator <(CurrentProgress cur, TargetProgress target)
             => (cur?.Value ?? 0) < (target?.Value ?? 0);
-        public static bool operator >=(CurrentProgress cur, TrackingTarget target)
+        public static bool operator >=(CurrentProgress cur, TargetProgress target)
             => (cur?.Value ?? 0) >= (target?.Value ?? 0);
-        public static bool operator <=(CurrentProgress cur, TrackingTarget target)
+        public static bool operator <=(CurrentProgress cur, TargetProgress target)
             => (cur?.Value ?? 0) <= (target?.Value ?? 0);
     }
 }
