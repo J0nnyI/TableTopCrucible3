@@ -50,6 +50,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                             / progresses.Count
                         )
                     )
+                    .Select(progress=> progress < (CurrentProgressPercent) 100 ? progress : (CurrentProgressPercent)0)
                 )
                 .Switch()
                 .DistinctUntilChanged();

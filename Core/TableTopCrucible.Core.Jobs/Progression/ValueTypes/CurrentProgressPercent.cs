@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.VisualBasic.CompilerServices;
+
 using ValueOf;
 
 namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
@@ -11,6 +13,11 @@ namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
 
         public static explicit operator CurrentProgressPercent(double value)
             => From(value);
+
+        public static bool operator > (CurrentProgressPercent val1, CurrentProgressPercent val2)
+            => val1.Value > val2.Value;
+        public static bool operator < (CurrentProgressPercent val1, CurrentProgressPercent val2)
+            => val1.Value < val2.Value;
 
         public static CurrentProgressPercent From(CurrentProgress current, TargetProgress target)
             => From(current.Value / target.Value * 100);
