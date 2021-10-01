@@ -15,7 +15,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
     public class MainPageVm : ReactiveObject, IActivatableViewModel, IMainPage
     {
         private readonly INavigationService _navigationService;
-        public IBannerList BannerList { get; }
+        public INotificationList NotificationList { get; }
         public INavigationList NavigationList { get; }
         public IAppHeader AppHeader { get; }
 
@@ -23,13 +23,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
         public INavigationPage CurrentPage => _currentPage.Value;
 
         public MainPageVm(
-            IBannerList bannerList,
+            INotificationList notificationList,
             INavigationList navigationList,
             INavigationService navigationService,
             IAppHeader appHeader)
         {
             _navigationService = navigationService;
-            BannerList = bannerList;
+            NotificationList = notificationList;
             NavigationList = navigationList;
             AppHeader = appHeader;
 

@@ -12,16 +12,16 @@ using TableTopCrucible.Core.Wpf.Engine.Services;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
-    [Transient(typeof(BannerListVm))]
-    public interface IBannerList
+    [Transient(typeof(NotificationListVm))]
+    public interface INotificationList
     {
 
     }
-    public class BannerListVm : ReactiveObject, IBannerList, IActivatableViewModel
+    public class NotificationListVm : ReactiveObject, INotificationList, IActivatableViewModel
     {
         private readonly ObservableCollectionExtended<INotification> _notificationList = new();
         public ObservableCollectionExtended<INotification> NotificationList => _notificationList;
-        public BannerListVm(INotificationService notificationService)
+        public NotificationListVm(INotificationService notificationService)
         {
             this.WhenActivated(() => new[]
             {

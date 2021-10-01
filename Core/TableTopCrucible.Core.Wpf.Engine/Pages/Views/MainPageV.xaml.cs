@@ -17,7 +17,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
             {
                 this.OneWayBind(
                     ViewModel,
-                    vm=>vm.BannerList,
+                    vm=>vm.NotificationList,
                     v=>v.NotificationList.ViewModel),
                 this.OneWayBind(
                     ViewModel,

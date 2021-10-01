@@ -74,12 +74,6 @@
                 >
                     <Grid>
                         <!--using the internal button progress bars creates background color which cant be removed-->
-                        <Button UseLayoutRounding="True"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                        >
-                            <md:PackIcon Kind="clock" />
-                        </Button>
                         <ProgressBar x:Name="JobProgress"
                                      Style="{StaticResource MaterialDesignCircularProgressBar}"
                                      VerticalAlignment="Center"
@@ -88,6 +82,14 @@
                                      Height="50"
                                      Maximum="100"
                                      UseLayoutRounding="True"/>
+                        <Button UseLayoutRounding="True"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                md:RippleAssist.IsDisabled="False"
+                                md:RippleAssist.RippleOnTop="True"
+                        >
+                            <md:PackIcon Kind="clock" />
+                        </Button>
                     </Grid>
                 </md:Badged>
                     <!--notifications-->

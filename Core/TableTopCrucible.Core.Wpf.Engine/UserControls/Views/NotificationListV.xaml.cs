@@ -7,9 +7,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
     /// <summary>
     /// Interaction logic for NotificastionListV.xaml
     /// </summary>
-    public partial class BannerListV : ReactiveUserControl<BannerListVm>, IActivatableView
+    public partial class NotificationListV : ReactiveUserControl<NotificationListVm>, IActivatableView
     {
-        public BannerListV()
+        public NotificationListV()
         {
             InitializeComponent();
             this.WhenActivated(() => new[]
