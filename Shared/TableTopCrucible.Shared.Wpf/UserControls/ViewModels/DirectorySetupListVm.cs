@@ -15,6 +15,7 @@ using System.Windows.Input;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
@@ -89,15 +90,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         var directorySetup = new DirectorySetup(path.GetDirectoryName().ToName(), path);
                         _directorySetupRepository.AddOrUpdate(directorySetup);
                         _notificationService.AddNotification(
-                            "Directory added successfully",
-                            $"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
+                            (Name)"Directory added successfully",
+                            (Description)$"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
                             NotificationType.Confirmation);
                     }
                     else
                     {
                         _notificationService.AddNotification(
-                            "Directory has already been added",
-                            $"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
+                            (Name)"Directory has already been added",
+                            (Description)$"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
                             NotificationType.Info);
                     }
                 });

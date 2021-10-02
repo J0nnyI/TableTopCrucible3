@@ -25,6 +25,12 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
         public JobQueueV()
         {
             InitializeComponent();
+            this.WhenActivated(() => new[]
+            {
+                this.OneWayBind(ViewModel,
+                    vm=>vm.Cards,
+                    v=>v.Jobs.ItemsSource),
+            });
         }
     }
 }

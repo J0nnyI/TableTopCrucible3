@@ -96,8 +96,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     {
                         _directorySetupRepository.AddOrUpdate(new DirectorySetup(Name, Path, DirectorySetup.Id));
                         _notificationService.AddNotification(
-                            "Directory saved successfully",
-                            $"The directory '{Name}' has been saved successfully",
+                            (vtName)"Directory saved successfully",
+                            (Description)$"The directory '{Name}' has been saved successfully",
                             NotificationType.Confirmation);
                     },
                     this.WhenAnyValue(
@@ -111,8 +111,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         Name = DirectorySetup.Name.Value;
                         Path = DirectorySetup.Path.Value;
                         _notificationService.AddNotification(
-                            "Directory undo successful",
-                            $"The changes in directory '{Name}' have been undone successfully",
+                            (vtName)"Directory undo successful",
+                            (Description)$"The changes in directory '{Name}' have been undone successfully",
                             NotificationType.Confirmation);
                     },
                     isDirtyChanges,
@@ -127,8 +127,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             {
                                 _directorySetupRepository.Delete(DirectorySetup.Id);
                                 _notificationService.AddNotification(
-                                    "Remove successful",
-                                    $"The Directory '{Name}' has been removed from this list",
+                                    (vtName)"Remove successful",
+                                    (Description)$"The Directory '{Name}' has been removed from this list",
                                     NotificationType.Confirmation);
                             });
                     },

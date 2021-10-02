@@ -24,12 +24,8 @@
                BasedOn="{StaticResource MaterialDesignFloatingActionMiniButton}">
             <Setter Property="Margin"
                     Value="16 0"/>
-            <Setter Property="md:ShadowAssist.ShadowDepth" 
-                    Value="Depth0"/>
             <Setter Property="Background"
                     Value="Transparent"/>
-            <Setter Property="Foreground"
-                    Value="{DynamicResource MaterialDesignDarkForeground}"/>
         </Style>
         <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignActionToggleButton}">
             <Setter Property="Foreground"
@@ -55,6 +51,7 @@
                               Content="{md:PackIcon Menu, Size=25}"/>
 
                 <Button Content="{md:PackIcon ContentSave}"
+                        BorderBrush="Transparent"
                         ToolTip="Save Data - Coming Soon"/>
             </StackPanel>
             <!--   Right   -->

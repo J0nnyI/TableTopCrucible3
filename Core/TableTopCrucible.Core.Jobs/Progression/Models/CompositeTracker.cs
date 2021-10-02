@@ -129,7 +129,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
                     }
                 )
             )
-                .Switch()
+            .Switch()
             .StartWith(JobState.ToDo)
                 .DistinctUntilChanged();
         }

@@ -11,6 +11,8 @@
                           d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
         <TextBlock Text="Completed Jobs"/>
+        <ListBox x:Name="Jobs" 
+                 Style="{StaticResource MaterialDesignCardsListBox}"/>
         <TextBlock Text="Active Jobs"/>
         <TextBlock Text="Queued Jobs"/>
     </StackPanel>

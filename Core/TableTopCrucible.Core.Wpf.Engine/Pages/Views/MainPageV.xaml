@@ -20,6 +20,7 @@
             <rx:ViewModelViewHost x:Name="NavigationList"
                                   DockPanel.Dock="Left"/>
             <md:DrawerHost x:Name="DrawerHost"
+                           md:ShadowAssist.ShadowDepth="Depth0"
                            OpenMode="Standard">
                 <md:DrawerHost.RightDrawerContent>
                     <md:ColorZone Mode="Dark" 
