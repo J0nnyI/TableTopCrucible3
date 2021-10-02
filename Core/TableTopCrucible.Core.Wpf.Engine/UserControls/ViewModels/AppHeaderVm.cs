@@ -10,6 +10,7 @@ using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
@@ -62,7 +63,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             INotificationService notificationService,
             IProgressTrackingService progressService,
             INotificationList notificationList,
-            IJobQueue jobQueue)
+            IJobQueuePage jobQueuePage)
         {
             _navigationService = navigationService;
             _notificationService = notificationService;
@@ -78,7 +79,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Select(sidebar => sidebar == notificationList);
                 this.IsJobqueueSelectedChanged =
                     this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar)
-                        .Select(sidebar => sidebar == jobQueue);
+                        .Select(sidebar => sidebar == jobQueuePage);
 
                 return new IDisposable[]
                 {
@@ -94,10 +95,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                         cmd=>ShowNotificationSidebar = cmd),
                     ReactiveCommandHelper.Create(()=>
                         {
-                            if (_navigationService.ActiveSidebar == jobQueue)
+                            if (_navigationService.ActiveSidebar == jobQueuePage)
                                 _navigationService.ActiveSidebar = null;
                             else
-                                _navigationService.ActiveSidebar = jobQueue;
+                                _navigationService.ActiveSidebar = jobQueuePage;
                         },
                         cmd=>ShowJobSidebarCommand = cmd),
                 };

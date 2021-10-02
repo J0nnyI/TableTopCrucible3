@@ -19,8 +19,10 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
     [Singleton]
-    public interface IJobQueue : ISidebarPage
-    {}
+    public interface IJobQueue
+    {
+        Func<ITrackingViewer, IObservable<bool>> JobFilter { get; set; }
+    }
     public class JobQueueVm:ReactiveObject, IActivatableViewModel, IJobQueue
     {
         private readonly IProgressTrackingService _progressTrackingService;
@@ -55,5 +57,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             card.Viewer = viewer;
             return card;
         }
+
+        public Func<ITrackingViewer, IObservable<bool>> JobFilter { get; set; }
     }
 }
