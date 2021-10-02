@@ -10,7 +10,7 @@ using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
 {
-    [Singleton(typeof(MainPageVm))]
+    [Singleton]
     public interface IMainPage
     {
 

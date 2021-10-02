@@ -14,7 +14,7 @@ using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Repositories
 {
-    [Singleton(typeof(DirectorySetupRepository))]
+    [Singleton]
     public interface IDirectorySetupRepository :
         ISourceRepository<DirectorySetupId, DirectorySetup, DirectorySetupDto>
     {

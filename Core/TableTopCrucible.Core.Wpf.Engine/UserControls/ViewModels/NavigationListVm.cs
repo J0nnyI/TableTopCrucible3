@@ -57,7 +57,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             => $"{Title}  |  cbu:{ChangedByUser}  |  {PageLocation}";
     }
 
-    [Transient(typeof(NavigationListVm))]
+    [Transient]
     public interface INavigationList
     {
 

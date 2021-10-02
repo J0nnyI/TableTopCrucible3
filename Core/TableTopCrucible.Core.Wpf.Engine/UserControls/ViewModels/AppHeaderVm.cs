@@ -14,7 +14,7 @@ using TableTopCrucible.Core.Wpf.Engine.Services;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
-    [Singleton(typeof(AppHeaderVm))]
+    [Singleton]
     public interface IAppHeader
     {
 

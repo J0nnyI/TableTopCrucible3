@@ -13,7 +13,7 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Services
 {
-    [Singleton(typeof(NotificationService))]
+    [Singleton]
     public interface INotificationService
     {
         NotificationId AddNotification(string title, string content, NotificationType type);

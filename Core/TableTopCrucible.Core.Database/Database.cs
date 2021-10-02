@@ -21,7 +21,7 @@ namespace TableTopCrucible.Core.Database
         Restore
     }
 
-    [Singleton(typeof(Database))]
+    [Singleton]
     public interface IDatabase
     {
         void Save();

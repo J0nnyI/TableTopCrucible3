@@ -23,7 +23,7 @@ using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Transient(typeof(DirectorySetupListVm))]
+    [Transient]
     public interface IDirectorySetupList
     {
 

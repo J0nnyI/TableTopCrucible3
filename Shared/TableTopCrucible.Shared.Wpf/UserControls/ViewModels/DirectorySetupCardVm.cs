@@ -24,7 +24,7 @@ using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Transient(typeof(DirectorySetupCardVm))]
+    [Transient]
     public interface IDirectorySetupCard : IComparable<IDirectorySetupCard>, IComparable
     {
         public DirectorySetupId DirectorySetupId { get; set; }

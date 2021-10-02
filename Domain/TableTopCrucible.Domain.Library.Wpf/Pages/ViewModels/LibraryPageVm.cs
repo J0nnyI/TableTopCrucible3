@@ -10,7 +10,7 @@ using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 {
-    [Singleton(typeof(LibraryPageVm))]
+    [Singleton]
     public interface ILibraryPage : INavigationPage
     {
 

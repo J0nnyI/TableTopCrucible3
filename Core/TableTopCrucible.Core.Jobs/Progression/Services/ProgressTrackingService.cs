@@ -11,7 +11,7 @@ using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Progression.Services
 {
-    [Singleton(typeof(ProgressTrackingService))]
+    [Singleton]
     public interface IProgressTrackingService
     {
         // creates a new tracker and adds it to the collection

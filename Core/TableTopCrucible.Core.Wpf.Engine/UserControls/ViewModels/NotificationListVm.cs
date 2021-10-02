@@ -17,7 +17,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     /// <summary>
     /// todo: add a proper page
     /// </summary>
-    [Transient(typeof(NotificationListVm))]
+    [Transient]
     public interface INotificationList:ISidebarPage
     {
 

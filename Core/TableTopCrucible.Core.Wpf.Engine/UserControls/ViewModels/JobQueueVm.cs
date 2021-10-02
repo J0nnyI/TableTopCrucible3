@@ -15,7 +15,7 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
-    [Singleton(typeof(JobQueueVm))]
+    [Singleton]
     public interface IJobQueue : ISidebarPage
     {}
     public class JobQueueVm:ReactiveObject, IActivatableViewModel, IJobQueue

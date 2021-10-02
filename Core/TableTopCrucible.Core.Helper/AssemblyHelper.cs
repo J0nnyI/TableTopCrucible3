@@ -28,11 +28,20 @@ namespace TableTopCrucible.Core.Helper
             => GetSolutionTypes().Where(t => t.IsAssignableFrom(baseType));
 
         public static IEnumerable<Type> GetSolutionTypesByAttribute<T>() where T : Attribute
-            => GetSolutionTypes().Where(t => t.HasCustomAttribute<T>());
+            => GetSolutionTypes().Where(t => t.HasCustomAttribute<T>(false));
 
+        public static IEnumerable<Type> GetSolutionClasses()
+            => GetSolutionTypes()!.Where(t => t.IsClass);
         public static IEnumerable<Type> GetSolutionClassesOfType<T>()
+            => GetSolutionClassesOfType(typeof(T));
+        public static IEnumerable<Type> GetSolutionClassesOfType(Type type)
             => GetSolutionTypes()
-                !.Where(t => t.IsAssignableTo(typeof(T)) && t.IsClass);
+                !.Where(t => t.IsAssignableTo(type) && t.IsClass);
 
+        public static IEnumerable<Type> GetTypesAssignableTo<T>()
+            => GetTypesAssignableTo(typeof(T));
+        public static IEnumerable<Type> GetTypesAssignableTo(Type type)
+            => GetSolutionTypes()
+                !.Where(t => t.IsAssignableTo(type));
     }
 }

@@ -29,7 +29,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
     /// <summary>
     /// Synchronizes the master file list with the files in the directory
     /// </summary>
-    [Singleton(typeof(FileSynchronizationService))]
+    [Singleton]
     public interface IFileSynchronizationService
     {
         ITrackingViewer StartScan();

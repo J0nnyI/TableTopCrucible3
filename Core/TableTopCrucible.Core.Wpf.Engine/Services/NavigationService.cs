@@ -11,7 +11,7 @@ using TableTopCrucible.Core.Wpf.Engine.Models;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Services
 {
-    [Singleton(typeof(NavigationService))]
+    [Singleton]
     public interface INavigationService
     {
         INavigationPage ActiveWorkarea { get; set; }

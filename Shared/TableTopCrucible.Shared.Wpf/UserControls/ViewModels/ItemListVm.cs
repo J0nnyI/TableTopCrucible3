@@ -14,7 +14,7 @@ using TableTopCrucible.Shared.ItemSync.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Transient(typeof(ItemListVm))]
+    [Transient]
     public interface IItemList
     {
 

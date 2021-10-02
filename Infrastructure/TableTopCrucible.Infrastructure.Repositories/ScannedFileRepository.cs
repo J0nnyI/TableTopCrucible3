@@ -7,7 +7,7 @@ using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Repositories
 {
-    [Singleton(typeof(ScannedFileRepository))]
+    [Singleton]
     public interface IScannedFileRepository :
         ISourceRepository<ScannedFileDataId, ScannedFileData, ScannedFileDataDto>
     {

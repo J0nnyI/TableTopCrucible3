@@ -10,7 +10,7 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Domain.Automation.Wpf.Pages.ViewModels
 {
-    [Singleton(typeof(TagAutomationPageVm))]
+    [Singleton]
     public interface ITagAutomationPage : INavigationPage
     {
 
