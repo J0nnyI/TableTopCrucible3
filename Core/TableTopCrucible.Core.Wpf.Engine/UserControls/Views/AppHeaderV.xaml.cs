@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Drawing;
 using ReactiveUI;
 
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
+using Application = System.Windows.Application;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 {
@@ -16,6 +19,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
         public AppHeaderV()
         {
             InitializeComponent();
+            var buttonBorderSelected = Application.Current.TryFindResource("PrimaryHueLightBrush") as System.Windows.Media.Brush;
+            var buttonBorder = System.Windows.Media.Brushes.Transparent;
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(v=>v.ViewModel)
@@ -52,6 +57,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     .Select(progress=>progress.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.JobProgress.Value),
+
+                ViewModel!.IsNotificationSidebarSelectedChanged
+                    .Select(selected=>selected?buttonBorderSelected:buttonBorder)
+                    .BindTo(this, v=>v.ShowNotificationSidebar.BorderBrush),
+                ViewModel!.IsJobqueueSelectedChanged
+                    .Select(selected=>selected? buttonBorderSelected:buttonBorder)
+                    .BindTo(this, v=>v.ShowJobSidebar.BorderBrush),
 
                 this.Bind(ViewModel,
                     vm=>vm.IsNavigationbarExpanded,

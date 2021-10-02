@@ -51,6 +51,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             }
         }
 
+        public IObservable<bool> IsNotificationSidebarSelectedChanged { get; private set; }
+        public IObservable<bool> IsJobqueueSelectedChanged { get; private set; }
+
         public ICommand ShowJobSidebarCommand { get; private set; }
         public ICommand ShowNotificationSidebar { get; private set; }
 
@@ -69,13 +72,33 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             this.WhenActivated(() =>
             {
                 this.NotificationCountChanges = _notificationService.Notifications.CountChanged.ObserveOn(RxApp.MainThreadScheduler);
+
+                this.IsNotificationSidebarSelectedChanged = 
+                    this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar)
+                    .Select(sidebar => sidebar == notificationList);
+                this.IsJobqueueSelectedChanged =
+                    this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar)
+                        .Select(sidebar => sidebar == jobQueue);
+
                 return new IDisposable[]
                 {
                     this.WhenAnyValue(vm => vm._navigationService.IsNavigationExpanded)
                         .ToProperty(this, vm => vm.IsNavigationbarExpanded, out _isNavigationbarExpanded),
-                    ReactiveCommandHelper.Create(()=>_navigationService.ActiveSidebar = notificationList,
+                    ReactiveCommandHelper.Create(() =>
+                        {
+                            if (_navigationService.ActiveSidebar == notificationList)
+                                _navigationService.ActiveSidebar = null;
+                            else
+                                _navigationService.ActiveSidebar = notificationList;
+                        },
                         cmd=>ShowNotificationSidebar = cmd),
-                    ReactiveCommandHelper.Create(()=>_navigationService.ActiveSidebar = jobQueue,
+                    ReactiveCommandHelper.Create(()=>
+                        {
+                            if (_navigationService.ActiveSidebar == jobQueue)
+                                _navigationService.ActiveSidebar = null;
+                            else
+                                _navigationService.ActiveSidebar = jobQueue;
+                        },
                         cmd=>ShowJobSidebarCommand = cmd),
                 };
             });

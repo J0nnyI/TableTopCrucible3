@@ -28,8 +28,6 @@
                     Value="Depth0"/>
             <Setter Property="Background"
                     Value="Transparent"/>
-            <Setter Property="BorderBrush"
-                    Value="Transparent"/>
             <Setter Property="Foreground"
                     Value="{DynamicResource MaterialDesignDarkForeground}"/>
         </Style>
@@ -86,8 +84,6 @@
                                 UseLayoutRounding="True"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                md:RippleAssist.IsDisabled="False"
-                                md:RippleAssist.RippleOnTop="True"
                         >
                             <md:PackIcon Kind="clock" />
                         </Button>
@@ -101,6 +97,7 @@
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 0 0">
                         <Button Content="{md:PackIcon Bell}"
+                                md:RippleAssist.IsDisabled="False"
                                 x:Name="ShowNotificationSidebar"/>
                     </md:Badged>
 
