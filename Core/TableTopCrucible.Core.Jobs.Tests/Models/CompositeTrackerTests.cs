@@ -8,9 +8,14 @@ using ReactiveUI;
 using Splat;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
+using System.Reactive.Subjects;
+using DynamicData;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
@@ -210,6 +215,24 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void NestedComposite()
         {
+            RxApp.MainThreadScheduler = Scheduler.Default;
+            RxApp.TaskpoolScheduler = Scheduler.Default;
+
+            Subject<Unit> bufferClose = new();
+            JobState[] stateChangesUpdates = null;
+            CurrentProgress[] currentProgressUpdates = null;
+            Viewer.JobStateChanges
+                .Buffer(bufferClose)
+                .Subscribe(items => stateChangesUpdates = items.ToArray())
+                .DisposeWith(_disposables);
+            Viewer.CurrentProgressChanges
+                .Buffer(bufferClose)
+                .Subscribe(items => currentProgressUpdates = items.ToArray())
+                .DisposeWith(_disposables);
+
+            //stateChangesUpdates.Should().Be(1);
+            //currentProgressUpdates.Should().Be(1);
+
             var upperChild = Tracker.AddSingle(null, (TargetProgress)2);
             var upperChildViewer = upperChild.Subscribe().DisposeWith(_disposables);
 
@@ -219,10 +242,12 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             var lowerChild = nestedComp.AddSingle(null, (TargetProgress)2);
             var lowerChildViewer = lowerChild.Subscribe().DisposeWith(_disposables);
 
+
             // ( 0%)    
             // -   0%   0   2
             // -(  0%)  
             //   -   0% 0   2
+            // / => ToDo
             Viewer.JobState
                 .Should().Be(upperChildViewer.JobState)
                 .And.Be(nestedCompViewer.JobState)
@@ -235,10 +260,15 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
                 .And.Be(lowerChildViewer.CurrentProgress)
                 .And.Be((CurrentProgress)0);
 
+            bufferClose.OnNext(Unit.Default);
+            currentProgressUpdates.Should().BeEquivalentTo(new[] { (CurrentProgress)0 });
+            stateChangesUpdates.Should().BeEquivalentTo(new[] { JobState.ToDo });
+
             // ( 25%)   
             // -   0%   0   2
             // -( 50%)  
             //   -  50% 1   2
+            // ToDo => InProgress
             lowerChild.Increment();
 
             Viewer.JobState
@@ -248,19 +278,24 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             upperChildViewer.JobState
                 .Should().Be(JobState.ToDo);
 
-            Viewer.CurrentProgress.Value
-                .Should().Be(CompositeTracker.Target.Value * .25);
+            Viewer.CurrentProgress
+                .Should().Be((CurrentProgress)25);
             upperChildViewer.CurrentProgress.Value
                 .Should().Be(0);
-            nestedCompViewer.CurrentProgress.Value
-                .Should().Be(CompositeTracker.Target.Value * .5);
+            nestedCompViewer.CurrentProgress
+                .Should().Be((CurrentProgress)50);
             lowerChildViewer.CurrentProgress.Value
                 .Should().Be(1);
+
+            bufferClose.OnNext(Unit.Default);
+            currentProgressUpdates.Should().BeEquivalentTo(new[] { (CurrentProgress)25 });
+            stateChangesUpdates.Should().BeEquivalentTo(new[] { JobState.InProgress });
 
             // ( 50%)
             // -  50%   1   2
             // -( 50%)
             //   -  50% 1   2
+            // InProgress
             upperChild.Increment();
 
             Viewer.JobState
@@ -269,20 +304,25 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
                 .And.Be(upperChildViewer.JobState)
                 .And.Be(JobState.InProgress);
 
-            Viewer.CurrentProgress.Value
-                .Should().Be(CompositeTracker.Target.Value * .5);
+            Viewer.CurrentProgress
+                .Should().Be((CurrentProgress)50);
             upperChildViewer.CurrentProgress.Value
                 .Should().Be(1);
-            nestedCompViewer.CurrentProgress.Value
-                .Should().Be(CompositeTracker.Target.Value * .5);
+            nestedCompViewer.CurrentProgress
+                .Should().Be((CurrentProgress)50);
             lowerChildViewer.CurrentProgress.Value
                 .Should().Be(1);
+
+            bufferClose.OnNext(Unit.Default);
+            currentProgressUpdates.Should().BeEquivalentTo(new[] { (CurrentProgress)50 });
+            stateChangesUpdates.Should().BeEmpty();
 
 
             // ( 75%)
             // -  50%   1   2
             // -(100%)
             //   - 100% 2   2
+            // InProgress
             lowerChild.Increment();
 
             Viewer.JobState
@@ -292,19 +332,24 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
                 .Should().Be(lowerChildViewer.JobState)
                 .And.Be(JobState.Done);
 
-            Viewer.CurrentProgress.Value
-                .Should().Be(CompositeTracker.Target.Value * .75);
+            Viewer.CurrentProgress
+                .Should().Be((CurrentProgress)75);
             upperChildViewer.CurrentProgress.Value
                 .Should().Be(1);
-            nestedCompViewer.CurrentProgress.Value
-                .Should().Be(CompositeTracker.Target.Value * 1.0);
+            nestedCompViewer.CurrentProgress
+                .Should().Be((CurrentProgress)100);
             lowerChildViewer.CurrentProgress.Value
                 .Should().Be(2);
+
+            bufferClose.OnNext(Unit.Default);
+            currentProgressUpdates.Should().BeEquivalentTo(new[] { (CurrentProgress)75 });
+            stateChangesUpdates.Should().BeEmpty();
 
             // (100%)
             // -  100%  2   2
             // -(100%)
             //   - 100% 2   2
+            // InProgress => Done
             upperChild.Increment();
 
             Viewer.JobState
@@ -313,13 +358,17 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
                 .And.Be(upperChildViewer.JobState)
                 .And.Be(JobState.Done);
 
-            Viewer.CurrentProgress.Value
-                .Should().Be(nestedCompViewer.CurrentProgress.Value)
-                .And.Be(CompositeTracker.Target.Value * 1.0);
+            Viewer.CurrentProgress
+                .Should().Be(nestedCompViewer.CurrentProgress)
+                .And.Be((CurrentProgress)100);
 
             lowerChildViewer.CurrentProgress.Value
                 .Should().Be(upperChildViewer.CurrentProgress.Value)
                 .And.Be(2);
+
+            bufferClose.OnNext(Unit.Default);
+            currentProgressUpdates.Should().BeEquivalentTo(new[] { (CurrentProgress)100 });
+            stateChangesUpdates.Should().BeEquivalentTo(new[] { JobState.Done });
         }
 
         [Test]

@@ -18,8 +18,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
 
             _accumulatedProgressChanges =
                 _increments
-                    .Scan((CurrentProgress)0, (acc, inc) => acc + inc)
-                    .StartWith((CurrentProgress)0);
+                    .StartWith((ProgressIncrement)0)
+                    .Scan((CurrentProgress)0, (acc, inc) => acc + inc);
 
             CurrentProgressChanges =
                 Observable.CombineLatest(

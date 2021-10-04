@@ -7,8 +7,13 @@ using ReactiveUI;
 using Splat;
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
@@ -61,22 +66,47 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         {
             var srcA = progressService!.CreateSourceTracker(null, (TargetProgress)2);
 
-            CurrentProgressPercent progress = null;
-            progressService.TotalProgress.Subscribe(prog => progress = prog).DisposeWith(_disposables);
+            CurrentProgressPercent lastProgress = null;
+            IList<CurrentProgressPercent> emittedValues = null;
 
-            progress.Should().Be((CurrentProgressPercent)0);
+            Subject<Unit> bufferClose = new();
+            progressService
+                .TotalProgress
+                .Buffer(bufferClose)
+                .Subscribe(progress =>
+                {
+                    lastProgress = progress.LastOrDefault();
+                    emittedValues = progress;
+                }).DisposeWith(_disposables);
+
+            bufferClose.OnNext(Unit.Default);
+            emittedValues.Count.Should().Be(1);
+            lastProgress.Should().Be((CurrentProgressPercent)0);
+
             srcA.Increment();
-            progress.Should().Be((CurrentProgressPercent)50);
+            bufferClose.OnNext(Unit.Default);
+            emittedValues.Count.Should().Be(1);
+            lastProgress.Should().Be((CurrentProgressPercent)50);
 
             var srcB = progressService!.CreateSourceTracker(null, (TargetProgress)2);
-            progress.Should().Be((CurrentProgressPercent)25);
+            bufferClose.OnNext(Unit.Default);
+            emittedValues.Count.Should().Be(1);
+            lastProgress.Should().Be((CurrentProgressPercent)25);
 
             srcB.Increment();
-            progress.Should().Be((CurrentProgressPercent)50);
+            bufferClose.OnNext(Unit.Default);
+            emittedValues.Count.Should().Be(1);
+            lastProgress.Should().Be((CurrentProgressPercent)50);
+
             srcA.Increment();
-            progress.Should().Be((CurrentProgressPercent)75);
+            bufferClose.OnNext(Unit.Default);
+            emittedValues.Count.Should().Be(1);
+            lastProgress.Should().Be((CurrentProgressPercent)75);
+
             srcB.Increment();
-            progress.Should().Be((CurrentProgressPercent)0);
+            bufferClose.OnNext(Unit.Default);
+            emittedValues.Count.Should().Be(1);
+            lastProgress.Should().Be((CurrentProgressPercent)0);
         }
     }
 }
