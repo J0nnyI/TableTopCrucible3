@@ -25,6 +25,18 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
         public JobQueuePageV()
         {
             InitializeComponent();
+            this.WhenActivated(() => new[]
+            {
+                this.OneWayBind(ViewModel,
+                    vm=>vm.TodoQueue,
+                    v=>v.ToDoHost.ViewModel),
+                this.OneWayBind(ViewModel,
+                    vm=>vm.InProgressQueue,
+                    v=>v.InProgressHost.ViewModel),
+                this.OneWayBind(ViewModel,
+                    vm=>vm.DoneQueue,
+                    v=>v.DoneHost.ViewModel),
+            });
         }
     }
 }

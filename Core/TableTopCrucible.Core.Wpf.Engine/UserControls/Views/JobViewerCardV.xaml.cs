@@ -31,14 +31,21 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                 this.OneWayBind(ViewModel,
                     vm=>vm.Viewer.Title.Value,
                     v=>v.Title.Text),
-                this.WhenAnyObservable(v=>v.ViewModel.Viewer.TargetProgressChanges)
+                this.WhenAnyObservable(
+                        v=>v.ViewModel.Viewer.TargetProgressChanges)
                     .Select(target=>target.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, v=>v.Progress.Maximum),
+                    .BindTo(this, 
+                        v=>v.Progress.Maximum),
                 this.WhenAnyObservable(v=>v.ViewModel.Viewer.CurrentProgressChanges)
                     .Select(target=>target.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.Progress.Value),
+                this.WhenAnyObservable(
+                    v=>v.ViewModel.Viewer.JobStateChanges)
+                    .Select(state=>state.ToString())
+                    .ObserveOn(RxApp.TaskpoolScheduler)
+                    .BindTo(this, v=>v.State.Text),
             });
         }
     }

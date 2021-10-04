@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
@@ -32,6 +33,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
             TodoQueue = todoQueue;
             InProgressQueue = inProgressQueue;
             DoneQueue = doneQueue;
+
+            todoQueue.JobFilter = JobFilter.FromState(JobState.ToDo);
+            inProgressQueue.JobFilter = JobFilter.FromState(JobState.InProgress);
+            doneQueue.JobFilter = JobFilter.FromState(JobState.Done);
         }
     }
 }

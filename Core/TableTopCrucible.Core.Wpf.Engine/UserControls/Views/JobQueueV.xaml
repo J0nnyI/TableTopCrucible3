@@ -9,11 +9,13 @@
                           xmlns:vm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels"
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel>
-        <TextBlock Text="Completed Jobs"/>
-        <ListBox x:Name="Jobs" 
-                 Style="{StaticResource MaterialDesignCardsListBox}"/>
-        <TextBlock Text="Active Jobs"/>
-        <TextBlock Text="Queued Jobs"/>
-    </StackPanel>
+    <Grid>
+    <TextBlock x:Name="EmptyListText"
+               Text="There are no jobs in this list"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Center"
+               Margin="0 20 0 0"/>
+    <ListBox x:Name="Jobs" 
+             Style="{StaticResource MaterialDesignCardsListBox}"/>
+    </Grid>
 </rxui:ReactiveUserControl>

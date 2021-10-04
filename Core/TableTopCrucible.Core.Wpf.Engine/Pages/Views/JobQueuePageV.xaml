@@ -9,9 +9,32 @@
                           xmlns:vm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels"
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel>
-        <rxui:ViewModelViewHost x:Name="ToDoHost"/>
-        <rxui:ViewModelViewHost x:Name="InProgressHost"/>
-        <rxui:ViewModelViewHost x:Name="DoneHost"/>
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="Auto"
+                           MinHeight="200"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="Auto"
+                           MinHeight="200"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="Auto"
+                           MinHeight="200"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Not Started"
+                   HorizontalAlignment="Center"
+                   Grid.Row="0"/>
+        <rxui:ViewModelViewHost x:Name="ToDoHost"
+                                Grid.Row="1"/>
+        <TextBlock Text="Running"
+                   HorizontalAlignment="Center"
+                   Grid.Row="2"/>
+        <rxui:ViewModelViewHost x:Name="InProgressHost"
+                                Grid.Row="3"/>
+        <TextBlock Text="Done"
+                   HorizontalAlignment="Center"
+                   Grid.Row="4"/>
+        <rxui:ViewModelViewHost x:Name="DoneHost"
+                                Grid.Row="5"/>
+    </Grid>
 </rxui:ReactiveUserControl>

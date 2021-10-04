@@ -444,5 +444,12 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Viewer.JobState
                 .Should().Be(JobState.InProgress);
         }
+
+        [Test]
+        [Ignore("todo")]
+        public void LateDoubleSupscription()
+        {
+
+        }
     }
 }
