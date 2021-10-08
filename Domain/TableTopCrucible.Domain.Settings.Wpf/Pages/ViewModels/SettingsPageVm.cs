@@ -13,7 +13,7 @@ namespace TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels
     public interface ISettingsPage : INavigationPage { }
     public class SettingsPageVm : ReactiveObject, IActivatableViewModel, ISettingsPage
     {
-        public ViewModelActivator Activator { get; } = new ViewModelActivator();
+        public ViewModelActivator Activator { get; } = new ();
         public PackIconKind? Icon => PackIconKind.Settings;
         public Name Title => Name.From("Settings");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Lower;

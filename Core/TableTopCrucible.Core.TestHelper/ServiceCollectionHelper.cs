@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
+using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace TableTopCrucible.Core.TestHelper
 {
@@ -16,14 +14,14 @@ namespace TableTopCrucible.Core.TestHelper
             srv.RemoveAll<IFileSystem>();
             srv.AddSingleton<IFileSystem, T>();
         }
-        public static void RemoveAutoMapper(this ServiceCollection srv)
+
+        public static void RemoveAutoMapper(this ServiceCollection serviceCollection)
         {
             var autoMapperAssembly = Assembly.GetAssembly(typeof(Mapper));
-            srv.Where(desc => desc.ServiceType.Assembly == autoMapperAssembly)
-                .Select(desc => desc.ServiceType)
+            serviceCollection.Where(serviceDescriptor => serviceDescriptor.ServiceType.Assembly == autoMapperAssembly)
+                .Select(serviceDescriptor => serviceDescriptor.ServiceType)
                 .ToList()
-                .ForEach(asrv => srv.RemoveAll(asrv));
+                .ForEach(serviceType => serviceCollection.RemoveAll(serviceType));
         }
-
     }
 }

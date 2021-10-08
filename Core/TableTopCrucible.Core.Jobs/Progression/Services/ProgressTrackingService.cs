@@ -14,26 +14,31 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
     [Singleton]
     public interface IProgressTrackingService
     {
-        // creates a new tracker and adds it to the collection
-        ICompositeTracker CreateCompositeTracker(Name title);
-        // creates a new tracker and adds it to the collection
-        ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null);
         IObservableList<ITrackingViewer> TrackerList { get; }
 
         IObservable<CurrentProgressPercent> TotalProgress { get; }
+
+        // creates a new tracker and adds it to the collection
+        ICompositeTracker CreateCompositeTracker(Name title);
+
+        // creates a new tracker and adds it to the collection
+        ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null);
     }
+
     internal class ProgressTrackingService : IProgressTrackingService
     {
+        private readonly SourceList<ITrackingViewer> trackerList = new();
+
         public ProgressTrackingService()
         {
             trackerList
                 .Connect()
                 .DisposeMany()
-                .Transform(tracker=>tracker
+                .Transform(tracker => tracker
                     .JobStateChanges
-                    .Where(state=>state == JobState.Done)
+                    .Where(state => state == JobState.Done)
                     .Delay(SettingsHelper.NotificationDelay)
-                    .Subscribe(_=>this.trackerList.Remove(tracker))
+                    .Subscribe(_ => trackerList.Remove(tracker))
                 )
                 .DisposeMany()
                 .Subscribe();
@@ -43,24 +48,27 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                 .Select(trackers => trackers
                     .Select(tracker => tracker.GetCurrentProgressInPercent())
                     .CombineLatest(
-                    progresses =>
-                        !progresses.Any() ? CurrentProgressPercent.Min :
-                        (CurrentProgressPercent)(
-                            progresses.Sum(progressPercent => progressPercent.Value)
-                            / progresses.Count
-                        )
+                        progresses =>
+                            !progresses.Any()
+                                ? CurrentProgressPercent.Min
+                                : (CurrentProgressPercent) (
+                                    progresses.Sum(progressPercent => progressPercent.Value)
+                                    / progresses.Count
+                                )
                     )
-                    .Select(progress=> progress < (CurrentProgressPercent) 100 ? progress : (CurrentProgressPercent)0)
+                    .Select(progress => progress < (CurrentProgressPercent) 100 ? progress : (CurrentProgressPercent) 0)
                 )
                 .Switch()
                 .DistinctUntilChanged();
         }
+
         public ICompositeTracker CreateCompositeTracker(Name title = null)
         {
             var tracker = new CompositeTracker(title);
             trackerList.Add(tracker);
             return tracker;
         }
+
         public ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null)
         {
             var tracker = new SourceTracker(title, target);
@@ -68,7 +76,6 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
             return tracker;
         }
 
-        private readonly SourceList<ITrackingViewer> trackerList = new();
         public IObservableList<ITrackingViewer> TrackerList => trackerList.AsObservableList();
         public IObservable<CurrentProgressPercent> TotalProgress { get; }
     }

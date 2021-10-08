@@ -61,17 +61,17 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                 ViewModel!.IsNotificationSidebarSelectedChanged
                     .Select(selected=>selected?buttonBorderSelected:buttonBorder)
                     .BindTo(this, v=>v.ShowNotificationSidebar.BorderBrush),
-                ViewModel!.IsJobqueueSelectedChanged
+                ViewModel!.IsJobQueueSelectedChanged
                     .Select(selected=>selected? buttonBorderSelected:buttonBorder)
                     .BindTo(this, v=>v.ShowJobSidebar.BorderBrush),
 
                 this.Bind(ViewModel,
-                    vm=>vm.IsNavigationbarExpanded,
+                    vm=>vm.IsNavigationBarExpanded,
                     v=>v.IsNavigationBarExpanded.IsChecked,
                     RxApp.MainThreadScheduler),
 
                 this.OneWayBind(ViewModel,
-                    vm => vm.IsNavigationbarExpanded,
+                    vm => vm.IsNavigationBarExpanded,
                     v => v.IsNavigationBarExpanded.ToolTip,
                     isExpanded => isExpanded ? "Collapse Sidebar" : "Expand Sidebar"),
 

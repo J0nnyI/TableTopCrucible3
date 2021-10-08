@@ -105,7 +105,7 @@ namespace TableTopCrucible.Core.Wpf.UserControls
                     .Where(text=>text != this.UserText)
                     .BindTo(this, v=>v.UserText),
                 
-                // bug: filepicker error popup visible without error
+                // bug: filePicker error popup visible without error
             });
         }
 

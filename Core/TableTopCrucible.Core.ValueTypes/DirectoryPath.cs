@@ -1,40 +1,36 @@
-﻿using ReactiveUI;
-using ReactiveUI.Validation.Abstractions;
-using ReactiveUI.Validation.Extensions;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
+using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Extensions;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-
 using ValueOf;
-
-using static TableTopCrucible.Core.Helper.FileSystemHelper;
-
-using SearchOption = System.IO.SearchOption;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
     /// <summary>
-    /// the path of a directory
+    ///     the path of a directory
     /// </summary>
-    public class DirectoryPath<Tthis>
-        : ValueOf<string, Tthis>
-        where Tthis : DirectoryPath<Tthis>, new()
+    public class DirectoryPath<TThis>
+        : ValueOf<string, TThis>
+        where TThis : DirectoryPath<TThis>, new()
     {
+        public static FilePath operator +(DirectoryPath<TThis> directory, FileName fileName) =>
+            FilePath.From(FileSystemHelper.Path.Combine(directory.Value, fileName.Value));
 
-        public static FilePath operator +(DirectoryPath<Tthis> directory, FileName fileName)
-            => FilePath.From(Path.Combine(directory.Value, fileName.Value));
-        public static Tthis operator +(DirectoryPath<Tthis> directory, DirectoryName subDirectory)
-            => From(Path.Combine(directory.Value, subDirectory.Value));
-        public static Tthis operator +(DirectoryPath<Tthis> directory, RelativeDirectoryPath relativeDirectory)
-            => From(Path.Combine(directory.Value, relativeDirectory.Value));
+        public static TThis operator +(DirectoryPath<TThis> directory, DirectoryName subDirectory) =>
+            From(FileSystemHelper.Path.Combine(directory.Value, subDirectory.Value));
+
+        public static TThis operator +(DirectoryPath<TThis> directory, RelativeDirectoryPath relativeDirectory) =>
+            From(FileSystemHelper.Path.Combine(directory.Value, relativeDirectory.Value));
 
         public static Exception IsValid(string path, bool includeExists = false)
         {
@@ -42,33 +38,36 @@ namespace TableTopCrucible.Core.ValueTypes
                 return new InvalidPathException("the path must not be null");
             // throws an exception if the path is invalid or relative
 
-            if (includeExists && !Directory.Exists(path))
+            if (includeExists && !FileSystemHelper.Directory.Exists(path))
                 return new InvalidPathException("This directory does not exist");
 
             try
             {
-                Path.IsPathRooted(path);
+                FileSystemHelper.Path.IsPathRooted(path);
             }
             catch (Exception ex)
             {
-                return new InvalidPathException($"The path '{Path}' is either not relative or invalid", ex);
+                return new InvalidPathException($"The path '{FileSystemHelper.Path}' is either not relative or invalid",
+                    ex);
             }
 
             if (string.IsNullOrWhiteSpace(path))
                 return new InvalidPathException("The path must not be empty");
             return null;
         }
+
         protected override void Validate()
         {
             var ex = IsValid(Value);
             if (ex != null) throw ex;
         }
+
         public static IDisposable RegisterValidator<T>(
             T vm,
             Expression<Func<T, string>> propertyName,
             bool includeExists = true,
-            IObservable<IEnumerable<DirectoryPath<Tthis>>> blacklistChanges = null
-            ) where T : ReactiveObject, IValidatableViewModel
+            IObservable<IEnumerable<DirectoryPath<TThis>>> blacklistChanges = null
+        ) where T : ReactiveObject, IValidatableViewModel
         {
             CompositeDisposable disposables = new();
             vm.ValidationRule(propertyName,
@@ -78,113 +77,122 @@ namespace TableTopCrucible.Core.ValueTypes
 
             if (includeExists)
                 vm.ValidationRule(propertyName,
-                        value => Directory.Exists(value),
+                        value => FileSystemHelper.Directory.Exists(value),
                         "This directory does not exist")
                     .DisposeWith(disposables);
 
             if (blacklistChanges != null)
-            {
                 vm.ValidationRule(
                     propertyName,
                     // ReSharper disable once InvokeAsExtensionMethod
                     Observable.CombineLatest(
                         vm.WhenAnyValue(propertyName),
-                        blacklistChanges.StartWith(Array.Empty<DirectoryPath<Tthis>>()),
+                        blacklistChanges.StartWith(Array.Empty<DirectoryPath<TThis>>()),
                         (prop, blacklist) =>
                             !blacklist.Select(vt => vt.Value).Contains(prop)
-                        ),
+                    ),
                     "This directory has already been registered"
                 ).DisposeWith(disposables);
-            }
 
             vm.ValidationRule(propertyName,
-                value =>
-                {
-                    try
+                    value =>
                     {
-                        return Path.IsPathRooted(value);
-                    }
-                    catch (Exception) { return false; }
-                }, "This is not a valid directory path")
+                        try
+                        {
+                            return FileSystemHelper.Path.IsPathRooted(value);
+                        }
+                        catch (Exception)
+                        {
+                            return false;
+                        }
+                    }, "This is not a valid directory path")
                 .DisposeWith(disposables);
             return disposables;
         }
 
-        public bool Exists() => Directory.Exists(Value);
+        public bool Exists() => FileSystemHelper.Directory.Exists(Value);
+
         public void Create()
         {
             try
             {
-                Directory.CreateDirectory(Value);
-
+                FileSystemHelper.Directory.CreateDirectory(Value);
             }
             catch (Exception ex)
             {
-
-                throw new DirectoryCreationFailedException<Tthis>(this as Tthis, ex);
+                throw new DirectoryCreationFailedException<TThis>(this as TThis, ex);
             }
         }
+
         public void Delete(bool recursive = true)
         {
             try
             {
-                Directory.Delete(Value, recursive);
+                FileSystemHelper.Directory.Delete(Value, recursive);
             }
             catch (Exception ex)
             {
-                throw new DirectoryDeletionFailedException<Tthis>(this as Tthis, ex);
+                throw new DirectoryDeletionFailedException<TThis>(this as TThis, ex);
             }
         }
 
-        public IDirectoryInfo GetParent()
-            => Directory.GetParent(Value);
-        public void Rename(Tthis newLocation)
+        public IDirectoryInfo GetParent() => FileSystemHelper.Directory.GetParent(Value);
+
+        public void Rename(TThis newLocation)
         {
             try
             {
-                if (!this.GetParent().Exists)
+                if (!GetParent().Exists)
                     return;
                 var newParent = newLocation.GetParent();
                 if (!newParent.Exists)
-                    Directory.CreateDirectory(newParent.FullName);
-                Directory.Move(Value, newLocation.Value);
-
+                    FileSystemHelper.Directory.CreateDirectory(newParent.FullName);
+                FileSystemHelper.Directory.Move(Value, newLocation.Value);
             }
             catch (Exception ex)
             {
-                throw new DirectoryMoveFailedException<Tthis>(this as Tthis, newLocation, ex);
+                throw new DirectoryMoveFailedException<TThis>(this as TThis, newLocation, ex);
             }
         }
 
-        public void Move(Tthis newLocation) => Directory.Move(Value, newLocation.Value);
+        public void Move(TThis newLocation)
+        {
+            FileSystemHelper.Directory.Move(Value, newLocation.Value);
+        }
+
         public DirectoryName GetDirectoryName() =>
-            DirectoryName.From(Value.Split(Path.DirectorySeparatorChar).Last());
+            DirectoryName.From(Value.Split(FileSystemHelper.Path.DirectorySeparatorChar).Last());
 
-        public IEnumerable<FilePath> EnumerateFiles()
-            => Directory.EnumerateFiles(Value, "*", SearchOption.AllDirectories).Select(FilePath.From);
+        public IEnumerable<FilePath> EnumerateFiles() =>
+            FileSystemHelper.Directory.EnumerateFiles(Value, "*", SearchOption.AllDirectories)
+                .Select(FilePath.From);
 
-        public IEnumerable<FilePath> GetFiles(string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
-            => Directory
+        public IEnumerable<FilePath> GetFiles(string searchPattern = "*",
+            SearchOption searchOption = SearchOption.AllDirectories) =>
+            FileSystemHelper.Directory
                 .GetFiles(Value, searchPattern, searchOption)
                 .Select(FilePath.From)
                 .ToImmutableArray();
 
         public IEnumerable<FilePath> GetFiles(params FileType[] types)
-            => this.EnumerateFiles()
+        {
+            return EnumerateFiles()
                 .Where(f => types.Contains(f.GetFileType()));
-
+        }
     }
+
     public class DirectoryPath : DirectoryPath<DirectoryPath>
     {
+        public static DirectoryPath AppData =>
+            From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) +
+            DirectoryName.From("TableTopCrucible");
 
-        public static FilePath operator +(DirectoryPath directory, FileName fileName)
-            => FilePath.From(Path.Combine(directory.Value, fileName.Value));
-        public static DirectoryPath operator +(DirectoryPath directory, DirectoryName subDirectory)
-            => From(Path.Combine(directory.Value, subDirectory.Value));
+        public static FilePath operator +(DirectoryPath directory, FileName fileName) =>
+            FilePath.From(FileSystemHelper.Path.Combine(directory.Value, fileName.Value));
 
-        public static DirectoryPath AppData => From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) + DirectoryName.From("TableTopCrucible");
+        public static DirectoryPath operator +(DirectoryPath directory, DirectoryName subDirectory) =>
+            From(FileSystemHelper.Path.Combine(directory.Value, subDirectory.Value));
 
-        public static DirectoryPath GetTemporaryPath()
-            => From(Path.GetTempPath());
+        public static DirectoryPath GetTemporaryPath() => From(FileSystemHelper.Path.GetTempPath());
     }
 }

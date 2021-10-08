@@ -14,7 +14,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
     [Singleton]
     public interface INavigationService
     {
-        INavigationPage ActiveWorkarea { get; set; }
+        INavigationPage ActiveWorkArea { get; set; }
         ISidebarPage ActiveSidebar { get; set; }
         IObservableList<INavigationPage> Pages { get; }
         bool IsNavigationExpanded { get; set; }
@@ -26,7 +26,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
         [Reactive] public bool IsNavigationExpanded { get; set; } = true;
 
         [Reactive]
-        public INavigationPage ActiveWorkarea { get; set; }
+        public INavigationPage ActiveWorkArea { get; set; }
 
         [Reactive]
         public ISidebarPage ActiveSidebar { get; set; }

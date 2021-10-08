@@ -1,24 +1,20 @@
-﻿
-using System;
-using System.Linq;
+﻿using System;
 using System.Reactive.Linq;
 
 namespace TableTopCrucible.Core.Helper
 {
     public static class SourceCacheHelper
     {
-
-        public static IObservable<Func<Tcache, bool>> ToFilter
-            <Tcache, Tobservable>
+        public static IObservable<Func<TCache, bool>> ToFilter
+            <TCache, TObservable>
             (
-            this IObservable<Tobservable> observable,
-            Func<Tcache, Tobservable, bool> filter
+                this IObservable<TObservable> observable,
+                Func<TCache, TObservable, bool> filter
             )
         {
             return observable.Select(value =>
-                new Func<Tcache, bool>(item => filter(item, value))
+                new Func<TCache, bool>(item => filter(item, value))
             );
         }
-
     }
 }

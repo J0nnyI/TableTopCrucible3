@@ -2,15 +2,14 @@
 
 namespace TableTopCrucible.Core.ValueTypes.Exceptions
 {
-    public class InvalidFiletypeException : Exception
+    public class InvalidFileTypeException : Exception
     {
-        public InvalidFiletypeException() : base()
+        public InvalidFileTypeException()
         {
-
         }
-        public InvalidFiletypeException(string message) : base(message)
-        {
 
+        public InvalidFileTypeException(string message) : base(message)
+        {
         }
     }
 }

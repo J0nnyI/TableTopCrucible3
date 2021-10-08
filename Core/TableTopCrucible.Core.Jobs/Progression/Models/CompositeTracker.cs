@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-
 using DynamicData;
-
 using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
@@ -13,39 +10,13 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
     // tracks a composite progress and returns the weighted total progress
     internal class CompositeTracker : ICompositeTracker, ITrackingViewer
     {
-        public static readonly WeightedTargetProgress Target = (WeightedTargetProgress)100;
-
-        IObservable<CurrentProgress> ITrackingViewer.CurrentProgressChanges =>
-            CurrentProgressChanges.Select(prog => (CurrentProgress)prog);
-        public IObservable<WeightedCurrentProgress> CurrentProgressChanges { get; }
-
-        IObservable<TargetProgress> ITrackingViewer.TargetProgressChanges =>
-            TargetProgressChanges.Select(target => (TargetProgress)target);
-
-        public IObservable<WeightedTargetProgress> TargetProgressChanges { get; } = Observable.Return(Target);
-
-        public Name Title { get; }
-        public IObservable<JobState> JobStateChanges { get; }
-
-        public ICompositeTracker AddComposite(Name name = null, JobWeight weight = null)
-        {
-            var tracker = new WeightedCompositeTracker(name, weight);
-            _trackerStack.Add(tracker);
-            return tracker;
-        }
-
-        public ISourceTracker AddSingle(Name name = null, TargetProgress targetProgress = null, JobWeight weight = null)
-        {
-            var tracker = new WeightedSourceTracker(name, targetProgress, weight);
-            _trackerStack.Add(tracker);
-            return tracker;
-        }
+        public static readonly WeightedTargetProgress Target = (WeightedTargetProgress) 100;
 
         private readonly SourceList<IWeightedTrackingViewer> _trackerStack = new();
 
         public CompositeTracker(Name title)
         {
-            this.Title = title;
+            Title = title;
 
 
             var trackerListChanges = _trackerStack
@@ -61,9 +32,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
 
                     return // get the weight of all trackers parallel as list
                         trackerList.Select(tracker =>
-                            Observable.CombineLatest(
-                                tracker.CurrentProgressChanges,
-                                tracker.TargetProgressChanges,
+                            tracker.CurrentProgressChanges.CombineLatest(tracker.TargetProgressChanges,
                                 tracker.JobStateChanges,
                                 (current, target, state) =>
                                 {
@@ -102,48 +71,74 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
 
             // todo compositeTracker: child-updates have to be in percent
             JobStateChanges = trackerListChanges.Select(trackerList =>
-                trackerList.Select(tracker => tracker.JobStateChanges)
-                    .CombineLatest(jobStates =>
-                        {
-                            // for more performance and maybe reliability compare current to target value instead
-                            // no children? todo
-                            if (!jobStates.Any())
-                                return JobState.ToDo;
+                    trackerList.Select(tracker => tracker.JobStateChanges)
+                        .CombineLatest(jobStates =>
+                            {
+                                // for more performance and maybe reliability compare current to target value instead
+                                // no children? todo
+                                if (!jobStates.Any())
+                                    return JobState.ToDo;
 
-                            // any job in progress? => InProgress
-                            if (jobStates.Contains(JobState.InProgress))
+                                // any job in progress? => InProgress
+                                if (jobStates.Contains(JobState.InProgress))
+                                    return JobState.InProgress;
+
+                                // all jobs done? => Done
+                                if (jobStates.All(state => state == JobState.Done))
+                                    return JobState.Done;
+
+                                // all jobs todo? => todo
+                                if (jobStates.All(state => state == JobState.ToDo))
+                                    return JobState.ToDo;
+
+                                // remainder: (some todo, some done) => inProgress
                                 return JobState.InProgress;
-
-                            // all jobs done? => Done
-                            if (jobStates.All(state => state == JobState.Done))
-                                return JobState.Done;
-
-                            // all jobs todo? => todo
-                            if (jobStates.All(state => state == JobState.ToDo))
-                                return JobState.ToDo;
-
-                            // remainder: (some todo, some done) => inProgress
-                            return JobState.InProgress;
-                        }
-                    )
+                            }
+                        )
                 )
                 .Switch()
                 .DistinctUntilChanged();
         }
-        public override string ToString()
-            => $"C {Title}";
+
+        public IObservable<WeightedCurrentProgress> CurrentProgressChanges { get; }
+
+        public IObservable<WeightedTargetProgress> TargetProgressChanges { get; } = Observable.Return(Target);
+
+        IObservable<CurrentProgress> ITrackingViewer.CurrentProgressChanges =>
+            CurrentProgressChanges.Cast<CurrentProgress>();
+
+        IObservable<TargetProgress> ITrackingViewer.TargetProgressChanges =>
+            TargetProgressChanges.Cast<TargetProgress>();
+
+        public Name Title { get; }
+        public IObservable<JobState> JobStateChanges { get; }
+
+        public ICompositeTracker AddComposite(Name name = null, JobWeight weight = null)
+        {
+            var tracker = new WeightedCompositeTracker(name, weight);
+            _trackerStack.Add(tracker);
+            return tracker;
+        }
+
+        public ISourceTracker AddSingle(Name name = null, TargetProgress targetProgress = null, JobWeight weight = null)
+        {
+            var tracker = new WeightedSourceTracker(name, targetProgress, weight);
+            _trackerStack.Add(tracker);
+            return tracker;
+        }
+
+        public override string ToString() => $"C {Title}";
     }
 
     internal class WeightedCompositeTracker : CompositeTracker, IWeightedTrackingViewer
     {
         public WeightedCompositeTracker(Name title, JobWeight weight) : base(title)
         {
-            this.Weight = weight ?? JobWeight.Default;
+            Weight = weight ?? JobWeight.Default;
         }
 
         public JobWeight Weight { get; }
 
-        public override string ToString()
-            => $"WC {Title} - {Weight}";
+        public override string ToString() => $"WC {Title} - {Weight}";
     }
 }

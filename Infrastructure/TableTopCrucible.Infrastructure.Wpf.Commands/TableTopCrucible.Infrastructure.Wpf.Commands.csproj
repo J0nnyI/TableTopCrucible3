@@ -6,7 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
+    <ProjectReference
+      Include="..\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
   </ItemGroup>
 
   <ItemGroup>

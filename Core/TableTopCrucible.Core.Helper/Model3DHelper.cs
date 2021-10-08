@@ -1,6 +1,4 @@
-﻿using DynamicData;
-
-using System.Linq;
+﻿using System.Linq;
 using System.Windows.Media.Media3D;
 
 namespace TableTopCrucible.Core.Helper
@@ -20,8 +18,12 @@ namespace TableTopCrucible.Core.Helper
 
             model.Transform = new MatrixTransform3D(matrix);
         }
+
         public static void Move(this Model3D model, double x, double y, double z)
-            => Move(model, new Point3D(x, y, z));
+        {
+            Move(model, new Point3D(x, y, z));
+        }
+
         public static void Move(this Model3D model, Point3D location)
         {
             if (model?.Bounds == null)
@@ -37,6 +39,7 @@ namespace TableTopCrucible.Core.Helper
 
             model.Transform = new MatrixTransform3D(matrix);
         }
+
         public static void Move(this ModelUIElement3D uiElement, Point3D location)
         {
             if (uiElement?.Model?.Bounds == null)
@@ -52,25 +55,24 @@ namespace TableTopCrucible.Core.Helper
 
             uiElement.Transform = new MatrixTransform3D(matrix);
         }
+
         public static void PlaceChildrenAtOrigin(this Model3DGroup group)
         {
-            foreach (Model3D model in group.Children)
-            {
-                model.PlaceAtOrigin();
-            }
+            foreach (var model in group.Children) model.PlaceAtOrigin();
         }
-        public static void PlaceAtOrigin(this Model3D model)
-            => model.Move(new Point3D(0, 0, 0));
 
-        public static Point3D GetOriginOffset(this Rect3D bounds)
+        public static void PlaceAtOrigin(this Model3D model)
         {
-            return new Point3D
+            model.Move(new Point3D(0, 0, 0));
+        }
+
+        public static Point3D GetOriginOffset(this Rect3D bounds) =>
+            new()
             {
                 X = bounds.X + bounds.SizeX / 2,
                 Y = bounds.Y + bounds.SizeY / 2,
                 Z = bounds.Z
             };
-        }
 
         public static void SetMaterial(this Model3DGroup model, Material material)
         {
@@ -84,10 +86,7 @@ namespace TableTopCrucible.Core.Helper
             model.Children.Where(x => x is GeometryModel3D)
                 .Cast<GeometryModel3D>()
                 .ToList()
-                .ForEach(x =>
-                {
-                    x.Material = material;
-                });
+                .ForEach(x => { x.Material = material; });
         }
     }
 }

@@ -447,7 +447,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
 
         [Test]
         [Ignore("todo")]
-        public void LateDoubleSupscription()
+        public void LateDoubleSubscription()
         {
 
         }

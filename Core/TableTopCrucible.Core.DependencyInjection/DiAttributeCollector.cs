@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.DependencyInjection.Exceptions;
 using TableTopCrucible.Core.Helper;
@@ -16,7 +14,7 @@ namespace TableTopCrucible.Core.DependencyInjection
         public static IServiceCollection GenerateServiceProvider(IServiceCollection services = null)
         {
             services ??= new ServiceCollection();
-            
+
 
             var classes = AssemblyHelper.GetSolutionClasses().ToArray();
 
@@ -28,16 +26,16 @@ namespace TableTopCrucible.Core.DependencyInjection
             services.TryAddEnumerable(singletons);
             services.TryAddEnumerable(scoped);
 
-            var faultyServices = services.Where(service => service.ImplementationType == null || service.ServiceType == null).ToArray();
-            if (faultyServices.Any())
-            {
-                throw new IncompleteServiceException(faultyServices);
-            }
-            
+            var faultyServices = services
+                .Where(service => service.ImplementationType == null || service.ServiceType == null).ToArray();
+            if (faultyServices.Any()) throw new IncompleteServiceException(faultyServices);
+
 
             return services;
         }
-        private static IEnumerable<ServiceDescriptor> getCollectionForAttribute<T>(IEnumerable<Type> classes) where T : Attribute
+
+        private static IEnumerable<ServiceDescriptor> getCollectionForAttribute<T>(IEnumerable<Type> classes)
+            where T : Attribute
         {
             var lifetime = ServiceLifetime.Singleton;
             if (typeof(T) == typeof(ScopedAttribute))

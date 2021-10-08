@@ -1,5 +1,4 @@
 ﻿using System;
-
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Database.ValueTypes
@@ -8,15 +7,16 @@ namespace TableTopCrucible.Core.Database.ValueTypes
     {
         public Guid Id { get; private init; }
         public DateTime Timestamp { get; private init; }
-        public static TableSaveId New(Guid? id = null, DateTime? timestamp = null)
-        => new TableSaveId
-        {
-            Id = id ?? Guid.NewGuid(),
-            Timestamp = timestamp ?? DateTime.Now
-        };
-        public override string ToString()
-            => Timestamp.ToString("yyyy-MM-dd-HH-mm-ss-ffff--" + Id.ToString());
-        public BareFileName GetBareFilename()
-            => BareFileName.From(this.ToString());
+
+        public static TableSaveId New(Guid? id = null, DateTime? timestamp = null) =>
+            new()
+            {
+                Id = id ?? Guid.NewGuid(),
+                Timestamp = timestamp ?? DateTime.Now
+            };
+
+        public override string ToString() => Timestamp.ToString("yyyy-MM-dd-HH-mm-ss-ffff--" + Id);
+
+        public BareFileName GetBareFilename() => BareFileName.From(ToString());
     }
 }

@@ -2,7 +2,7 @@
 
 namespace TableTopCrucible.Core.DependencyInjection.Attributes
 {
-    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = true, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = true)]
     public class SingletonAttribute : Attribute
     {
     }

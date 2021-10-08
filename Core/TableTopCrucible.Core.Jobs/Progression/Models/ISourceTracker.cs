@@ -8,6 +8,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
     public interface ISourceTracker : IDisposable, ITrackingViewer
     {
         public void SetTarget(TargetProgress trackingTarget);
+
         // default = 1
         public void Increment(ProgressIncrement increment = null);
 

@@ -40,7 +40,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 .Select(states => states.Count(state => state != JobState.Done));
 
         private ObservableAsPropertyHelper<bool> _isNavigationBarExpanded;
-        public bool IsNavigationbarExpanded
+        public bool IsNavigationBarExpanded
         {
             get => _isNavigationBarExpanded.Value;
             set
@@ -51,7 +51,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         }
 
         public IObservable<bool> IsNotificationSidebarSelectedChanged { get; private set; }
-        public IObservable<bool> IsJobqueueSelectedChanged { get; private set; }
+        public IObservable<bool> IsJobQueueSelectedChanged { get; private set; }
 
         public ICommand ShowJobSidebarCommand { get; private set; }
         public ICommand ShowNotificationSidebar { get; private set; }
@@ -65,7 +65,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         {
             _navigationService = navigationService;
             _progressService = progressService;
-            CurrentPageTitleChanges = this.WhenAnyValue(vm => vm._navigationService.ActiveWorkarea.Title);
+            CurrentPageTitleChanges = this.WhenAnyValue(vm => vm._navigationService.ActiveWorkArea.Title);
 
             this.WhenActivated(() =>
             {
@@ -74,14 +74,14 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 this.IsNotificationSidebarSelectedChanged = 
                     this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar)
                     .Select(sidebar => sidebar == notificationList);
-                this.IsJobqueueSelectedChanged =
+                this.IsJobQueueSelectedChanged =
                     this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar)
                         .Select(sidebar => sidebar == jobQueuePage);
 
                 return new IDisposable[]
                 {
                     this.WhenAnyValue(vm => vm._navigationService.IsNavigationExpanded)
-                        .ToProperty(this, vm => vm.IsNavigationbarExpanded, out _isNavigationBarExpanded),
+                        .ToProperty(this, vm => vm.IsNavigationBarExpanded, out _isNavigationBarExpanded),
                     ReactiveCommandHelper.Create(() =>
                         {
                             _navigationService.ActiveSidebar = 

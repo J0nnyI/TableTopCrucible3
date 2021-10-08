@@ -13,11 +13,11 @@ namespace TableTopCrucible.Core.Database.Models
         : IEntity<Tid>
         where Tid : IEntityId
     {
-        public Tid Id { get; }
-
         protected EntityBase(Tid id)
         {
-            this.Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = id ?? throw new ArgumentNullException(nameof(id));
         }
+
+        public Tid Id { get; }
     }
 }

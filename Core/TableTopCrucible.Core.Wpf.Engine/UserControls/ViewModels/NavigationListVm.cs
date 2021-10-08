@@ -186,9 +186,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     )
                     .Select(m=>m.Page)
                     .WhereNotNull()
-                    .BindTo(navigationService, srv=>srv.ActiveWorkarea),
+                    .BindTo(navigationService, srv=>srv.ActiveWorkArea),
 
-                this.WhenAnyValue(vm=>vm._navigationService.ActiveWorkarea)
+                this.WhenAnyValue(vm=>vm._navigationService.ActiveWorkArea)
                     .WhereNotNull()
                     .Subscribe(selection =>
                     {

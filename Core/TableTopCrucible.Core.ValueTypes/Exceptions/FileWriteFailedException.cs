@@ -6,7 +6,6 @@ namespace TableTopCrucible.Core.ValueTypes.Exceptions
     {
         public FileWriteFailedException(Exception innerException) : base(null, innerException)
         {
-
         }
     }
 }

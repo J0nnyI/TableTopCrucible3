@@ -20,7 +20,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
 
             this.WhenActivated(() => new IDisposable[]
             {
-                ViewModel!.ActiveWorkareaChanges
+                ViewModel!.ActiveWorkAreaChanges
                     .BindTo(this,
                         v=>v.MainContainer.ViewModel),
                 ViewModel!.ActiveSidebarChanges

@@ -2,15 +2,12 @@
 
 namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
 {
-
     public class WeightedCurrentProgress : ValueOf<double, WeightedCurrentProgress>
     {
-        public static explicit operator WeightedCurrentProgress(double value)
-            => From(value);
+        public static explicit operator WeightedCurrentProgress(double value) => From(value);
 
-        public static WeightedCurrentProgress operator +(WeightedCurrentProgress valueA, WeightedCurrentProgress valueB)
-            => (WeightedCurrentProgress)(valueA.Value + valueB.Value);
-
-
+        public static WeightedCurrentProgress operator
+            +(WeightedCurrentProgress valueA, WeightedCurrentProgress valueB) =>
+            (WeightedCurrentProgress) (valueA.Value + valueB.Value);
     }
 }

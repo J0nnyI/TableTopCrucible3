@@ -1,15 +1,12 @@
-﻿using FluentAssertions;
-
-using NUnit.Framework;
-
-using Splat;
-
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using FluentAssertions;
+using NUnit.Framework;
+using Splat;
 
 namespace TableTopCrucible.Core.ValueTypes.Tests
 {
-    [TestFixture()]
+    [TestFixture]
     public class FilePathTests
     {
         [SetUp]
@@ -18,7 +15,7 @@ namespace TableTopCrucible.Core.ValueTypes.Tests
             Locator.CurrentMutable.Register<IFileSystem>(() => new MockFileSystem());
         }
 
-        [Test()]
+        [Test]
         public void GetFileTypeTest()
         {
             FilePath.From(@"C:\SubDir\file.obj").GetFileType().Should().Be(FileType.Model);

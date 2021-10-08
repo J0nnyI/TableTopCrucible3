@@ -1,5 +1,4 @@
 ﻿using System.IO.Compression;
-
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
@@ -10,7 +9,7 @@ namespace TableTopCrucible.Core.Database.ValueTypes
         protected override void Validate()
         {
             if (!IsLibrary())
-                throw new InvalidFiletypeException($"{Value} is not a valid library file");
+                throw new InvalidFileTypeException($"{Value} is not a valid library file");
             base.Validate();
         }
 
@@ -21,8 +20,7 @@ namespace TableTopCrucible.Core.Database.ValueTypes
             return path;
         }
 
-        public LibraryDirectoryPath GetWorkingDirectory()
-            => LibraryDirectoryPath.ForFile(this);
+        public LibraryDirectoryPath GetWorkingDirectory() => LibraryDirectoryPath.ForFile(this);
 
         public new LibraryDirectoryPath GetDirectoryPath() => LibraryDirectoryPath.From(base.GetDirectoryPath());
     }

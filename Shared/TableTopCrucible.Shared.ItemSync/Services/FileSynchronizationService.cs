@@ -121,7 +121,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                         // hash items and do the rest in parallel
                         filesToHash
                             .AsParallel()
-                            .WithDegreeOfParallelism(SettingsHelper.Threadcount)
+                            .WithDegreeOfParallelism(SettingsHelper.ThreadCount)
                             .ForAll(item =>
                             {
                                 item.CreateNewHashKey();

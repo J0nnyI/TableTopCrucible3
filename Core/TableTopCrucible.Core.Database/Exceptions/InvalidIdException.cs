@@ -6,7 +6,6 @@ namespace TableTopCrucible.Core.Database.Exceptions
     {
         public InvalidIdException(string message) : base(message)
         {
-
         }
     }
 }

@@ -7,12 +7,12 @@ namespace TableTopCrucible.Core.Helper
     {
         public static TimeSpan NotificationDelay => new(0, 0, 0, 5);
         public static double NotificationResolution => NotificationDelay / AnimationResolution;
-        public static bool AutocloseEnabled => true;
+        public static bool AutoCloseEnabled => true;
         public static double AnimationFrames => AnimationDuration / AnimationResolution;
         public static TimeSpan AnimationResolution => new TimeSpan(0, 0, 0, 1) / 30;
         public static TimeSpan AnimationDuration => TimeSpan.FromMilliseconds(200);
 
-        public static int Threadcount => 2;
+        public static int ThreadCount => 2;
         public static TimeSpan PipelineBufferTime => TimeSpan.FromSeconds(5);
     }
 }

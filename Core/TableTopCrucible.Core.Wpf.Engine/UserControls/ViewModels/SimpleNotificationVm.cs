@@ -68,7 +68,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
         private IDisposable _initDeleteCountdown()
         {
-            if (!SettingsHelper.AutocloseEnabled)
+            if (!SettingsHelper.AutoCloseEnabled)
                 return new CompositeDisposable();
 
             return new CompositeDisposable(new IDisposable[]

@@ -6,7 +6,6 @@ namespace TableTopCrucible.Core.ValueTypes.Exceptions
     {
         public InvalidNameException(string message) : base(message)
         {
-
         }
     }
 }

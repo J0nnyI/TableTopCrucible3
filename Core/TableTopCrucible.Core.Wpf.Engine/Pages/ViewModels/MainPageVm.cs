@@ -23,8 +23,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
         public INavigationList NavigationList { get; }
         public IAppHeader AppHeader { get; }
 
-        public IObservable<INavigationPage> ActiveWorkareaChanges =>
-            this.WhenAnyValue(vm => vm._navigationService.ActiveWorkarea);
+        public IObservable<INavigationPage> ActiveWorkAreaChanges =>
+            this.WhenAnyValue(vm => vm._navigationService.ActiveWorkArea);
         public IObservable<ISidebarPage> ActiveSidebarChanges =>
             this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar);
 

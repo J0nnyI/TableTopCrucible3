@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-
 using NUnit.Framework;
 
 namespace TableTopCrucible.Core.ValueTypes.Tests

@@ -12,6 +12,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         Name Title { get; }
         IObservable<JobState> JobStateChanges { get; }
     }
+
     public interface IWeightedTrackingViewer : ITrackingViewer
     {
         JobWeight Weight { get; }

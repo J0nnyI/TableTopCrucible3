@@ -25,7 +25,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
     [TestFixture()]
     public class FileSyncListGroupingTests
     {
-        public static readonly TimeSpan TestTimeout = new TimeSpan(0, 0, 0, 0, 500);
+        public static readonly TimeSpan TestTimeout = TimeSpan.FromMilliseconds(500);
 
         private IDirectorySetupRepository directorySetupRepository;
         private IScannedFileRepository fileRepository;
