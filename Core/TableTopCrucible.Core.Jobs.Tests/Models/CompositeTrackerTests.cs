@@ -30,7 +30,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
     public class CompositeTrackerTests : ReactiveObject
     {
         private IProgressTrackingService? progressService;
-        public ICompositeTrackerController Tracker { get; set; }
+        public ICompositeTracker Tracker { get; set; }
         public ISubscribedTrackingViewer Viewer { get; set; }
 
 
@@ -436,7 +436,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         public void Todo_InProgress_Done()
         {
-            var childA = Tracker.AddSingle();
+            Tracker.AddSingle();
             var childB = Tracker.AddSingle();
             var childC = Tracker.AddSingle();
             childB.Increment();
@@ -448,6 +448,13 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Test]
         [Ignore("todo")]
         public void LateDoubleSupscription()
+        {
+
+        }
+
+        [Test]
+        [Ignore("todo")]
+        public void LateChildAdd()
         {
 
         }

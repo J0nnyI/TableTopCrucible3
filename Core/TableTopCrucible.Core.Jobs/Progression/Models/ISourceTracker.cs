@@ -5,7 +5,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
 {
     // controls a single source tracker
     // dispose completes the tracking, regardless of the current progress
-    public interface ISourceTrackerController : IDisposable, ITrackingViewer
+    public interface ISourceTracker : IDisposable, ITrackingViewer
     {
         public void SetTarget(TargetProgress trackingTarget);
         // default = 1

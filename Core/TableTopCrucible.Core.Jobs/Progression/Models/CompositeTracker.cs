@@ -11,7 +11,7 @@ using TableTopCrucible.Core.ValueTypes;
 namespace TableTopCrucible.Core.Jobs.Progression.Models
 {
     // tracks a composite progress and returns the weighted total progress
-    internal class CompositeTracker : ICompositeTrackerController, ITrackingViewer
+    internal class CompositeTracker : ICompositeTracker, ITrackingViewer
     {
         public static readonly WeightedTargetProgress Target = (WeightedTargetProgress)100;
 
@@ -27,14 +27,14 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         public Name Title { get; }
         public IObservable<JobState> JobStateChanges { get; }
 
-        public ICompositeTrackerController AddComposite(Name name = null, JobWeight weight = null)
+        public ICompositeTracker AddComposite(Name name = null, JobWeight weight = null)
         {
             var tracker = new WeightedCompositeTracker(name, weight);
             _trackerStack.Add(tracker);
             return tracker;
         }
 
-        public ISourceTrackerController AddSingle(Name name = null, TargetProgress targetProgress = null, JobWeight weight = null)
+        public ISourceTracker AddSingle(Name name = null, TargetProgress targetProgress = null, JobWeight weight = null)
         {
             var tracker = new WeightedSourceTracker(name, targetProgress, weight);
             _trackerStack.Add(tracker);

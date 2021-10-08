@@ -15,9 +15,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
     public interface IProgressTrackingService
     {
         // creates a new tracker and adds it to the collection
-        ICompositeTrackerController CreateCompositeTracker(Name title);
+        ICompositeTracker CreateCompositeTracker(Name title);
         // creates a new tracker and adds it to the collection
-        ISourceTrackerController CreateSourceTracker(Name title = null, TargetProgress target = null);
+        ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null);
         IObservableList<ITrackingViewer> TrackerList { get; }
 
         IObservable<CurrentProgressPercent> TotalProgress { get; }
@@ -55,13 +55,13 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                 .Switch()
                 .DistinctUntilChanged();
         }
-        public ICompositeTrackerController CreateCompositeTracker(Name title = null)
+        public ICompositeTracker CreateCompositeTracker(Name title = null)
         {
             var tracker = new CompositeTracker(title);
             trackerList.Add(tracker);
             return tracker;
         }
-        public ISourceTrackerController CreateSourceTracker(Name title = null, TargetProgress target = null)
+        public ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null)
         {
             var tracker = new SourceTracker(title, target);
             trackerList.Add(tracker);

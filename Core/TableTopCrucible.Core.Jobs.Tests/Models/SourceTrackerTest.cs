@@ -23,7 +23,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
     public class SourceTrackerTest : ReactiveObject
     {
         private IProgressTrackingService? progressService;
-        public ISourceTrackerController Tracker { get; set; }
+        public ISourceTracker Tracker { get; set; }
         public ISubscribedTrackingViewer Viewer { get; set; }
 
 

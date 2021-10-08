@@ -7,7 +7,7 @@ using TableTopCrucible.Core.ValueTypes;
 namespace TableTopCrucible.Core.Jobs.Progression.Models
 {
     // tracks a single progress
-    internal class SourceTracker : ISourceTrackerController, ITrackingViewer
+    internal class SourceTracker : ISourceTracker, ITrackingViewer
     {
 
         public SourceTracker(Name title, TargetProgress trackingTarget)
