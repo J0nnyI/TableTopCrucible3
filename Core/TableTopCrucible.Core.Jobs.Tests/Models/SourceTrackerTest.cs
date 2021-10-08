@@ -22,7 +22,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
     [TestFixture]
     public class SourceTrackerTest : ReactiveObject
     {
-        private IProgressTrackingService? progressService;
+        private IProgressTrackingService progressService;
         public ISourceTracker Tracker { get; set; }
         public ISubscribedTrackingViewer Viewer { get; set; }
 
@@ -45,7 +45,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Prepare.ApplicationEnvironment();
             this.progressService = Locator.Current.GetService<IProgressTrackingService>();
 
-            this.Tracker = progressService.CreateSourceTracker((Name)"testTracker");
+            this.Tracker = progressService!.CreateSourceTracker((Name)"testTracker");
             this.Viewer = Tracker.Subscribe();
             _disposables = new CompositeDisposable(
                 Tracker,

@@ -46,6 +46,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
 
             public FileSetupData(string path, FileState state)
             {
+                FileState = state;
                 File = FilePath.From(path);
                 Content = Guid.NewGuid().ToString();
                 NewContent = Guid.NewGuid().ToString();

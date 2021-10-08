@@ -75,7 +75,7 @@ namespace TableTopCrucible.Core.Wpf.UserControls
         {
             this.DataContext = this.ViewModel = new DirectoryPickerVm();
             InitializeComponent();
-            // sync usertext and path
+            // sync user text and path
             this.WhenActivated(() => new[]
             {
                 //sync UserText (raw input) and Path (validated input)

@@ -10,7 +10,7 @@ namespace TableTopCrucible.Core.ValueTypes.Tests
     {
 
         private FileHash buildHash(int seed = 1)
-            => FileHash.From(Enumerable.Range(seed, 64).Select(i => Convert.ToByte(i)).ToArray());
+            => FileHash.From(Enumerable.Range(seed, 64).Select(Convert.ToByte).ToArray());
         private FileHashKey buildHashKey(int seed = 1)
             => FileHashKey.From((buildHash(seed), FileSize.From(seed)));
 

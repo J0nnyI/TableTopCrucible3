@@ -165,7 +165,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private FileSyncListGrouping getFileGroups(IEnumerable<DirectorySetup> directorySetups)
         {
             return new(directorySetups
-                .SelectMany(dir => startScanForDirectory(dir)));
+                .SelectMany(startScanForDirectory));
         }
 
 

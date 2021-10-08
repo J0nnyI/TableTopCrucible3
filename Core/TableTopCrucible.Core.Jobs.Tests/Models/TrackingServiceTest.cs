@@ -23,7 +23,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
     [TestFixture()]
     public class TrackingServiceTests : ReactiveObject
     {
-        private IProgressTrackingService? progressService;
+        private IProgressTrackingService progressService;
 
         private CompositeDisposable _disposables;
 

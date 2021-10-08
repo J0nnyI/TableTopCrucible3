@@ -19,9 +19,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
             => (CurrentProgress)current.Value;
 
         public static bool operator ==(CurrentProgress cur, TargetProgress target)
-            => (cur?.Value ?? 0) == (target?.Value ?? 0);
+            => (cur?.Value ?? 0).Equals(target?.Value ?? 0);
         public static bool operator !=(CurrentProgress cur, TargetProgress target)
-            => (cur?.Value ?? 0) != (target?.Value ?? 0);
+            => !(cur?.Value ?? 0).Equals(target?.Value ?? 0);
 
         public override bool Equals(object obj)
         {
@@ -31,6 +31,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
         }
 
         public override int GetHashCode()
+            // ReSharper disable once NonReadonlyMemberInGetHashCode
             => Value.GetHashCode();
 
         public static bool operator >(CurrentProgress cur, TargetProgress target)

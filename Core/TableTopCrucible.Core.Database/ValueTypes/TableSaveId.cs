@@ -6,8 +6,8 @@ namespace TableTopCrucible.Core.Database.ValueTypes
 {
     public class TableSaveId
     {
-        public Guid Id { get; private set; }
-        public DateTime Timestamp { get; private set; }
+        public Guid Id { get; private init; }
+        public DateTime Timestamp { get; private init; }
         public static TableSaveId New(Guid? id = null, DateTime? timestamp = null)
         => new TableSaveId
         {

@@ -23,11 +23,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     public class AppHeaderVm : ReactiveObject, IActivatableViewModel, IAppHeader
     {
         private readonly INavigationService _navigationService;
-        private readonly INotificationService _notificationService;
         private readonly IProgressTrackingService _progressService;
         public ViewModelActivator Activator { get; } = new();
-
-        private ObservableAsPropertyHelper<string> _currentPageTitle;
+        
         public IObservable<Name> CurrentPageTitleChanges { get; }
         public IObservable<int> NotificationCountChanges { get; private set; }
         public IObservable<CurrentProgressPercent> GlobalJobProgressChanges => _progressService.TotalProgress;
@@ -41,10 +39,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 .Switch()
                 .Select(states => states.Count(state => state != JobState.Done));
 
-        private ObservableAsPropertyHelper<bool> _isNavigationbarExpanded;
+        private ObservableAsPropertyHelper<bool> _isNavigationBarExpanded;
         public bool IsNavigationbarExpanded
         {
-            get => _isNavigationbarExpanded.Value;
+            get => _isNavigationBarExpanded.Value;
             set
             {
                 if (_navigationService.IsNavigationExpanded != value)
@@ -66,13 +64,12 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             IJobQueuePage jobQueuePage)
         {
             _navigationService = navigationService;
-            _notificationService = notificationService;
             _progressService = progressService;
             CurrentPageTitleChanges = this.WhenAnyValue(vm => vm._navigationService.ActiveWorkarea.Title);
 
             this.WhenActivated(() =>
             {
-                this.NotificationCountChanges = _notificationService.Notifications.CountChanged.ObserveOn(RxApp.MainThreadScheduler);
+                this.NotificationCountChanges = notificationService.Notifications.CountChanged.ObserveOn(RxApp.MainThreadScheduler);
 
                 this.IsNotificationSidebarSelectedChanged = 
                     this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar)
@@ -84,21 +81,21 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 return new IDisposable[]
                 {
                     this.WhenAnyValue(vm => vm._navigationService.IsNavigationExpanded)
-                        .ToProperty(this, vm => vm.IsNavigationbarExpanded, out _isNavigationbarExpanded),
+                        .ToProperty(this, vm => vm.IsNavigationbarExpanded, out _isNavigationBarExpanded),
                     ReactiveCommandHelper.Create(() =>
                         {
-                            if (_navigationService.ActiveSidebar == notificationList)
-                                _navigationService.ActiveSidebar = null;
-                            else
-                                _navigationService.ActiveSidebar = notificationList;
+                            _navigationService.ActiveSidebar = 
+                                _navigationService.ActiveSidebar == notificationList 
+                                    ? null 
+                                    : notificationList;
                         },
                         cmd=>ShowNotificationSidebar = cmd),
                     ReactiveCommandHelper.Create(()=>
                         {
-                            if (_navigationService.ActiveSidebar == jobQueuePage)
-                                _navigationService.ActiveSidebar = null;
-                            else
-                                _navigationService.ActiveSidebar = jobQueuePage;
+                            _navigationService.ActiveSidebar = 
+                                _navigationService.ActiveSidebar == jobQueuePage 
+                                    ? null 
+                                    : jobQueuePage;
                         },
                         cmd=>ShowJobSidebarCommand = cmd),
                 };

@@ -53,7 +53,7 @@ namespace TableTopCrucible.Core.Database
         internal LibraryDirectoryPath LibraryPath { get; private set; }
         [Reactive]
         internal LibraryFilePath CurrentFile { get; private set; }
-        internal ConcurrentDictionary<TableName, ITable> tables { get; } = new();
+        internal ConcurrentDictionary<TableName, ITable> _Tables { get; } = new();
 
         public Database()
         {
@@ -71,7 +71,7 @@ namespace TableTopCrucible.Core.Database
                 return;
             if (autoSave)
                 this.Save();
-            this.tables.Values.ToList().ForEach(table => table.Close());
+            this._Tables.Values.ToList().ForEach(table => table.Close());
             LibraryPath.Delete();
             this.LibraryPath = null;
         }
@@ -82,9 +82,9 @@ namespace TableTopCrucible.Core.Database
             where Tdto : IEntityDto<Tid, Tentity>
         {
             var name = TableName.FromType<Tid, Tentity>();
-            if (!tables.ContainsKey(name))
-                tables.TryAdd(name, new Table<Tid, Tentity, Tdto>(LibraryPath));
-            return tables[name] as ITable<Tid, Tentity, Tdto>;
+            if (!_Tables.ContainsKey(name))
+                _Tables.TryAdd(name, new Table<Tid, Tentity, Tdto>(LibraryPath));
+            return _Tables[name] as ITable<Tid, Tentity, Tdto>;
         }
 
         public void New(DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
@@ -95,7 +95,7 @@ namespace TableTopCrucible.Core.Database
         /// 
         /// </summary>
         /// <param name="file">when true, the old files will be overridden and no exception will be thrown</param>
-        /// <param name="force"></param>
+        /// <param name="behavior"></param>
         public void OpenFile(LibraryFilePath file, DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel)
         {
             _initialize(file, behavior);
@@ -142,11 +142,11 @@ namespace TableTopCrucible.Core.Database
             var saveId = TableSaveId.New();
             try
             {
-                this.tables.ToList().ForEach(table => table.Value.Save(saveId));
+                this._Tables.ToList().ForEach(table => table.Value.Save(saveId));
             }
             catch (Exception ex)
             {
-                this.tables.ToList().ForEach(table => table.Value.RollBackSave(saveId));
+                this._Tables.ToList().ForEach(table => table.Value.RollBackSave(saveId));
 
                 throw new SaveFailedException(ex);
             }
@@ -159,7 +159,7 @@ namespace TableTopCrucible.Core.Database
             var oldDir = this.LibraryPath;
             oldDir.Rename(newDir);
             this.LibraryPath = newDir;
-            foreach (var table in this.tables.Select(kv => kv.Value))
+            foreach (var table in this._Tables.Select(kv => kv.Value))
                 table.LibraryDirectory = newDir;
             Save();
         }

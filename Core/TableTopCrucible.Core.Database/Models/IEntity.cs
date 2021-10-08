@@ -2,7 +2,7 @@
 
 namespace TableTopCrucible.Core.Database.Models
 {
-    public interface IEntity<Tid>
+    public interface IEntity<out Tid>
         where Tid : IEntityId
     {
         public Tid Id { get; }

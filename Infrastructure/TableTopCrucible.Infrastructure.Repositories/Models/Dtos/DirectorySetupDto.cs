@@ -8,9 +8,10 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos
 {
     public class DirectorySetupDto : IEntityDto<DirectorySetupId, DirectorySetup>
     {
-        public string Name { get; }
-        public string Path { get; }
-        public DateTime LastSync { get; }
+        public string NameValue { get; set; }
+        public string PathValue { get; set; }
+        public DateTime LastSyncValue { get; set; }
         public Guid IdValue { get; set; }
+
     }
 }

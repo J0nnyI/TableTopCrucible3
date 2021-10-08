@@ -29,7 +29,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
     [TestOf(typeof(CompositeTracker))]
     public class CompositeTrackerTests : ReactiveObject
     {
-        private IProgressTrackingService? progressService;
+        private IProgressTrackingService progressService;
         public ICompositeTracker Tracker { get; set; }
         public ISubscribedTrackingViewer Viewer { get; set; }
 

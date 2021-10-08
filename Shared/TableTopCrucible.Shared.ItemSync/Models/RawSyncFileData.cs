@@ -24,7 +24,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
     }
     internal class RawSyncFileData
     {
-        private IFileInfo foundFileInfo;
+        private readonly IFileInfo foundFileInfo;
 
         public RawSyncFileData(ScannedFileData knownFile, FilePath foundFile)
         {

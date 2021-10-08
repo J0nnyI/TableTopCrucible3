@@ -37,6 +37,7 @@ namespace TableTopCrucible.Core.ValueTypes
         protected override bool Equals(ValueOf<byte[], FileHash> other)
             => Equals(other as object);
         public override int GetHashCode()
+            // ReSharper disable once NonReadonlyMemberInGetHashCode
             => HashCode.Combine(base.GetHashCode(), Value);
 
         public override string ToString()

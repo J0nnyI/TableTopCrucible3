@@ -18,8 +18,8 @@ namespace TableTopCrucible.Core.DependencyInjection.Exceptions
                     service => 
                     string.Join(Environment.NewLine,
                         "Lifetime: " + service.Lifetime,
-                        "class: " + service.ImplementationType.Name,
-                        "interface: " + service.ImplementationType.Name
+                        "class: " + service.ImplementationType?.Name,
+                        "interface: " + service.ImplementationType?.Name
                     )
                 )
             );

@@ -40,7 +40,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
             OnCompleted();
             _completedChanges.Dispose();
             _targetProgressChanges.Dispose();
-            _increments.Dispose();
+            lock (_increments)
+                _increments.Dispose();
         }
 
         public void OnCompleted()
@@ -50,7 +51,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
             _completedChanges.OnNext(true);
             _completedChanges.OnCompleted();
             _targetProgressChanges.OnCompleted();
-            _increments.OnCompleted();
+            lock (_increments)
+                _increments.OnCompleted();
         }
         private readonly BehaviorSubject<bool> _completedChanges = new(false);
 
@@ -71,7 +73,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
             .DistinctUntilChanged();
 
         private readonly ReplaySubject<ProgressIncrement> _increments = new();
-        private IObservable<CurrentProgress> _accumulatedProgressChanges { get; }
+        private readonly IObservable<CurrentProgress> _accumulatedProgressChanges;
 
         public IObservable<CurrentProgress> CurrentProgressChanges { get; }
 

@@ -21,6 +21,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public override int GetHashCode()
         {
+            // ReSharper disable once NonReadonlyMemberInGetHashCode
             return HashCode.Combine(base.GetHashCode(), Value.Item1, Value.Item2);
         }
 

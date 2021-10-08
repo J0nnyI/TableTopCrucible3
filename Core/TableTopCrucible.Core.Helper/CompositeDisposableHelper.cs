@@ -10,6 +10,6 @@ namespace TableTopCrucible.Core.Helper
         public static void Add(this CompositeDisposable compDisposable, params IDisposable[] disposables)
             => compDisposable.Add(disposables as IEnumerable<IDisposable>);
         public static void Add(this CompositeDisposable compDisposable, IEnumerable<IDisposable> disposables)
-            => disposables.ToList().ForEach(x => compDisposable.Add(x));
+            => disposables.ToList().ForEach(compDisposable.Add);
     }
 }
