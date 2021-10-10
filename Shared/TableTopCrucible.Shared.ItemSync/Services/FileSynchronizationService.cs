@@ -22,6 +22,7 @@ using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
+using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Models;
 
 namespace TableTopCrucible.Shared.ItemSync.Services
@@ -39,16 +40,19 @@ namespace TableTopCrucible.Shared.ItemSync.Services
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IScannedFileRepository _fileRepository;
+        private readonly IItemRepository _itemRepository;
         private readonly IProgressTrackingService _progressTrackingService;
         [Reactive] public bool ScanRunning { get; private set; } = false;
 
         public FileSynchronizationService(
             IDirectorySetupRepository directorySetupRepository,
             IScannedFileRepository fileRepository,
+            IItemRepository itemRepository,
             IProgressTrackingService progressTrackingService)
         {
             _directorySetupRepository = directorySetupRepository;
             _fileRepository = fileRepository;
+            _itemRepository = itemRepository;
             _progressTrackingService = progressTrackingService;
 
             this.StartScanCommand = ReactiveCommand.Create(
@@ -114,7 +118,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                             .TakeUntil(updateTracker.OnDone())
                             .Subscribe(items =>
                             {
-                                _handleChangedFiles(items);
+                                _handleChangedFiles(items.ToArray());
                                 updateTracker.Increment((ProgressIncrement)items.Count);
                             });
 
@@ -169,9 +173,20 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         }
 
 
-        private void _handleChangedFiles(IEnumerable<RawSyncFileData> files)
+        private void _handleChangedFiles(RawSyncFileData[] files)
         {
             _fileRepository.AddOrUpdate(files.Select(file => file.GetNewFileEntity()));
+
+            this._itemRepository.Edit(itemUpdater =>
+            {
+                foreach (var file in files)
+                {
+                    var helper = file.GetItemUpdateHelper(itemUpdater.Items);
+                    var update = helper.GetItemUpdate();
+                    if(update is not null)
+                        itemUpdater.AddOrUpdate(update);
+                }
+            });
         }
     }
 }

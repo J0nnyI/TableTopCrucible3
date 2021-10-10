@@ -12,5 +12,8 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static FileName operator +(BareFileName fileName, FileExtension extension) =>
             FileName.From(fileName.Value + extension.Value);
+
+        public Name ToName()
+            => (Name) Value;
     }
 }

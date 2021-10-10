@@ -14,12 +14,26 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel HorizontalAlignment="Left">
-            <Button x:Name="FileSync"
-                    Content="Start Sync"/>
-        </StackPanel>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <GridSplitter Width="4"
+                      Margin=" 0 4 -2 4"
+                      Grid.RowSpan="2"/>
+        <Button x:Name="FileSync"
+                    Content="Start Sync"
+                    HorizontalAlignment="Left"
+                    Grid.Column="0"
+                    Grid.Row="0"/>
+        <TextBlock Text="files"
+                   HorizontalAlignment="Center"
+                   Grid.Column="0"
+                   Grid.Row="0"/>
         <ListView x:Name="Files"
-                  Grid.Row="1">
+                  Margin="5"
+                  Grid.Row="1"
+                  Grid.Column="0">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Path" DisplayMemberBinding="{Binding FileLocation}"/>
@@ -30,5 +44,19 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <TextBlock Text="items"
+                   HorizontalAlignment="Center"
+                   Grid.Column="1"
+                   Grid.Row="0"/>
+        <ListView x:Name="Items"
+                  Margin="5"
+                  Grid.Row="1"
+                  Grid.Column="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                </GridView>
+            </ListView.View>
+            </ListView>
     </Grid>
 </reactiveUi:ReactiveUserControl>

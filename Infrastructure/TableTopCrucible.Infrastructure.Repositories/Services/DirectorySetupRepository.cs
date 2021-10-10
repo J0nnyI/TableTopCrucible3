@@ -27,7 +27,7 @@ namespace TableTopCrucible.Infrastructure.Repositories
         public DirectorySetupRepository(IDatabase database) : base(database)
         {
             TakenDirectoriesChanges =
-                DataChanges
+                Data
                     .Connect()
                     .Transform(m => m.Path)
                     .ToCollection()

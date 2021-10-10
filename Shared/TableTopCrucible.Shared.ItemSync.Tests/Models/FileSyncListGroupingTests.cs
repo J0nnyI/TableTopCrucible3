@@ -36,7 +36,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             public FilePath File { get; }
             public string Content { get; init; }
             public string NewContent { get; init; }
-            public FileState FileState { get; }
+            public FileUpdateSource FileUpdateSource { get; }
             public FileHashKey HashKey { get; private set; }
             public FileHashKey TargetHashKey { get; private set; }
             public DateTime LastWrite { get; private set; }
@@ -44,9 +44,9 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             public ScannedFileDataId OriginalId { get; private set; }
 
 
-            public FileSetupData(string path, FileState state)
+            public FileSetupData(string path, FileUpdateSource updateSource)
             {
-                FileState = state;
+                FileUpdateSource = updateSource;
                 File = FilePath.From(path);
                 Content = Guid.NewGuid().ToString();
                 NewContent = Guid.NewGuid().ToString();
@@ -58,7 +58,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                 OriginalId = ScannedFileDataId.New();
 
                 // create local file
-                if (FileState != FileState.Deleted)
+                if (FileUpdateSource != FileUpdateSource.Deleted)
                 {
                     File.GetDirectoryPath().Create();
                     File.WriteAllText(Content);
@@ -66,14 +66,14 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                 }
 
                 // new files do not have a model
-                if (FileState == FileState.New)
+                if (FileUpdateSource == FileUpdateSource.New)
                     return null;
 
                 // create hash for old file
                 TargetHashKey = HashKey = FileHashKey.Create(File);
 
                 // update file if required
-                if (FileState == FileState.Updated)
+                if (FileUpdateSource == FileUpdateSource.Updated)
                 {
                     if (NewContent != null)
                         File.WriteAllText(NewContent);
@@ -91,7 +91,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             {
                 output.HashKey.Should().Be(HashKey);
 
-                if (FileState == FileState.Deleted)
+                if (FileUpdateSource == FileUpdateSource.Deleted)
                     output.Should().BeNull();
                 else
                 {
@@ -198,16 +198,16 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                 },
                 FileData = new FileSetupData[]
                 {
-                    new(@"C:\First\New\A.stl", FileState.New),
-                    new(@"C:\First\New\B.stl", FileState.New),
-                    new(@"C:\First\Unchanged\A.stl", FileState.Unchanged),
-                    new(@"C:\First\Unchanged\B.stl", FileState.Unchanged),
-                    new(@"C:\First\Deleted\A.stl", FileState.Deleted),
-                    new(@"C:\First\Deleted\B.stl", FileState.Deleted),
-                    new(@"C:\First\Updated\A.stl", FileState.Updated),
-                    new(@"C:\First\Updated\B.stl", FileState.Updated),
-                    new(@"C:\second\A.stl", FileState.New),
-                    new(@"C:\second\B.stl", FileState.New),
+                    new(@"C:\First\New\A.stl", FileUpdateSource.New),
+                    new(@"C:\First\New\B.stl", FileUpdateSource.New),
+                    new(@"C:\First\Unchanged\A.stl", FileUpdateSource.Unchanged),
+                    new(@"C:\First\Unchanged\B.stl", FileUpdateSource.Unchanged),
+                    new(@"C:\First\Deleted\A.stl", FileUpdateSource.Deleted),
+                    new(@"C:\First\Deleted\B.stl", FileUpdateSource.Deleted),
+                    new(@"C:\First\Updated\A.stl", FileUpdateSource.Updated),
+                    new(@"C:\First\Updated\B.stl", FileUpdateSource.Updated),
+                    new(@"C:\second\A.stl", FileUpdateSource.New),
+                    new(@"C:\second\B.stl", FileUpdateSource.New),
                 },
             }.RunTest();
         }

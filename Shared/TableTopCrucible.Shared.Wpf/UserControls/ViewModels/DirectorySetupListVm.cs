@@ -56,7 +56,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             this.WhenActivated(() => new[]
             {
                 _directorySetupRepository
-                    .DataChanges
+                    .Data
                     .Connect()
                     .Transform(m=>m.Id)
                     .IgnoreUpdateWhen((m1, m2)=>m1==m2)

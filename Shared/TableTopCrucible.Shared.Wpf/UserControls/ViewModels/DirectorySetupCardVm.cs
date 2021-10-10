@@ -68,7 +68,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 // Properties
                 this.WhenAnyValue(
                         vm => vm.DirectorySetupId,
-                        id => _directorySetupRepository.DataChanges.Watch(id))
+                        id => _directorySetupRepository.Data.Watch(id))
                     .Switch()
                     .Select(change=>change.Current)
                     .Do(m =>

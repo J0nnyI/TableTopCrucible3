@@ -17,11 +17,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
             this.WhenActivated(() => new IDisposable[]
             {
                 this.OneWayBind(ViewModel,
+                    vm=>vm.FileSyncCommand,
+                    v=>v.FileSync.Command),
+                this.OneWayBind(ViewModel,
                     vm => vm.Files,
                     v => v.Files.ItemsSource),
                 this.OneWayBind(ViewModel,
-                    vm=>vm.FileSyncCommand,
-                    v=>v.FileSync.Command)
+                    vm => vm.Items,
+                    v => v.Items.ItemsSource),
             });
         }
     }

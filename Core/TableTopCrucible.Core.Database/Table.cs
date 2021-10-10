@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
+
 using AutoMapper;
+
 using DynamicData;
 using DynamicData.Kernel;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using Splat;
+
 using TableTopCrucible.Core.Database.Exceptions;
 using TableTopCrucible.Core.Database.Models;
 using TableTopCrucible.Core.Database.ValueTypes;
@@ -51,6 +56,7 @@ namespace TableTopCrucible.Core.Database
         IObservable<Tentity> WatchValue(Tid entityId);
         void Remove(Tid id);
         void Remove(IEnumerable<Tid> id);
+        public void Edit(Action<ISourceUpdater<Tentity, Tid>> updateAction);
     }
 
 
@@ -125,28 +131,23 @@ namespace TableTopCrucible.Core.Database
         public IObservableCache<Tentity, Tid> Data => _data;
 
         public void AddOrUpdate(Tentity entity)
-        {
-            _data.AddOrUpdate(entity);
-        }
+            => _data.AddOrUpdate(entity);
 
         public void AddOrUpdate(IEnumerable<Tentity> entity)
-        {
-            _data.AddOrUpdate(entity);
-        }
+            => _data.AddOrUpdate(entity);
 
 
         public void Remove(Tid id)
-        {
-            _data.Remove(id);
-        }
+            => _data.Remove(id);
 
         public void Remove(IEnumerable<Tid> id)
-        {
-            _data.Remove(id);
-        }
+            => _data.Remove(id);
 
-        public override int Count => _data.Count;
+        public override int Count
+            => _data.Count;
 
+        public void Edit(Action<ISourceUpdater<Tentity, Tid>> updateAction)
+            => _data.Edit(updateAction);
 
         public IObservable<Tentity> WatchValue(Tid entityId) => _data.WatchValue(entityId);
 
