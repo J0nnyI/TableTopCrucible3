@@ -1,22 +1,31 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
+
 using DynamicData;
+
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Progression.Models
 {
     // tracks a composite progress and returns the weighted total progress
-    internal class CompositeTracker : ICompositeTracker, ITrackingViewer
+    internal class CompositeTracker : ICompositeTracker, ITrackingViewer, IDisposable
     {
-        public static readonly WeightedTargetProgress Target = (WeightedTargetProgress) 100;
+        private CompositeDisposable _disposables = new();
+        private readonly IObservable<Unit> _onDestroy;
+        public static readonly WeightedTargetProgress Target = (WeightedTargetProgress)100;
 
         private readonly SourceList<IWeightedTrackingViewer> _trackerStack = new();
 
         public CompositeTracker(Name title)
         {
             Title = title;
+            _onDestroy = _disposables.AsSubject();
 
 
             var trackerListChanges = _trackerStack
@@ -24,10 +33,11 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
                 .ToCollection()
                 .Publish()
                 .RefCount();
+
             CurrentProgressChanges = trackerListChanges
                 .Select(trackerList =>
                 {
-                    var totalTrackerWeight = (JobWeight) trackerList
+                    var totalTrackerWeight = (JobWeight)trackerList
                         .Sum(tracker => tracker.Weight.Value);
 
                     return // get the weight of all trackers parallel as list
@@ -46,9 +56,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
                                     switch (state)
                                     {
                                         case JobState.ToDo:
-                                            return (WeightedCurrentProgress) 0;
+                                            return (WeightedCurrentProgress)0;
                                         case JobState.Done:
-                                            return (WeightedCurrentProgress) (Target.Value * targetFraction);
+                                            return (WeightedCurrentProgress)(Target.Value * targetFraction);
                                     }
 
                                     // current value
@@ -56,18 +66,21 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
                                     if (filledPercent > 1) // catch overfill
                                         filledPercent = 1;
 
-                                    return (WeightedCurrentProgress) (targetPercent * filledPercent);
+                                    return (WeightedCurrentProgress)(targetPercent * filledPercent);
                                 }
                             )
                         ).CombineLatest( // sum the content of the list
-                            targets => (WeightedCurrentProgress) targets
+                            targets => (WeightedCurrentProgress)targets
                                 .Select(target => target.Value)
                                 .Sum()
                         );
                 })
                 .Switch()
-                .StartWith((WeightedCurrentProgress) 0)
-                .DistinctUntilChanged();
+                .StartWith((WeightedCurrentProgress)0)
+                .DistinctUntilChanged()
+                .TakeUntil(this._onDestroy)
+                .Replay()
+                .ConnectUntil(_disposables);
 
             // todo compositeTracker: child-updates have to be in percent
             JobStateChanges = trackerListChanges.Select(trackerList =>
@@ -97,7 +110,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
                         )
                 )
                 .Switch()
-                .DistinctUntilChanged();
+                .DistinctUntilChanged()
+                .Replay(1)
+                .ConnectUntil(_disposables);
         }
 
         public IObservable<WeightedCurrentProgress> CurrentProgressChanges { get; }
@@ -105,10 +120,10 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         public IObservable<WeightedTargetProgress> TargetProgressChanges { get; } = Observable.Return(Target);
 
         IObservable<CurrentProgress> ITrackingViewer.CurrentProgressChanges =>
-            CurrentProgressChanges.Cast<CurrentProgress>();
+            CurrentProgressChanges.Select(currentProgress => (CurrentProgress)currentProgress);
 
         IObservable<TargetProgress> ITrackingViewer.TargetProgressChanges =>
-            TargetProgressChanges.Cast<TargetProgress>();
+            TargetProgressChanges.Select(target => (TargetProgress)target);
 
         public Name Title { get; }
         public IObservable<JobState> JobStateChanges { get; }
@@ -128,6 +143,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         }
 
         public override string ToString() => $"C {Title}";
+        public void Dispose()
+        => _disposables.Dispose();
     }
 
     internal class WeightedCompositeTracker : CompositeTracker, IWeightedTrackingViewer

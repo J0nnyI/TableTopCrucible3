@@ -32,8 +32,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
 
         public override int GetHashCode()
             // ReSharper disable once NonReadonlyMemberInGetHashCode
-            =>
-                Value.GetHashCode();
+            => Value.GetHashCode();
 
         public static bool operator >(CurrentProgress cur, TargetProgress target) =>
             (cur?.Value ?? 0) > (target?.Value ?? 0);

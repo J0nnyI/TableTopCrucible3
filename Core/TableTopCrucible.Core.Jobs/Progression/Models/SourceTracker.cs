@@ -64,8 +64,10 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
             }
         }
 
-        public IObservable<JobState> JobStateChanges => _accumulatedProgressChanges.Do(x => { }).CombineLatest(
-                TargetProgressChanges.Do(x => { }),
+        public IObservable<JobState> JobStateChanges => 
+            Observable.CombineLatest(
+                _accumulatedProgressChanges.Do(x => { }),
+                _targetProgressChanges.Do(x => { }),
                 _completedChanges.Do(x => { }),
                 (current, target, completed) =>
                 {
@@ -83,9 +85,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         public IObservable<TargetProgress> TargetProgressChanges => _targetProgressChanges.AsObservable();
 
         public void SetTarget(TargetProgress trackingTarget)
-        {
-            _targetProgressChanges.OnNext(trackingTarget);
-        }
+        => _targetProgressChanges.OnNext(trackingTarget);
 
         public void Increment(ProgressIncrement increment)
         {

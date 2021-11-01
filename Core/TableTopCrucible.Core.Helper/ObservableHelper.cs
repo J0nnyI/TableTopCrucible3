@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using DynamicData.Kernel;
 
 namespace TableTopCrucible.Core.Helper
@@ -71,6 +73,19 @@ namespace TableTopCrucible.Core.Helper
             Seed = 1,
             Initial = 2,
             Full = 3
+        }
+
+        /// <summary>
+        /// connects to the source until the compositeDisposable is disposed of
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="disposeWith"></param>
+        /// <returns></returns>
+        public static IConnectableObservable<T> ConnectUntil<T>(this IConnectableObservable<T> source, CompositeDisposable disposeWith)
+        {
+            source.Connect().DisposeWith(disposeWith);
+            return source;
         }
     }
 }

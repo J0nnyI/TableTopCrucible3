@@ -31,17 +31,17 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
 
         public ProgressTrackingService()
         {
-            trackerList
-                .Connect()
-                .DisposeMany()
-                .Transform(tracker => tracker
-                    .JobStateChanges
-                    .Where(state => state == JobState.Done)
-                    .Delay(SettingsHelper.NotificationDelay)
-                    .Subscribe(_ => trackerList.Remove(tracker))
-                )
-                .DisposeMany()
-                .Subscribe();
+            //trackerList
+            //    .Connect()
+            //    .DisposeMany()
+            //    .Transform(tracker => tracker
+            //        .JobStateChanges
+            //        .Where(state => state == JobState.Done)
+            //        .Delay(SettingsHelper.NotificationDelay)
+            //        .Subscribe(_ => trackerList.Remove(tracker))
+            //    )
+            //    .DisposeMany()
+            //    .Subscribe();
 
             TotalProgress = trackerList.Connect()
                 .ToCollection()
@@ -60,6 +60,10 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                 )
                 .Switch()
                 .DistinctUntilChanged();
+
+            //this.CreateSourceTracker((Name) "ToDo Test");
+            //this.CreateSourceTracker((Name) "InProgress Test").Increment((ProgressIncrement).5);
+            this.CreateSourceTracker((Name)"Done Test").OnCompleted();
         }
 
         public ICompositeTracker CreateCompositeTracker(Name title = null)

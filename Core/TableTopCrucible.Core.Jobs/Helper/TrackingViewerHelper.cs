@@ -70,22 +70,28 @@ namespace TableTopCrucible.Core.Jobs.Helper
 
         public void _bindValues(IScheduler scheduler)
         {
-            _disposables = new CompositeDisposable(CurrentProgressChanges.ToProperty(
-                this,
-                vm => vm.CurrentProgress,
-                out _currentProgress,
+            _disposables = new CompositeDisposable(
+                CurrentProgressChanges.ToProperty(
+                    this,
+                    vm => vm.CurrentProgress,
+                    out _currentProgress,
                 false,
-                scheduler ?? Scheduler.CurrentThread), TargetProgressChanges.ToProperty(
-                this,
-                vm => vm.TargetProgress,
-                out _targetProgress,
-                false,
-                scheduler ?? Scheduler.CurrentThread), JobStateChanges.ToProperty(
-                this,
-                vm => vm.JobState,
-                out _jobState,
-                false,
-                scheduler ?? Scheduler.CurrentThread)).DisposeWith(_permanentDisposables);
+                    scheduler)
+                 ,
+                TargetProgressChanges.ToProperty(
+                    this,
+                    vm => vm.TargetProgress,
+                    out _targetProgress,
+                    false,
+                    scheduler)
+                ,
+                JobStateChanges.ToProperty(
+                    this,
+                    vm => vm.JobState,
+                    out _jobState,
+                    false,
+                    scheduler)
+                ).DisposeWith(_permanentDisposables);
         }
 
         public override string ToString()

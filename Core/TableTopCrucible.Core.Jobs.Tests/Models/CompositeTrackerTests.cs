@@ -16,6 +16,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using DynamicData;
+using Microsoft.AspNetCore.Mvc;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
@@ -49,6 +50,10 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [SetUp]
         public void BeforeEach()
         {
+            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(e =>
+            {
+
+            });
             Prepare.ApplicationEnvironment();
             this.progressService = Locator.Current.GetService<IProgressTrackingService>();
 
@@ -66,6 +71,18 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         public void InitialValues()
         {
             Tracker.Title.Value.Should().Be("testTracker");
+            (Tracker as CompositeTracker).TargetProgressChanges.Subscribe(x =>
+            {
+
+            });
+            Tracker.TargetProgressChanges.Subscribe(x =>
+            {
+
+            });
+            Viewer.TargetProgressChanges.Subscribe(x =>
+            {
+
+            });
             Viewer.TargetProgress.Value.Should().Be(CompositeTracker.Target.Value);
             Viewer.JobState.Should().Be(JobState.ToDo);
         }
@@ -396,8 +413,13 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             var childB = Tracker.AddSingle();
             childA.OnCompleted();
             childB.OnCompleted();
+
+            JobState? late = null;
+            Viewer.JobStateChanges.Take(1).Subscribe(x => late = x);
+
             Viewer.JobState
-                .Should().Be(JobState.Done);
+                .Should().Be(JobState.Done, "pre sub");
+            late.Should().Be(JobState.Done, "post sub");
         }
 
         [Test]
@@ -456,6 +478,36 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Ignore("todo")]
         public void LateChildAdd()
         {
+
+        }
+
+    }
+
+    [TestFixture]
+    public class DemoTest
+    {
+        [Test]
+        public void TestFilterObservable()
+        {
+            var list = new SourceList<IObservable<int>>();
+            var item1 = new Subject<int>();
+            var item2 = new Subject<int>();
+            int filteredCount = 0;
+            list.AddRange(new[] { item1, item2 });
+            list
+                .Connect()
+                .FilterOnObservable(o => 
+                    o.Select(x => x % 2 == 0))
+                .OnItemAdded(x => filteredCount++)
+                .OnItemRemoved(x => filteredCount--)
+                .Subscribe();
+            filteredCount.Should().Be(2);
+            item1.OnNext(1);
+            filteredCount.Should().Be(1);
+            item2.OnNext(1);
+            filteredCount.Should().Be(0);
+            item2.OnNext(2);
+            filteredCount.Should().Be(1);
 
         }
     }

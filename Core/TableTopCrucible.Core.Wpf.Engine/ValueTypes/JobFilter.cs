@@ -20,7 +20,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.ValueTypes
         public static readonly JobFilter Default = From(_ => Observable.Return(true), "Default");
 
         public static JobFilter FromState(JobState filterState)
-            => From(viewer => viewer.JobStateChanges.Select(state => state == filterState), "filter by state " + filterState);
+            => From(viewer => viewer
+                .JobStateChanges
+                .Select(state => state == filterState),
+                "filter by state " + filterState);
 
         public static JobFilter From(Func<ITrackingViewer, IObservable<bool>> value, string description)
         {
