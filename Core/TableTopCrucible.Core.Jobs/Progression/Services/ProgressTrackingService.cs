@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
+
 using DynamicData;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
@@ -25,8 +28,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
         ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null);
     }
 
-    internal class ProgressTrackingService : IProgressTrackingService
+    internal class ProgressTrackingService : IProgressTrackingService, IDisposable
     {
+        private CompositeDisposable _disposables = new();
         private readonly SourceList<ITrackingViewer> trackerList = new();
 
         public ProgressTrackingService()
@@ -51,19 +55,19 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                         progresses =>
                             !progresses.Any()
                                 ? CurrentProgressPercent.Min
-                                : (CurrentProgressPercent) (
+                                : (CurrentProgressPercent)(
                                     progresses.Sum(progressPercent => progressPercent.Value)
                                     / progresses.Count
                                 )
                     )
-                    .Select(progress => progress < (CurrentProgressPercent) 100 ? progress : (CurrentProgressPercent) 0)
+                    .Select(progress => progress < (CurrentProgressPercent)100 ? progress : (CurrentProgressPercent)0)
                 )
                 .Switch()
-                .DistinctUntilChanged();
+                .DistinctUntilChanged()
+                .StartWith(CurrentProgressPercent.Min)
+                .Replay(1)
+                .ConnectUntil(_disposables);
 
-            //this.CreateSourceTracker((Name) "ToDo Test");
-            //this.CreateSourceTracker((Name) "InProgress Test").Increment((ProgressIncrement).5);
-            this.CreateSourceTracker((Name)"Done Test").OnCompleted();
         }
 
         public ICompositeTracker CreateCompositeTracker(Name title = null)
@@ -82,5 +86,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
 
         public IObservableList<ITrackingViewer> TrackerList => trackerList.AsObservableList();
         public IObservable<CurrentProgressPercent> TotalProgress { get; }
+        public void Dispose()
+           => _disposables.Dispose();
     }
 }

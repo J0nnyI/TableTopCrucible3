@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
@@ -15,10 +17,14 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         private readonly ReplaySubject<ProgressIncrement> _increments = new();
 
         private readonly BehaviorSubject<TargetProgress> _targetProgressChanges = new((TargetProgress) 1);
-        private bool disposed;
+        private readonly CompositeDisposable _disposables = new ();
 
         public SourceTracker(Name title, TargetProgress trackingTarget)
         {
+            _completedChanges.DisposeWith(_disposables);
+            _increments.DisposeWith(_disposables);
+            _targetProgressChanges.DisposeWith(_disposables);
+
             Title = title;
             if (trackingTarget != null)
                 SetTarget(trackingTarget);
@@ -31,37 +37,22 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
             CurrentProgressChanges =
                 _accumulatedProgressChanges.CombineLatest(TargetProgressChanges,
                     _completedChanges,
-                    (current, target, completed) => completed || current > target ? (CurrentProgress) target : current
-                );
+                    (current, target, completed) => 
+                        completed || current > target 
+                            ? (CurrentProgress) target 
+                            : current
+                )
+                .Replay(1)
+                .ConnectUntil(_disposables);
         }
 
         public Name Title { get; }
-
-        public void Dispose()
-        {
-            if (disposed)
-                return;
-            disposed = true;
-            OnCompleted();
-            _completedChanges.Dispose();
-            _targetProgressChanges.Dispose();
-            lock (_increments)
-            {
-                _increments.Dispose();
-            }
-        }
-
-        public void OnCompleted()
+        
+        public void Complete()
         {
             if (_completedChanges.Value)
                 return;
             _completedChanges.OnNext(true);
-            _completedChanges.OnCompleted();
-            _targetProgressChanges.OnCompleted();
-            lock (_increments)
-            {
-                _increments.OnCompleted();
-            }
         }
 
         public IObservable<JobState> JobStateChanges => 
@@ -79,13 +70,18 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
                         return JobState.Done;
                     return JobState.InProgress;
                 })
-            .DistinctUntilChanged();
+            .DistinctUntilChanged()
+            .Replay(1)
+            .ConnectUntil(this._disposables);
 
         public IObservable<CurrentProgress> CurrentProgressChanges { get; }
-        public IObservable<TargetProgress> TargetProgressChanges => _targetProgressChanges.AsObservable();
+
+        public IObservable<TargetProgress> TargetProgressChanges =>
+            _targetProgressChanges
+                .AsObservable();
 
         public void SetTarget(TargetProgress trackingTarget)
-        => _targetProgressChanges.OnNext(trackingTarget);
+            => _targetProgressChanges.OnNext(trackingTarget);
 
         public void Increment(ProgressIncrement increment)
         {
@@ -96,12 +92,23 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         }
 
         public override string ToString() => $"S {Title}";
+        public void Dispose()
+        {
+            // the completion has to be delayed since the b-subjects seem to push no longer values once they are completed (runtime only?)
+            _completedChanges.OnCompleted();
+            _targetProgressChanges.OnCompleted();
+            lock (_increments)
+            {
+                _increments.OnCompleted();
+            }
+            _disposables.Dispose();
+        }
     }
 
     internal class WeightedSourceTracker : SourceTracker, IWeightedTrackingViewer
     {
-        public WeightedSourceTracker(Name title, TargetProgress trackingTarget, JobWeight weight) : base(title,
-            trackingTarget)
+        public WeightedSourceTracker(Name title, TargetProgress trackingTarget, JobWeight weight) 
+            : base(title, trackingTarget)
         {
             Weight = weight ?? JobWeight.Default;
         }

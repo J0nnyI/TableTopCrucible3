@@ -3,7 +3,9 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+
 using ReactiveUI;
+
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
@@ -78,7 +80,10 @@ namespace TableTopCrucible.Core.Jobs.Helper
                 false,
                     scheduler)
                  ,
-                TargetProgressChanges.ToProperty(
+                TargetProgressChanges.Do(x =>
+                {
+
+                }).ToProperty(
                     this,
                     vm => vm.TargetProgress,
                     out _targetProgress,
@@ -105,8 +110,12 @@ namespace TableTopCrucible.Core.Jobs.Helper
                 type = "Weighted Source";
             if (Source is SourceTracker)
                 type = "Source";
-            return $"{CurrentProgress} / {TargetProgress} ({CurrentProgress.Value / TargetProgress.Value * 100}%) - " +
-                   type;
+
+            var progPercent = string.Empty;
+            if (CurrentProgress != null && TargetProgress != null)
+                progPercent = $" : ({CurrentProgress.Value / TargetProgress.Value * 100}%)";
+
+            return $"{Title} - {type} - {JobState}: {CurrentProgress} / {TargetProgress} {progPercent}";
         }
     }
 

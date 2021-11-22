@@ -1,5 +1,7 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
+using System.Reactive.Concurrency;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Reactive.Testing;
 using ReactiveUI;
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
@@ -8,8 +10,10 @@ using TableTopCrucible.Core.DependencyInjection;
 
 namespace TableTopCrucible.Core.TestHelper
 {
+    // test environment setups
     public static class Prepare
     {
+        // prepares an integration application environment
         public static void ApplicationEnvironment(bool includeAutoMapper = false)
         {
             Host

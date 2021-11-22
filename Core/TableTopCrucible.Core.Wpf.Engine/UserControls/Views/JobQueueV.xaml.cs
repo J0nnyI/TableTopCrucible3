@@ -13,8 +13,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DynamicData;
 using ReactiveUI;
+using Splat;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.Jobs.Helper;
+using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views

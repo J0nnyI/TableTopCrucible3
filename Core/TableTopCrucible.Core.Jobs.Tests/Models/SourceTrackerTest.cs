@@ -89,7 +89,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
 
             Tracker.Increment();
 
-            Tracker.OnCompleted();
+            Tracker.Complete();
             Viewer.JobState.Should().Be(JobState.Done);
             Viewer.CurrentProgress.Value.Should().Be(Viewer.TargetProgress.Value);
         }
@@ -102,7 +102,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Tracker.SetTarget((TargetProgress)5);
             Tracker.Increment((ProgressIncrement)5);
             Viewer.JobState.Should().Be(JobState.Done);
-            Tracker.OnCompleted();
+            Tracker.Complete();
         }
 
         [Test]
@@ -111,13 +111,13 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Tracker.SetTarget((TargetProgress)5);
             Tracker.Increment((ProgressIncrement)6);
             Viewer.JobState.Should().Be(JobState.Done);
-            Tracker.OnCompleted();
+            Tracker.Complete();
         }
 
         [Test]
         public void InstantClose()
         {
-            Tracker.OnCompleted();
+            Tracker.Complete();
             Viewer.JobState
                 .Should().Be(JobState.Done);
             Viewer.CurrentProgress
@@ -128,20 +128,33 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         public void LateSubscriptions()
         {
             Tracker.SetTarget((TargetProgress)5);
+            Viewer.JobState.Should().Be(JobState.ToDo);
             Tracker.Increment();
             Tracker.Increment();
             Tracker.Increment();
             CurrentProgress lateProgress = null;
+            JobState? jobState = null;
             Tracker
                 .CurrentProgressChanges
                 .Subscribe(x => lateProgress = x)
                 .DisposeWith(_disposables);
+            Tracker
+                .JobStateChanges
+                .Subscribe(x => jobState = x)
+                .DisposeWith(_disposables);
 
             lateProgress.Should().Be(Viewer.CurrentProgress).And.Be((CurrentProgress)3);
+            jobState.Should().Be(Viewer.JobState).And.Be(JobState.InProgress);
 
             Tracker.Increment();
 
             lateProgress.Should().Be(Viewer.CurrentProgress).And.Be((CurrentProgress)4);
+            jobState.Should().Be(Viewer.JobState).And.Be(JobState.InProgress);
+
+            Tracker.Increment();
+            lateProgress.Should().Be(Viewer.CurrentProgress).And.Be((CurrentProgress)5);
+            jobState.Should().Be(Viewer.JobState).And.Be(JobState.Done);
+
         }
     }
 }

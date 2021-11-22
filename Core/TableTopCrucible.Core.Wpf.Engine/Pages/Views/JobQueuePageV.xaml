@@ -11,30 +11,27 @@
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="Auto"
-                           MinHeight="200"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="Auto"
-                           MinHeight="200"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="Auto"
-                           MinHeight="200"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Not Started"
-                   HorizontalAlignment="Center"
-                   Grid.Row="0"/>
-        <rxui:ViewModelViewHost x:Name="ToDoHost"
-                                Grid.Row="1"/>
-        <TextBlock Text="Running"
-                   HorizontalAlignment="Center"
-                   Grid.Row="2"/>
-        <rxui:ViewModelViewHost x:Name="InProgressHost"
-                                Grid.Row="3"/>
-        <TextBlock Text="Done"
-                   HorizontalAlignment="Center"
-                   Grid.Row="4"/>
-        <rxui:ViewModelViewHost x:Name="DoneHost"
-                                Grid.Row="5"/>
+        <Expander  Header="All"
+                   Grid.Row="0">
+            <rxui:ViewModelViewHost x:Name="AllHost"/>
+        </Expander>
+        <Expander  Header="Not Started"
+                   Grid.Row="1">
+            <rxui:ViewModelViewHost x:Name="ToDoHost"/>
+        </Expander>
+        <Expander Header="In Progress"
+                  IsExpanded="True"
+                  Grid.Row="2">
+            <rxui:ViewModelViewHost x:Name="InProgressHost"/>
+        </Expander>
+        <Expander Header="Done"
+                  Grid.Row="3">
+            <rxui:ViewModelViewHost x:Name="DoneHost"/>
+        </Expander>
     </Grid>
 </rxui:ReactiveUserControl>

@@ -105,7 +105,8 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
                     if (filesToHash.Length > 0)
                     {
-                        hashingTracker.SetTarget((TargetProgress)filesToHash.Length);
+                        var totalSize = filesToHash.Sum(file => file.FoundFile.Value.Length);
+                        hashingTracker.SetTarget((TargetProgress)totalSize);
                         updateTracker.SetTarget((TargetProgress)filesToHash.Length);
 
                         var updatePipeline = new Subject<RawSyncFileData>();
@@ -129,14 +130,14 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                             .ForAll(item =>
                             {
                                 item.CreateNewHashKey();
-                                hashingTracker.Increment();
+                                hashingTracker.Increment((ProgressIncrement)item.FoundFile.Value.Length);
                                 updatePipeline.OnNext(item);
                             });
                     }
                     else
                     {
-                        hashingTracker.OnCompleted();
-                        updateTracker.OnCompleted();
+                        hashingTracker.Complete();
+                        updateTracker.Complete();
                     }
 
                 }

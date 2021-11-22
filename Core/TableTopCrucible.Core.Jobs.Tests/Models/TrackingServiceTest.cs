@@ -108,5 +108,6 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             emittedValues.Count.Should().Be(1);
             lastProgress.Should().Be((CurrentProgressPercent)0);
         }
+
     }
 }

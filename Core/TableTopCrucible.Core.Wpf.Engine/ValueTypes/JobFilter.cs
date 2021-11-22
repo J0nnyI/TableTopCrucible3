@@ -17,7 +17,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.ValueTypes
     public class JobFilter : ValueOf<Func<ITrackingViewer, IObservable<bool>>, JobFilter>
     {
         public string Description { get; private set; }
-        public static readonly JobFilter Default = From(_ => Observable.Return(true), "Default");
+        public static readonly JobFilter All = From(_ => Observable.Return(true), "All Jobs");
 
         public static JobFilter FromState(JobState filterState)
             => From(viewer => viewer

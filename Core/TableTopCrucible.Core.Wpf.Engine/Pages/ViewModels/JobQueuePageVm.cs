@@ -19,6 +19,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
     }
     public class JobQueuePagePageVm:IJobQueuePage
     {
+        public IJobQueue AllQueue { get; }
         public IJobQueue TodoQueue { get; }
         public IJobQueue InProgressQueue { get; }
         public IJobQueue DoneQueue { get; }
@@ -26,14 +27,17 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
         public SidebarWidth Width => null;
 
         public JobQueuePagePageVm(
-            IJobQueue todoQueue, 
+            IJobQueue allQueue, 
+            IJobQueue todoQueue,
             IJobQueue inProgressQueue,
             IJobQueue doneQueue)
         {
+            AllQueue = allQueue;
             TodoQueue = todoQueue;
             InProgressQueue = inProgressQueue;
             DoneQueue = doneQueue;
 
+            allQueue.JobFilter = JobFilter.All;
             todoQueue.JobFilter = JobFilter.FromState(JobState.ToDo);
             inProgressQueue.JobFilter = JobFilter.FromState(JobState.InProgress);
             doneQueue.JobFilter = JobFilter.FromState(JobState.Done);

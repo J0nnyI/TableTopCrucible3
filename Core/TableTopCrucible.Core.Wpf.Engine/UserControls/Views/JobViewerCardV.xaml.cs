@@ -26,7 +26,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
         public JobViewerCardV()
         {
             InitializeComponent();
-            this.WhenActivated(()=>new[]
+            this.WhenActivated(()=>new IDisposable[]
             {
                 this.OneWayBind(ViewModel,
                     vm=>vm.Viewer.Title.Value,
@@ -35,7 +35,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                         v=>v.ViewModel.Viewer.TargetProgressChanges)
                     .Select(target=>target.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, 
+                    .BindTo(this,
                         v=>v.Progress.Maximum),
                 this.WhenAnyObservable(v=>v.ViewModel.Viewer.CurrentProgressChanges)
                     .Select(target=>target.Value)

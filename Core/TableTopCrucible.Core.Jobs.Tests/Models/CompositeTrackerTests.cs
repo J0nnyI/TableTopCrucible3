@@ -50,10 +50,6 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [SetUp]
         public void BeforeEach()
         {
-            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(e =>
-            {
-
-            });
             Prepare.ApplicationEnvironment();
             this.progressService = Locator.Current.GetService<IProgressTrackingService>();
 
@@ -138,7 +134,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
                 .Be(JobState.InProgress);
 
             // 3 => done
-            child.OnCompleted();
+            child.Complete();
 
             Viewer.CurrentProgress.Value
                 .Should()
@@ -181,14 +177,14 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Viewer.CurrentProgress.Value
                 .Should().Be(CompositeTracker.Target.Value * 0.5);
 
-            childA.OnCompleted();
+            childA.Complete();
             Viewer.CurrentProgress.Value
                 .Should().Be(CompositeTracker.Target.Value * 0.75);
 
             Viewer.JobState
                 .Should().Be(JobState.InProgress);
 
-            childB.OnCompleted();
+            childB.Complete();
             Viewer.CurrentProgress.Value
                 .Should().Be(CompositeTracker.Target.Value * 1.0);
 
@@ -220,11 +216,11 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Viewer.CurrentProgress
                 .Should().Be((CurrentProgress)(CompositeTracker.Target.Value * (modA * .5 + modB * .35) / 100));
 
-            childB.OnCompleted();
+            childB.Complete();
             Viewer.CurrentProgress
                 .Should().Be((CurrentProgress)(CompositeTracker.Target.Value * (modA * .5 + modB * 1) / 100));
 
-            childA.OnCompleted();
+            childA.Complete();
             Viewer.CurrentProgress
                 .Should().Be((CurrentProgress)(CompositeTracker.Target.Value * (modA * 1 + modB * 1) / 100));
         }
@@ -411,8 +407,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         {
             var childA = Tracker.AddSingle();
             var childB = Tracker.AddSingle();
-            childA.OnCompleted();
-            childB.OnCompleted();
+            childA.Complete();
+            childB.Complete();
 
             JobState? late = null;
             Viewer.JobStateChanges.Take(1).Subscribe(x => late = x);
@@ -427,8 +423,8 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         {
             var childA = Tracker.AddSingle();
             var childB = Tracker.AddSingle();
-            childA.OnCompleted();
-            childB.OnCompleted();
+            childA.Complete();
+            childB.Complete();
             Viewer.JobState
                 .Should().Be(JobState.Done);
         }
@@ -450,7 +446,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             var childA = Tracker.AddSingle(null, (TargetProgress)2);
             var childB = Tracker.AddSingle();
             childA.Increment();
-            childB.OnCompleted();
+            childB.Complete();
             Viewer.JobState
                 .Should().Be(JobState.InProgress);
         }
@@ -462,7 +458,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             var childB = Tracker.AddSingle();
             var childC = Tracker.AddSingle();
             childB.Increment();
-            childC.OnCompleted();
+            childC.Complete();
             Viewer.JobState
                 .Should().Be(JobState.InProgress);
         }

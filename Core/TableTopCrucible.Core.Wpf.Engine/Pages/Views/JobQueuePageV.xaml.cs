@@ -28,6 +28,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
             this.WhenActivated(() => new[]
             {
                 this.OneWayBind(ViewModel,
+                    vm=>vm.AllQueue,
+                    v=>v.AllHost.ViewModel),
+                this.OneWayBind(ViewModel,
                     vm=>vm.TodoQueue,
                     v=>v.ToDoHost.ViewModel),
                 this.OneWayBind(ViewModel,

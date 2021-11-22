@@ -13,6 +13,6 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         public void Increment(ProgressIncrement increment = null);
 
         // should be called when the task is done, dispose should be called when the tracker will be no longer needed (reading included)
-        public void OnCompleted();
+        public void Complete();
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-
+using Splat;
 using TableTopCrucible.Core.Wpf.Engine;
 
 namespace TableTopCrucible.Starter
@@ -12,6 +12,7 @@ namespace TableTopCrucible.Starter
         public App()
         {
             EngineStarter.InitializeEngine();
+            Locator.Current.GetService<ITestingService>().CreateData();
         }
     }
 }

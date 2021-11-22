@@ -120,10 +120,10 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         public IObservable<WeightedTargetProgress> TargetProgressChanges { get; } = Observable.Return(Target);
 
         IObservable<CurrentProgress> ITrackingViewer.CurrentProgressChanges =>
-            CurrentProgressChanges.Select(currentProgress => (CurrentProgress)currentProgress);
+            CurrentProgressChanges.Select(x => (CurrentProgress)x);
 
         IObservable<TargetProgress> ITrackingViewer.TargetProgressChanges =>
-            TargetProgressChanges.Select(target => (TargetProgress)target);
+            TargetProgressChanges.Select(x => (TargetProgress)x);
 
         public Name Title { get; }
         public IObservable<JobState> JobStateChanges { get; }
