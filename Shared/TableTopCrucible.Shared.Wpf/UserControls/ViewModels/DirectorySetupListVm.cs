@@ -47,11 +47,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 this.WhenAnyValue(vm => vm.Directories.Count)
                     .Select(c => c == 0)
                     .DistinctUntilChanged()
-                    .Select(show =>
-                        ObservableHelper.AnimateValue(0, 1)
-                            .Select(opacity => show ? opacity : 1 - opacity) // invert animation direction depending on the toggle
-                    )
-                    .Switch();
+                    // causes ui lags
+                    //.Select(show =>
+                    //    ObservableHelper.AnimateValue(0, 1)
+                    //        .Select(opacity => show ? opacity : 1 - opacity) // invert animation direction depending on the toggle
+                    //)
+                    //.Switch()
+                    .Select(show => show ? 1.0 : 0.0);
 
             this.WhenActivated(() => new[]
             {

@@ -1,6 +1,6 @@
 ﻿using ValueOf;
 
-namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
+namespace TableTopCrucible.Core.Jobs.ValueTypes
 {
     public class TargetProgress : ValueOf<double, TargetProgress>
     {

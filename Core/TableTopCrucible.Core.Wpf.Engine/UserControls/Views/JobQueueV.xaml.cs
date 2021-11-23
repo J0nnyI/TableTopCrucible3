@@ -13,9 +13,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 using DynamicData;
+
 using ReactiveUI;
+
 using Splat;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Services;
@@ -41,10 +45,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     v=>v.ViewModel.Cards.Count)
                     .Select(count => count > 0)
                     .DistinctUntilChanged()
-                    .Select(show=>
-                        ObservableHelper.AnimateValue(1,0)
-                            .Select(value=>show?value:1-value))
-                    .Switch()
+                    .Select(show=>show
+                        ? 0
+                        : 1)
                     .BindTo(this, v=>v.EmptyListText.Opacity)
             });
         }

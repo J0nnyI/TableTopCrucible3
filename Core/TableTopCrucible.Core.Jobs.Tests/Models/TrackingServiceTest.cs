@@ -15,7 +15,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using TableTopCrucible.Core.Jobs.Progression.Services;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 
 namespace TableTopCrucible.Core.Jobs.Models.Tests

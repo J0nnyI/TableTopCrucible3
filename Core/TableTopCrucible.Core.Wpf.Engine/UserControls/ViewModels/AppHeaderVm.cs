@@ -8,7 +8,7 @@ using System.Windows.Shell;
 using DynamicData;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Jobs.Progression.Services;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.Services;

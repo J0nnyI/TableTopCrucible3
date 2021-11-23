@@ -20,7 +20,7 @@ using Splat;
 using TableTopCrucible.Core.Jobs.JobQueue.Models;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;

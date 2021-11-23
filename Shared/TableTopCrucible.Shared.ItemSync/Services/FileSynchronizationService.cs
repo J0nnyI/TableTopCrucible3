@@ -18,7 +18,7 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
@@ -88,6 +88,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             {
                 try
                 {
+                    Thread.Sleep(5000);
                     var files = getFileGroups(
                         _directorySetupRepository
                         .Data

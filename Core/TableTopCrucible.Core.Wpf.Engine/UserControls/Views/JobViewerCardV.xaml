@@ -23,15 +23,16 @@
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="Title"
                    Grid.Row="0"
-                   Grid.Column="0"/>
-        <TextBlock x:Name="State"
-                   Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="2"/>
+        <TextBlock x:Name="ProgressPercent"
+                   Margin="8 0 0 0"
+                   Grid.Row="1"
                    Grid.Column="1"/>
         <ProgressBar x:Name="Progress"
                      UseLayoutRounding="True"
                      Margin="0 8 0 0"
                      Grid.Row="1"
-                     Grid.Column="0"
-                     Grid.ColumnSpan="2"/>
+                     Grid.Column="0"/>
     </Grid>
 </rxui:ReactiveUserControl>

@@ -9,7 +9,7 @@ using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Progression.Services
@@ -35,19 +35,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
 
         public ProgressTrackingService()
         {
-            //trackerList
-            //    .Connect()
-            //    .DisposeMany()
-            //    .Transform(tracker => tracker
-            //        .JobStateChanges
-            //        .Where(state => state == JobState.Done)
-            //        .Delay(SettingsHelper.NotificationDelay)
-            //        .Subscribe(_ => trackerList.Remove(tracker))
-            //    )
-            //    .DisposeMany()
-            //    .Subscribe();
-
             TotalProgress = trackerList.Connect()
+                .FilterOnObservable(tracker=>tracker.JobStateChanges.Select(state=>state == JobState.InProgress))
                 .ToCollection()
                 .Select(trackers => trackers
                     .Select(tracker => tracker.GetCurrentProgressInPercent())
@@ -67,7 +56,6 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                 .StartWith(CurrentProgressPercent.Min)
                 .Replay(1)
                 .ConnectUntil(_disposables);
-
         }
 
         public ICompositeTracker CreateCompositeTracker(Name title = null)

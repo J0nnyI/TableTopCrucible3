@@ -1,6 +1,6 @@
 ﻿using ValueOf;
 
-namespace TableTopCrucible.Core.Jobs.Progression.ValueTypes
+namespace TableTopCrucible.Core.Jobs.ValueTypes
 {
     // the current progress in percent (0.0 to 100.0)
     public class CurrentProgressPercent : ValueOf<double, CurrentProgressPercent>

@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 using ReactiveUI;
 
 using TableTopCrucible.Core.Jobs.Progression.Models;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Helper
@@ -130,7 +130,9 @@ namespace TableTopCrucible.Core.Jobs.Helper
 
         public static IObservable<CurrentProgressPercent> GetCurrentProgressInPercent(
             this ITrackingViewer viewer) =>
-            viewer.CurrentProgressChanges.CombineLatest(viewer.TargetProgressChanges,
+            Observable.CombineLatest(
+                viewer.CurrentProgressChanges,
+                viewer.TargetProgressChanges,
                 CurrentProgressPercent.From);
 
         public static IObservable<Unit> OnDone(this ITrackingViewer viewer)

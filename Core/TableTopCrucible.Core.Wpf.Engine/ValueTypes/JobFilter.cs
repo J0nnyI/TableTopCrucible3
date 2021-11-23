@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 using FluentValidation.Results;
 
 using TableTopCrucible.Core.Jobs.Progression.Models;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
-
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using ValueOf;
 
 namespace TableTopCrucible.Core.Wpf.Engine.ValueTypes

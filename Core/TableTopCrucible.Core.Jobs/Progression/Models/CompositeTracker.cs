@@ -8,7 +8,7 @@ using System.Reactive.Subjects;
 using DynamicData;
 
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Progression.Models

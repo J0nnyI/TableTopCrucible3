@@ -5,7 +5,7 @@ using ReactiveUI;
 using Splat;
 
 using TableTopCrucible.Core.Jobs.Progression.Services;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels;
 

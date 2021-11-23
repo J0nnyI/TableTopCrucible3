@@ -1,5 +1,5 @@
 ﻿using System;
-using TableTopCrucible.Core.Jobs.Progression.ValueTypes;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.Progression.Models
 {

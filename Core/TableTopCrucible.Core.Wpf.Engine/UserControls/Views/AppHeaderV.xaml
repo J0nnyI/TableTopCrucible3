@@ -61,13 +61,13 @@
                 <!--Show Jobs-->
                 <md:Badged x:Name="JobBadge"
                            BadgePlacementMode="BottomRight"
-                           ToolTip="Show Jobs"
+                           ToolTip="Queued Jobs"
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 20 0"
                            VerticalAlignment="Center"
                            Cursor="Hand"
                 >
-                    <Grid>
+                    <Grid ToolTip="Job Queue">
                         <!--using the internal button progress bars creates background color which cant be removed-->
                         <ProgressBar x:Name="JobProgress"
                                      Style="{StaticResource MaterialDesignCircularProgressBar}"
