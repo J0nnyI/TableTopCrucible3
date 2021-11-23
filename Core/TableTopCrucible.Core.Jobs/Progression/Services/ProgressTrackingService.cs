@@ -4,7 +4,8 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using DynamicData;
-
+using DynamicData.Aggregation;
+using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
@@ -32,11 +33,12 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
     {
         private CompositeDisposable _disposables = new();
         private readonly SourceList<ITrackingViewer> trackerList = new();
+        private readonly IObservableList<ITrackingViewer> _completedJobs;
 
         public ProgressTrackingService()
         {
             TotalProgress = trackerList.Connect()
-                .FilterOnObservable(tracker=>tracker.JobStateChanges.Select(state=>state == JobState.InProgress))
+                .FilterOnObservable(tracker => tracker.JobStateChanges.Select(state => state == JobState.InProgress))
                 .ToCollection()
                 .Select(trackers => trackers
                     .Select(tracker => tracker.GetCurrentProgressInPercent())
@@ -56,11 +58,29 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                 .StartWith(CurrentProgressPercent.Min)
                 .Replay(1)
                 .ConnectUntil(_disposables);
+
+            _completedJobs = trackerList
+                .Connect()
+                .FilterOnObservable(tracker => tracker.JobStateChanges.Select(state => state == JobState.Done))
+                .AsObservableList();
         }
 
+        private void _limitDoneTrackers(ITrackingViewer tracker)
+        {
+            tracker.OnDone()
+                .Take(1)
+                .Subscribe(_ =>
+                {
+                    if (_completedJobs.Count >= SettingsHelper.DoneJobLimit)
+                        trackerList.Remove(_completedJobs.Items.First());
+
+                });
+
+        }
         public ICompositeTracker CreateCompositeTracker(Name title = null)
         {
             var tracker = new CompositeTracker(title);
+            _limitDoneTrackers(tracker);
             trackerList.Add(tracker);
             return tracker;
         }
@@ -68,6 +88,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
         public ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null)
         {
             var tracker = new SourceTracker(title, target);
+            _limitDoneTrackers(tracker);
             trackerList.Add(tracker);
             return tracker;
         }

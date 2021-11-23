@@ -15,10 +15,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Expander x:Name="ToDoExpander"
-                  Grid.Row="1">
+                  Grid.Row="0">
             <Expander.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -37,7 +36,7 @@
             <rxui:ViewModelViewHost x:Name="ToDoHost"/>
         </Expander>
         <Expander x:Name="InProgressExpander"
-                  Grid.Row="2">
+                  Grid.Row="1">
             <Expander.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -56,7 +55,7 @@
             <rxui:ViewModelViewHost x:Name="InProgressHost"/>
         </Expander>
         <Expander x:Name="DoneExpander"
-                  Grid.Row="3">
+                  Grid.Row="2">
             <Expander.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>

@@ -14,5 +14,7 @@ namespace TableTopCrucible.Core.Helper
 
         public static int ThreadCount => 2;
         public static TimeSpan PipelineBufferTime => TimeSpan.FromSeconds(5);
+        // the last n jobs will stay in memory, everything else will be removed
+        public static int DoneJobLimit => 5;
     }
 }
