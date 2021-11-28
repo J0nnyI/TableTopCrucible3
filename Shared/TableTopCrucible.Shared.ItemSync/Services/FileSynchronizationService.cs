@@ -185,7 +185,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 {
                     var helper = file.GetItemUpdateHelper(itemUpdater.Items);
                     var update = helper.GetItemUpdate();
-                    if(update is not null)
+                    if (update is not null)
                         itemUpdater.AddOrUpdate(update);
                 }
             });

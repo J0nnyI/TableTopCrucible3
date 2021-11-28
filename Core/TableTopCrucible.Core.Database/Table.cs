@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 
-using AutoMapper;
 
 using DynamicData;
 using DynamicData.Kernel;
@@ -62,11 +62,8 @@ namespace TableTopCrucible.Core.Database
 
     internal abstract class Table : ReactiveObject, ITable
     {
-        protected readonly IMapper mapper;
-
         protected Table(LibraryDirectoryPath libraryDirectory)
         {
-            mapper = Locator.Current.GetService<IMapper>();
             LibraryDirectory = libraryDirectory;
 
             LastUpdateChanges = OnDataUpdate
@@ -92,6 +89,11 @@ namespace TableTopCrucible.Core.Database
         [Reactive] public DateTime? LastSave { get; protected set; }
 
         public IObservable<Optional<DateTime>> LastUpdateChanges { get; }
+
+        public void LoadLatest()
+        {
+            throw new NotImplementedException();
+        }
 
         public abstract void RollBackSave(TableSaveId saveId);
 
@@ -159,8 +161,17 @@ namespace TableTopCrucible.Core.Database
             var file = _getFilepath(saveId);
             try
             {
-                var dto = mapper.Map<IEnumerable<Tdto>>(_data.Items);
-                file.WriteObject(dto);
+                file.WriteObject(
+                    new TableDto<Tid, Tentity, Tdto>()
+                    {
+                        Data = _data.Items.Select(item =>
+                         {
+                             var dto = Activator.CreateInstance<Tdto>();
+                             dto.Initialize(item);
+                             return dto;
+                         }).ToArray()
+                    }
+                );
             }
             catch (Exception ex) when (
                 ex is FileWriteFailedException ||

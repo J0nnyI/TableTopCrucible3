@@ -13,9 +13,18 @@
         <TextBlock x:Name="EmptyListText"
                    Text="There are no jobs in this list"
                    VerticalAlignment="Top"
-                   HorizontalAlignment="Center"
-                   Margin="0 20 0 0"/>
+                   HorizontalAlignment="Left"
+                   Margin="16 0 0 20"/>
         <ListBox x:Name="Jobs" 
-                 Style="{StaticResource MaterialDesignCardsListBox}"/>
+                 IsHitTestVisible="False"
+                 Style="{StaticResource MaterialDesignCardsListBox}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem"
+                       BasedOn="{StaticResource MaterialDesignCardsListBoxItem}">
+<Setter Property="Margin" Value="0 0 0 8"/>
+                </Style>
+
+            </ListBox.ItemContainerStyle>
+        </ListBox>
     </Grid>
 </rxui:ReactiveUserControl>

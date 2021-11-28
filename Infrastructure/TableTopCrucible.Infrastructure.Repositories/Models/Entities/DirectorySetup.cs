@@ -18,9 +18,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Entities
 
         public int CompareTo(DirectorySetup other)
             => Name.CompareTo(other?.Name);
-
-        public DirectorySetup(string name, string path, DirectorySetupId Id = null) : this(vtName.From(name), DirectorySetupPath.From(path), Id)
-        { }
+        
         public DirectorySetup(vtName name, DirectorySetupPath path, DirectorySetupId Id = null) : base(Id ?? DirectorySetupId.New())
         {
             this.Name = name;

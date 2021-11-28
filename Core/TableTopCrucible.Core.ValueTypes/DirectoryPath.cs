@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Windows.Forms;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Extensions;
@@ -194,5 +195,6 @@ namespace TableTopCrucible.Core.ValueTypes
             From(FileSystemHelper.Path.Combine(directory.Value, subDirectory.Value));
 
         public static DirectoryPath GetTemporaryPath() => From(FileSystemHelper.Path.GetTempPath());
+        public static explicit operator DirectoryPath(string path) => From(path);
     }
 }

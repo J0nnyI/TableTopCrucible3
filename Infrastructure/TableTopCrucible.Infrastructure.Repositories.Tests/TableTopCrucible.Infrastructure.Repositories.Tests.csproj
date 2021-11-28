@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Test.Packages\TableTopCrucible.Core.Test.Packages.csproj" />
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.TestHelper\TableTopCrucible.Core.TestHelper.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
   </ItemGroup>

@@ -99,6 +99,9 @@ namespace TableTopCrucible.Core.ValueTypes
             a is not null && b is not null && a.Equals(b); // both filled
 
         public static bool operator !=(FilePath<TThis> a, TThis b) => !(a == b);
+
+        public static explicit operator FilePath<TThis>(string path)
+            => From(path);
     }
 
     /// <summary>

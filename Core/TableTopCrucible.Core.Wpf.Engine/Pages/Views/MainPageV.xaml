@@ -36,8 +36,9 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Name="SidebarTitle"
-                                       Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                                       Margin="24 12 0 24"
+                                       Style="{StaticResource SidebarTitle}"
+                                       Margin="24 0 0 0"
+                                       VerticalAlignment="Center"
                                        Grid.Row="0"
                                        Grid.Column="0"/>
                             <Button x:Name="CloseSidebar"
@@ -50,8 +51,7 @@
                             <rx:ViewModelViewHost x:Name="SidebarContainer"
                                                   Grid.Row="1"
                                                   Grid.Column="0"
-                                                  Grid.ColumnSpan="2"
-                                                  Margin="8 0 0 0"/>
+                                                  Grid.ColumnSpan="2"/>
                         </Grid>
                     </md:ColorZone>
                 </md:DrawerHost.RightDrawerContent>

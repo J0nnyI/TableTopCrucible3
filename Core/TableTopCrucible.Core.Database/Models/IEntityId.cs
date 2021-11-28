@@ -15,6 +15,9 @@ namespace TableTopCrucible.Core.Database.Models
 
         public static TThis New() => new() {Value = Guid.NewGuid()};
 
+        public static explicit operator EntityIdBase<TThis>(Guid id)
+            => From(id);
+
         protected override void Validate()
         {
             if (Value == default)

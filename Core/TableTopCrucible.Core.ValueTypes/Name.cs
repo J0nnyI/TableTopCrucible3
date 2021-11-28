@@ -33,5 +33,9 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public static explicit operator Name(string value) => From(value);
+        public Name()
+        {
+            
+        }
     }
 }

@@ -11,12 +11,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 using TableTopCrucible.Shared.ItemSync.Services;
 
 
@@ -125,8 +127,15 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
 
             private void prepare()
             {
-                directorySetupRepository.AddOrUpdate(Directories.Select(dir => new DirectorySetup(dir, dir)));
-                fileRepository.AddOrUpdate(FileData.Select(file => file.Prepare()).Where(file=>file != null).ToArray());
+                directorySetupRepository.AddOrUpdate(
+                    Directories.Select(dir =>
+                        new DirectorySetup(
+                            (Name)dir,
+                            DirectorySetupPath.From(dir)
+                            )
+                        )
+                    );
+                fileRepository.AddOrUpdate(FileData.Select(file => file.Prepare()).Where(file => file != null).ToArray());
             }
 
             private void evaluateResult()

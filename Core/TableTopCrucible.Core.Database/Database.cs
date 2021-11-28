@@ -42,7 +42,7 @@ namespace TableTopCrucible.Core.Database
         void New(DatabaseInitErrorBehavior behavior = DatabaseInitErrorBehavior.Cancel);
     }
 
-    internal class Database : ReactiveObject, IDatabase
+    public class Database : ReactiveObject, IDatabase
     {
         private readonly ObservableAsPropertyHelper<DatabaseState> _state;
 
@@ -140,6 +140,7 @@ namespace TableTopCrucible.Core.Database
             var dir = file == null
                 ? LibraryDirectoryPath.GetTemporaryPath()
                 : file.GetWorkingDirectory();
+
             CurrentFile = file;
             if (dir.Exists())
                 switch (behavior)

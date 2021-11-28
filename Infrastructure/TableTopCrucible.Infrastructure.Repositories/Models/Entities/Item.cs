@@ -16,10 +16,13 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Entities
         public Name Name { get; }
         public FileHashKey ModelFileKey { get; }
         public IReadOnlyCollection<Tag> Tags { get; init; }
-        public Item(Name name, FileHashKey modelFileKey, ItemId id = null) : base(id ?? ItemId.New())
+        public Item(Name name, FileHashKey modelFileKey, ItemId id = null) 
+            : base(id ?? ItemId.New())
         {
             Name = name;
             ModelFileKey = modelFileKey;
         }
+        // autoMapper constructor
+        private Item():base(ItemId.New()){}
     }
 }

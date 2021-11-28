@@ -61,7 +61,7 @@
                 <!--Show Jobs-->
                 <md:Badged x:Name="JobBadge"
                            BadgePlacementMode="BottomRight"
-                           ToolTip="Queued Jobs"
+                           ToolTip="Incomplete Jobs"
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 20 0"
                            VerticalAlignment="Center"
@@ -88,12 +88,13 @@
                 </md:Badged>
                     <!--notifications-->
                 <md:Badged x:Name="NotificationBadge"
-                           ToolTip="Notifications"
+                           ToolTip="Number of Notifications"
                            BadgePlacementMode="BottomRight"
                            VerticalAlignment="Center"
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 0 0">
                         <Button Content="{md:PackIcon Bell}"
+                                ToolTip="Notifications"
                                 md:RippleAssist.IsDisabled="False"
                                 x:Name="ShowNotificationSidebar"/>
                     </md:Badged>

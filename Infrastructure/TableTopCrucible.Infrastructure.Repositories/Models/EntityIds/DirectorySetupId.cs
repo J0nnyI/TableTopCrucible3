@@ -1,4 +1,5 @@
-﻿using TableTopCrucible.Core.Database.Models;
+﻿using System;
+using TableTopCrucible.Core.Database.Models;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Models.EntityIds
 {

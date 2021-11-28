@@ -94,7 +94,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 // Commands
                 ReactiveCommandHelper.Create(() =>
                     {
-                        _directorySetupRepository.AddOrUpdate(new DirectorySetup(Name, Path, DirectorySetup.Id));
+                        _directorySetupRepository.AddOrUpdate(new DirectorySetup(
+                            (vtName)Name,
+                            (DirectorySetupPath)Path, 
+                            DirectorySetup.Id));
                         _notificationService.AddNotification(
                             (vtName)"Directory saved successfully",
                             (Description)$"The directory '{Name}' has been saved successfully",

@@ -74,7 +74,7 @@
                         ToolTip="{Binding Title}">
                 <md:PackIcon Kind="{Binding Icon}"/>
                     <TextBlock Text="{Binding Title}"
-                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                               Style="{StaticResource SidebarSubTitle}"
                                VerticalAlignment="Center"/>
             </StackPanel>
         </DataTemplate>
