@@ -2,14 +2,8 @@
 
 namespace TableTopCrucible.Core.DependencyInjection.Attributes
 {
-    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = true, Inherited = false)]
-    public class ScopedAttribute : Attribute, IServiceAttribute
+    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = true)]
+    public class ScopedAttribute : Attribute
     {
-        public ScopedAttribute(Type implementation)
-        {
-            Implementation = implementation;
-        }
-
-        public Type Implementation { get; }
     }
 }

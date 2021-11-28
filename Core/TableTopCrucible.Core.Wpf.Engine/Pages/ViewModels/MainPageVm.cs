@@ -1,4 +1,7 @@
-﻿using ReactiveUI;
+﻿using System;
+using System.Linq.Expressions;
+using System.Windows.Input;
+using ReactiveUI;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
@@ -7,42 +10,45 @@ using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
 {
-    [Singleton(typeof(MainPageVm))]
+    [Singleton]
     public interface IMainPage
     {
 
     }
+
     public class MainPageVm : ReactiveObject, IActivatableViewModel, IMainPage
     {
         private readonly INavigationService _navigationService;
-        public IBannerList BannerList { get; }
+        public INotificationList NotificationOverlay { get; }
         public INavigationList NavigationList { get; }
         public IAppHeader AppHeader { get; }
 
-        private ObservableAsPropertyHelper<INavigationPage> _currentPage;
-        public INavigationPage CurrentPage => _currentPage.Value;
+        public IObservable<INavigationPage> ActiveWorkAreaChanges =>
+            this.WhenAnyValue(vm => vm._navigationService.ActiveWorkArea);
+        public IObservable<ISidebarPage> ActiveSidebarChanges =>
+            this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar);
+
+        public ICommand CloseSidebarCommand { get; private set; }
 
         public MainPageVm(
-            IBannerList bannerList,
+            INotificationList notificationOverlay,
             INavigationList navigationList,
             INavigationService navigationService,
             IAppHeader appHeader)
         {
             _navigationService = navigationService;
-            BannerList = bannerList;
+            NotificationOverlay = notificationOverlay;
             NavigationList = navigationList;
             AppHeader = appHeader;
 
-            this.WhenActivated(() => new[]
+            this.WhenActivated(() => new []
             {
-                this.WhenAnyValue(
-                    vm=>vm._navigationService.CurrentPage)
-                    .ToProperty(
-                        this,
-                        vm=>vm.CurrentPage,
-                        out _currentPage)
+                ReactiveCommandHelper.Create(
+                    ()=>navigationService.ActiveSidebar = null,
+                    cmd=>this.CloseSidebarCommand = cmd)
             });
         }
+        
 
         public ViewModelActivator Activator { get; } = new();
     }

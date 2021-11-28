@@ -13,10 +13,9 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Services
 {
-    [Singleton(typeof(NotificationService))]
+    [Singleton]
     public interface INotificationService
     {
-        NotificationId AddNotification(string title, string content, NotificationType type);
         NotificationId AddNotification(Name title, Description content, NotificationType type);
         void RemoveNotification(NotificationId id);
         IObservableList<INotification> Notifications { get; }
@@ -36,9 +35,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
             this.Notifications = observableList;
 
         }
-
-        public NotificationId AddNotification(string title, string content, NotificationType type)
-            => AddNotification(Name.From(title), Description.From(content), type);
+        
         public NotificationId AddNotification(Name title, Description content, NotificationType type)
         {
             var notification = new SimpleNotificationVm(title, content, type);

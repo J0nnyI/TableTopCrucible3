@@ -2,7 +2,7 @@
 
 namespace TableTopCrucible.Core.Database.Models
 {
-    public interface IEntity<Tid>
+    public interface IEntity<out Tid>
         where Tid : IEntityId
     {
         public Tid Id { get; }
@@ -13,11 +13,11 @@ namespace TableTopCrucible.Core.Database.Models
         : IEntity<Tid>
         where Tid : IEntityId
     {
-        public Tid Id { get; }
-
         protected EntityBase(Tid id)
         {
-            this.Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = id ?? throw new ArgumentNullException(nameof(id));
         }
+
+        public Tid Id { get; }
     }
 }

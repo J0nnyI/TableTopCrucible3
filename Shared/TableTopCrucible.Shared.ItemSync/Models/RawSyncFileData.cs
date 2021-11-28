@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ReactiveUI;
+
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
@@ -6,116 +8,95 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Security.Cryptography;
 
-using MoreLinq.Extensions;
-
-using ReactiveUI;
-
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 
 namespace TableTopCrucible.Shared.ItemSync.Models
 {
-    internal enum FileState
-    {
-        New,
-        Deleted,
-        Updated,
-        Unchanged
-    }
     internal class RawSyncFileData
     {
-        private IFileInfo foundFileInfo;
+        private readonly IFileInfo foundFileInfo;
 
         public RawSyncFileData(ScannedFileData knownFile, FilePath foundFile)
         {
             this.KnownFile = knownFile;
+            this.OriginalHashKey = knownFile?.HashKey;
             FoundFile = foundFile;
-            State = GetFileState();
-
-            this.foundFileInfo = FoundFile.GetInfo();
+            this.foundFileInfo = FoundFile?.GetInfo();
+            UpdateSource = GetFileState();
         }
         public ScannedFileData KnownFile { get; }
         public FilePath FoundFile { get; }
 
-        private BehaviorSubject<FileHashKey> _newHashKey { get; } = new(null);
-        public IObservable<FileHashKey> NewHashKeyChanges => _newHashKey.WhereNotNull();
+        public FileHashKey NewHashKey { get; private set; }
+        public FileHashKey OriginalHashKey { get; private set; }
 
-        public FileHashKey CreateNewHashkey(HashAlgorithm algorithm = null)
+
+        public FileHashKey CreateNewHashKey(HashAlgorithm algorithm = null)
         {
-            if (this._newHashKey.Value != null)
-                return _newHashKey.Value;
+            if (this.NewHashKey != null)
+                return NewHashKey;
 
             var hash = FileHashKey.From(
                 FileHash.Create(FoundFile, algorithm ?? new SHA512Managed()),
                 FileSize.From(foundFileInfo.Length));
-            this._newHashKey.OnNext(hash);
-            this._newHashKey.OnCompleted();
+            NewHashKey = hash;
             return hash;
         }
 
-        public FileState State { get; }
+        public FileUpdateSource UpdateSource { get; }
 
-        private FileState GetFileState()
+        private FileUpdateSource GetFileState()
         {
             if (FoundFile == null && KnownFile == null)
                 throw new ArgumentNullException(nameof(FoundFile), "at least one file must be set");
             if (FoundFile != null && KnownFile == null)
-                return FileState.New;
+                return FileUpdateSource.New;
             if (FoundFile == null && KnownFile != null)
-                return FileState.Deleted;
-            if (foundFileInfo.LastWriteTime == KnownFile.LastWrite)
-                return FileState.Unchanged;
+                return FileUpdateSource.Deleted;
+            if (foundFileInfo.LastWriteTime == KnownFile!.LastWrite)
+                return FileUpdateSource.Unchanged;
 
-            return FileState.Updated;
+            return FileUpdateSource.Updated;
         }
 
-        public ScannedFileData GetNewEntity()
-            => new(_newHashKey.Value, FoundFile, foundFileInfo.LastWriteTime, KnownFile?.Id);
+        public ScannedFileData GetNewFileEntity()
+            => new(NewHashKey, FoundFile, foundFileInfo.LastWriteTime, KnownFile?.Id);
+
+        public ItemUpdateHelper GetItemUpdateHelper(IEnumerable<Item> items)
+        {
+            return new(this, items);
+        }
     }
 
-    internal class FileSyncListGrouping
+    internal class ItemUpdateHelper
     {
-        public IEnumerable<RawSyncFileData> NewFiles { get; }
-        public IEnumerable<RawSyncFileData> UpdatedFiles { get; }
-        public IEnumerable<RawSyncFileData> DeletedFiles { get; }
+        public FileHashKey HashAfterSync { get; }
+        public FileUpdateSource UpdateSource { get; }
+        public FilePath File { get; }
 
-        public FileSyncListGrouping(IEnumerable<RawSyncFileData> files)
+        /// item which is linked to <see cref="HashAfterSync"/>
+        public Item LinkedItemAfterSync { get; }
+
+        public ItemUpdateHelper(RawSyncFileData fileHelper, IEnumerable<Item> items)
         {
+            HashAfterSync = fileHelper.NewHashKey;
+            File = fileHelper.FoundFile;
+            UpdateSource = fileHelper.UpdateSource;
 
-            var groups =
-                files
-                    .GroupBy(file => file.State)
-                    .ToArray();
-
-            NewFiles = groups.FirstOrDefault(g => g.Key == FileState.New)
-                ?.DistinctBy(dir => dir.FoundFile)
-                ?.ToArray() ?? Array.Empty<RawSyncFileData>();
-
-            DeletedFiles = groups.FirstOrDefault(g => g.Key == FileState.Deleted)
-                ?.ToArray() ?? Array.Empty<RawSyncFileData>();
-
-            UpdatedFiles = groups.FirstOrDefault(g => g.Key == FileState.Updated)
-                ?.DistinctBy(dir => dir.FoundFile)
-                ?.ToArray() ?? Array.Empty<RawSyncFileData>();
+            LinkedItemAfterSync = items.FirstOrDefault(item => item.ModelFileKey == HashAfterSync);
         }
 
-        public void UpdateFileHashes()
+        public Item GetItemUpdate()
         {
-            using var algorithm = new SHA512Managed();
-
-            NewFiles.Concat(UpdatedFiles).ToList().ForEach(file =>
+            // temporary solution: only handle new items
+            if (LinkedItemAfterSync is null) // there is no item for the updated file
             {
-                file.CreateNewHashkey(algorithm);
-            });
+                // todo: autoTagging
+                return new Item(File.GetFilenameWithoutExtension().ToName(), HashAfterSync);
+            }
+            return null;
         }
 
-        public IObservable<RawSyncFileData> GetFileHashUpdateFeed()
-        {
-            return NewFiles
-                .Concat(UpdatedFiles)
-                .ToArray()
-                .ToObservable()
-                .Do(data => data.CreateNewHashkey());
-        }
     }
 }

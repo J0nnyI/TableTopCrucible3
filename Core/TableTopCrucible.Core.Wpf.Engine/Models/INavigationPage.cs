@@ -12,10 +12,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.Models
     }
     public interface INavigationPage
     {
-        public PackIconKind? Icon { get; }
-        public Name Title { get; }
-        public NavigationPageLocation PageLocation { get; }
-        public SortingOrder Position { get; }
+        PackIconKind? Icon { get; }
+        Name Title { get; }
+        NavigationPageLocation PageLocation { get; }
+        SortingOrder Position { get; }
     }
 
 }

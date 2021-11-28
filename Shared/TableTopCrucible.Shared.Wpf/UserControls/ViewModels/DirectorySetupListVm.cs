@@ -15,6 +15,7 @@ using System.Windows.Input;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
@@ -23,7 +24,7 @@ using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Transient(typeof(DirectorySetupListVm))]
+    [Transient]
     public interface IDirectorySetupList
     {
 
@@ -46,16 +47,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 this.WhenAnyValue(vm => vm.Directories.Count)
                     .Select(c => c == 0)
                     .DistinctUntilChanged()
-                    .Select(show =>
-                        ObservableHelper.AnimateValue(0,1)
-                            .Select(opacity => show ? opacity : 1 - opacity) // invert animation direction depending on the toggle
-                    )
-                    .Switch();
+                    // causes ui lags
+                    //.Select(show =>
+                    //    ObservableHelper.AnimateValue(0, 1)
+                    //        .Select(opacity => show ? opacity : 1 - opacity) // invert animation direction depending on the toggle
+                    //)
+                    //.Switch()
+                    .Select(show => show ? 1.0 : 0.0);
 
             this.WhenActivated(() => new[]
             {
                 _directorySetupRepository
-                    .DataChanges
+                    .Data
                     .Connect()
                     .Transform(m=>m.Id)
                     .IgnoreUpdateWhen((m1, m2)=>m1==m2)
@@ -89,15 +92,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         var directorySetup = new DirectorySetup(path.GetDirectoryName().ToName(), path);
                         _directorySetupRepository.AddOrUpdate(directorySetup);
                         _notificationService.AddNotification(
-                            "Directory added successfully",
-                            $"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
+                            (Name)"Directory added successfully",
+                            (Description)$"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
                             NotificationType.Confirmation);
                     }
                     else
                     {
                         _notificationService.AddNotification(
-                            "Directory has already been added",
-                            $"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
+                            (Name)"Directory has already been added",
+                            (Description)$"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
                             NotificationType.Info);
                     }
                 });

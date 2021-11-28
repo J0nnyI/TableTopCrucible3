@@ -1,28 +1,21 @@
-﻿using NUnit.Framework;
-using TableTopCrucible.Core.ValueTypes;
-using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
+using NUnit.Framework;
 using Splat;
-using TableTopCrucible.Core.Helper;
 
 namespace TableTopCrucible.Core.ValueTypes.Tests
 {
-    [TestFixture()]
+    [TestFixture]
     public class FilePathTests
     {
         [SetUp]
         public void BeforeEach()
         {
-            Locator.CurrentMutable.Register< IFileSystem>(()=>new MockFileSystem());
+            Locator.CurrentMutable.Register<IFileSystem>(() => new MockFileSystem());
         }
 
-        [Test()]
+        [Test]
         public void GetFileTypeTest()
         {
             FilePath.From(@"C:\SubDir\file.obj").GetFileType().Should().Be(FileType.Model);

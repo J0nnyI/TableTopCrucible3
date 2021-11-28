@@ -14,14 +14,5 @@ namespace TableTopCrucible.Core.TestHelper
             srv.RemoveAll<IFileSystem>();
             srv.AddSingleton<IFileSystem, T>();
         }
-        public static void RemoveAutoMapper(this ServiceCollection srv)
-        {
-            var autoMapperAssembly = Assembly.GetAssembly(typeof(Mapper));
-            srv.Where(desc => desc.ServiceType.Assembly == autoMapperAssembly)
-                .Select(desc => desc.ServiceType)
-                .ToList()
-                .ForEach(asrv => srv.RemoveAll(asrv));
-        }
-
     }
 }

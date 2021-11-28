@@ -6,20 +6,19 @@ namespace TableTopCrucible.Core.ValueTypes.Exceptions
     {
         protected DirectoryMoveFailedException(string message, Exception innerException) : base(message, innerException)
         {
-
         }
     }
 
     public class DirectoryMoveFailedException<TDir> : DirectoryMoveFailedException
     {
-        public TDir OldDirectory { get; }
-        public TDir NewDirectory { get; }
-
         public DirectoryMoveFailedException(TDir oldDirectory, TDir newDirectory, Exception innerException) : base(
             $"directory '{oldDirectory}' could not be renamed to '{newDirectory}'", innerException)
         {
-            this.OldDirectory = oldDirectory;
-            this.NewDirectory = newDirectory;
+            OldDirectory = oldDirectory;
+            NewDirectory = newDirectory;
         }
+
+        public TDir OldDirectory { get; }
+        public TDir NewDirectory { get; }
     }
 }

@@ -1,19 +1,20 @@
-﻿
-using System.IO.Abstractions.TestingHelpers;
+﻿using System.IO.Abstractions.TestingHelpers;
+using System.Reactive.Concurrency;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Reactive.Testing;
 using ReactiveUI;
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
-using TableTopCrucible.Core.Database;
 using TableTopCrucible.Core.DependencyInjection;
-using TableTopCrucible.Core.Wpf.Engine;
 
 namespace TableTopCrucible.Core.TestHelper
 {
+    // test environment setups
     public static class Prepare
     {
-        public static void ApplicationEnvironment(bool includeAutomapper = false)
+        // prepares an integration application environment
+        public static void ApplicationEnvironment(bool includeAutoMapper = false)
         {
             Host
                 .CreateDefaultBuilder()
@@ -25,18 +26,14 @@ namespace TableTopCrucible.Core.TestHelper
                     resolver.InitializeReactiveUI();
 
 
-                    DependencyBuilder.GetServices(services, includeAutomapper);
+                    DependencyBuilder.GetServices(services, includeAutoMapper);
 
                     services.ReplaceFileSystem<MockFileSystem>();
                     services.UseMicrosoftDependencyResolver();
                     Locator.CurrentMutable.InitializeSplat();
                     Locator.CurrentMutable.InitializeReactiveUI();
-
                 })
-                .ConfigureLogging(loggingBuilder =>
-                {
-                    loggingBuilder.AddSplat();
-                })
+                .ConfigureLogging(loggingBuilder => { loggingBuilder.AddSplat(); })
                 .UseEnvironment(
                     Environments.Development
                 )

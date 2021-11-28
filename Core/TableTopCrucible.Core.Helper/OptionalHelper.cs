@@ -1,5 +1,4 @@
-﻿
-using DynamicData.Kernel;
+﻿using DynamicData.Kernel;
 
 namespace TableTopCrucible.Core.Helper
 {

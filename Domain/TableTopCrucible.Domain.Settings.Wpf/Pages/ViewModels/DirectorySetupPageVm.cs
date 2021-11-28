@@ -10,7 +10,7 @@ using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels
 {
-    [Singleton(typeof(DirectorySetupPageVm))]
+    [Singleton]
     public interface IDirectorySetupPage : INavigationPage
     {
 

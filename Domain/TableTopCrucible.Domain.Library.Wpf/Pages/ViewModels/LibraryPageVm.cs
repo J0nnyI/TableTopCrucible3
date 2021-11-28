@@ -10,7 +10,7 @@ using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 {
-    [Singleton(typeof(LibraryPageVm))]
+    [Singleton]
     public interface ILibraryPage : INavigationPage
     {
 
@@ -24,7 +24,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
         public SortingOrder Position => SortingOrder.From(1);
 
-        public LibraryPageVm(IItemList itemList )
+        public LibraryPageVm(IItemList itemList)
         {
             ItemList = itemList;
         }

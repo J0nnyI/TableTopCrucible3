@@ -50,11 +50,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     },
                     c=>YesClickedCommand = c
                     ),
-                ReactiveCommandHelper.Create(
-                    () =>
-                    {
-                        Close();
-                    },
+                ReactiveCommandHelper.Create(Close,
                     c=>NoClickedCommand = c
                 ),
             });
@@ -62,7 +58,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
         private bool closed = false;
 
-        private Subject<YesNoDialogResult> _dialogResult = new();
+        private readonly Subject<YesNoDialogResult> _dialogResult = new();
         public IObservable<YesNoDialogResult> Result => _dialogResult;
     }
 }

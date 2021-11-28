@@ -1,22 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices;
-using MoreLinq;
+﻿using MoreLinq;
 
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Security.Cryptography;
+using System.Threading;
 using System.Windows.Input;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Core.Jobs.Services;
+using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.Jobs.Helper;
+using TableTopCrucible.Core.Jobs.Progression.Models;
+using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
+using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Models;
 
 namespace TableTopCrucible.Shared.ItemSync.Services
@@ -24,26 +30,29 @@ namespace TableTopCrucible.Shared.ItemSync.Services
     /// <summary>
     /// Synchronizes the master file list with the files in the directory
     /// </summary>
-    [Singleton(typeof(FileSynchronizationService))]
+    [Singleton]
     public interface IFileSynchronizationService
     {
-        IObservable<Unit> StartScan();
+        ITrackingViewer StartScan();
         ICommand StartScanCommand { get; }
     }
     public class FileSynchronizationService : IFileSynchronizationService
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IScannedFileRepository _fileRepository;
+        private readonly IItemRepository _itemRepository;
         private readonly IProgressTrackingService _progressTrackingService;
         [Reactive] public bool ScanRunning { get; private set; } = false;
 
         public FileSynchronizationService(
             IDirectorySetupRepository directorySetupRepository,
             IScannedFileRepository fileRepository,
+            IItemRepository itemRepository,
             IProgressTrackingService progressTrackingService)
         {
             _directorySetupRepository = directorySetupRepository;
             _fileRepository = fileRepository;
+            _itemRepository = itemRepository;
             _progressTrackingService = progressTrackingService;
 
             this.StartScanCommand = ReactiveCommand.Create(
@@ -52,49 +61,98 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     .Select(x => !x));
         }
 
-        public IObservable<Unit> StartScan()
+        public ICommand StartScanCommand { get; }
+        public ITrackingViewer StartScan()
         {
-            this.ScanRunning = true;
+            if (ScanRunning)
+                return null;
+            ScanRunning = true;
 
-            var mainTracker = _progressTrackingService.CreateNewCompositeTracker((Name)"File Synchronization");
+            var totalProgress = _progressTrackingService
+                .CreateCompositeTracker(
+                    (Name)"File Synchronization"
+                );
+            var stepTracker = totalProgress.AddSingle((Name)"Total", (TargetProgress)1, (JobWeight)1);
+            var hashingTracker = totalProgress.AddSingle((Name)"hashing", null, (JobWeight)10);
+            var updateTracker = totalProgress.AddSingle((Name)"update", null, (JobWeight)3);
 
-            using var prepTracker = mainTracker.AddSingle((Name)"Preparation", (TrackingTarget)1);
-            var deleteTracker = mainTracker.AddSingle((Name)"Delete Tracker", (TrackingTarget)1);
-            var updateTracker = mainTracker.AddSingle((Name) "update Tracker", (TrackingTarget) 1, (TrackingWeight) 10);
-
-            var fileGroups = getFileGroups(_directorySetupRepository.Data.Items);
-            fileGroups.UpdateFileHashes();
-            prepTracker.Increment();
-            prepTracker.Dispose();
-
-            Observable.CombineLatest(
-                Observable.Start(() =>
-                {
-                    fileGroups.GetFileHashUpdateFeed()
-                        .Buffer(new TimeSpan(0, 0, 0, 10))
-                        .Do(hashedFiles =>
-                        {
-                            _fileRepository.AddOrUpdate(hashedFiles.Select(file => file.GetNewEntity()));
-                            updateTracker.Increment();
-                        });
-                }, RxApp.TaskpoolScheduler),
-                Observable.Start(() =>
-                {
-                    _fileRepository.Delete(fileGroups.DeletedFiles.Select(file => file.KnownFile.Id));
-                    deleteTracker.Increment();
-                    deleteTracker.Dispose();
-                }, RxApp.TaskpoolScheduler)
-            )
-                .Subscribe(_ => { }, () =>
+            totalProgress
+                .OnDone()
+                .Take(1)
+                .Subscribe(_ =>
             {
-                this.ScanRunning = false;
+                ScanRunning = false;
             });
 
-            return Observable.Never<Unit>();
+            Observable.Start(() =>
+            {
+                try
+                {
+                    Thread.Sleep(5000);
+                    var files = getFileGroups(
+                        _directorySetupRepository
+                        .Data
+                        .Items);
 
+                    stepTracker.Increment();
+
+                    // remove deleted files
+                    _fileRepository.Delete(files.DeletedFiles.Select(file => file.KnownFile.Id));
+
+                    // prepare hash process
+                    var filesToHash = files.NewFiles
+                        .Concat(files.UpdatedFiles)
+                        .ToArray();
+
+                    if (filesToHash.Length > 0)
+                    {
+                        var totalSize = filesToHash.Sum(file => file.FoundFile.Value.Length);
+                        hashingTracker.SetTarget((TargetProgress)totalSize);
+                        updateTracker.SetTarget((TargetProgress)filesToHash.Length);
+
+                        var updatePipeline = new Subject<RawSyncFileData>();
+
+                        var dbgItems = new List<IEnumerable<RawSyncFileData>>();
+
+                        updatePipeline
+                            .ObserveOn(RxApp.TaskpoolScheduler)
+                            .Buffer(SettingsHelper.PipelineBufferTime)
+                            .TakeUntil(updateTracker.OnDone())
+                            .Subscribe(items =>
+                            {
+                                _handleChangedFiles(items.ToArray());
+                                updateTracker.Increment((ProgressIncrement)items.Count);
+                            });
+
+                        // hash items and do the rest in parallel
+                        filesToHash
+                            .AsParallel()
+                            .WithDegreeOfParallelism(SettingsHelper.ThreadCount)
+                            .ForAll(item =>
+                            {
+                                item.CreateNewHashKey();
+                                hashingTracker.Increment((ProgressIncrement)item.FoundFile.Value.Length);
+                                updatePipeline.OnNext(item);
+                            });
+                    }
+                    else
+                    {
+                        hashingTracker.Complete();
+                        updateTracker.Complete();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Debugger.Break();
+                    throw;
+                }
+
+            }, RxApp.TaskpoolScheduler);
+
+            return totalProgress;
         }
-
-        public ICommand StartScanCommand { get; }
 
         private IEnumerable<RawSyncFileData> startScanForDirectory(DirectorySetup directory)
         {
@@ -113,8 +171,24 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private FileSyncListGrouping getFileGroups(IEnumerable<DirectorySetup> directorySetups)
         {
             return new(directorySetups
-                .SelectMany(dir => startScanForDirectory(dir)));
+                .SelectMany(startScanForDirectory));
         }
 
+
+        private void _handleChangedFiles(RawSyncFileData[] files)
+        {
+            _fileRepository.AddOrUpdate(files.Select(file => file.GetNewFileEntity()));
+
+            this._itemRepository.Edit(itemUpdater =>
+            {
+                foreach (var file in files)
+                {
+                    var helper = file.GetItemUpdateHelper(itemUpdater.Items);
+                    var update = helper.GetItemUpdate();
+                    if (update is not null)
+                        itemUpdater.AddOrUpdate(update);
+                }
+            });
+        }
     }
 }

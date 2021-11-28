@@ -1,5 +1,4 @@
-﻿
-using ValueOf;
+﻿using ValueOf;
 
 namespace TableTopCrucible.Core.ValueTypes
 {

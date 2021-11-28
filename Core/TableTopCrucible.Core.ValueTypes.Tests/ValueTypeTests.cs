@@ -4,14 +4,13 @@ using NUnit.Framework;
 
 namespace TableTopCrucible.Core.ValueTypes.Tests
 {
-    [TestFixture()]
+    [TestFixture]
     public class ValueTypeTests
     {
+        private FileHash buildHash(int seed = 1) =>
+            FileHash.From(Enumerable.Range(seed, 64).Select(Convert.ToByte).ToArray());
 
-        private FileHash buildHash(int seed = 1)
-            => FileHash.From(Enumerable.Range(seed, 64).Select(i => Convert.ToByte(i)).ToArray());
-        private FileHashKey buildHashKey(int seed = 1)
-            => FileHashKey.From((buildHash(seed), FileSize.From(seed)));
+        private FileHashKey buildHashKey(int seed = 1) => FileHashKey.From((buildHash(seed), FileSize.From(seed)));
 
         private void testEquality<T>(Func<T> factory, Func<T> factoryVariant, string description = null)
         {
@@ -28,12 +27,13 @@ namespace TableTopCrucible.Core.ValueTypes.Tests
         [Test]
         public void FileHashTests()
         {
-            testEquality(() => buildHash(1), () => buildHash(10));
+            testEquality(() => buildHash(), () => buildHash(10));
         }
+
         [Test]
         public void FileDataHashKeyTests()
         {
-            testEquality(() => buildHashKey(1), () => buildHashKey(10));
+            testEquality(() => buildHashKey(), () => buildHashKey(10));
         }
     }
 }

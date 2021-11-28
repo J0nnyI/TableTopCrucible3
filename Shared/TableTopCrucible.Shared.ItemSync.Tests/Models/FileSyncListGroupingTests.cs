@@ -1,25 +1,24 @@
-﻿using NUnit.Framework;
-using TableTopCrucible.Shared.ItemSync.Models;
+﻿using FluentAssertions;
+
+using MoreLinq.Extensions;
+
+using NUnit.Framework;
+
+using Splat;
+
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Printing;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Navigation;
-using FluentAssertions;
-using Microsoft.Xaml.Behaviors.Core;
-using MoreLinq.Extensions;
-using Splat;
+
+using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
 using TableTopCrucible.Shared.ItemSync.Services;
 
 
@@ -28,7 +27,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
     [TestFixture()]
     public class FileSyncListGroupingTests
     {
-        public static readonly TimeSpan TestTimeout = new TimeSpan(0, 0, 0, 0, 500);
+        public static readonly TimeSpan TestTimeout = TimeSpan.FromMilliseconds(500);
 
         private IDirectorySetupRepository directorySetupRepository;
         private IScannedFileRepository fileRepository;
@@ -39,7 +38,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             public FilePath File { get; }
             public string Content { get; init; }
             public string NewContent { get; init; }
-            public FileState FileState { get; }
+            public FileUpdateSource FileUpdateSource { get; }
             public FileHashKey HashKey { get; private set; }
             public FileHashKey TargetHashKey { get; private set; }
             public DateTime LastWrite { get; private set; }
@@ -47,8 +46,9 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             public ScannedFileDataId OriginalId { get; private set; }
 
 
-            public FileSetupData(string path, FileState state)
+            public FileSetupData(string path, FileUpdateSource updateSource)
             {
+                FileUpdateSource = updateSource;
                 File = FilePath.From(path);
                 Content = Guid.NewGuid().ToString();
                 NewContent = Guid.NewGuid().ToString();
@@ -60,22 +60,22 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                 OriginalId = ScannedFileDataId.New();
 
                 // create local file
-                if (FileState != FileState.Deleted)
+                if (FileUpdateSource != FileUpdateSource.Deleted)
                 {
-                    File.SetCreationTime(LastWrite);
                     File.GetDirectoryPath().Create();
                     File.WriteAllText(Content);
+                    File.SetCreationTime(LastWrite);
                 }
 
                 // new files do not have a model
-                if (FileState == FileState.New)
+                if (FileUpdateSource == FileUpdateSource.New)
                     return null;
 
                 // create hash for old file
                 TargetHashKey = HashKey = FileHashKey.Create(File);
 
                 // update file if required
-                if (FileState == FileState.Updated)
+                if (FileUpdateSource == FileUpdateSource.Updated)
                 {
                     if (NewContent != null)
                         File.WriteAllText(NewContent);
@@ -93,7 +93,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             {
                 output.HashKey.Should().Be(HashKey);
 
-                if (FileState == FileState.Deleted)
+                if (FileUpdateSource == FileUpdateSource.Deleted)
                     output.Should().BeNull();
                 else
                 {
@@ -102,11 +102,11 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                     output.LastWrite.Should().Be(TargetLastWrite);
                     output.Id.Should().Be(OriginalId);
                 }
-                
+
                 return Unit.Default;
             }
 
-            
+
         }
 
 
@@ -127,8 +127,15 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
 
             private void prepare()
             {
-                directorySetupRepository.AddOrUpdate(Directories.Select(dir => new DirectorySetup(dir, dir)));
-                fileRepository.AddOrUpdate(FileData.Select(file => file.Prepare()).ToArray());
+                directorySetupRepository.AddOrUpdate(
+                    Directories.Select(dir =>
+                        new DirectorySetup(
+                            (Name)dir,
+                            DirectorySetupPath.From(dir)
+                            )
+                        )
+                    );
+                fileRepository.AddOrUpdate(FileData.Select(file => file.Prepare()).Where(file => file != null).ToArray());
             }
 
             private void evaluateResult()
@@ -168,11 +175,10 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
 
                 fileSyncService
                     .StartScan()
-                    .Select(_ => true)
-                    .Timeout(TestTimeout, Observable.Return(false))
-                    .Wait()
-                    .Should()
-                    .BeTrue("test run into timeout of " + TestTimeout);
+                    .OnDone()
+                    .Take(1)
+                    .Timeout(TestTimeout)
+                    .Wait();
 
                 evaluateResult();
             }
@@ -189,29 +195,28 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
         }
 
         [Test]
-        [Ignore("not implemented yet")]
         public void UpdateFileHashesTest()
         { // feature not implemented yet
             new TestSetup
             {
                 Directories = new[]
                 {
-                    @"C:\first",
-                    @"C:\first\Unchanged",
+                    @"C:\First",
+                    @"C:\First\Unchanged",
                     @"C:\second",
                 },
                 FileData = new FileSetupData[]
                 {
-                    new(@"C:\first\New\A.stl", FileState.New),
-                    new(@"C:\first\New\B.stl", FileState.New),
-                    new(@"C:\first\Unchanged\A.stl", FileState.Unchanged),
-                    new(@"C:\first\Unchanged\B.stl", FileState.Unchanged),
-                    new(@"C:\first\Deleted\A.stl", FileState.Deleted),
-                    new(@"C:\first\Deleted\B.stl", FileState.Deleted),
-                    new(@"C:\first\Updated\A.stl", FileState.Updated),
-                    new(@"C:\first\Updated\B.stl", FileState.Updated),
-                    new(@"C:\second\A.stl", FileState.New),
-                    new(@"C:\second\B.stl", FileState.New),
+                    new(@"C:\First\New\A.stl", FileUpdateSource.New),
+                    new(@"C:\First\New\B.stl", FileUpdateSource.New),
+                    new(@"C:\First\Unchanged\A.stl", FileUpdateSource.Unchanged),
+                    new(@"C:\First\Unchanged\B.stl", FileUpdateSource.Unchanged),
+                    new(@"C:\First\Deleted\A.stl", FileUpdateSource.Deleted),
+                    new(@"C:\First\Deleted\B.stl", FileUpdateSource.Deleted),
+                    new(@"C:\First\Updated\A.stl", FileUpdateSource.Updated),
+                    new(@"C:\First\Updated\B.stl", FileUpdateSource.Updated),
+                    new(@"C:\second\A.stl", FileUpdateSource.New),
+                    new(@"C:\second\B.stl", FileUpdateSource.New),
                 },
             }.RunTest();
         }

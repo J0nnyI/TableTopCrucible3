@@ -1,5 +1,4 @@
 ﻿using System;
-
 using ValueOf;
 
 namespace TableTopCrucible.Core.Database.ValueTypes

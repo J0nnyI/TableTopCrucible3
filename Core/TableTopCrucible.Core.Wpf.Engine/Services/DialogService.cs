@@ -7,7 +7,7 @@ using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Services
 {
-    [Singleton(typeof(DialogService))]
+    [Singleton]
     public interface IDialogService
     {
 

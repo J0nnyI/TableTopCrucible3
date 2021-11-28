@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using DynamicData;
+﻿using DynamicData;
 using DynamicData.Binding;
+
 using ReactiveUI;
+
+using System;
+using System.Reactive.Linq;
+using System.Windows.Input;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
+using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Transient(typeof(ItemListVm))]
+    [Transient]
     public interface IItemList
     {
 
@@ -28,22 +27,31 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ViewModelActivator Activator { get; } = new();
 
         public ObservableCollectionExtended<ScannedFileData> Files = new();
+        public ObservableCollectionExtended<Item> Items= new();
         public ICommand FileSyncCommand => _fileSynchronizationService.StartScanCommand;
 
-        public ItemListVm(IScannedFileRepository fileRepository,
-            IFileSynchronizationService fileSynchronizationService)
+        public ItemListVm(
+            IScannedFileRepository fileRepository,
+            IFileSynchronizationService fileSynchronizationService,
+            IItemRepository itemRepository)
         {
             _fileRepository = fileRepository;
             _fileSynchronizationService = fileSynchronizationService;
 
-            this.WhenActivated(()=>new []{
+            this.WhenActivated(() => new[]{
 
                 fileRepository
-                    .DataChanges
+                    .Data
                     .Connect()
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Bind(Files)
-                    .Subscribe()
+                    .Subscribe(),
+                itemRepository
+                    .Data
+                    .Connect()
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Bind(Items)
+                    .Subscribe(),
             });
         }
     }

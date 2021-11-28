@@ -6,6 +6,8 @@ namespace TableTopCrucible.Core.Database.Models
         where Tid : IEntityId
         where Tentity : IEntity<Tid>
     {
-        public Guid IdValue { get; set; }
+        Guid Id { get; set; }
+        Tentity ToEntity();
+        void Initialize(Tentity sourceEntity);
     }
 }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-
 using ValueOf;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -12,30 +10,34 @@ namespace TableTopCrucible.Core.ValueTypes
         public static readonly IEnumerable<FileExtension> SlicerProject = FromList(".3mf");
         public static readonly IEnumerable<FileExtension> SlicedFile = FromList(".photon", ".gcode");
         public static readonly IEnumerable<FileExtension> Archive = FromList(".zip");
-        public static readonly IEnumerable<FileExtension> Model = FromList(".stl", ".obj", ".off", ".objz", ".lwo", ".3ds");
-        public static readonly IEnumerable<FileExtension> Image = FromList(".png", ".jpg", ".jpeg", ".bmp", ".gif", ".hdp", ".jp2", ".pbm", ".psd", ".tga", ".tiff", ".img");
+
+        public static readonly IEnumerable<FileExtension> Model = FromList(".stl", ".obj", ".off", ".objz", ".lwo",
+            ".3ds");
+
+        public static readonly IEnumerable<FileExtension> Image = FromList(".png", ".jpg", ".jpeg", ".bmp", ".gif",
+            ".hdp", ".jp2", ".pbm", ".psd", ".tga", ".tiff", ".img");
+
         public static readonly FileExtension Library = From(".ttcl");
         public static readonly FileExtension Table = From(".ttct");
-        public static IEnumerable<FileExtension> FromList(params string[] values)
-            => values.Select(FileExtension.From);
-        public FileExtension ToLower()
-            => From(this.Value.ToLower());
-        public bool IsModel()
-             => Model.Contains(this.ToLower());
-        public bool IsImage()
-             => Image.Contains(this.ToLower());
-        public bool IsSlicerProject()
-            => SlicerProject.Contains(this.ToLower());
 
-        public bool IsSlicedFile()
-            => SlicedFile.Contains(this.ToLower());
-        public bool IsArchive()
-            => Archive.Contains(this.ToLower());
+        public static IEnumerable<FileExtension> FromList(params string[] values) => values.Select(From);
 
-        public bool IsLibrary()
-             => Library == this.ToLower();
-        public bool IsTable()
-             => Table == this.ToLower();
+        public FileExtension ToLower() => From(Value.ToLower());
+
+        public bool IsModel() => Model.Contains(ToLower());
+
+        public bool IsImage() => Image.Contains(ToLower());
+
+        public bool IsSlicerProject() => SlicerProject.Contains(ToLower());
+
+        public bool IsSlicedFile() => SlicedFile.Contains(ToLower());
+
+        public bool IsArchive() => Archive.Contains(ToLower());
+
+        public bool IsLibrary() => Library == ToLower();
+
+        public bool IsTable() => Table == ToLower();
+
         public FileType GetFileType()
         {
             if (IsModel())
@@ -55,7 +57,5 @@ namespace TableTopCrucible.Core.ValueTypes
 
             return FileType.Other;
         }
-
-
     }
 }

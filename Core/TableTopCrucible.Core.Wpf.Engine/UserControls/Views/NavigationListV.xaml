@@ -28,7 +28,6 @@
                     Value="Hand"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Height" Value="{StaticResource ButtonSize}"/>
-            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignLightForeground}"/>
             <Setter Property="Width" Value="{StaticResource ExpandedWidth}"/>
             <Style.Resources>
                 <Style TargetType="md:PackIcon">
@@ -68,11 +67,6 @@
                     </DataTrigger.ExitActions>
                 </DataTrigger>
             </Style.Triggers>
-
-
-
-
-
         </Style>
         <DataTemplate x:Key="ItemTemplate"
                       DataType="m:INavigationPage">
@@ -80,7 +74,7 @@
                         ToolTip="{Binding Title}">
                 <md:PackIcon Kind="{Binding Icon}"/>
                     <TextBlock Text="{Binding Title}"
-                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                               Style="{StaticResource SidebarSubTitle}"
                                VerticalAlignment="Center"/>
             </StackPanel>
         </DataTemplate>
@@ -88,7 +82,8 @@
 
     <md:ColorZone md:ShadowAssist.ShadowDepth="Depth2"
                   md:ShadowAssist.ShadowEdges="Right"
-                  Mode="PrimaryDark"
+                  Mode="Dark"
+                  Background="{DynamicResource SidebarBackground}"
                   VerticalAlignment="Stretch">
         <DockPanel VerticalAlignment="Stretch">
             <ListBox x:Name="UpperList"
