@@ -15,6 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core\DataPersistence\TableTopCrucible.Core.DataPersistence.EntityFramework\TableTopCrucible.Core.DataPersistence.EntityFramework.csproj" />
+    <ProjectReference Include="..\Core\DataPersistence\TableTopCrucible.Core.DataPersistence\TableTopCrucible.Core.DataPersistence.csproj" />
     <ProjectReference Include="..\Core\TableTopCrucible.Core.Database\TableTopCrucible.Core.Database.csproj" />
     <ProjectReference Include="..\Core\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
     <ProjectReference Include="..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
@@ -28,6 +30,8 @@
     <ProjectReference Include="..\Domain\TableTopCrucible.Domain.Automation.Wpf\TableTopCrucible.Domain.Automation.Wpf.csproj" />
     <ProjectReference Include="..\Domain\TableTopCrucible.Domain.Library.Wpf\TableTopCrucible.Domain.Library.Wpf.csproj" />
     <ProjectReference Include="..\Domain\TableTopCrucible.Domain.Settings.Wpf\TableTopCrucible.Domain.Settings.Wpf.csproj" />
+    <ProjectReference Include="..\Infrastructure\DataPersistence\TableTopCrucible.Infrastructure.DataPersistence.EntityFramework\TableTopCrucible.Infrastructure.DataPersistence.EntityFramework.csproj" />
+    <ProjectReference Include="..\Infrastructure\DataPersistence\TableTopCrucible.Infrastructure.DataPersistence\TableTopCrucible.Infrastructure.DataPersistence.csproj" />
     <ProjectReference Include="..\Infrastructure\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
     <ProjectReference Include="..\Infrastructure\TableTopCrucible.Infrastructure.Wpf.Commands\TableTopCrucible.Infrastructure.Wpf.Commands.csproj" />
     <ProjectReference Include="..\Shared\TableTopCrucible.Shared.ItemSync\TableTopCrucible.Shared.ItemSync.csproj" />
