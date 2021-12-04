@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0-Windows</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
+  </ItemGroup>
+
+</Project>

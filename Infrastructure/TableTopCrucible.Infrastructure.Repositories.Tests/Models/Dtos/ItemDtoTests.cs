@@ -27,7 +27,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos.Tests
             var size = 100;
             var itemIn = new Item((Name) "tagTest", FileHashKey.From(FileHash.From(hash), FileSize.From(size)));
             
-            var itemDtoIn = new ItemDto();
+            var itemDtoIn = new ItemEntity();
             itemDtoIn.Initialize(itemIn);
 
             itemDtoIn.Name.Should().Be(itemIn.Name.Value);
@@ -37,7 +37,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos.Tests
 
             var serialized = JsonSerializer.Serialize(itemDtoIn);
 
-            var itemDtoOut = (ItemDto)JsonSerializer.Deserialize(serialized, typeof(ItemDto));
+            var itemDtoOut = (ItemEntity)JsonSerializer.Deserialize(serialized, typeof(ItemEntity));
             
             itemDtoOut.Name.Should().Be(itemIn.Name.Value);
             itemDtoOut.Id.Should().Be(itemIn.Id.Value);

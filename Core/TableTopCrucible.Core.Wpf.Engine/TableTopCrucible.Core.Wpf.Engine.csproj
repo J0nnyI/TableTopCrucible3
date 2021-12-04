@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.Database\TableTopCrucible.Core.Database.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />

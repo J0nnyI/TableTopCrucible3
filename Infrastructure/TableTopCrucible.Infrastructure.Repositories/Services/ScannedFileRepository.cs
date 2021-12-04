@@ -8,15 +8,12 @@ using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
 namespace TableTopCrucible.Infrastructure.Repositories
 {
     [Singleton]
-    public interface IScannedFileRepository :
-        ISourceRepository<ScannedFileDataId, ScannedFileData, ScannedFileDataDto>
+    public interface IScannedFileRepository 
     {
     }
-    internal class ScannedFileRepository :
-        SourceRepositoryBase<ScannedFileDataId, ScannedFileData, ScannedFileDataDto>,
-        IScannedFileRepository
+    internal class ScannedFileRepository :IScannedFileRepository
     {
-        public ScannedFileRepository(IDatabase database) : base(database)
+        public ScannedFileRepository()
         {
         }
 

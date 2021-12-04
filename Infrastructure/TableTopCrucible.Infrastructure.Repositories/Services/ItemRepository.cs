@@ -14,10 +14,10 @@ using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
 namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
     [Singleton]
-    public interface IItemRepository : ISourceRepository<ItemId, Item, ItemDto> { }
-    internal class ItemRepository : SourceRepositoryBase<ItemId, Item, ItemDto>, IItemRepository
+    public interface IItemRepository { }
+    internal class ItemRepository : IItemRepository
     {
-        public ItemRepository(IDatabase database) : base(database)
+        public ItemRepository()
         {
         }
     }

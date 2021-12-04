@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Database\TableTopCrucible.Core.Database.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
