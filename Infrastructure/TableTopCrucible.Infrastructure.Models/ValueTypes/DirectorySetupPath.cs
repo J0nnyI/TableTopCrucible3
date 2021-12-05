@@ -1,7 +1,7 @@
 ﻿
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes
+namespace TableTopCrucible.Infrastructure.Models.ValueTypes
 {
     public class DirectorySetupPath : DirectoryPath<DirectorySetupPath>
     {

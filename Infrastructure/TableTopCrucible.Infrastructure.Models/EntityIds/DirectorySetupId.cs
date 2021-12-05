@@ -1,8 +1,8 @@
 ﻿using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Infrastructure.Repositories.Models.EntityIds
+namespace TableTopCrucible.Infrastructure.Models.EntityIds
 {
-    public class DirectorySetupId : IdBase<DirectorySetupId>
+    public class DirectorySetupId : DataIdBase<DirectorySetupId>
     {
     }
 }

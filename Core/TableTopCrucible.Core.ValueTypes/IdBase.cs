@@ -8,7 +8,8 @@ using ValueOf;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public abstract class IdBase<TThis> : ValueOf<Guid, TThis> where TThis : IdBase<TThis>, new()
+    public abstract class IdBase<TThis> : ValueOf<Guid, TThis> 
+        where TThis : IdBase<TThis>, new()
     {
         public Guid GetGuid() => Value;
 

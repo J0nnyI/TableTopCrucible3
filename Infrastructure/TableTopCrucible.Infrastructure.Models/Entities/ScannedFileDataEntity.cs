@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Models.Models;
 
-namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos
+namespace TableTopCrucible.Infrastructure.Models.Entities
 {
-    [DataContract]
-    public class ScannedFileDataDto
+    public class ScannedFileDataEntity:IDataEntity
     {
         public Guid Id { get; set; }
         public string FileLocation { get; set; }
@@ -15,7 +14,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos
         public long FileSize { get; set; }
         public DateTime LastWrite { get; set; }
 
-        public ScannedFileData ToEntity()
+        public ScannedFileDataModel ToEntity()
         {
             return new (
                 FileHashKey.From(
@@ -28,7 +27,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos
             );
         }
 
-        public void Initialize(ScannedFileData sourceEntity)
+        public void Initialize(ScannedFileDataModel sourceEntity)
         {
             Id = sourceEntity.Id.Value;
             FileLocation = sourceEntity.FileLocation.Value;

@@ -1,21 +1,12 @@
-﻿using NUnit.Framework;
-using TableTopCrucible.Infrastructure.Repositories.Models.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
-using System.Transactions;
-using AutoMapper;
 using FluentAssertions;
-using Splat;
-using TableTopCrucible.Core.TestHelper;
+using NUnit.Framework;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
+using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Infrastructure.Models.Models;
 
-namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos.Tests
+namespace TableTopCrucible.Infrastructure.Repositories.Tests.Models.Dtos
 {
     [TestFixture()]
     public class ItemDtoTests
@@ -25,7 +16,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos.Tests
         {
             var hash = Enumerable.Range(1,64).Select(i=>(byte)i).ToArray();
             var size = 100;
-            var itemIn = new Item((Name) "tagTest", FileHashKey.From(FileHash.From(hash), FileSize.From(size)));
+            var itemIn = new ItemModel((Name) "tagTest", FileHashKey.From(FileHash.From(hash), FileSize.From(size)));
             
             var itemDtoIn = new ItemEntity();
             itemDtoIn.Initialize(itemIn);

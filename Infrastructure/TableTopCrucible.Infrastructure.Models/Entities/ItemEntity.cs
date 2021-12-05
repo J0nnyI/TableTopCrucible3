@@ -1,36 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
-using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
-using ValueOf;
+using TableTopCrucible.Infrastructure.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Models.Models;
 
-namespace TableTopCrucible.Infrastructure.Repositories.Models.Dtos
+namespace TableTopCrucible.Infrastructure.Models.Entities
 {
-    [DataContract]
-    public class ItemEntity
+    public class ItemEntity:IDataEntity
     {
         public string Name { get; set; }
         public byte[] ModelFileHash { get; set; }
         public long ModelFileSize { get; set; }
         public Guid Id { get; set; }
 
-        public Item ToEntity()
+        public ItemModel ToEntity()
         {
-            return new Item(
+            return new ItemModel(
                 (Name) Name,
                 FileHashKey.From((FileHash.From(ModelFileHash), FileSize.From(ModelFileSize))),
                 ItemId.From(Id)
             );
         }
 
-        public void Initialize(Item sourceEntity)
+        public void Initialize(ItemModel sourceEntity)
         {
             Name = sourceEntity.Name.Value;
             ModelFileHash = sourceEntity.ModelFileKey.Hash.Value;

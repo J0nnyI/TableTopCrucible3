@@ -8,8 +8,4 @@
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Changeset\" />
-  </ItemGroup>
-
 </Project>

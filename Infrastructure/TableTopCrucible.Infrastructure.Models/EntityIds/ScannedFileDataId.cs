@@ -1,9 +1,9 @@
 ﻿
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Infrastructure.Repositories.Models.EntityIds
+namespace TableTopCrucible.Infrastructure.Models.EntityIds
 {
-    public class ScannedFileDataId : IdBase<ScannedFileDataId>
+    public class ScannedFileDataId : DataIdBase<ScannedFileDataId>
     {
     }
 }

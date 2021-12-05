@@ -14,7 +14,7 @@ namespace TableTopCrucible.Core.TestHelper
     public static class Prepare
     {
         // prepares an integration application environment
-        public static void ApplicationEnvironment(bool includeAutoMapper = false)
+        public static void ApplicationEnvironment()
         {
             Host
                 .CreateDefaultBuilder()
@@ -26,7 +26,7 @@ namespace TableTopCrucible.Core.TestHelper
                     resolver.InitializeReactiveUI();
 
 
-                    DependencyBuilder.GetServices(services, includeAutoMapper);
+                    DependencyBuilder.GetServices(services);
 
                     services.ReplaceFileSystem<MockFileSystem>();
                     services.UseMicrosoftDependencyResolver();

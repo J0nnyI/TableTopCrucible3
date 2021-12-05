@@ -1,11 +1,6 @@
-﻿
-using TableTopCrucible.Core.Database;
-using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Infrastructure.Repositories.Models.Dtos;
-using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
+﻿using TableTopCrucible.Core.DependencyInjection.Attributes;
 
-namespace TableTopCrucible.Infrastructure.Repositories
+namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
     [Singleton]
     public interface IScannedFileRepository 

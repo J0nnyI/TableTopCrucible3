@@ -21,22 +21,15 @@ namespace TableTopCrucible.Core.DependencyInjection
             return services;
         }
 
-        public static void GetServices(IServiceCollection services, bool includeAutoMapper = true)
+        public static void GetServices(IServiceCollection services)
         {
             services.AddSingleton<IFileSystem, FileSystem>();
             services.TryAddEnumerable(DiAttributeCollector.GenerateServiceProvider());
-            if (includeAutoMapper)
-                configureAutoMapper(services);
             services.AddSingleton(typeof(ILoggerFactory), buildLoggingFactory());
         }
 
         public static IServiceProvider BuildDependencyProvider() => GetServices().BuildServiceProvider();
-
-        private static void configureAutoMapper(IServiceCollection services)
-        {
-            services.AddAutoMapper(Assembly.Load("TableTopCrucible.Infrastructure.Repositories"));
-        }
-
+        
 
         private static ILoggerFactory buildLoggingFactory()
         {

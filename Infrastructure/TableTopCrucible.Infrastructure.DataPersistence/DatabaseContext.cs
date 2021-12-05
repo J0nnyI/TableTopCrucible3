@@ -1,36 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TableTopCrucible.Core.Database.ValueTypes;
-using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Repositories.Models.Dtos;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
-namespace TableTopCrucible.Infrastructure.DataPersistence.EntityFramework
+namespace TableTopCrucible.Infrastructure.DataPersistence
 {
     public interface IDatabaseContext
     {
         public LibraryFilePath FileName { get; }
         public DbSet<ItemEntity> Items { get; }
-        public DbSet<ScannedFileDataDto> Files { get; }
-        public DbSet<DirectorySetupDto> DirectorySetup { get; }
-
+        public DbSet<ScannedFileDataEntity> Files { get; }
+        public DbSet<DirectorySetupEntity> DirectorySetups { get; }
+        public int SaveChanges();
     }
     internal class DatabaseContext : DbContext, IDatabaseContext
     {
-        public LibraryFilePath FileName { get; }
+        public LibraryFilePath FileName { get; init; }
         public DbSet<ItemEntity> Items { get; set; }
-        public DbSet<ScannedFileDataDto> Files { get; set; }
-        public DbSet<DirectorySetupDto> DirectorySetup { get; set; }
-
-        internal DatabaseContext()
-        {
-
-        }
+        public DbSet<ScannedFileDataEntity> Files { get; set; }
+        public DbSet<DirectorySetupEntity> DirectorySetups { get; set; }
+        
 
         public DatabaseContext(LibraryFilePath fileName)
         {
