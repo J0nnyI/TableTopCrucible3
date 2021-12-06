@@ -10,8 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using ReactiveUI;
-
-using TableTopCrucible.Core.Database.ValueTypes;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;

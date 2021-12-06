@@ -1,24 +1,19 @@
-﻿using FluentAssertions;
-
-using NUnit.Framework;
-
-using ReactiveUI;
-
-using Splat;
-
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using FluentAssertions;
+using NUnit.Framework;
+using ReactiveUI;
+using Splat;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 
-namespace TableTopCrucible.Core.Jobs.Models.Tests
+namespace TableTopCrucible.Core.Jobs.Tests.Models
 {
     [TestFixture()]
     public class TrackingServiceTests : ReactiveObject

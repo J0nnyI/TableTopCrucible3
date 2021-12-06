@@ -26,8 +26,8 @@ namespace TableTopCrucible.Core.Helper
         public static bool AutoSaveEnabled = true;
 
         public static string DefaultFilePath =>
-            "library.ttcl";
-        //Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TableTopCrucible", "Library.ttcl");
+            //"library.ttcl";
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TableTopCrucible", "Library.ttcl");
     }
 
 }

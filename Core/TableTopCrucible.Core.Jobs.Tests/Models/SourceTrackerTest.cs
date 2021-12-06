@@ -1,15 +1,10 @@
-﻿using FluentAssertions;
-
-using NUnit.Framework;
-
-using ReactiveUI;
-
-using Splat;
-
-using System;
+﻿using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
+using FluentAssertions;
+using NUnit.Framework;
+using ReactiveUI;
+using Splat;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
@@ -17,7 +12,7 @@ using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.Models.Tests
+namespace TableTopCrucible.Core.Jobs.Tests.Models
 {
     [TestFixture]
     public class SourceTrackerTest : ReactiveObject

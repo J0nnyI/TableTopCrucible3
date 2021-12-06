@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TableTopCrucible.Core.Database.Exceptions
+namespace TableTopCrucible.Core.ValueTypes.Exceptions
 {
     public class InvalidIdException : Exception
     {

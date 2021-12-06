@@ -1,17 +1,12 @@
-﻿using FluentAssertions;
-
-using MoreLinq.Extensions;
-
-using NUnit.Framework;
-
-using Splat;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-
+using FluentAssertions;
+using MoreLinq.Extensions;
+using NUnit.Framework;
+using Splat;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
@@ -19,12 +14,11 @@ using TableTopCrucible.Infrastructure.Models.ChangeSets;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Models.Models;
 using TableTopCrucible.Infrastructure.Models.ValueTypes;
-using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.ItemSync.Models;
 using TableTopCrucible.Shared.ItemSync.Services;
 
-
-namespace TableTopCrucible.Shared.ItemSync.Models.Tests
+namespace TableTopCrucible.Shared.ItemSync.Tests.Models
 {
     [TestFixture()]
     public class FileSyncListGroupingTests

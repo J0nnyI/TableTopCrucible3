@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Microsoft.EntityFrameworkCore;
-using TableTopCrucible.Core.Database.ValueTypes;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Infrastructure.DataPersistence
