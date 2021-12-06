@@ -50,7 +50,8 @@
                               BorderBrush="Transparent"
                               Content="{md:PackIcon Menu, Size=25}"/>
 
-                <Button Content="{md:PackIcon ContentSave}"
+                <Button x:Name="Save"
+                        Content="{md:PackIcon ContentSave}"
                         BorderBrush="Transparent"
                         ToolTip="Save Data - Coming Soon"/>
             </StackPanel>

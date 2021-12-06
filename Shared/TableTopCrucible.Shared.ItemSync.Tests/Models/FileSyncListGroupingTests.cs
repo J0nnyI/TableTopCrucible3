@@ -130,7 +130,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
 
             private void prepare()
             {
-                directorySetupRepository.AddOrUpdate(
+                directorySetupRepository.Update(
                     Directories.Select(dir =>
                         new DirectorySetupChangeSet(
                             (Name)dir,
@@ -138,7 +138,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                             )
                         )
                     );
-                fileRepository.AddOrUpdate(FileData.Select(file => file.Prepare()).Where(file => file != null).ToArray());
+                fileRepository.Update(FileData.Select(file => file.Prepare()).Where(file => file != null).ToArray());
             }
 
             private void evaluateResult()

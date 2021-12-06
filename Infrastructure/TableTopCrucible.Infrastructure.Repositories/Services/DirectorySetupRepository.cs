@@ -17,19 +17,13 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
     public interface IDirectorySetupRepository
         : IRepository<DirectorySetupId, DirectorySetupModel, DirectorySetupEntity, DirectorySetupChangeSet>
     {
-        IObservable<IEnumerable<DirectorySetupPath>> TakenDirectoriesChanges { get; }
-        IObservableCache<DirectorySetupModel, DirectorySetupId> Cache { get; }
     }
     internal class DirectorySetupRepository
         : RepositoryBase<DirectorySetupId, DirectorySetupModel, DirectorySetupEntity, DirectorySetupChangeSet>,
         IDirectorySetupRepository
     {
-        public IObservableCache<DirectorySetupModel, DirectorySetupId> Cache => _cache;
-        private readonly SourceCache<DirectorySetupModel, DirectorySetupId> _cache = new(e => e.Id);
-
         public DirectorySetupRepository(IDatabaseAccessor database) : base(database, database.DirectorySetup)
         {
         }
-        public IObservable<IEnumerable<DirectorySetupPath>> TakenDirectoriesChanges { get; }
     }
 }

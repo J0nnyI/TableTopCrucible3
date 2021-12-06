@@ -102,6 +102,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static explicit operator FilePath<TThis>(string path)
             => From(path);
+            
     }
 
     /// <summary>

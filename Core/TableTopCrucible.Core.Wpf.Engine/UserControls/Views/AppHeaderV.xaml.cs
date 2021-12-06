@@ -80,6 +80,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     v=>v.ShowJobSidebar.Command),
 
                 this.OneWayBind(ViewModel,
+                    vm=>vm.SaveCommand,
+                    v=>v.Save.Command),
+
+                this.OneWayBind(ViewModel,
                     vm=>vm.ShowNotificationSidebar,
                     v=>v.ShowNotificationSidebar.Command),
             });

@@ -63,7 +63,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Cache
                     .Connect()
                     .Transform(m=>m.Id)
-                    .IgnoreUpdateWhen((m1, m2)=>m1==m2)
+                    //.IgnoreUpdateWhen((m1, m2)=>m1==m2)
                     .Transform(m=>
                     {
                         var card = Locator.Current.GetService<IDirectorySetupCard>();
@@ -92,7 +92,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     if (takenItem == null)
                     {
                         var directorySetup = new DirectorySetupChangeSet(path.GetDirectoryName().ToName(), path);
-                        _directorySetupRepository.AddOrUpdate(directorySetup);
+                        _directorySetupRepository.Add(directorySetup);
                         _notificationService.AddNotification(
                             (Name)"Directory added successfully",
                             (Description)$"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",

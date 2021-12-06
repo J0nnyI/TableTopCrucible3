@@ -8,7 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
+
 using ReactiveUI;
+
 using TableTopCrucible.Core.Database.ValueTypes;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
@@ -28,11 +30,12 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public DbSet<ItemEntity> Items { get; }
         public DbSet<ScannedFileDataEntity> Files { get; }
         public DbSet<DirectorySetupEntity> DirectorySetup { get; }
-        void Open(LibraryFilePath file);
+        //void Open(LibraryFilePath file);
         void AutoSave();
+        void ManualSave();
     }
 
-    public abstract class DatabaseAccessor :ReactiveObject, IDatabaseAccessor
+    public class DatabaseAccessor : ReactiveObject, IDatabaseAccessor
     {
         public DbSet<ItemEntity> Items => _database.Items;
         public DbSet<ScannedFileDataEntity> Files => _database.Files;
@@ -47,25 +50,40 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         /// </summary>
         public void AutoSave()
         {
-            if(SettingsHelper.AutoCloseEnabled)
-                this._onSave.OnNext(SaveType.Auto);
+
+            if (SettingsHelper.AutoSaveEnabled)
+                _database.SaveChanges();
+            //this._onSave.OnNext(SaveType.Auto);
         }
 
         public void ManualSave()
         {
-            this._onSave.OnNext(SaveType.Manual);
+            try
+            {
+                //this._onSave.OnNext(SaveType.Manual);
+                _database.SaveChanges();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
-        protected DatabaseAccessor()
+        public DatabaseAccessor()
         {
+            var file = (LibraryFilePath)SettingsHelper.DefaultFilePath;
+
+            this.Open(file);
             // reset buffer on manual save
-            _onSave.Where(type=>type == SaveType.Manual)
-                .Select(_=>Unit.Default)
+            _onSave.Where(type => type == SaveType.Manual)
+                .Select(_ => Unit.Default)
                 .StartWith(Unit.Default)
-                .Select(_=>_onSave
+                .Select(_ => _onSave
                     .Buffer(SettingsHelper.AutoSaveBuffer))
                 .Switch()
-                .Subscribe(_ =>_database.SaveChanges());
+                .Subscribe(_ => _database.SaveChanges());
         }
     }
 }

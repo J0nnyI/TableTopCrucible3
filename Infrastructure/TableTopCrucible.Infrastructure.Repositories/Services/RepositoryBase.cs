@@ -26,8 +26,9 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         
         void Remove(TId id);
         void Remove(IEnumerable<TId> ids);
-        void AddOrUpdate(TChangeSet newModel);
-        void AddOrUpdate(IEnumerable<TChangeSet> newModels);
+        void Update(TChangeSet newModel);
+        void Update(IEnumerable<TChangeSet> newModels);
+        void Add(TChangeSet newModel);
         public IObservable<Change<TModel, TId>> Watch(TId id);
     }
 
@@ -38,7 +39,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         where TModel : class, IDataModel<TId>
         where TChangeSet : class, IDataChangeSet<TId, TModel, TEntity>
     {
-        public IObservableCache<TModel, TId> Cache => _cache;
+        public IObservableCache<TModel, TId> Cache => _cache.AsObservableCache();
         public IEnumerable<KeyValuePair<TId, TModel>> KeyValues => _cache.KeyValues;
         public IEnumerable<TModel> Values => _cache.Items;
         protected readonly SourceCache<TModel, TId> _cache = new(e => e.Id);
@@ -53,14 +54,20 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             _cache.AddOrUpdate(_dbSet.Select(entity => entity.ToModel()));
         }
 
-        public void AddOrUpdate(TChangeSet newModel)
+        public void Add(TChangeSet newModel)
+        {
+            _dbSet.Add(newModel.ToEntity());
+            _cache.AddOrUpdate(newModel.ToModel());
+            _database.AutoSave();
+        }
+        public void Update(TChangeSet newModel)
         {
             _dbSet.Update(newModel.ToEntity());
             _cache.AddOrUpdate(newModel.ToModel());
             _database.AutoSave();
         }
 
-        public void AddOrUpdate(IEnumerable<TChangeSet> newModels)
+        public void Update(IEnumerable<TChangeSet> newModels)
         {
             var modelArray = newModels.ToArray();
             var entities = modelArray.Select(changeSet=>changeSet.ToEntity()).ToArray();
@@ -72,15 +79,25 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         public void Remove(TId id)
         {
-            _dbSet.Remove(new TEntity { Id = id.Guid });
-            _cache.RemoveKey(id);
-            _database.AutoSave();
+            try
+            {
+                var original = _dbSet.Single(e => e.Id == id.Guid);
+                _dbSet.Remove(original);
+                _cache.RemoveKey(id);
+                _database.AutoSave();
+            } 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public void Remove(IEnumerable<TId> ids)
         {
             var idArray = ids.ToArray();
-            var entities = idArray.Select(id => new TEntity {Id = id.Guid});
+            var guidArray = idArray.Select(id => id.Guid).ToArray();
+            var entities = _dbSet.Where(entity=>guidArray.Contains(entity.Id));
             _dbSet.RemoveRange(entities);
             _cache.RemoveKeys(idArray);
             _database.AutoSave();

@@ -176,9 +176,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
         private void _handleChangedFiles(RawSyncFileData[] files)
         {
-            _fileRepository.AddOrUpdate(files.Select(file => file.GetNewFileEntity()));
+            _fileRepository.Update(files.Select(file => file.GetNewFileEntity()));
 
-            _itemRepository.AddOrUpdate(
+            _itemRepository.Update(
             files.Select(file => file
                     .GetItemUpdateHelper(_itemRepository.Values)
                     .GetItemUpdate())

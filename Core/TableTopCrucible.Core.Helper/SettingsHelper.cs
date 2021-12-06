@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -7,6 +8,7 @@ namespace TableTopCrucible.Core.Helper
     {
         public static TimeSpan NotificationDelay => new(0, 0, 0, 5);
         public static double NotificationResolution => NotificationDelay / AnimationResolution;
+        //notifications
         public static bool AutoCloseEnabled => true;
         public static double AnimationFrames => AnimationDuration / AnimationResolution;
         public static TimeSpan AnimationResolution => new TimeSpan(0, 0, 0, 1) / 10;
@@ -23,6 +25,9 @@ namespace TableTopCrucible.Core.Helper
 
         public static bool AutoSaveEnabled = true;
 
+        public static string DefaultFilePath =>
+            "library.ttcl";
+        //Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TableTopCrucible", "Library.ttcl");
     }
 
 }

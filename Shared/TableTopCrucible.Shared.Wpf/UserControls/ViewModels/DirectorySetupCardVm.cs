@@ -95,7 +95,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 // Commands
                 ReactiveCommandHelper.Create(() =>
                     {
-                        _directorySetupRepository.AddOrUpdate(new DirectorySetupChangeSet(
+                        _directorySetupRepository.Update(new DirectorySetupChangeSet(
                             (vtName)Name,
                             (DirectorySetupPath)Path, 
                             DirectorySetup.Id));
