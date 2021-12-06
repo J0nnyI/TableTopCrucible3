@@ -9,7 +9,9 @@ using System.Reactive.Subjects;
 using System.Security.Cryptography;
 
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
+using TableTopCrucible.Infrastructure.Models.ChangeSets;
+using TableTopCrucible.Infrastructure.Models.Models;
+using TableTopCrucible.Infrastructure.Models.ValueTypes;
 
 namespace TableTopCrucible.Shared.ItemSync.Models
 {
@@ -17,7 +19,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
     {
         private readonly IFileInfo foundFileInfo;
 
-        public RawSyncFileData(ScannedFileData knownFile, FilePath foundFile)
+        public RawSyncFileData(ScannedFileDataModel knownFile, FilePath foundFile)
         {
             this.KnownFile = knownFile;
             this.OriginalHashKey = knownFile?.HashKey;
@@ -25,7 +27,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             this.foundFileInfo = FoundFile?.GetInfo();
             UpdateSource = GetFileState();
         }
-        public ScannedFileData KnownFile { get; }
+        public ScannedFileDataModel KnownFile { get; }
         public FilePath FoundFile { get; }
 
         public FileHashKey NewHashKey { get; private set; }
@@ -60,10 +62,10 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             return FileUpdateSource.Updated;
         }
 
-        public ScannedFileData GetNewFileEntity()
+        public ScannedFileDataChangeSet GetNewFileEntity()
             => new(NewHashKey, FoundFile, foundFileInfo.LastWriteTime, KnownFile?.Id);
 
-        public ItemUpdateHelper GetItemUpdateHelper(IEnumerable<Item> items)
+        public ItemUpdateHelper GetItemUpdateHelper(IEnumerable<ItemModel> items)
         {
             return new(this, items);
         }
@@ -76,9 +78,9 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         public FilePath File { get; }
 
         /// item which is linked to <see cref="HashAfterSync"/>
-        public Item LinkedItemAfterSync { get; }
+        public ItemModel LinkedItemAfterSync { get; }
 
-        public ItemUpdateHelper(RawSyncFileData fileHelper, IEnumerable<Item> items)
+        public ItemUpdateHelper(RawSyncFileData fileHelper, IEnumerable<ItemModel> items)
         {
             HashAfterSync = fileHelper.NewHashKey;
             File = fileHelper.FoundFile;
@@ -87,13 +89,13 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             LinkedItemAfterSync = items.FirstOrDefault(item => item.ModelFileKey == HashAfterSync);
         }
 
-        public Item GetItemUpdate()
+        public ItemChangeSet GetItemUpdate()
         {
             // temporary solution: only handle new items
             if (LinkedItemAfterSync is null) // there is no item for the updated file
             {
                 // todo: autoTagging
-                return new Item(File.GetFilenameWithoutExtension().ToName(), HashAfterSync);
+                return new (File.GetFilenameWithoutExtension().ToName(), HashAfterSync, Enumerable.Empty<Tag>());
             }
             return null;
         }

@@ -3,8 +3,7 @@
 using ReactiveUI;
 
 using System.Reactive.Linq;
-
-using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.ValueTypes;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views

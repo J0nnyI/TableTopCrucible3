@@ -4,9 +4,9 @@ using TableTopCrucible.Infrastructure.Models.Models;
 
 namespace TableTopCrucible.Infrastructure.Models.ChangeSets
 {
-    public interface IDataChangeSet<TId, out TEntity, out TModel>
+    public interface IDataChangeSet<TId, out TModel, out TEntity>
         where TId : IDataId
-        where TEntity : class, IDataEntity
+        where TEntity : class, IDataEntity<TId, TModel>
         where TModel : class, IDataModel<TId>
     {
         TEntity ToEntity();

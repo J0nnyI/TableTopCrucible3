@@ -7,7 +7,7 @@
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                           xmlns:v="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.Views"
-                          xmlns:entities="clr-namespace:TableTopCrucible.Infrastructure.Repositories.Models.Entities;assembly=TableTopCrucible.Infrastructure.Repositories"
+                          xmlns:entities="clr-namespace:TableTopCrucible.Infrastructure.Models.Entities;assembly=TableTopCrucible.Infrastructure.Models"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                           mc:Ignorable="d" 

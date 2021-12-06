@@ -16,5 +16,13 @@ namespace TableTopCrucible.Core.Helper
         public static TimeSpan PipelineBufferTime => TimeSpan.FromSeconds(5);
         // the last n jobs will stay in memory, everything else will be removed
         public static int DoneJobLimit => 5;
+        /// <summary>
+        /// the autoSave (subject) is buffered by this duration to prevent excessive writing
+        /// </summary>
+        public static TimeSpan AutoSaveBuffer => TimeSpan.FromMinutes(1);
+
+        public static bool AutoSaveEnabled = true;
+
     }
+
 }

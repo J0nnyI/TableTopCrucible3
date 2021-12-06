@@ -15,10 +15,12 @@ using System.Reactive.Linq;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.ChangeSets;
+using TableTopCrucible.Infrastructure.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Models.Models;
+using TableTopCrucible.Infrastructure.Models.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
-using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
-using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
+using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Services;
 
 
@@ -29,7 +31,8 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
     {
         public static readonly TimeSpan TestTimeout = TimeSpan.FromMilliseconds(500);
 
-        private IDirectorySetupRepository directorySetupRepository;
+        private IDirectorySetupRepository
+            directorySetupRepository;
         private IScannedFileRepository fileRepository;
         private IFileSynchronizationService fileSyncService;
 
@@ -54,7 +57,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                 NewContent = Guid.NewGuid().ToString();
             }
             // prepares data for this file according to its given state
-            public ScannedFileData Prepare()
+            public ScannedFileDataChangeSet Prepare()
             {
                 TargetLastWrite = LastWrite = DateTime.Now.AddMinutes(-10);
                 OriginalId = ScannedFileDataId.New();
@@ -85,11 +88,11 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
                 }
 
                 // an unchanged file does not need further modifications
-                return new ScannedFileData(HashKey, File, LastWrite, OriginalId);
+                return new (HashKey, File, LastWrite, OriginalId);
 
             }
 
-            public Unit Test(ScannedFileData output)
+            public Unit Test(ScannedFileDataModel output)
             {
                 output.HashKey.Should().Be(HashKey);
 
@@ -129,7 +132,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             {
                 directorySetupRepository.AddOrUpdate(
                     Directories.Select(dir =>
-                        new DirectorySetup(
+                        new DirectorySetupChangeSet(
                             (Name)dir,
                             DirectorySetupPath.From(dir)
                             )
@@ -142,21 +145,19 @@ namespace TableTopCrucible.Shared.ItemSync.Models.Tests
             {
                 // files are not duplicated
                 fileRepository
-                    .Data
-                    .Items
+                    .Values
                     .Select(file => file.FileLocation)
                     .Distinct()
                     .Count()
                     .Should()
                     .Be(
                         fileRepository
-                            .Data
-                            .Items
+                            .Values
                             .Count());
 
                 // data matches expectations
                 FileData.FullJoin(
-                    fileRepository.Data.Items,
+                    fileRepository.Values,
                     input => input.File,
                     output => output.FileLocation,
                     input => input.Test(null),

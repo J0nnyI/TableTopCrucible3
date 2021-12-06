@@ -15,11 +15,12 @@ using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
+using TableTopCrucible.Infrastructure.Models.ChangeSets;
+using TableTopCrucible.Infrastructure.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Models.Models;
+using TableTopCrucible.Infrastructure.Models.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
-using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Models.EntityIds;
-using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
-
+using TableTopCrucible.Infrastructure.Repositories.Services;
 using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
@@ -28,13 +29,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     public interface IDirectorySetupCard : IComparable<IDirectorySetupCard>, IComparable
     {
         public DirectorySetupId DirectorySetupId { get; set; }
-        public DirectorySetup DirectorySetup { get; }
+        public DirectorySetupModel DirectorySetup { get; }
         public bool ResetOnSave { get; set; }
     }
     public class DirectorySetupCardVm : ReactiveValidationObject, IActivatableViewModel, IDirectorySetupCard
     {
-        private ObservableAsPropertyHelper<DirectorySetup> _directorySetup;
-        public DirectorySetup DirectorySetup => _directorySetup?.Value;
+        private ObservableAsPropertyHelper<DirectorySetupModel> _directorySetup;
+        public DirectorySetupModel DirectorySetup => _directorySetup?.Value;
         [Reactive]
         public DirectorySetupId DirectorySetupId { get; set; }
 
@@ -68,7 +69,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 // Properties
                 this.WhenAnyValue(
                         vm => vm.DirectorySetupId,
-                        id => _directorySetupRepository.Data.Watch(id))
+                        id => _directorySetupRepository.Watch(id))
                     .Switch()
                     .Select(change=>change.Current)
                     .Do(m =>
@@ -94,7 +95,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 // Commands
                 ReactiveCommandHelper.Create(() =>
                     {
-                        _directorySetupRepository.AddOrUpdate(new DirectorySetup(
+                        _directorySetupRepository.AddOrUpdate(new DirectorySetupChangeSet(
                             (vtName)Name,
                             (DirectorySetupPath)Path, 
                             DirectorySetup.Id));
@@ -128,7 +129,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             .Where(confirmed => confirmed == YesNoDialogResult.Yes)
                             .Subscribe(_ =>
                             {
-                                _directorySetupRepository.Delete(DirectorySetup.Id);
+                                _directorySetupRepository.Remove(DirectorySetup.Id);
                                 _notificationService.AddNotification(
                                     (vtName)"Remove successful",
                                     (Description)$"The Directory '{Name}' has been removed from this list",

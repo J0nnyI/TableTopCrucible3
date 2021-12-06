@@ -6,7 +6,7 @@ using TableTopCrucible.Infrastructure.Models.Models;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
 {
-    public class ScannedFileDataEntity:IDataEntity
+    public class ScannedFileDataEntity:IDataEntity<ScannedFileDataId, ScannedFileDataModel>
     {
         public Guid Id { get; set; }
         public string FileLocation { get; set; }
@@ -14,7 +14,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         public long FileSize { get; set; }
         public DateTime LastWrite { get; set; }
 
-        public ScannedFileDataModel ToEntity()
+        public ScannedFileDataModel ToModel()
         {
             return new (
                 FileHashKey.From(

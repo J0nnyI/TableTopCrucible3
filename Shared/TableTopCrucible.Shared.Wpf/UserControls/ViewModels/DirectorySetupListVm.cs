@@ -18,9 +18,11 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.ChangeSets;
+using TableTopCrucible.Infrastructure.Models.Models;
+using TableTopCrucible.Infrastructure.Models.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
-using TableTopCrucible.Infrastructure.Repositories.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Models.ValueTypes;
+using TableTopCrucible.Infrastructure.Repositories.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
@@ -58,7 +60,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             this.WhenActivated(() => new[]
             {
                 _directorySetupRepository
-                    .Data
+                    .Cache
                     .Connect()
                     .Transform(m=>m.Id)
                     .IgnoreUpdateWhen((m1, m2)=>m1==m2)
@@ -86,10 +88,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     var path = await GetDirectoryDialog.Handle(Unit.Default);
                     if (path == null)
                         return;
-                    var takenItem = _directorySetupRepository.Data.Items.FirstOrDefault(e => e.Path == path);
+                    var takenItem = _directorySetupRepository.Values.FirstOrDefault(e => e.Path == path);
                     if (takenItem == null)
                     {
-                        var directorySetup = new DirectorySetup(path.GetDirectoryName().ToName(), path);
+                        var directorySetup = new DirectorySetupChangeSet(path.GetDirectoryName().ToName(), path);
                         _directorySetupRepository.AddOrUpdate(directorySetup);
                         _notificationService.AddNotification(
                             (Name)"Directory added successfully",
