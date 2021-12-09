@@ -19,18 +19,25 @@ namespace TableTopCrucible.Infrastructure.Models.ChangeSets
         public Name Name { get; set; }
         public FileHashKey ModelFileKey { get; set; }
         public List<Tag> Tags { get; } = new();
-        public ItemEntity ToEntity() =>
-            new()
-            {
-                Id = Id.Guid,
-                ModelFileHash = ModelFileKey.Hash.Value,
-                ModelFileSize = ModelFileKey.FileSize.Value,
-                Name = Name.Value,
-                Tags = Tags.Select(tag => tag.Value).ToJson().Value
-            };
+
+        public ItemEntity ToEntity()
+        {
+            var entity = new ItemEntity();
+            UpdateEntity(entity);
+            return entity;
+        }
 
         public ItemModel ToModel() =>
             new(Name, ModelFileKey, Tags, Id);
+
+        public void UpdateEntity(ItemEntity entity)
+        {
+            entity.Id = Id.Guid;
+            entity.ModelFileHash = ModelFileKey.Hash.Value;
+            entity.ModelFileSize = ModelFileKey.FileSize.Value;
+            entity.Name = Name.Value;
+            entity.Tags = Tags.Select(tag => tag.Value).ToJson().Value;
+        }
 
         public ItemChangeSet()
         {

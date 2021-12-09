@@ -23,14 +23,18 @@ namespace TableTopCrucible.Infrastructure.Models.ChangeSets
             );
         }
 
+        public void UpdateEntity(DirectorySetupEntity entity)
+        {
+            entity.Name = this.Name.Value;
+            entity.Path = this.Path.Value;
+            entity.Id = this.Id.Value;
+        }
+
         public DirectorySetupEntity ToEntity()
         {
-            return new ()
-            {
-                Name = this.Name.Value,
-                Path = this.Path.Value,
-                Id = this.Id.Value
-            };
+            var entity = new DirectorySetupEntity();
+            UpdateEntity(entity);
+            return entity;
         }
 
         public DirectorySetupChangeSet()

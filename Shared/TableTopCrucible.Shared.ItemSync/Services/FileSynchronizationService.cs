@@ -88,7 +88,6 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             {
                 try
                 {
-                    Thread.Sleep(5000);
                     var files = getFileGroups(
                         _directorySetupRepository
                             .Values);
@@ -176,7 +175,10 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
         private void _handleChangedFiles(RawSyncFileData[] files)
         {
-            _fileRepository.Update(files.Select(file => file.GetNewFileEntity()));
+            var toAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewFileChangeSet());
+            var toUpdate = files.Where(x => x.UpdateSource == FileUpdateSource.Updated).Select(file => file.GetNewFileChangeSet());
+            _fileRepository.Update(toUpdate);
+            _fileRepository.Add(toAdd);
 
             _itemRepository.Update(
             files.Select(file => file

@@ -62,7 +62,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             return FileUpdateSource.Updated;
         }
 
-        public ScannedFileDataChangeSet GetNewFileEntity()
+        public ScannedFileDataChangeSet GetNewFileChangeSet()
             => new(NewHashKey, FoundFile, foundFileInfo.LastWriteTime, KnownFile?.Id);
 
         public ItemUpdateHelper GetItemUpdateHelper(IEnumerable<ItemModel> items)

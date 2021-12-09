@@ -23,12 +23,13 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         IObservableCache<TModel, TId> Cache { get; }
         IEnumerable<KeyValuePair<TId, TModel>> KeyValues { get; }
         IEnumerable<TModel> Values { get; }
-        
+
         void Remove(TId id);
         void Remove(IEnumerable<TId> ids);
-        void Update(TChangeSet newModel);
-        void Update(IEnumerable<TChangeSet> newModels);
-        void Add(TChangeSet newModel);
+        void Update(TChangeSet changeSet);
+        void Update(IEnumerable<TChangeSet> newChangeSets);
+        void Add(TChangeSet newData);
+        void Add(IEnumerable<TChangeSet> newData);
         public IObservable<Change<TModel, TId>> Watch(TId id);
     }
 
@@ -54,25 +55,61 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             _cache.AddOrUpdate(_dbSet.Select(entity => entity.ToModel()));
         }
 
-        public void Add(TChangeSet newModel)
+        public void Add(TChangeSet newData)
         {
-            _dbSet.Add(newModel.ToEntity());
-            _cache.AddOrUpdate(newModel.ToModel());
+            _dbSet.Add(newData.ToEntity());
+            _cache.AddOrUpdate(newData.ToModel());
             _database.AutoSave();
         }
-        public void Update(TChangeSet newModel)
+        public void Add(IEnumerable<TChangeSet> newData)
         {
-            _dbSet.Update(newModel.ToEntity());
-            _cache.AddOrUpdate(newModel.ToModel());
+            _dbSet.AddRange(newData.Select(data=>data.ToEntity()));
+            _cache.AddOrUpdate(newData.Select(data => data.ToModel()));
+            _database.AutoSave();
+        }
+        public void Update(TChangeSet changeSet)
+        {
+            var entity = _dbSet.Single(dbEntity => dbEntity.Id == changeSet.Id.Guid);
+            changeSet.UpdateEntity(entity);
+            _dbSet.Update(entity);
+            _cache.AddOrUpdate(changeSet.ToModel());
             _database.AutoSave();
         }
 
-        public void Update(IEnumerable<TChangeSet> newModels)
+        public void AddOrUpdate(IEnumerable<TChangeSet> newChangeSets)
         {
-            var modelArray = newModels.ToArray();
-            var entities = modelArray.Select(changeSet=>changeSet.ToEntity()).ToArray();
+            var changeSetArray = newChangeSets.ToArray();
+
+            var entities = changeSetArray
+                .Select(changeSet =>
+                {
+                    var entity = _dbSet.Single(dbEntity => dbEntity.Id == changeSet.Id.Guid);
+                    changeSet.UpdateEntity(entity);
+                    return entity;
+                })
+                .ToArray();
             _dbSet.UpdateRange(entities);
-            var models = modelArray.Select(changeSet => changeSet.ToModel()).ToArray();
+
+            var models = changeSetArray.Select(changeSet => changeSet.ToModel()).ToArray();
+            _cache.AddOrUpdate(models);
+            _database.AutoSave();
+        }
+
+        public void Update(IEnumerable<TChangeSet> newChangeSets)
+        {
+            var changeSetArray = newChangeSets.ToArray();
+
+            var entities = changeSetArray
+                .Select(changeSet =>
+                {
+                    var entity = _dbSet.Single(dbEntity => dbEntity.Id == changeSet.Id.Guid);
+                    changeSet.UpdateEntity(entity);
+                    return entity;
+                })
+                .ToArray();
+            _dbSet.UpdateRange(entities);
+
+            var models = changeSetArray.Select(changeSet => changeSet.ToModel()).ToArray();
             _cache.AddOrUpdate(models);
             _database.AutoSave();
         }
@@ -85,7 +122,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 _dbSet.Remove(original);
                 _cache.RemoveKey(id);
                 _database.AutoSave();
-            } 
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e);
@@ -96,8 +133,12 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         public void Remove(IEnumerable<TId> ids)
         {
             var idArray = ids.ToArray();
+
+            if(idArray.Length==0)
+                return;
+
             var guidArray = idArray.Select(id => id.Guid).ToArray();
-            var entities = _dbSet.Where(entity=>guidArray.Contains(entity.Id));
+            var entities = _dbSet.Where(entity => guidArray.Contains(entity.Id));
             _dbSet.RemoveRange(entities);
             _cache.RemoveKeys(idArray);
             _database.AutoSave();
