@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
@@ -14,7 +15,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public int SaveChanges();
         public void Migrate();
     }
-    public class DatabaseContext : DbContext, IDatabaseContext
+    public class DatabaseContext : DbContextWithTriggers, IDatabaseContext
     {
         public LibraryFilePath FileName { get; init; }
         public DbSet<ItemEntity> Items { get; set; }
@@ -40,8 +41,13 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
+
             modelBuilder.Entity<ItemEntity>()
                 .HasKey(item => item.Id);
+            modelBuilder.Entity<ItemEntity>()
+                .HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
+
             modelBuilder.Entity<ScannedFileDataEntity>()
                 .HasKey(file => file.Id);
             modelBuilder.Entity<DirectorySetupEntity>()

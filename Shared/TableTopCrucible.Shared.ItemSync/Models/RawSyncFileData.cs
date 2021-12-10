@@ -9,9 +9,6 @@ using System.Reactive.Subjects;
 using System.Security.Cryptography;
 
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Models.ChangeSets;
-using TableTopCrucible.Infrastructure.Models.Models;
-using TableTopCrucible.Infrastructure.Models.ValueTypes;
 
 namespace TableTopCrucible.Shared.ItemSync.Models
 {
