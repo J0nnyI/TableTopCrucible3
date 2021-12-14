@@ -175,8 +175,8 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
         private void _handleChangedFiles(RawSyncFileData[] files)
         {
-            var toAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewFileChangeSet());
-            var toUpdate = files.Where(x => x.UpdateSource == FileUpdateSource.Updated).Select(file => file.GetNewFileChangeSet());
+            var toAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity());
+            var toUpdate = files.Where(x => x.UpdateSource == FileUpdateSource.Updated).Select(file => file.GetNewEntity());
             _fileRepository.Update(toUpdate);
             _fileRepository.Add(toAdd);
 

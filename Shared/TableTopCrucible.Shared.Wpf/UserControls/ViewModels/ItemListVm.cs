@@ -26,7 +26,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         private readonly IFileSynchronizationService _fileSynchronizationService;
         public ViewModelActivator Activator { get; } = new();
 
-        public ObservableCollectionExtended<ScannedFileDataModel> Files = new();
+        public ObservableCollectionExtended<ScannedFileDataEntity> Files = new();
         public ObservableCollectionExtended<ItemModel> Items= new();
         public ICommand FileSyncCommand => _fileSynchronizationService.StartScanCommand;
 

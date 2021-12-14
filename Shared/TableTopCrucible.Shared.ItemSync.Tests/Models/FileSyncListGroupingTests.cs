@@ -10,10 +10,7 @@ using Splat;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Models.ChangeSets;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
-using TableTopCrucible.Infrastructure.Models.Models;
-using TableTopCrucible.Infrastructure.Models.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Models;
 using TableTopCrucible.Shared.ItemSync.Services;
@@ -86,7 +83,7 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
 
             }
 
-            public Unit Test(ScannedFileDataModel output)
+            public Unit Test(ScannedFileDataEntity output)
             {
                 output.HashKey.Should().Be(HashKey);
 

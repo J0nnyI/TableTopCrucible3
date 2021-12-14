@@ -9,6 +9,7 @@ using System.Reactive.Subjects;
 using System.Security.Cryptography;
 
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Shared.ItemSync.Models
 {
@@ -16,7 +17,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
     {
         private readonly IFileInfo foundFileInfo;
 
-        public RawSyncFileData(ScannedFileDataModel knownFile, FilePath foundFile)
+        public RawSyncFileData(ScannedFileDataEntity knownFile, FilePath foundFile)
         {
             this.KnownFile = knownFile;
             this.OriginalHashKey = knownFile?.HashKey;
@@ -24,7 +25,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             this.foundFileInfo = FoundFile?.GetInfo();
             UpdateSource = GetFileState();
         }
-        public ScannedFileDataModel KnownFile { get; }
+        public ScannedFileDataEntity KnownFile { get; }
         public FilePath FoundFile { get; }
 
         public FileHashKey NewHashKey { get; private set; }
@@ -59,10 +60,16 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             return FileUpdateSource.Updated;
         }
 
-        public ScannedFileDataChangeSet GetNewFileChangeSet()
-            => new(NewHashKey, FoundFile, foundFileInfo.LastWriteTime, KnownFile?.Id);
+        public void GetNewEntity()
+        {
+            if (KnownFile == null)
+                KnownFile = new();
+            KnownFile.HashKey = NewHashKey;
+            KnownFile.FileLocation = FoundFile;
+            KnownFile.LastWrite = foundFileInfo.LastWriteTime;
+        }
 
-        public ItemUpdateHelper GetItemUpdateHelper(IEnumerable<ItemModel> items)
+        public ItemUpdateHelper GetItemUpdateHelper(IEnumerable<ItemEntity> items)
         {
             return new(this, items);
         }
@@ -75,9 +82,9 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         public FilePath File { get; }
 
         /// item which is linked to <see cref="HashAfterSync"/>
-        public ItemModel LinkedItemAfterSync { get; }
+        public ItemEntity LinkedItemAfterSync { get; }
 
-        public ItemUpdateHelper(RawSyncFileData fileHelper, IEnumerable<ItemModel> items)
+        public ItemUpdateHelper(RawSyncFileData fileHelper, IEnumerable<ItemEntity> items)
         {
             HashAfterSync = fileHelper.NewHashKey;
             File = fileHelper.FoundFile;

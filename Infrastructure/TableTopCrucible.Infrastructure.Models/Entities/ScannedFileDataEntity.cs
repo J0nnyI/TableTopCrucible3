@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using TableTopCrucible.Core.ValueTypes;
@@ -6,12 +7,25 @@ using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
 {
-    public class ScannedFileDataEntity : IDataEntity<ScannedFileDataId>
+    public sealed class ScannedFileDataEntity : DataEntity<ScannedFileDataId>
     {
-        public Guid Id { get; set; }
-        public string FileLocation { get; set; }
-        public byte[] Hash { get; set; }
-        public long FileSize { get; set; }
+        public FilePath FileLocation { get; set; }
+        public FileHashKey HashKey { get; set; }
         public DateTime LastWrite { get; set; }
+
+        public ScannedFileDataEntity()
+        {
+
+        }
+
+        public ScannedFileDataEntity(FilePath fileLocation, FileHashKey hashKey, DateTime lastWrite)
+        {
+            FileLocation = fileLocation;
+            HashKey = hashKey;
+            LastWrite = lastWrite;
+        }
+
+        protected override IEnumerable<object> getAtomicValues()
+            => new object[] { Id, FileLocation, HashKey, LastWrite };
     }
 }

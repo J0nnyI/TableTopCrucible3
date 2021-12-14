@@ -7,9 +7,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 {
     public class DirectorySetupEntity : IDataEntity<DirectorySetupId>
     {
-        public string Name { get; set; }
-        public string Path { get; set; }
-        [DatabaseGenerated()]
-        public Guid Id { get; init; }
+        public Name Name { get; set; }
+        public FilePath Path { get; set; }
+        public DirectorySetupId Id { get; init; }
     }
 }

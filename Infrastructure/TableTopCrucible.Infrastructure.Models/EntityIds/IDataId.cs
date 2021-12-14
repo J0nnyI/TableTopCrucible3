@@ -5,11 +5,16 @@ namespace TableTopCrucible.Infrastructure.Models.EntityIds
 {
     public interface IDataId
     {
-        Guid Guid { get; }
+        Guid Guid { get; init; }
     }
     public abstract class DataIdBase<TThis>:IdBase<TThis>, IDataId
         where TThis : IdBase<TThis>, new()
     {
-        public Guid Guid => base.Value;
+        public Guid Guid
+        {
+            get=>base.Value;
+            init => base.Value = value;
+        }
+        
     }
 }
