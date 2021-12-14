@@ -20,7 +20,7 @@ using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Models.Models;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Models;
@@ -90,12 +90,12 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 {
                     var files = getFileGroups(
                         _directorySetupRepository
-                            .Values);
+                            .Data);
 
                     stepTracker.Increment();
 
                     // remove deleted files
-                    _fileRepository.Remove(files.DeletedFiles.Select(file => file.KnownFile.Id));
+                    _fileRepository.Data.RemoveRange(files.DeletedFiles.Select(file => file.KnownFile));
 
                     // prepare hash process
                     var filesToHash = files.NewFiles
@@ -152,10 +152,10 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             return totalProgress;
         }
 
-        private IEnumerable<RawSyncFileData> startScanForDirectory(DirectorySetupModel directory)
+        private IEnumerable<RawSyncFileData> startScanForDirectory(DirectorySetupEntity directory)
         {
             var foundFiles = directory.Path.GetFiles(FileType.Image, FileType.Model).ToArray();
-            var knownFiles = _fileRepository.Values;
+            var knownFiles = _fileRepository.Data;
             return foundFiles.FullJoin(
                 knownFiles,
                 foundFile => foundFile.Value,
@@ -166,10 +166,10 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
         }
 
-        private FileSyncListGrouping getFileGroups(IEnumerable<DirectorySetupModel> directorySetups)
+        private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetupEntity> directorySetups)
         {
             return new(directorySetups
-                .SelectMany(startScanForDirectory));
+                .SelectMany(directory=>startScanForDirectory(directory)));
         }
 
 
@@ -177,12 +177,12 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         {
             var toAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity());
             var toUpdate = files.Where(x => x.UpdateSource == FileUpdateSource.Updated).Select(file => file.GetNewEntity());
-            _fileRepository.Update(toUpdate);
-            _fileRepository.Add(toAdd);
+            _fileRepository.Data.UpdateRange(toUpdate);
+            _fileRepository.Data.AddRange(toAdd);
 
-            _itemRepository.Update(
+            _itemRepository.Data.UpdateRange(
             files.Select(file => file
-                    .GetItemUpdateHelper(_itemRepository.Values)
+                    .GetItemUpdateHelper(_itemRepository.Data)
                     .GetItemUpdate())
                 .Where(update => update is not null)
             );

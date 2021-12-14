@@ -15,10 +15,8 @@ using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
-using TableTopCrucible.Infrastructure.Models.ChangeSets;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
-using TableTopCrucible.Infrastructure.Models.Models;
-using TableTopCrucible.Infrastructure.Models.ValueTypes;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using vtName = TableTopCrucible.Core.ValueTypes.Name;
@@ -29,13 +27,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     public interface IDirectorySetupCard : IComparable<IDirectorySetupCard>, IComparable
     {
         public DirectorySetupId DirectorySetupId { get; set; }
-        public DirectorySetupModel DirectorySetup { get; }
+        public DirectorySetupEntity DirectorySetup { get; }
         public bool ResetOnSave { get; set; }
     }
     public class DirectorySetupCardVm : ReactiveValidationObject, IActivatableViewModel, IDirectorySetupCard
     {
-        private ObservableAsPropertyHelper<DirectorySetupModel> _directorySetup;
-        public DirectorySetupModel DirectorySetup => _directorySetup?.Value;
+        private ObservableAsPropertyHelper<DirectorySetupEntity> _directorySetup;
+        public DirectorySetupEntity DirectorySetup => _directorySetup?.Value;
         [Reactive]
         public DirectorySetupId DirectorySetupId { get; set; }
 

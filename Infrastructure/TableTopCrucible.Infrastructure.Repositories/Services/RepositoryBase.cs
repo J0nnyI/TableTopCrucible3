@@ -30,5 +30,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         {
             Data = data;
         }
+
+
     }
 }

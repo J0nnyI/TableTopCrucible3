@@ -59,20 +59,22 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 
             return FileUpdateSource.Updated;
         }
-
-        public void GetNewEntity()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>the updated old or a new entity depending on the type of change</returns>
+        public ScannedFileDataEntity GetNewEntity()
         {
             if (KnownFile == null)
-                KnownFile = new();
+                return new(FoundFile, NewHashKey, foundFileInfo.LastWriteTime);
             KnownFile.HashKey = NewHashKey;
             KnownFile.FileLocation = FoundFile;
             KnownFile.LastWrite = foundFileInfo.LastWriteTime;
+            return KnownFile;
         }
 
-        public ItemUpdateHelper GetItemUpdateHelper(IEnumerable<ItemEntity> items)
-        {
-            return new(this, items);
-        }
+        public ItemUpdateHelper GetItemUpdateHelper(IQueryable<ItemEntity> items)
+            => new(this, items);
     }
 
     internal class ItemUpdateHelper
@@ -84,24 +86,26 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         /// item which is linked to <see cref="HashAfterSync"/>
         public ItemEntity LinkedItemAfterSync { get; }
 
-        public ItemUpdateHelper(RawSyncFileData fileHelper, IEnumerable<ItemEntity> items)
+        public ItemUpdateHelper(RawSyncFileData fileHelper, IQueryable<ItemEntity> items)
         {
             HashAfterSync = fileHelper.NewHashKey;
             File = fileHelper.FoundFile;
             UpdateSource = fileHelper.UpdateSource;
 
-            LinkedItemAfterSync = items.FirstOrDefault(item => item.ModelFileKey == HashAfterSync);
+            LinkedItemAfterSync = items.Single(item => item.FileHashKey == HashAfterSync);
         }
 
-        public ItemChangeSet GetItemUpdate()
+        public ItemEntity GetItemUpdate()
         {
             // temporary solution: only handle new items
             if (LinkedItemAfterSync is null) // there is no item for the updated file
             {
                 // todo: autoTagging
-                return new (File.GetFilenameWithoutExtension().ToName(), HashAfterSync, Enumerable.Empty<Tag>());
+                return new (File.GetFilenameWithoutExtension().ToName(), HashAfterSync);
             }
-            return null;
+
+            LinkedItemAfterSync.FileHashKey = HashAfterSync;
+            return LinkedItemAfterSync;
         }
 
     }
