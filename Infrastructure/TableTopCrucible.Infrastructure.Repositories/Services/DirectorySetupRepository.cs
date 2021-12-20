@@ -19,7 +19,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         : RepositoryBase<DirectorySetupId, DirectorySetupEntity>,
         IDirectorySetupRepository
     {
-        public DirectorySetupRepository(IDatabaseAccessor database) : base(database.DirectorySetup)
+        public DirectorySetupRepository(IDatabaseAccessor database) : base(database, database.DirectorySetup)
         {
         }
     }

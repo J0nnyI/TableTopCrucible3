@@ -95,7 +95,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     stepTracker.Increment();
 
                     // remove deleted files
-                    _fileRepository.Data.RemoveRange(files.DeletedFiles.Select(file => file.KnownFile));
+                    _fileRepository.RemoveRange(files.DeletedFiles.Select(file => file.KnownFile));
 
                     // prepare hash process
                     var filesToHash = files.NewFiles
@@ -177,15 +177,8 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         {
             var toAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity());
             var toUpdate = files.Where(x => x.UpdateSource == FileUpdateSource.Updated).Select(file => file.GetNewEntity());
-            _fileRepository.Data.UpdateRange(toUpdate);
-            _fileRepository.Data.AddRange(toAdd);
-
-            _itemRepository.Data.UpdateRange(
-            files.Select(file => file
-                    .GetItemUpdateHelper(_itemRepository.Data)
-                    .GetItemUpdate())
-                .Where(update => update is not null)
-            );
+            _fileRepository.AddRange(toAdd);
+            
         }
     }
 }

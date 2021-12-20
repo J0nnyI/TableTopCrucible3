@@ -10,6 +10,7 @@ using Splat;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Models;
@@ -48,7 +49,7 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
                 NewContent = Guid.NewGuid().ToString();
             }
             // prepares data for this file according to its given state
-            public ScannedFileDataChangeSet Prepare()
+            public ScannedFileDataEntity Prepare()
             {
                 TargetLastWrite = LastWrite = DateTime.Now.AddMinutes(-10);
                 OriginalId = ScannedFileDataId.New();
@@ -78,8 +79,9 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
                     TargetHashKey = FileHashKey.Create(File);
                 }
 
+                throw new NotImplementedException("has to be redone");
                 // an unchanged file does not need further modifications
-                return new (HashKey, File, LastWrite, OriginalId);
+                //return new (HashKey, File, LastWrite, OriginalId);
 
             }
 
@@ -121,44 +123,47 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
 
             private void prepare()
             {
-                directorySetupRepository.Update(
-                    Directories.Select(dir =>
-                        new DirectorySetupChangeSet(
-                            (Name)dir,
-                            DirectorySetupPath.From(dir)
-                            )
-                        )
-                    );
-                fileRepository.Update(FileData.Select(file => file.Prepare()).Where(file => file != null).ToArray());
+                throw new NotImplementedException("has to be rewritten");
+                //directorySetupRepository.Update(
+                //    Directories.Select(dir =>
+                //        new DirectorySetupChangeSet(
+                //            (Name)dir,
+                //            DirectorySetupEntity.From(dir)
+                //            )
+                //        )
+                //    );
+                //fileRepository.Update(FileData.Select(file => file.Prepare()).Where(file => file != null).ToArray());
             }
 
             private void evaluateResult()
             {
+                throw new NotImplementedException("has to be rewritten");
                 // files are not duplicated
-                fileRepository
-                    .Values
-                    .Select(file => file.FileLocation)
-                    .Distinct()
-                    .Count()
-                    .Should()
-                    .Be(
-                        fileRepository
-                            .Values
-                            .Count());
 
-                // data matches expectations
-                FileData.FullJoin(
-                    fileRepository.Values,
-                    input => input.File,
-                    output => output.FileLocation,
-                    input => input.Test(null),
-                    output =>
-                    {
-                        Assert.Fail("got a scanned file for which there was no input");
-                        return Unit.Default;
-                    },
-                    (input, output) => input.Test(output)
-                ).ToArray();
+                //fileRepository
+                //    .Values
+                //    .Select(file => file.FileLocation)
+                //    .Distinct()
+                //    .Count()
+                //    .Should()
+                //    .Be(
+                //        fileRepository
+                //            .Values
+                //            .Count());
+
+                //// data matches expectations
+                //FileData.FullJoin(
+                //    fileRepository.Values,
+                //    input => input.File,
+                //    output => output.FileLocation,
+                //    input => input.Test(null),
+                //    output =>
+                //    {
+                //        Assert.Fail("got a scanned file for which there was no input");
+                //        return Unit.Default;
+                //    },
+                //    (input, output) => input.Test(output)
+                //).ToArray();
             }
 
             public void RunTest()

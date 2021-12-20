@@ -10,5 +10,14 @@ namespace TableTopCrucible.Core.ValueTypes
                 throw new InvalidFileTypeException($"{Value} is not a valid library file");
             base.Validate();
         }
+
+        public static LibraryFilePath WorkingFile
+            => (LibraryFilePath)(DirectoryPath.AppData + (FileName) "workingDatabase.ttcl");
+
+        public static explicit operator LibraryFilePath(FilePath value)
+            => From(value.Value);
+
+        public bool IsWorkingFile
+            => this == WorkingFile;
     }
 }

@@ -16,5 +16,8 @@ namespace TableTopCrucible.Core.ValueTypes
         public bool IsImage() => GetExtension().IsImage();
 
         public FileType GetFileType() => GetExtension().GetFileType();
+
+        public static explicit operator FileName(string value)
+            => From(value);
     }
 }

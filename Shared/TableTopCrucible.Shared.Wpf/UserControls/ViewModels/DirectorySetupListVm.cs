@@ -18,9 +18,7 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
-using TableTopCrucible.Infrastructure.Models.ChangeSets;
-using TableTopCrucible.Infrastructure.Models.Models;
-using TableTopCrucible.Infrastructure.Models.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
@@ -36,7 +34,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
 
-        public Interaction<Unit, DirectorySetupPath> GetDirectoryDialog { get; } = new();
+        public Interaction<Unit, DirectorySetupEntity> GetDirectoryDialog { get; } = new();
 
         public ICommand CreateDirectory { get; private set; }
         public IObservable<double> HintOpacity { get; }
@@ -57,55 +55,58 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     //.Switch()
                     .Select(show => show ? 1.0 : 0.0);
 
-            this.WhenActivated(() => new[]
-            {
-                _directorySetupRepository
-                    .Cache
-                    .Connect()
-                    .Transform(m=>m.Id)
-                    //.IgnoreUpdateWhen((m1, m2)=>m1==m2)
-                    .Transform(m=>
-                    {
-                        var card = Locator.Current.GetService<IDirectorySetupCard>();
-                        card.DirectorySetupId = m;
-                        return card;
-                    })
-                    .Sort()
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Bind(Directories)
-                    .Subscribe(),
+                throw new NotImplementedException("has to be rewritten");
+            //this.WhenActivated(() => new[]
+            //{
+            //    _directorySetupRepository
+            //        .Updates
+            //        .Select(change=>
+            //            change.Queryable
+            //            .AsEnumerable()
+            //            .OrderBy(dir=>dir.Name)
+            //            .Select(dir=>
+            //            {
+            //                var card = Locator.Current.GetService<IDirectorySetupCard>();
+            //                card.DirectorySetupId = dir.Id;
+            //                return card;
+            //            })
+            //        )
+            //        .ObserveOn(RxApp.MainThreadScheduler)
+            //        .Bind(Directories)
+            //        .Subscribe(),
 
-                _initCommands(),
-            });
+            //    _initCommands(),
+            //});
         }
 
         private IDisposable _initCommands()
         {
+                throw new NotImplementedException("has to be rewritten");
             var disposables = new CompositeDisposable();
-            CreateDirectory =
-                ReactiveCommand.Create(async () =>
-                {
-                    var path = await GetDirectoryDialog.Handle(Unit.Default);
-                    if (path == null)
-                        return;
-                    var takenItem = _directorySetupRepository.Values.FirstOrDefault(e => e.Path == path);
-                    if (takenItem == null)
-                    {
-                        var directorySetup = new DirectorySetupChangeSet(path.GetDirectoryName().ToName(), path);
-                        _directorySetupRepository.Add(directorySetup);
-                        _notificationService.AddNotification(
-                            (Name)"Directory added successfully",
-                            (Description)$"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
-                            NotificationType.Confirmation);
-                    }
-                    else
-                    {
-                        _notificationService.AddNotification(
-                            (Name)"Directory has already been added",
-                            (Description)$"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
-                            NotificationType.Info);
-                    }
-                });
+            //CreateDirectory =
+                //ReactiveCommand.Create(async () =>
+                //{
+                //    var path = await GetDirectoryDialog.Handle(Unit.Default);
+                //    if (path == null)
+                //        return;
+                //    var takenItem = _directorySetupRepository.Values.FirstOrDefault(e => e.Path == path);
+                //    if (takenItem == null)
+                //    {
+                //        var directorySetup = new DirectorySetupChangeSet(path.GetDirectoryName().ToName(), path);
+                //        _directorySetupRepository.Add(directorySetup);
+                //        _notificationService.AddNotification(
+                //            (Name)"Directory added successfully",
+                //            (Description)$"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
+                //            NotificationType.Confirmation);
+                //    }
+                //    else
+                //    {
+                //        _notificationService.AddNotification(
+                //            (Name)"Directory has already been added",
+                //            (Description)$"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
+                //            NotificationType.Info);
+                //    }
+                //});
             return disposables;
         }
         public ObservableCollectionExtended<IDirectorySetupCard> Directories { get; } = new();

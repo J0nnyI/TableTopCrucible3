@@ -41,7 +41,12 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         private readonly Subject<SaveType> _onSave = new();
         private IDatabaseContext _database;
         public void Open(LibraryFilePath file)
-            => _database = new DatabaseContext(file);
+        {
+            if(!file.IsWorkingFile)
+                file.Copy(LibraryFilePath.WorkingFile);
+
+            _database = new DatabaseContext();
+        }
 
         /// <summary>
         /// handles automated saving
@@ -69,9 +74,11 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
             }
         }
 
+
         public DatabaseAccessor()
         {
             var file = (LibraryFilePath)SettingsHelper.DefaultFilePath;
+
 
             this.Open(file);
             // reset buffer on manual save

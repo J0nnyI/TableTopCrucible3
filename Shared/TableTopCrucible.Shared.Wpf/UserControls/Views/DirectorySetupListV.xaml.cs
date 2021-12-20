@@ -3,7 +3,8 @@
 using ReactiveUI;
 
 using System.Reactive.Linq;
-using TableTopCrucible.Infrastructure.Models.ValueTypes;
+using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
@@ -38,7 +39,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 {
                     VistaFolderBrowserDialog dialog = new();
                     interaction.SetOutput(dialog.ShowDialog() == true
-                        ? DirectorySetupPath.From(dialog.SelectedPath)
+                        ? new DirectorySetupEntity((DirectoryPath)dialog.SelectedPath)
                         : null);
                 })
             });

@@ -8,7 +8,6 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 {
     public interface IDatabaseContext
     {
-        public LibraryFilePath FileName { get; }
         public DbSet<ItemEntity> Items { get; }
         public DbSet<ScannedFileDataEntity> Files { get; }
         public DbSet<DirectorySetupEntity> DirectorySetups { get; }
@@ -17,27 +16,20 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
     }
     public class DatabaseContext : DbContextWithTriggers, IDatabaseContext
     {
-        public LibraryFilePath FileName { get; init; }
         public DbSet<ItemEntity> Items { get; set; }
         public DbSet<ScannedFileDataEntity> Files { get; set; }
         public DbSet<DirectorySetupEntity> DirectorySetups { get; set; }
         public void Migrate()
             => this.Database.Migrate();
-
+        
         public DatabaseContext()
         {
-                
-        }
-
-        public DatabaseContext(LibraryFilePath fileName)
-        {
-            FileName = fileName;
             this.Migrate();
         }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={FileName}");
+            => options.UseSqlite($"Data Source={LibraryFilePath.WorkingFile}");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

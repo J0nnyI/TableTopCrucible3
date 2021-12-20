@@ -15,7 +15,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         IScannedFileRepository
     {
         public ScannedFileRepository(IDatabaseAccessor database)
-            : base(database.Files)
+            : base(database, database.Files)
         { }
     }
 }

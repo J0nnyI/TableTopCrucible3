@@ -19,6 +19,7 @@ using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+
 using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
@@ -61,15 +62,16 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         {
             this._directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
             this._notificationService = Locator.Current.GetService<INotificationService>();
+            throw new NotImplementedException("has to be rewritten");
 
             this.WhenActivated(() => new[]
             {
                 // Properties
-                this.WhenAnyValue(
+            this.WhenAnyValue(
                         vm => vm.DirectorySetupId,
                         id => _directorySetupRepository.Watch(id))
                     .Switch()
-                    .Select(change=>change.Current)
+                    .Select(change=>change)
                     .Do(m =>
                     {
                         Name = m?.Name?.Value;
@@ -88,15 +90,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
                 // Validation
                 vtName.RegisterValidator(this, vm=>vm.Name),
-                DirectorySetupPath.RegisterValidator(this, vm=>vm.Path),
+                //DirectorySetupEntity.RegisterValidator(this, vm=>vm.Path),
 
-                // Commands
-                ReactiveCommandHelper.Create(() =>
+            // Commands
+            ReactiveCommandHelper.Create(() =>
                     {
-                        _directorySetupRepository.Update(new DirectorySetupChangeSet(
-                            (vtName)Name,
-                            (DirectorySetupPath)Path, 
-                            DirectorySetup.Id));
+                        //_directorySetupRepository.Update(new DirectorySetupChangeSet(
+                        //    (vtName)Name,
+                        //    (DirectorySetupEntity)Path,
+                        //    DirectorySetup.Id));
                         _notificationService.AddNotification(
                             (vtName)"Directory saved successfully",
                             (Description)$"The directory '{Name}' has been saved successfully",
@@ -118,7 +120,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             NotificationType.Confirmation);
                     },
                     isDirtyChanges,
-                    c=>UndoChangesCommand =c
+                    c => UndoChangesCommand = c
                 ),
                 ReactiveCommandHelper.Create(() =>
                     {
@@ -134,19 +136,19 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                                     NotificationType.Confirmation);
                             });
                     },
-                    c=>RemoveDirectoryCommand = c
+                    c => RemoveDirectoryCommand = c
                 ),
             },
                 vm => vm.DirectorySetup
             );
         }
 
-        public int CompareTo(IDirectorySetupCard other)
-            => this.DirectorySetup?.CompareTo(other?.DirectorySetup) ?? 1;
+    public int CompareTo(IDirectorySetupCard other)
+        => this.DirectorySetup?.Name?.CompareTo(other?.DirectorySetup?.Name) ?? 1;
 
-        public int CompareTo(object obj)
-            => CompareTo(obj as IDirectorySetupCard);
+    public int CompareTo(object obj)
+        => CompareTo(obj as IDirectorySetupCard);
 
-        public ViewModelActivator Activator { get; } = new();
-    }
+    public ViewModelActivator Activator { get; } = new();
+}
 }

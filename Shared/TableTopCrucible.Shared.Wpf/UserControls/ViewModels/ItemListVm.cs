@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 using System.Windows.Input;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Infrastructure.Models.Models;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Services;
@@ -27,7 +27,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ViewModelActivator Activator { get; } = new();
 
         public ObservableCollectionExtended<ScannedFileDataEntity> Files = new();
-        public ObservableCollectionExtended<ItemModel> Items= new();
+        public ObservableCollectionExtended<ItemEntity> Items = new();
         public ICommand FileSyncCommand => _fileSynchronizationService.StartScanCommand;
 
         public ItemListVm(
@@ -38,21 +38,22 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             _fileRepository = fileRepository;
             _fileSynchronizationService = fileSynchronizationService;
 
-            this.WhenActivated(() => new[]{
+            throw new NotImplementedException("has to be rewritten");
+            //this.WhenActivated(() => new[]{
 
-                fileRepository
-                    .Cache
-                    .Connect()
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Bind(Files)
-                    .Subscribe(),
-                itemRepository
-                    .Cache
-                    .Connect()
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Bind(Items)
-                    .Subscribe(),
-            });
+                //fileRepository
+                //    .Cache
+                //    .Connect()
+                //    .ObserveOn(RxApp.MainThreadScheduler)
+                //    .Bind(Files)
+                //    .Subscribe(),
+                //itemRepository
+                //    .Cache
+                //    .Connect()
+                //    .ObserveOn(RxApp.MainThreadScheduler)
+                //    .Bind(Items)
+                //    .Subscribe(),
+            //});
         }
     }
 }

@@ -39,6 +39,9 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public bool Exists() => FileSystemHelper.File.Exists(Value);
 
+        public void Copy(FilePath<TThis> newPath, bool overwrite = true) 
+            => FileSystemHelper.File.Copy(Value, newPath.Value, overwrite);
+
         public void WriteAllText(string text)
         {
             try
@@ -103,6 +106,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public static explicit operator FilePath<TThis>(string path)
             => From(path);
             
+
     }
 
     /// <summary>

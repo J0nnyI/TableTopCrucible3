@@ -23,7 +23,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         IItemRepository
     {
         public ItemRepository(IDatabaseAccessor database)
-            : base(database.Items)
+            : base(database, database.Items)
         {
         }
     }
