@@ -1,17 +1,16 @@
 ﻿using System.Linq;
-using Splat;
 using System.Windows;
+using Splat;
 using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels;
 using TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels;
-using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
 namespace TableTopCrucible.Starter
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {

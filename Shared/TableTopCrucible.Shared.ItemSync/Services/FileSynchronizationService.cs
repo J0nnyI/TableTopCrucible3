@@ -1,15 +1,13 @@
-﻿using MoreLinq;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Threading;
 using System.Windows.Input;
+using MoreLinq;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
@@ -18,20 +16,19 @@ using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Models;
 
 namespace TableTopCrucible.Shared.ItemSync.Services
 {
     /// <summary>
-    /// Synchronizes the master file list with the files in the directory
+    ///     Synchronizes the master file list with the files in the directory
     /// </summary>
     [Singleton]
     public interface IFileSynchronizationService
     {
-        ITrackingViewer StartScan();
         ICommand StartScanCommand { get; }
+        ITrackingViewer StartScan();
     }
 
     public class FileSynchronizationService : IFileSynchronizationService
@@ -40,9 +37,6 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private readonly IScannedFileRepository _fileRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IProgressTrackingService _progressTrackingService;
-
-        [Reactive]
-        public bool ScanRunning { get; private set; } = false;
 
         public FileSynchronizationService(
             IDirectorySetupRepository directorySetupRepository,
@@ -60,6 +54,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 this.WhenAnyValue(s => s.ScanRunning)
                     .Select(x => !x));
         }
+
+        [Reactive]
+        public bool ScanRunning { get; private set; }
 
         public ICommand StartScanCommand { get; }
 

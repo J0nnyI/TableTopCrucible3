@@ -1,20 +1,16 @@
-﻿using DynamicData;
+﻿using System.Windows.Input;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Windows.Input;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 {
     /// <summary>
-    /// Interaction logic for NotificationListV.xaml
+    ///     Interaction logic for NotificationListV.xaml
     /// </summary>
     public partial class NavigationListV : ReactiveUserControl<NavigationListVm>, IActivatableView
     {
-        [Reactive]
-        public INavigationPage Selection { get; set; }
-
         public NavigationListV()
         {
             InitializeComponent();
@@ -48,6 +44,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     m => m as FlaggedNavigationItem ?? new FlaggedNavigationItem(NavigationPageLocation.Lower, true))
             });
         }
+
+        [Reactive]
+        public INavigationPage Selection { get; set; }
 
         private void BlockOnControl(object sender, MouseButtonEventArgs e)
             => e.Handled = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);

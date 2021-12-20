@@ -4,7 +4,7 @@ using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 {
     /// <summary>
-    /// Interaction logic for NotificationListV.xaml
+    ///     Interaction logic for NotificationListV.xaml
     /// </summary>
     public partial class NotificationListV : ReactiveUserControl<NotificationListVm>, IActivatableView
     {

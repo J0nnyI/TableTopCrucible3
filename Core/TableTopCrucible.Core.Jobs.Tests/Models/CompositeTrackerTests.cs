@@ -23,23 +23,6 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
     [TestOf(typeof(CompositeTracker))]
     public class CompositeTrackerTests : ReactiveObject
     {
-        private IProgressTrackingService progressService;
-        public ICompositeTracker Tracker { get; set; }
-        public ISubscribedTrackingViewer Viewer { get; set; }
-
-
-        private CompositeDisposable _disposables;
-
-
-        private Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
-        {
-            return ex =>
-            {
-                Assert.Fail((observable ?? typeof(T).Name) + " threw an exception: " + Environment.NewLine + ex);
-                return Observable.Empty<T>();
-            };
-        }
-
         [SetUp]
         public void BeforeEach()
         {
@@ -55,6 +38,23 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
         public void AfterEach()
         {
             _disposables?.Dispose();
+        }
+
+        private IProgressTrackingService progressService;
+        public ICompositeTracker Tracker { get; set; }
+        public ISubscribedTrackingViewer Viewer { get; set; }
+
+
+        private CompositeDisposable _disposables;
+
+
+        private Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
+        {
+            return ex =>
+            {
+                Assert.Fail((observable ?? typeof(T).Name) + " threw an exception: " + Environment.NewLine + ex);
+                return Observable.Empty<T>();
+            };
         }
 
         [Test]

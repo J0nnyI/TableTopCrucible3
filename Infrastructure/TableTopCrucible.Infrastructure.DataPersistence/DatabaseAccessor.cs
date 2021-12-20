@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -36,22 +32,32 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
     public class DatabaseAccessor : ReactiveObject, IDatabaseAccessor
     {
-        public DbSet<ItemEntity> Items => _database.Items;
-        public DbSet<ScannedFileDataEntity> Files => _database.Files;
-        public DbSet<DirectorySetupEntity> DirectorySetup => _database.DirectorySetups;
         private readonly Subject<SaveType> _onSave = new();
         private IDatabaseContext _database;
 
-        public void Open(LibraryFilePath file)
-        {
-            if (!file.IsWorkingFile)
-                file.Copy(LibraryFilePath.WorkingFile);
 
-            _database = new DatabaseContext();
+        public DatabaseAccessor()
+        {
+            var file = (LibraryFilePath)SettingsHelper.DefaultFilePath;
+
+
+            Open(file);
+            // reset buffer on manual save
+            _onSave.Where(type => type == SaveType.Manual)
+                .Select(_ => Unit.Default)
+                .StartWith(Unit.Default)
+                .Select(_ => _onSave
+                    .Buffer(SettingsHelper.AutoSaveBuffer))
+                .Switch()
+                .Subscribe(_ => _database.SaveChanges());
         }
 
+        public DbSet<ItemEntity> Items => _database.Items;
+        public DbSet<ScannedFileDataEntity> Files => _database.Files;
+        public DbSet<DirectorySetupEntity> DirectorySetup => _database.DirectorySetups;
+
         /// <summary>
-        /// handles automated saving
+        ///     handles automated saving
         /// </summary>
         public void AutoSave()
         {
@@ -74,21 +80,12 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
             }
         }
 
-
-        public DatabaseAccessor()
+        public void Open(LibraryFilePath file)
         {
-            var file = (LibraryFilePath)SettingsHelper.DefaultFilePath;
+            if (!file.IsWorkingFile)
+                file.Copy(LibraryFilePath.WorkingFile);
 
-
-            Open(file);
-            // reset buffer on manual save
-            _onSave.Where(type => type == SaveType.Manual)
-                .Select(_ => Unit.Default)
-                .StartWith(Unit.Default)
-                .Select(_ => _onSave
-                    .Buffer(SettingsHelper.AutoSaveBuffer))
-                .Switch()
-                .Subscribe(_ => _database.SaveChanges());
+            _database = new DatabaseContext();
         }
     }
 }

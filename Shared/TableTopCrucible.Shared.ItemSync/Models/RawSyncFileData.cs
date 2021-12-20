@@ -1,10 +1,6 @@
-﻿using ReactiveUI;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Security.Cryptography;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
@@ -28,7 +24,9 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         public FilePath FoundFile { get; }
 
         public FileHashKey NewHashKey { get; private set; }
-        public FileHashKey OriginalHashKey { get; private set; }
+        public FileHashKey OriginalHashKey { get; }
+
+        public FileUpdateSource UpdateSource { get; }
 
 
         public FileHashKey CreateNewHashKey(HashAlgorithm algorithm = null)
@@ -42,8 +40,6 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             NewHashKey = hash;
             return hash;
         }
-
-        public FileUpdateSource UpdateSource { get; }
 
         private FileUpdateSource GetFileState()
         {
@@ -60,7 +56,6 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns>the updated old or a new entity depending on the type of change</returns>
         public ScannedFileDataEntity GetNewEntity()
@@ -79,13 +74,6 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 
     internal class ItemUpdateHelper
     {
-        public FileHashKey HashAfterSync { get; }
-        public FileUpdateSource UpdateSource { get; }
-        public FilePath File { get; }
-
-        /// item which is linked to <see cref="HashAfterSync"/>
-        public ItemEntity LinkedItemAfterSync { get; }
-
         public ItemUpdateHelper(RawSyncFileData fileHelper, IQueryable<ItemEntity> items)
         {
             HashAfterSync = fileHelper.NewHashKey;
@@ -94,6 +82,14 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 
             LinkedItemAfterSync = items.Single(item => item.FileHashKey == HashAfterSync);
         }
+
+        public FileHashKey HashAfterSync { get; }
+        public FileUpdateSource UpdateSource { get; }
+        public FilePath File { get; }
+
+        /// item which is linked to
+        /// <see cref="HashAfterSync" />
+        public ItemEntity LinkedItemAfterSync { get; }
 
         public ItemEntity GetItemUpdate()
         {

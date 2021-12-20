@@ -16,7 +16,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
         public IYesNoDialog OpenYesNoDialog(string text)
         {
             var dialog = new YesNoDialogVm(text);
-            DialogHost.Show(new ViewModelViewHost() { ViewModel = dialog }, "List",
+            DialogHost.Show(new ViewModelViewHost { ViewModel = dialog }, "List",
                 (sender, args) => { dialog.Session = args.Session; },
                 (sender, args) => { dialog.Close(); });
             return dialog;

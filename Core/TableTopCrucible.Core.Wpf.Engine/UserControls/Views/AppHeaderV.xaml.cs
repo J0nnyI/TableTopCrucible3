@@ -1,17 +1,13 @@
-﻿using System;
-using System.Drawing;
-using ReactiveUI;
-using System.Linq;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 using System.Windows;
-using System.Windows.Forms;
+using System.Windows.Media;
+using ReactiveUI;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
-using Application = System.Windows.Application;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 {
     /// <summary>
-    /// Interaction logic for AppHeaderV.xaml
+    ///     Interaction logic for AppHeaderV.xaml
     /// </summary>
     public partial class AppHeaderV : ReactiveUserControl<AppHeaderVm>, IActivatableView
     {
@@ -19,8 +15,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
         {
             InitializeComponent();
             var buttonBorderSelected =
-                Application.Current.TryFindResource("PrimaryHueLightBrush") as System.Windows.Media.Brush;
-            var buttonBorder = System.Windows.Media.Brushes.Transparent;
+                Application.Current.TryFindResource("PrimaryHueLightBrush") as Brush;
+            var buttonBorder = Brushes.Transparent;
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(v => v.ViewModel)

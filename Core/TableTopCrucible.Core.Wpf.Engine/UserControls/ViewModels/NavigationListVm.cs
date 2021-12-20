@@ -1,12 +1,12 @@
-﻿using DynamicData;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Reactive.Linq;
+using DynamicData;
 using DynamicData.Binding;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reactive.Linq;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
@@ -34,7 +34,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         }
 
         public DateTime TimeStamp { get; private set; } = DateTime.Now;
-        public void OnSelected() => TimeStamp = DateTime.Now;
         public INavigationPage Page { get; }
         public PackIconKind? Icon => Page?.Icon;
 
@@ -47,6 +46,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public SortingOrder Position => Page?.Position;
 
         public bool HasContent => Page != null;
+        public void OnSelected() => TimeStamp = DateTime.Now;
 
         public override string ToString()
             => $"{Title}  |  cbu:{ChangedByUser}  |  {PageLocation}";
@@ -60,19 +60,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     public class NavigationListVm : ReactiveObject, INavigationList, IActivatableViewModel
     {
         private readonly INavigationService _navigationService;
-
-        public ObservableCollectionExtended<FlaggedNavigationItem> UpperList { get; } = new();
-        public ObservableCollectionExtended<FlaggedNavigationItem> LowerList { get; } = new();
         private ObservableAsPropertyHelper<bool> _isExpanded;
-        public bool IsExpanded => _isExpanded.Value;
-
-        [Reactive]
-        public FlaggedNavigationItem UpperSelection { get; set; }
-            = new(NavigationPageLocation.Upper, false);
-
-        [Reactive]
-        public FlaggedNavigationItem LowerSelection { get; set; }
-            = new(NavigationPageLocation.Lower, false);
 
         public NavigationListVm(INavigationService navigationService)
         {
@@ -101,12 +89,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Subscribe(),
 
                 // handle selection
-                Observable.CombineLatest(
-                        this.WhenAnyValue(vm => vm.UpperSelection)
-                            .Do(m => m.OnSelected())
-                            .Pairwise(false)
-                            .Where(m => m.Current.Value.ChangedByUser),
-                        this.WhenAnyValue(vm => vm.LowerSelection)
+                this.WhenAnyValue(vm => vm.UpperSelection)
+                    .Do(m => m.OnSelected())
+                    .Pairwise(false)
+                    .Where(m => m.Current.Value.ChangedByUser).CombineLatest(this.WhenAnyValue(vm => vm.LowerSelection)
                             .Do(m => m.OnSelected())
                             .Pairwise(false)
                             .Where(m => m.Current.Value.ChangedByUser),
@@ -183,9 +169,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                             LowerSelection = lower;
                     }),
 
-                Observable.Merge(
-                        this.WhenAnyValue(vm => vm.UpperSelection),
-                        this.WhenAnyValue(vm => vm.LowerSelection)
+                this.WhenAnyValue(vm => vm.UpperSelection).Merge(this.WhenAnyValue(vm => vm.LowerSelection)
                     )
                     .Select(m => m.Page)
                     .WhereNotNull()
@@ -208,6 +192,18 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     })
             });
         }
+
+        public ObservableCollectionExtended<FlaggedNavigationItem> UpperList { get; } = new();
+        public ObservableCollectionExtended<FlaggedNavigationItem> LowerList { get; } = new();
+        public bool IsExpanded => _isExpanded.Value;
+
+        [Reactive]
+        public FlaggedNavigationItem UpperSelection { get; set; }
+            = new(NavigationPageLocation.Upper, false);
+
+        [Reactive]
+        public FlaggedNavigationItem LowerSelection { get; set; }
+            = new(NavigationPageLocation.Lower, false);
 
         public ViewModelActivator Activator { get; } = new();
     }

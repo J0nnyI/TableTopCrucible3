@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Printing;
 using System.Runtime.CompilerServices;
-using Microsoft.VisualBasic.CompilerServices;
 using ReactiveUI;
-using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
@@ -19,13 +15,18 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
     }
 
     /// <summary>
-    /// used for entities like item
+    ///     used for entities like item
     /// </summary>
     /// <typeparam name="TId"></typeparam>
     public abstract class DataEntity<TId> : ReactiveObject, IDataEntity<TId>
         where TId : IDataId, new()
     {
-        private TId _id;
+        private readonly TId _id;
+
+        protected DataEntity()
+        {
+            Id = new TId { Guid = Guid.NewGuid() };
+        }
 
         [Key]
         public TId Id
@@ -37,11 +38,6 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                     throw new NullReferenceException(nameof(Id));
                 _id = value;
             }
-        }
-
-        protected DataEntity()
-        {
-            Id = new TId { Guid = Guid.NewGuid() };
         }
 
         protected abstract IEnumerable<object> getAtomicValues();
@@ -58,7 +54,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                 .Aggregate(HashCode.Combine);
 
         /// <summary>
-        /// same as <see cref="IReactiveObjectExtensions.RaiseAndSetIfChanged{TObj,TRet}"/> but it throws an <see cref="NullReferenceException"/> if the value is null
+        ///     same as <see cref="IReactiveObjectExtensions.RaiseAndSetIfChanged{TObj,TRet}" /> but it throws an
+        ///     <see cref="NullReferenceException" /> if the value is null
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="field"></param>

@@ -1,8 +1,8 @@
-﻿using DynamicData;
+﻿using System;
+using System.Reactive.Linq;
+using DynamicData;
 using DynamicData.Binding;
 using ReactiveUI;
-using System;
-using System.Reactive.Linq;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
@@ -12,7 +12,7 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
     /// <summary>
-    /// todo: add a proper page
+    ///     todo: add a proper page
     /// </summary>
     [Transient]
     public interface INotificationList : ISidebarPage
@@ -21,9 +21,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
     public class NotificationListVm : ReactiveObject, INotificationList, IActivatableViewModel
     {
-        private readonly ObservableCollectionExtended<INotification> _notificationList = new();
-        public ObservableCollectionExtended<INotification> NotificationList => _notificationList;
-
         public NotificationListVm(INotificationService notificationService)
         {
             this.WhenActivated(() => new[]
@@ -31,10 +28,12 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 notificationService.Notifications
                     .Connect()
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .Bind(_notificationList)
+                    .Bind(NotificationList)
                     .Subscribe()
             });
         }
+
+        public ObservableCollectionExtended<INotification> NotificationList { get; } = new();
 
         public ViewModelActivator Activator { get; } = new();
         public Name Title => (Name)"Notifications";

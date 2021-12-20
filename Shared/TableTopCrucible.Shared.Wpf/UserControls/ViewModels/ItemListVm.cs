@@ -1,12 +1,9 @@
-﻿using DynamicData;
+﻿using System;
+using System.Windows.Input;
 using DynamicData.Binding;
 using ReactiveUI;
-using System;
-using System.Reactive.Linq;
-using System.Windows.Input;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Infrastructure.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Services;
 
@@ -21,11 +18,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     {
         private readonly IScannedFileRepository _fileRepository;
         private readonly IFileSynchronizationService _fileSynchronizationService;
-        public ViewModelActivator Activator { get; } = new();
 
         public ObservableCollectionExtended<ScannedFileDataEntity> Files = new();
         public ObservableCollectionExtended<ItemEntity> Items = new();
-        public ICommand FileSyncCommand => _fileSynchronizationService.StartScanCommand;
 
         public ItemListVm(
             IScannedFileRepository fileRepository,
@@ -52,5 +47,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             //    .Subscribe(),
             //});
         }
+
+        public ICommand FileSyncCommand => _fileSynchronizationService.StartScanCommand;
+        public ViewModelActivator Activator { get; } = new();
     }
 }

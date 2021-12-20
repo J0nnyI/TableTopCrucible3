@@ -125,9 +125,7 @@ namespace TableTopCrucible.Core.Jobs.Helper
 
         public static IObservable<CurrentProgressPercent> GetCurrentProgressInPercent(
             this ITrackingViewer viewer) =>
-            Observable.CombineLatest(
-                viewer.CurrentProgressChanges,
-                viewer.TargetProgressChanges,
+            viewer.CurrentProgressChanges.CombineLatest(viewer.TargetProgressChanges,
                 CurrentProgressPercent.From);
 
         public static IObservable<Unit> OnDone(this ITrackingViewer viewer)

@@ -17,23 +17,6 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
     [TestFixture]
     public class SourceTrackerTest : ReactiveObject
     {
-        private IProgressTrackingService progressService;
-        public ISourceTracker Tracker { get; set; }
-        public ISubscribedTrackingViewer Viewer { get; set; }
-
-
-        private CompositeDisposable _disposables;
-
-
-        private Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
-        {
-            return new Func<Exception, IObservable<T>>(ex =>
-            {
-                Assert.Fail((observable ?? typeof(T).Name) + " threw an exception: " + Environment.NewLine + ex);
-                return Observable.Empty<T>();
-            });
-        }
-
         [SetUp]
         public void BeforeEach()
         {
@@ -52,6 +35,23 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
         public void AfterEach()
         {
             _disposables?.Dispose();
+        }
+
+        private IProgressTrackingService progressService;
+        public ISourceTracker Tracker { get; set; }
+        public ISubscribedTrackingViewer Viewer { get; set; }
+
+
+        private CompositeDisposable _disposables;
+
+
+        private Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
+        {
+            return ex =>
+            {
+                Assert.Fail((observable ?? typeof(T).Name) + " threw an exception: " + Environment.NewLine + ex);
+                return Observable.Empty<T>();
+            };
         }
 
         [Test]

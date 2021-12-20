@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Windows.Navigation;
 using DynamicData;
 using Microsoft.EntityFrameworkCore;
 using TableTopCrucible.Infrastructure.DataPersistence;
@@ -63,28 +62,28 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         where TId : IDataId
         where TEntity : IDataEntity<TId>
     {
-        public EntityUpdateChangeReason ChangeReason { get; }
-        public IReadOnlyDictionary<TId, TEntity> UpdatedEntities { get; }
-
         public EntityUpdate(EntityUpdateChangeReason changeReason, IReadOnlyDictionary<TId, TEntity> updatedEntities)
         {
             ChangeReason = changeReason;
             UpdatedEntities = updatedEntities;
         }
+
+        public EntityUpdateChangeReason ChangeReason { get; }
+        public IReadOnlyDictionary<TId, TEntity> UpdatedEntities { get; }
     }
 
     public class CollectionUpdate<TId, TEntity> : IQueryable<TEntity>
         where TId : IDataId
         where TEntity : IDataEntity<TId>
     {
-        public IQueryable<TEntity> Queryable { get; }
-        public EntityUpdate<TId, TEntity> UpdateInfo { get; }
-
         public CollectionUpdate(IQueryable<TEntity> queryable, EntityUpdate<TId, TEntity> updateInfo)
         {
             Queryable = queryable;
             UpdateInfo = updateInfo;
         }
+
+        public IQueryable<TEntity> Queryable { get; }
+        public EntityUpdate<TId, TEntity> UpdateInfo { get; }
 
         #region Queryable
 
@@ -106,10 +105,10 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         where TEntity : class, IDataEntity<TId>, new()
     {
         IQueryable<TEntity> Data { get; }
-        IObservable<TEntity> Watch(TId id);
-        IObservable<TEntity> Watch(IObservable<TId> idChanges);
         TEntity this[TId id] { get; }
         IObservable<CollectionUpdate<TId, TEntity>> Updates { get; }
+        IObservable<TEntity> Watch(TId id);
+        IObservable<TEntity> Watch(IObservable<TId> idChanges);
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
         void Remove(TEntity entity);
@@ -123,28 +122,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         where TId : IDataId
         where TEntity : class, IDataEntity<TId>, new()
     {
-        private readonly IDatabaseAccessor _database;
-        protected DbSet<TEntity> _Data { get; }
-        public IQueryable<TEntity> Data => _Data;
         private readonly Subject<EntityUpdate<TId, TEntity>> _changes = new();
-        public IObservable<CollectionUpdate<TId, TEntity>> Updates { get; }
-
-        public IObservable<TEntity> Watch(TId id)
-            => _changes
-                .Where(change =>
-                    change.UpdatedEntities.ContainsKey(id))
-                .Select(change =>
-                    change.UpdatedEntities[id])
-                .StartWith(Data.SingleOrDefault(entity => entity.Id.Equals(id)));
-
-        public IObservable<TEntity> Watch(IObservable<TId> idChanges)
-            => idChanges.Select(Watch)
-                .Switch()
-                .Replay(1)
-                .RefCount();
-
-        public TEntity this[TId id]
-            => _Data.Single(entity => entity.Id.Equals(id));
+        private readonly IDatabaseAccessor _database;
 
         protected RepositoryBase(IDatabaseAccessor database, DbSet<TEntity> data)
         {
@@ -166,6 +145,27 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                     )
                 );
         }
+
+        protected DbSet<TEntity> _Data { get; }
+        public IQueryable<TEntity> Data => _Data;
+        public IObservable<CollectionUpdate<TId, TEntity>> Updates { get; }
+
+        public IObservable<TEntity> Watch(TId id)
+            => _changes
+                .Where(change =>
+                    change.UpdatedEntities.ContainsKey(id))
+                .Select(change =>
+                    change.UpdatedEntities[id])
+                .StartWith(Data.SingleOrDefault(entity => entity.Id.Equals(id)));
+
+        public IObservable<TEntity> Watch(IObservable<TId> idChanges)
+            => idChanges.Select(Watch)
+                .Switch()
+                .Replay(1)
+                .RefCount();
+
+        public TEntity this[TId id]
+            => _Data.Single(entity => entity.Id.Equals(id));
 
         public void Add(TEntity entity)
         {

@@ -15,14 +15,9 @@ using TableTopCrucible.Core.TestHelper;
 
 namespace TableTopCrucible.Core.Jobs.Tests.Models
 {
-    [TestFixture()]
+    [TestFixture]
     public class TrackingServiceTests : ReactiveObject
     {
-        private IProgressTrackingService progressService;
-
-        private CompositeDisposable _disposables;
-
-
         [SetUp]
         public void BeforeEach()
         {
@@ -36,6 +31,10 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
         {
             _disposables?.Dispose();
         }
+
+        private IProgressTrackingService progressService;
+
+        private CompositeDisposable _disposables;
 
         [Test]
         public void TotalProgress_NoLateAdds()

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 using ReactiveUI;
 using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
@@ -7,7 +6,7 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
 {
     /// <summary>
-    /// Interaction logic for MainPageV.xaml
+    ///     Interaction logic for MainPageV.xaml
     /// </summary>
     public partial class MainPageV : ReactiveUserControl<MainPageVm>
     {
@@ -16,7 +15,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
             InitializeComponent();
 
 
-            this.WhenActivated(() => new IDisposable[]
+            this.WhenActivated(() => new[]
             {
                 ViewModel!.ActiveWorkAreaChanges
                     .BindTo(this,

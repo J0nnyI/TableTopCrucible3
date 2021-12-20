@@ -1,21 +1,14 @@
-﻿using DynamicData;
-using DynamicData.Binding;
-using ReactiveUI;
-using ReactiveUI.Validation.Helpers;
-using Splat;
-using System;
-using System.Linq;
+﻿using System;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
+using DynamicData.Binding;
+using ReactiveUI;
+using ReactiveUI.Validation.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
-using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
@@ -29,11 +22,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
-
-        public Interaction<Unit, DirectorySetupEntity> GetDirectoryDialog { get; } = new();
-
-        public ICommand CreateDirectory { get; private set; }
-        public IObservable<double> HintOpacity { get; }
 
         public DirectorySetupListVm(IDirectorySetupRepository directorySetupRepository,
             INotificationService notificationService)
@@ -79,6 +67,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             //});
         }
 
+        public Interaction<Unit, DirectorySetupEntity> GetDirectoryDialog { get; } = new();
+
+        public ICommand CreateDirectory { get; private set; }
+        public IObservable<double> HintOpacity { get; }
+
+        public ObservableCollectionExtended<IDirectorySetupCard> Directories { get; } = new();
+        public ViewModelActivator Activator { get; } = new();
+
         private IDisposable _initCommands()
         {
             throw new NotImplementedException("has to be rewritten");
@@ -109,8 +105,5 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             //});
             return disposables;
         }
-
-        public ObservableCollectionExtended<IDirectorySetupCard> Directories { get; } = new();
-        public ViewModelActivator Activator { get; } = new();
     }
 }

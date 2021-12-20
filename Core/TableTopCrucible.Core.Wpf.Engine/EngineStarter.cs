@@ -1,16 +1,16 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using System.Linq;
+using Microsoft.Extensions.Hosting;
 using ReactiveUI;
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
-using System.Linq;
 using TableTopCrucible.Core.DependencyInjection;
 using TableTopCrucible.Core.Helper;
 
 namespace TableTopCrucible.Core.Wpf.Engine
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    ///     Interaction logic for App.xaml
     /// </summary>
     public static class EngineStarter
     {

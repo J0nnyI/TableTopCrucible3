@@ -1,11 +1,11 @@
-﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using ReactiveUI.Validation.Helpers;
-using Splat;
-using System;
+﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Helpers;
+using Splat;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Engine.Services;
@@ -14,7 +14,6 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
-using TableTopCrucible.Infrastructure.Repositories;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
@@ -30,32 +29,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
     public class DirectorySetupCardVm : ReactiveValidationObject, IActivatableViewModel, IDirectorySetupCard
     {
-        private ObservableAsPropertyHelper<DirectorySetupEntity> _directorySetup;
-        public DirectorySetupEntity DirectorySetup => _directorySetup?.Value;
-
-        [Reactive]
-        public DirectorySetupId DirectorySetupId { get; set; }
-
-        [Reactive]
-        public bool ResetOnSave { get; set; } = false;
-
-        [Reactive]
-        public string Name { get; set; }
-
-        [Reactive]
-        public string Path { get; set; }
-
-        private ObservableAsPropertyHelper<bool> _isDirty;
-        public bool IsDirty => _isDirty.Value;
-
-        public Interaction<Unit, YesNoDialogResult> ConfirmDeletionInteraction { get; } = new();
-
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
+        private ObservableAsPropertyHelper<DirectorySetupEntity> _directorySetup;
 
-        public ICommand SaveChangesCommand { get; private set; }
-        public ICommand UndoChangesCommand { get; private set; }
-        public ICommand RemoveDirectoryCommand { get; private set; }
+        private ObservableAsPropertyHelper<bool> _isDirty;
 
         public DirectorySetupCardVm()
         {
@@ -142,12 +120,33 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             );
         }
 
+        [Reactive]
+        public string Name { get; set; }
+
+        [Reactive]
+        public string Path { get; set; }
+
+        public bool IsDirty => _isDirty.Value;
+
+        public Interaction<Unit, YesNoDialogResult> ConfirmDeletionInteraction { get; } = new();
+
+        public ICommand SaveChangesCommand { get; private set; }
+        public ICommand UndoChangesCommand { get; private set; }
+        public ICommand RemoveDirectoryCommand { get; private set; }
+
+        public ViewModelActivator Activator { get; } = new();
+        public DirectorySetupEntity DirectorySetup => _directorySetup?.Value;
+
+        [Reactive]
+        public DirectorySetupId DirectorySetupId { get; set; }
+
+        [Reactive]
+        public bool ResetOnSave { get; set; } = false;
+
         public int CompareTo(IDirectorySetupCard other)
             => DirectorySetup?.Name?.CompareTo(other?.DirectorySetup?.Name) ?? 1;
 
         public int CompareTo(object obj)
             => CompareTo(obj as IDirectorySetupCard);
-
-        public ViewModelActivator Activator { get; } = new();
     }
 }

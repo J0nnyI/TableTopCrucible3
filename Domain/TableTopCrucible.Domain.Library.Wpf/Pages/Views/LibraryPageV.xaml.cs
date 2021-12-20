@@ -1,11 +1,11 @@
-﻿using ReactiveUI;
-using System;
+﻿using System;
+using ReactiveUI;
 using TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.Pages.Views
 {
     /// <summary>
-    /// Interaction logic for LibraryPageV.xaml
+    ///     Interaction logic for LibraryPageV.xaml
     /// </summary>
     public partial class LibraryPageV : ReactiveUserControl<LibraryPageVm>
     {

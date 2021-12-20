@@ -68,15 +68,8 @@ namespace TableTopCrucible.Core.Helper
             return AnimateValue(from, v => v + stepSize, duration, scheduler);
         }
 
-        internal enum PCValueType : byte
-        {
-            Seed = 1,
-            Initial = 2,
-            Full = 3
-        }
-
         /// <summary>
-        /// connects to the source until the compositeDisposable is disposed of
+        ///     connects to the source until the compositeDisposable is disposed of
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
@@ -87,6 +80,13 @@ namespace TableTopCrucible.Core.Helper
         {
             source.Connect().DisposeWith(disposeWith);
             return source;
+        }
+
+        internal enum PCValueType : byte
+        {
+            Seed = 1,
+            Initial = 2,
+            Full = 3
         }
     }
 }

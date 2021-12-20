@@ -1,7 +1,6 @@
-﻿using DynamicData;
+﻿using System;
+using DynamicData;
 using DynamicData.Binding;
-using System;
-using System.Reactive.Linq;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
@@ -14,15 +13,14 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
     [Singleton]
     public interface INotificationService
     {
+        IObservableList<INotification> Notifications { get; }
         NotificationId AddNotification(Name title, Description content, NotificationType type);
         void RemoveNotification(NotificationId id);
-        IObservableList<INotification> Notifications { get; }
     }
 
     public class NotificationService : INotificationService
     {
         private readonly SourceCache<INotification, NotificationId> _notifications = new(n => n.Id);
-        public IObservableList<INotification> Notifications { get; }
 
         public NotificationService()
         {
@@ -33,6 +31,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
                 .Subscribe();
             Notifications = observableList;
         }
+
+        public IObservableList<INotification> Notifications { get; }
 
         public NotificationId AddNotification(Name title, Description content, NotificationType type)
         {

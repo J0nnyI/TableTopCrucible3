@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
@@ -11,22 +8,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
     {
         private Name _name;
 
-        public Name Name
-        {
-            get => _name;
-            set => RaiseAndSetRequiredIfChanged(ref _name, value);
-        }
-
         private DirectoryPath _path;
-
-        public DirectoryPath Path
-        {
-            get => _path;
-            set => RaiseAndSetRequiredIfChanged(ref _path, value);
-        }
-
-        protected override IEnumerable<object> getAtomicValues()
-            => new object[] { Name, Path };
 
         public DirectorySetupEntity()
         {
@@ -37,5 +19,20 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             Path = path;
             Name = path.GetDirectoryName().ToName();
         }
+
+        public Name Name
+        {
+            get => _name;
+            set => RaiseAndSetRequiredIfChanged(ref _name, value);
+        }
+
+        public DirectoryPath Path
+        {
+            get => _path;
+            set => RaiseAndSetRequiredIfChanged(ref _path, value);
+        }
+
+        protected override IEnumerable<object> getAtomicValues()
+            => new object[] { Name, Path };
     }
 }

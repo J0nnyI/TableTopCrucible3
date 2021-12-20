@@ -2,17 +2,11 @@
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Transactions;
-using System.Windows.Markup;
-using DynamicData;
 using DynamicData.Kernel;
 using FluentAssertions;
-using Microsoft.Reactive.Testing;
 using NUnit.Framework;
 using ReactiveUI;
 using Splat;
-using TableTopCrucible.Core.Jobs.JobQueue.Models;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
@@ -23,13 +17,9 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Tests.UserControls.ViewModels
 {
-    [TestFixture()]
+    [TestFixture]
     public class JobQueueVmTests
     {
-        public CompositeDisposable Disposables;
-        public IProgressTrackingService ProgressService;
-        public JobQueueVm JobQueueVm;
-
         [SetUp]
         public void BeforeEach()
         {
@@ -47,6 +37,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.Tests.UserControls.ViewModels
             JobQueueVm.Activator.Deactivate();
         }
 
+        public CompositeDisposable Disposables;
+        public IProgressTrackingService ProgressService;
+        public JobQueueVm JobQueueVm;
+
         [Test]
         public void SetupWorks()
         {
@@ -54,7 +48,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.Tests.UserControls.ViewModels
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="filterState">the state which the VM filters for</param>
         /// <param name="lateUpdate">whether the jobs have been updated before or after the component was activated</param>

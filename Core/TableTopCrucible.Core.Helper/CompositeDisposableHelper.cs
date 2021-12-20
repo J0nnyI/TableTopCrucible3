@@ -21,8 +21,9 @@ namespace TableTopCrucible.Core.Helper
         }
 
         /// <summary>
-        /// returns a subject which is fired when the composite disposable is being disposed.
-        /// since this subject uses an internal helper, the result of this method should be stored as field and not called each time requiring the subject.
+        ///     returns a subject which is fired when the composite disposable is being disposed.
+        ///     since this subject uses an internal helper, the result of this method should be stored as field and not called each
+        ///     time requiring the subject.
         /// </summary>
         /// <param name="compDisposable"></param>
         /// <returns></returns>
@@ -31,9 +32,14 @@ namespace TableTopCrucible.Core.Helper
 
         private sealed class DisposeEmitter : IDisposable
         {
-            public IObservable<Unit> OnDisposed => _onDisposed.AsObservable();
             private readonly Subject<Unit> _onDisposed = new();
-            private bool disposed = false;
+            private bool disposed;
+
+            private DisposeEmitter()
+            {
+            }
+
+            public IObservable<Unit> OnDisposed => _onDisposed.AsObservable();
 
             public void Dispose()
             {
@@ -42,10 +48,6 @@ namespace TableTopCrucible.Core.Helper
                 disposed = true;
                 _onDisposed.OnNext(Unit.Default);
                 _onDisposed.Dispose();
-            }
-
-            private DisposeEmitter()
-            {
             }
 
             public static DisposeEmitter ForComposite(CompositeDisposable compositeDisposable)

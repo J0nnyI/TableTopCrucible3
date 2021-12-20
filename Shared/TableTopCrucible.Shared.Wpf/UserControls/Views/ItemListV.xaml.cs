@@ -1,11 +1,11 @@
-﻿using ReactiveUI;
-using System;
+﻿using System;
+using ReactiveUI;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 {
     /// <summary>
-    /// Interaction logic for ItemListV.xaml
+    ///     Interaction logic for ItemListV.xaml
     /// </summary>
     public partial class ItemListV : ReactiveUserControl<ItemListVm>, IActivatableView
     {

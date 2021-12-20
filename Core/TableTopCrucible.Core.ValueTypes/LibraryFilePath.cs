@@ -4,6 +4,12 @@ namespace TableTopCrucible.Core.ValueTypes
 {
     public class LibraryFilePath : FilePath<LibraryFilePath>
     {
+        public static LibraryFilePath WorkingFile
+            => (LibraryFilePath)(DirectoryPath.AppData + (FileName)"workingDatabase.ttcl");
+
+        public bool IsWorkingFile
+            => this == WorkingFile;
+
         protected override void Validate()
         {
             if (!IsLibrary())
@@ -11,13 +17,7 @@ namespace TableTopCrucible.Core.ValueTypes
             base.Validate();
         }
 
-        public static LibraryFilePath WorkingFile
-            => (LibraryFilePath)(DirectoryPath.AppData + (FileName)"workingDatabase.ttcl");
-
         public static explicit operator LibraryFilePath(FilePath value)
             => From(value.Value);
-
-        public bool IsWorkingFile
-            => this == WorkingFile;
     }
 }

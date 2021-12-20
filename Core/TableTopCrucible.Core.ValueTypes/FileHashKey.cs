@@ -1,6 +1,4 @@
-﻿using System;
-using TableTopCrucible.Infrastructure.Models.Entities;
-using ValueOf;
+﻿using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {

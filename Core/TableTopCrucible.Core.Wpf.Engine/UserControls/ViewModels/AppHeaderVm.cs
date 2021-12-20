@@ -1,10 +1,9 @@
-﻿using ReactiveUI;
-using System;
+﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Input;
-using System.Windows.Shell;
 using DynamicData;
+using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
@@ -24,40 +23,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IProgressTrackingService _progressService;
-        public ViewModelActivator Activator { get; } = new();
-
-        public IObservable<Name> CurrentPageTitleChanges { get; }
-        public IObservable<int> NotificationCountChanges { get; private set; }
-        public IObservable<CurrentProgressPercent> GlobalJobProgressChanges => _progressService.TotalProgress;
-
-        public IObservable<int> JobCountChanges =>
-            _progressService
-                .TrackerList
-                .Connect()
-                .ToCollection()
-                .Select(jobs => jobs
-                    .Select(job => job.JobStateChanges).CombineLatest())
-                .Switch()
-                .Select(states => states.Count(state => state != JobState.Done));
 
         private ObservableAsPropertyHelper<bool> _isNavigationBarExpanded;
-
-        public bool IsNavigationBarExpanded
-        {
-            get => _isNavigationBarExpanded.Value;
-            set
-            {
-                if (_navigationService.IsNavigationExpanded != value)
-                    _navigationService.IsNavigationExpanded = value;
-            }
-        }
-
-        public IObservable<bool> IsNotificationSidebarSelectedChanged { get; private set; }
-        public IObservable<bool> IsJobQueueSelectedChanged { get; private set; }
-
-        public ICommand ShowJobSidebarCommand { get; private set; }
-        public ICommand SaveCommand { get; private set; }
-        public ICommand ShowNotificationSidebar { get; private set; }
 
         public AppHeaderVm(
             INavigationService navigationService,
@@ -108,5 +75,37 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 };
             });
         }
+
+        public IObservable<Name> CurrentPageTitleChanges { get; }
+        public IObservable<int> NotificationCountChanges { get; private set; }
+        public IObservable<CurrentProgressPercent> GlobalJobProgressChanges => _progressService.TotalProgress;
+
+        public IObservable<int> JobCountChanges =>
+            _progressService
+                .TrackerList
+                .Connect()
+                .ToCollection()
+                .Select(jobs => jobs
+                    .Select(job => job.JobStateChanges).CombineLatest())
+                .Switch()
+                .Select(states => states.Count(state => state != JobState.Done));
+
+        public bool IsNavigationBarExpanded
+        {
+            get => _isNavigationBarExpanded.Value;
+            set
+            {
+                if (_navigationService.IsNavigationExpanded != value)
+                    _navigationService.IsNavigationExpanded = value;
+            }
+        }
+
+        public IObservable<bool> IsNotificationSidebarSelectedChanged { get; private set; }
+        public IObservable<bool> IsJobQueueSelectedChanged { get; private set; }
+
+        public ICommand ShowJobSidebarCommand { get; private set; }
+        public ICommand SaveCommand { get; private set; }
+        public ICommand ShowNotificationSidebar { get; private set; }
+        public ViewModelActivator Activator { get; } = new();
     }
 }

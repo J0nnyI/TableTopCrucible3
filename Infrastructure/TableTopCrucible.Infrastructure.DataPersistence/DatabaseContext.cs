@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using EntityFrameworkCore.Triggers;
+﻿using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
@@ -17,17 +16,17 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
     public class DatabaseContext : DbContextWithTriggers, IDatabaseContext
     {
+        public DatabaseContext()
+        {
+            Migrate();
+        }
+
         public DbSet<ItemEntity> Items { get; set; }
         public DbSet<ScannedFileDataEntity> Files { get; set; }
         public DbSet<DirectorySetupEntity> DirectorySetups { get; set; }
 
         public void Migrate()
             => Database.Migrate();
-
-        public DatabaseContext()
-        {
-            Migrate();
-        }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)

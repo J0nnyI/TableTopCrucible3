@@ -15,16 +15,16 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 
     public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage
     {
+        public LibraryPageVm(IItemList itemList)
+        {
+            ItemList = itemList;
+        }
+
         public IItemList ItemList { get; }
         public ViewModelActivator Activator { get; } = new();
         public PackIconKind? Icon => PackIconKind.Bookshelf;
         public Name Title => Name.From("Item Library");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
         public SortingOrder Position => SortingOrder.From(1);
-
-        public LibraryPageVm(IItemList itemList)
-        {
-            ItemList = itemList;
-        }
     }
 }

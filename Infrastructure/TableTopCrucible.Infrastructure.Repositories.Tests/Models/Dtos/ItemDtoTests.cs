@@ -1,13 +1,8 @@
-﻿using System.Linq;
-using System.Text.Json;
-using FluentAssertions;
-using NUnit.Framework;
-using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Models.Entities;
+﻿using NUnit.Framework;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Tests.Models.Dtos
 {
-    [TestFixture()]
+    [TestFixture]
     public class ItemDtoTests
     {
     }

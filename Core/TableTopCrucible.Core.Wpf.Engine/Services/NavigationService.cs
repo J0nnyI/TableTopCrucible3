@@ -1,7 +1,7 @@
-﻿using DynamicData;
+﻿using System.Linq;
+using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Linq;
 using TableTopCrucible.Core.DependencyInjection;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
@@ -20,6 +20,15 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
     internal class NavigationService : ReactiveObject, INavigationService
     {
         private readonly SourceList<INavigationPage> _pages = new();
+
+        public NavigationService()
+        {
+            _pages.AddRange(
+                DependencyInjectionHelper.GetServicesByType<INavigationPage>()
+                    .Where(s => s != null) // filter vm utilities
+            );
+        }
+
         public IObservableList<INavigationPage> Pages => _pages;
 
         [Reactive]
@@ -30,13 +39,5 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
 
         [Reactive]
         public ISidebarPage ActiveSidebar { get; set; }
-
-        public NavigationService()
-        {
-            _pages.AddRange(
-                DependencyInjectionHelper.GetServicesByType<INavigationPage>()
-                    .Where(s => s != null) // filter vm utilities
-            );
-        }
     }
 }

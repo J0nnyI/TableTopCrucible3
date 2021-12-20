@@ -1,14 +1,14 @@
-﻿using MaterialDesignThemes.Wpf;
-using ReactiveUI;
-using System;
+﻿using System;
 using System.Windows;
+using MaterialDesignThemes.Wpf;
+using ReactiveUI;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 {
     /// <summary>
-    /// Interaction logic for SimpleNotification.xaml
+    ///     Interaction logic for SimpleNotification.xaml
     /// </summary>
     public partial class SimpleNotification : ReactiveUserControl<SimpleNotificationVm>
     {

@@ -1,7 +1,7 @@
-﻿using ReactiveUI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using ReactiveUI;
 using TableTopCrucible.Core.Helper;
 
 namespace TableTopCrucible.Core.Wpf.Helper

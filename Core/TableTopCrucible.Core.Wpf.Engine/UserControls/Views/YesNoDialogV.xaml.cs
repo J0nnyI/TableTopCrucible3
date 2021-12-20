@@ -4,7 +4,7 @@ using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 {
     /// <summary>
-    /// Interaction logic for YesNoDialog.xaml
+    ///     Interaction logic for YesNoDialog.xaml
     /// </summary>
     public partial class YesNoDialogV : ReactiveUserControl<YesNoDialogVm>, IActivatableView
     {

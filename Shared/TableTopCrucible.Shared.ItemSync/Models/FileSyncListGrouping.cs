@@ -7,11 +7,6 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 {
     internal class FileSyncListGrouping
     {
-        public IEnumerable<RawSyncFileData> NewFiles { get; }
-        public IEnumerable<RawSyncFileData> UpdatedFiles { get; }
-        public IEnumerable<RawSyncFileData> DeletedFiles { get; }
-        public IEnumerable<RawSyncFileData> UnchangedFiles { get; }
-
         public FileSyncListGrouping(IEnumerable<RawSyncFileData> files)
         {
             var groups =
@@ -34,5 +29,10 @@ namespace TableTopCrucible.Shared.ItemSync.Models
                 ?.DistinctBy(dir => dir.FoundFile)
                 ?.ToArray() ?? Array.Empty<RawSyncFileData>();
         }
+
+        public IEnumerable<RawSyncFileData> NewFiles { get; }
+        public IEnumerable<RawSyncFileData> UpdatedFiles { get; }
+        public IEnumerable<RawSyncFileData> DeletedFiles { get; }
+        public IEnumerable<RawSyncFileData> UnchangedFiles { get; }
     }
 }

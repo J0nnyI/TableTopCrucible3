@@ -5,8 +5,8 @@ using System.Linq;
 namespace TableTopCrucible.Infrastructure.Models.Entities
 {
     /// <summary>
-    /// source: https://levelup.gitconnected.com/using-value-objects-with-entity-framework-core-5cead49dbf9c
-    /// github: https://github.dev/fiseni/ImmutabilitySample/tree/master/src/ImmutabilitySample/Entities
+    ///     source: https://levelup.gitconnected.com/using-value-objects-with-entity-framework-core-5cead49dbf9c
+    ///     github: https://github.dev/fiseni/ImmutabilitySample/tree/master/src/ImmutabilitySample/Entities
     /// </summary>
     public abstract class ComplexDataType
     {

@@ -1,7 +1,5 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
-using System.Reactive.Concurrency;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Reactive.Testing;
 using ReactiveUI;
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;

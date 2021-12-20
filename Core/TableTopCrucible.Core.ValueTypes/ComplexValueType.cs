@@ -3,7 +3,7 @@
 namespace TableTopCrucible.Infrastructure.Models.Entities
 {
     /// <summary>
-    /// used for complex value types like FileHashKey
+    ///     used for complex value types like FileHashKey
     /// </summary>
     /// <typeparam name="TThis"></typeparam>
     public abstract class ComplexValueType<TThis> : ComplexDataType

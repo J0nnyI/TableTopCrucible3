@@ -13,11 +13,11 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
     {
         private readonly IObservable<CurrentProgress> _accumulatedProgressChanges;
         private readonly BehaviorSubject<bool> _completedChanges = new(false);
+        private readonly CompositeDisposable _disposables = new();
 
         private readonly ReplaySubject<ProgressIncrement> _increments = new();
 
         private readonly BehaviorSubject<TargetProgress> _targetProgressChanges = new((TargetProgress)1);
-        private readonly CompositeDisposable _disposables = new();
 
         public SourceTracker(Name title, TargetProgress trackingTarget)
         {
@@ -56,9 +56,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         }
 
         public IObservable<JobState> JobStateChanges =>
-            Observable.CombineLatest(
-                    _accumulatedProgressChanges.Do(x => { }),
-                    _targetProgressChanges.Do(x => { }),
+            _accumulatedProgressChanges.Do(x => { }).CombineLatest(_targetProgressChanges.Do(x => { }),
                     _completedChanges.Do(x => { }),
                     (current, target, completed) =>
                     {
@@ -91,8 +89,6 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
             }
         }
 
-        public override string ToString() => $"S {Title}";
-
         public void Dispose()
         {
             // the completion has to be delayed since the b-subjects seem to push no longer values once they are completed (runtime only?)
@@ -105,6 +101,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
 
             _disposables.Dispose();
         }
+
+        public override string ToString() => $"S {Title}";
     }
 
     internal class WeightedSourceTracker : SourceTracker, IWeightedTrackingViewer

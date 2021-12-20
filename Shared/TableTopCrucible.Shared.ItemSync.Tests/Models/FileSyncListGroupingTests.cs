@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using FluentAssertions;
-using MoreLinq.Extensions;
 using NUnit.Framework;
 using Splat;
 using TableTopCrucible.Core.Jobs.Helper;
@@ -18,9 +16,19 @@ using TableTopCrucible.Shared.ItemSync.Services;
 
 namespace TableTopCrucible.Shared.ItemSync.Tests.Models
 {
-    [TestFixture()]
+    [TestFixture]
     public class FileSyncListGroupingTests
     {
+        [SetUp]
+        public void BeforeEach()
+        {
+            Prepare.ApplicationEnvironment();
+
+            directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
+            fileRepository = Locator.Current.GetService<IScannedFileRepository>();
+            fileSyncService = Locator.Current.GetService<IFileSynchronizationService>();
+        }
+
         public static readonly TimeSpan TestTimeout = TimeSpan.FromMilliseconds(500);
 
         private IDirectorySetupRepository
@@ -31,6 +39,14 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
 
         internal class FileSetupData
         {
+            public FileSetupData(string path, FileUpdateSource updateSource)
+            {
+                FileUpdateSource = updateSource;
+                File = FilePath.From(path);
+                Content = Guid.NewGuid().ToString();
+                NewContent = Guid.NewGuid().ToString();
+            }
+
             public FilePath File { get; }
             public string Content { get; init; }
             public string NewContent { get; init; }
@@ -40,15 +56,6 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
             public DateTime LastWrite { get; private set; }
             public DateTime TargetLastWrite { get; private set; }
             public ScannedFileDataId OriginalId { get; private set; }
-
-
-            public FileSetupData(string path, FileUpdateSource updateSource)
-            {
-                FileUpdateSource = updateSource;
-                File = FilePath.From(path);
-                Content = Guid.NewGuid().ToString();
-                NewContent = Guid.NewGuid().ToString();
-            }
 
             // prepares data for this file according to its given state
             public ScannedFileDataEntity Prepare()
@@ -112,8 +119,6 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
             private readonly IDirectorySetupRepository directorySetupRepository;
             private readonly IScannedFileRepository fileRepository;
             private readonly IFileSynchronizationService fileSyncService;
-            public IEnumerable<FileSetupData> FileData { get; init; }
-            public IEnumerable<string> Directories { get; init; }
 
             public TestSetup()
             {
@@ -121,6 +126,9 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
                 fileRepository = Locator.Current.GetService<IScannedFileRepository>();
                 fileSyncService = Locator.Current.GetService<IFileSynchronizationService>();
             }
+
+            public IEnumerable<FileSetupData> FileData { get; init; }
+            public IEnumerable<string> Directories { get; init; }
 
             private void prepare()
             {
@@ -180,16 +188,6 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
 
                 evaluateResult();
             }
-        }
-
-        [SetUp]
-        public void BeforeEach()
-        {
-            Prepare.ApplicationEnvironment();
-
-            directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
-            fileRepository = Locator.Current.GetService<IScannedFileRepository>();
-            fileSyncService = Locator.Current.GetService<IFileSynchronizationService>();
         }
 
         [Test]

@@ -1,7 +1,7 @@
-﻿using ReactiveUI;
-using Splat;
-using System;
+﻿using System;
 using System.Reactive.Linq;
+using ReactiveUI;
+using Splat;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 

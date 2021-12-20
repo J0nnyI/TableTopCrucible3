@@ -1,23 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
 using DynamicData;
 using DynamicData.Binding;
 using FluentAssertions;
 using NUnit.Framework;
-using ReactiveUI;
 
 namespace TableTopCrucible.Core.Test.Packages
 {
     /// <summary>
-    /// testFixture to check if 3rd party code behaves as expected
+    ///     testFixture to check if 3rd party code behaves as expected
     /// </summary>
-    [TestFixture()]
+    [TestFixture]
     internal class DynamicDataTests
     {
         private void CheckCount(SourceList<Tuple<string, IObservable<bool>>> list, int count)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Windows.Input;
 using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -17,17 +16,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
     public class MainPageVm : ReactiveObject, IActivatableViewModel, IMainPage
     {
         private readonly INavigationService _navigationService;
-        public INotificationList NotificationOverlay { get; }
-        public INavigationList NavigationList { get; }
-        public IAppHeader AppHeader { get; }
-
-        public IObservable<INavigationPage> ActiveWorkAreaChanges =>
-            this.WhenAnyValue(vm => vm._navigationService.ActiveWorkArea);
-
-        public IObservable<ISidebarPage> ActiveSidebarChanges =>
-            this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar);
-
-        public ICommand CloseSidebarCommand { get; private set; }
 
         public MainPageVm(
             INotificationList notificationOverlay,
@@ -47,6 +35,18 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
                     cmd => CloseSidebarCommand = cmd)
             });
         }
+
+        public INotificationList NotificationOverlay { get; }
+        public INavigationList NavigationList { get; }
+        public IAppHeader AppHeader { get; }
+
+        public IObservable<INavigationPage> ActiveWorkAreaChanges =>
+            this.WhenAnyValue(vm => vm._navigationService.ActiveWorkArea);
+
+        public IObservable<ISidebarPage> ActiveSidebarChanges =>
+            this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar);
+
+        public ICommand CloseSidebarCommand { get; private set; }
 
 
         public ViewModelActivator Activator { get; } = new();

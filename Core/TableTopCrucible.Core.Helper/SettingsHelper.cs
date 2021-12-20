@@ -6,6 +6,7 @@ namespace TableTopCrucible.Core.Helper
     // todo temporary class until a proper settings repository is implemented
     public static class SettingsHelper
     {
+        public static bool AutoSaveEnabled = true;
         public static TimeSpan NotificationDelay => new(0, 0, 0, 5);
 
         public static double NotificationResolution => NotificationDelay / AnimationResolution;
@@ -24,11 +25,9 @@ namespace TableTopCrucible.Core.Helper
         public static int DoneJobLimit => 5;
 
         /// <summary>
-        /// the autoSave (subject) is buffered by this duration to prevent excessive writing
+        ///     the autoSave (subject) is buffered by this duration to prevent excessive writing
         /// </summary>
         public static TimeSpan AutoSaveBuffer => TimeSpan.FromMinutes(1);
-
-        public static bool AutoSaveEnabled = true;
 
         public static string DefaultFilePath =>
             //"library.ttcl";
