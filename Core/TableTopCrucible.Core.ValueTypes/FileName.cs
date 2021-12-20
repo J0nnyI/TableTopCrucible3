@@ -9,7 +9,9 @@ namespace TableTopCrucible.Core.ValueTypes
     public class FileName : ValueOf<string, FileName>
     {
         public FileExtension GetExtension(bool toLower = false) =>
-            FileExtension.From(Path.GetExtension(toLower ? Value.ToLower() : Value));
+            FileExtension.From(Path.GetExtension(toLower
+                ? Value.ToLower()
+                : Value));
 
         public bool IsModel() => GetExtension().IsModel();
 

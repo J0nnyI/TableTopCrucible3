@@ -14,7 +14,6 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 
         public FileSyncListGrouping(IEnumerable<RawSyncFileData> files)
         {
-
             var groups =
                 files
                     .GroupBy(file => file.UpdateSource)

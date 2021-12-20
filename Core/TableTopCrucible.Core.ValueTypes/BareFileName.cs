@@ -14,6 +14,6 @@ namespace TableTopCrucible.Core.ValueTypes
             FileName.From(fileName.Value + extension.Value);
 
         public Name ToName()
-            => (Name) Value;
+            => (Name)Value;
     }
 }

@@ -1,7 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
-
 using ReactiveUI;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
@@ -13,8 +11,8 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
     [Singleton]
     public interface ILibraryPage : INavigationPage
     {
-
     }
+
     public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage
     {
         public IItemList ItemList { get; }

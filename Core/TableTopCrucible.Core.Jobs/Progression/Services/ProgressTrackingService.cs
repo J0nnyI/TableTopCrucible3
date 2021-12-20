@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
 using DynamicData;
 using DynamicData.Aggregation;
 using ReactiveUI;
@@ -51,7 +50,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                                     / progresses.Count
                                 )
                     )
-                    .Select(progress => progress < (CurrentProgressPercent)100 ? progress : (CurrentProgressPercent)0)
+                    .Select(progress => progress < (CurrentProgressPercent)100
+                        ? progress
+                        : (CurrentProgressPercent)0)
                 )
                 .Switch()
                 .DistinctUntilChanged()
@@ -73,10 +74,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                 {
                     if (_completedJobs.Count >= SettingsHelper.DoneJobLimit)
                         trackerList.Remove(_completedJobs.Items.First());
-
                 });
-
         }
+
         public ICompositeTracker CreateCompositeTracker(Name title = null)
         {
             var tracker = new CompositeTracker(title);
@@ -95,7 +95,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
 
         public IObservableList<ITrackingViewer> TrackerList => trackerList.AsObservableList();
         public IObservable<CurrentProgressPercent> TotalProgress { get; }
+
         public void Dispose()
-           => _disposables.Dispose();
+            => _disposables.Dispose();
     }
 }

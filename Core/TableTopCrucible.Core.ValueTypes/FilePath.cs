@@ -11,7 +11,9 @@ namespace TableTopCrucible.Core.ValueTypes
     public class FilePath<TThis> : ValueOf<string, TThis> where TThis : FilePath<TThis>, new()
     {
         public FileExtension GetExtension(bool toLower = false) =>
-            FileExtension.From(FileSystemHelper.Path.GetExtension(toLower ? Value.ToLower() : Value));
+            FileExtension.From(FileSystemHelper.Path.GetExtension(toLower
+                ? Value.ToLower()
+                : Value));
 
         public bool IsModel() => GetExtension().IsModel();
 
@@ -39,7 +41,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public bool Exists() => FileSystemHelper.File.Exists(Value);
 
-        public void Copy(FilePath<TThis> newPath, bool overwrite = true) 
+        public void Copy(FilePath<TThis> newPath, bool overwrite = true)
             => FileSystemHelper.File.Copy(Value, newPath.Value, overwrite);
 
         public void WriteAllText(string text)
@@ -105,8 +107,6 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static explicit operator FilePath<TThis>(string path)
             => From(path);
-            
-
     }
 
     /// <summary>

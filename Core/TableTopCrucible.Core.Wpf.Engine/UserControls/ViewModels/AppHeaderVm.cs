@@ -1,5 +1,4 @@
 ﻿using ReactiveUI;
-
 using System;
 using System.Linq;
 using System.Reactive.Linq;
@@ -19,8 +18,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     [Singleton]
     public interface IAppHeader
     {
-
     }
+
     public class AppHeaderVm : ReactiveObject, IActivatableViewModel, IAppHeader
     {
         private readonly INavigationService _navigationService;
@@ -30,6 +29,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public IObservable<Name> CurrentPageTitleChanges { get; }
         public IObservable<int> NotificationCountChanges { get; private set; }
         public IObservable<CurrentProgressPercent> GlobalJobProgressChanges => _progressService.TotalProgress;
+
         public IObservable<int> JobCountChanges =>
             _progressService
                 .TrackerList
@@ -41,6 +41,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 .Select(states => states.Count(state => state != JobState.Done));
 
         private ObservableAsPropertyHelper<bool> _isNavigationBarExpanded;
+
         public bool IsNavigationBarExpanded
         {
             get => _isNavigationBarExpanded.Value;
@@ -72,12 +73,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 
             this.WhenActivated(() =>
             {
-                this.NotificationCountChanges = notificationService.Notifications.CountChanged.ObserveOn(RxApp.MainThreadScheduler);
+                NotificationCountChanges =
+                    notificationService.Notifications.CountChanged.ObserveOn(RxApp.MainThreadScheduler);
 
-                this.IsNotificationSidebarSelectedChanged =
+                IsNotificationSidebarSelectedChanged =
                     this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar)
-                    .Select(sidebar => sidebar == notificationList);
-                this.IsJobQueueSelectedChanged =
+                        .Select(sidebar => sidebar == notificationList);
+                IsJobQueueSelectedChanged =
                     this.WhenAnyValue(vm => vm._navigationService.ActiveSidebar)
                         .Select(sidebar => sidebar == jobQueuePage);
 
@@ -92,17 +94,17 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                                     ? null
                                     : notificationList;
                         },
-                        cmd=>ShowNotificationSidebar = cmd),
-                    ReactiveCommandHelper.Create(()=>
+                        cmd => ShowNotificationSidebar = cmd),
+                    ReactiveCommandHelper.Create(() =>
                         {
                             _navigationService.ActiveSidebar =
                                 _navigationService.ActiveSidebar == jobQueuePage
                                     ? null
                                     : jobQueuePage;
                         },
-                        cmd=>ShowJobSidebarCommand = cmd),
-                    ReactiveCommandHelper.Create(()=>database.ManualSave(),
-                        cmd=>SaveCommand = cmd)
+                        cmd => ShowJobSidebarCommand = cmd),
+                    ReactiveCommandHelper.Create(() => database.ManualSave(),
+                        cmd => SaveCommand = cmd)
                 };
             });
         }

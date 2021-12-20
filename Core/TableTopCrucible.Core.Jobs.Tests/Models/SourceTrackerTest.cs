@@ -25,9 +25,9 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
         private CompositeDisposable _disposables;
 
 
-        Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
+        private Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
         {
-            return new(ex =>
+            return new Func<Exception, IObservable<T>>(ex =>
             {
                 Assert.Fail((observable ?? typeof(T).Name) + " threw an exception: " + Environment.NewLine + ex);
                 return Observable.Empty<T>();
@@ -38,10 +38,10 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
         public void BeforeEach()
         {
             Prepare.ApplicationEnvironment();
-            this.progressService = Locator.Current.GetService<IProgressTrackingService>();
+            progressService = Locator.Current.GetService<IProgressTrackingService>();
 
-            this.Tracker = progressService!.CreateSourceTracker((Name)"testTracker");
-            this.Viewer = Tracker.Subscribe();
+            Tracker = progressService!.CreateSourceTracker((Name)"testTracker");
+            Viewer = Tracker.Subscribe();
             _disposables = new CompositeDisposable(
                 Tracker,
                 Viewer
@@ -76,10 +76,10 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
             Viewer.JobState.Should().Be(JobState.InProgress);
             Viewer.CurrentProgress.Value.Should().Be(3, "1 => 3");
         }
+
         [Test]
         public void UnderFillScenario()
         {
-
             Tracker.SetTarget((TargetProgress)5);
 
             Tracker.Increment();
@@ -88,7 +88,6 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
             Viewer.JobState.Should().Be(JobState.Done);
             Viewer.CurrentProgress.Value.Should().Be(Viewer.TargetProgress.Value);
         }
-
 
 
         [Test]
@@ -149,7 +148,6 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
             Tracker.Increment();
             lateProgress.Should().Be(Viewer.CurrentProgress).And.Be((CurrentProgress)5);
             jobState.Should().Be(Viewer.JobState).And.Be(JobState.Done);
-
         }
     }
 }

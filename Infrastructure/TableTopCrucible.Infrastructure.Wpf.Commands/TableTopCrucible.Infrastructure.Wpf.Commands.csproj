@@ -1,20 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0-windows</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference
+            Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
+        <ProjectReference
+            Include="..\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ReactiveUI.Fody" Version="16.3.10" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="ReactiveUI.Fody" Version="16.3.10" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="RepositoryEdit\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="RepositoryEdit\" />
+    </ItemGroup>
 
 </Project>

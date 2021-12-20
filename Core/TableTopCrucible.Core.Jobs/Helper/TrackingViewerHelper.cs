@@ -3,9 +3,7 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
 using ReactiveUI;
-
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
@@ -77,13 +75,10 @@ namespace TableTopCrucible.Core.Jobs.Helper
                     this,
                     vm => vm.CurrentProgress,
                     out _currentProgress,
-                false,
+                    false,
                     scheduler)
-                 ,
-                TargetProgressChanges.Do(x =>
-                {
-
-                }).ToProperty(
+                ,
+                TargetProgressChanges.Do(x => { }).ToProperty(
                     this,
                     vm => vm.TargetProgress,
                     out _targetProgress,
@@ -96,7 +91,7 @@ namespace TableTopCrucible.Core.Jobs.Helper
                     out _jobState,
                     false,
                     scheduler)
-                ).DisposeWith(_permanentDisposables);
+            ).DisposeWith(_permanentDisposables);
         }
 
         public override string ToString()

@@ -5,22 +5,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Printing;
 using System.Runtime.CompilerServices;
-
 using Microsoft.VisualBasic.CompilerServices;
-
 using ReactiveUI;
-
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
 {
-
     public interface IDataEntity<TId>
         where TId : IDataId
     {
         TId Id { get; init; }
     }
+
     /// <summary>
     /// used for entities like item
     /// </summary>
@@ -46,10 +43,11 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         {
             Id = new TId { Guid = Guid.NewGuid() };
         }
+
         protected abstract IEnumerable<object> getAtomicValues();
 
         public override bool Equals(object obj)
-            => obj.GetType() == this.GetType()
+            => obj.GetType() == GetType()
                && obj is DataEntity<TId> other
                && Id.Equals(other.Id)
                && getAtomicValues().SequenceEqual(other.getAtomicValues());
@@ -66,7 +64,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         /// <param name="field"></param>
         /// <param name="value"></param>
         /// <param name="name"></param>
-        public void RaiseAndSetRequiredIfChanged<TValue>(ref TValue field, TValue value, [CallerMemberName] string name="")
+        public void RaiseAndSetRequiredIfChanged<TValue>(ref TValue field, TValue value,
+            [CallerMemberName] string name = "")
         {
             if (value is null)
                 throw new NullReferenceException(name);

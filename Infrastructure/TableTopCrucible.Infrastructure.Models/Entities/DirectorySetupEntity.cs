@@ -10,6 +10,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
     public class DirectorySetupEntity : DataEntity<DirectorySetupId>
     {
         private Name _name;
+
         public Name Name
         {
             get => _name;
@@ -24,18 +25,17 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             set => RaiseAndSetRequiredIfChanged(ref _path, value);
         }
 
-        protected override IEnumerable<object> getAtomicValues() 
-            => new object[]{Name, Path};
+        protected override IEnumerable<object> getAtomicValues()
+            => new object[] { Name, Path };
 
         public DirectorySetupEntity()
         {
-                
         }
 
         public DirectorySetupEntity(DirectoryPath path)
         {
-            this.Path = path;
-            this.Name = path.GetDirectoryName().ToName();
+            Path = path;
+            Name = path.GetDirectoryName().ToName();
         }
     }
 }

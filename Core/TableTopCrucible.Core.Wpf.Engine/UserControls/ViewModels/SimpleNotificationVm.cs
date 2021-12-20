@@ -1,7 +1,5 @@
 ﻿using ReactiveUI;
-
 using Splat;
-
 using System;
 using System.Linq;
 using System.Reactive;
@@ -9,7 +7,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
-
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
@@ -18,7 +15,6 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
-
     public class SimpleNotificationVm : ReactiveObject, INotification, IActivatableViewModel
     {
         public Name Title { get; }
@@ -55,14 +51,14 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             Title = title;
             Content = content;
             Type = type;
-            this._notificationService = Locator.Current!.GetService<INotificationService>();
+            _notificationService = Locator.Current!.GetService<INotificationService>();
             this.WhenActivated(() => new[]
             {
                 _initDeleteCountdown(),
-                ReactiveCommandHelper.Create(() =>_closedByUser.OnNext(Unit.Default)
-                    , cmd=>CloseNotificationCommand = cmd),
-                this.WhenAnyValue(vm=>vm.Type, type=>type != NotificationType.Error)
-                    .ToProperty(this, vm=>vm.Closable, out _closable)
+                ReactiveCommandHelper.Create(() => _closedByUser.OnNext(Unit.Default)
+                    , cmd => CloseNotificationCommand = cmd),
+                this.WhenAnyValue(vm => vm.Type, type => type != NotificationType.Error)
+                    .ToProperty(this, vm => vm.Closable, out _closable)
             });
         }
 
@@ -79,9 +75,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .OutputObservable(out var deleteCountdownActiveChanges)
                     .ToProperty(
                         this,
-                        v=>v.DeleteCountdownRunning,
+                        v => v.DeleteCountdownRunning,
                         out _deleteCountdownRunning,
-                        false,RxApp.MainThreadScheduler),
+                        false, RxApp.MainThreadScheduler),
 
                 // timer countdown
                 deleteCountdownActiveChanges
@@ -97,7 +93,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     )
                     .Switch()
                     .OutputObservable(out var deleteCountdownProgressChanges)
-                    .ToProperty(this, vm=>vm.DeleteCountdownProgress, out _deleteCountdownProgress, false, RxApp.MainThreadScheduler),
+                    .ToProperty(this, vm => vm.DeleteCountdownProgress, out _deleteCountdownProgress, false,
+                        RxApp.MainThreadScheduler),
 
                 // card fadeout
                 deleteCountdownProgressChanges
@@ -111,12 +108,11 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                             SettingsHelper.AnimationDuration,
                             RxApp.TaskpoolScheduler)
                     )
-                    .Finally(() =>_notificationService.RemoveNotification(Id))
+                    .Finally(() => _notificationService.RemoveNotification(Id))
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .StartWith(1)
-                    .ToProperty(this, vm => vm.CardOpacity, out _cardOpacity, false, RxApp.MainThreadScheduler),
+                    .ToProperty(this, vm => vm.CardOpacity, out _cardOpacity, false, RxApp.MainThreadScheduler)
             });
         }
-
     }
 }

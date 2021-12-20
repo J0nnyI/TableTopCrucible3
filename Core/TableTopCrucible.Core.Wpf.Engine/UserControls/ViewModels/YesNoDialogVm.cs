@@ -1,7 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
-
 using ReactiveUI;
-
 using System;
 using System.Reactive.Subjects;
 using System.Windows.Input;
@@ -13,10 +11,12 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         Yes,
         No
     }
+
     public interface IYesNoDialog
     {
         IObservable<YesNoDialogResult> Result { get; }
     }
+
     public class YesNoDialogVm : ReactiveObject, IActivatableViewModel, IYesNoDialog
     {
         public string Text { get; }
@@ -34,6 +34,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             _dialogResult.OnNext(YesNoDialogResult.No);
             _dialogResult.OnCompleted();
         }
+
         internal YesNoDialogVm(string text)
         {
             Text = text;
@@ -48,11 +49,11 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                         _dialogResult.OnNext(YesNoDialogResult.Yes);
                         _dialogResult.OnCompleted();
                     },
-                    c=>YesClickedCommand = c
-                    ),
-                ReactiveCommandHelper.Create(Close,
-                    c=>NoClickedCommand = c
+                    c => YesClickedCommand = c
                 ),
+                ReactiveCommandHelper.Create(Close,
+                    c => NoClickedCommand = c
+                )
             });
         }
 

@@ -1,5 +1,4 @@
 ﻿using ReactiveUI;
-
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
@@ -16,8 +15,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
             {
                 this.OneWayBind(
                     ViewModel,
-                    vm=>vm.NotificationList,
-                            v=>v.Notifications.ItemsSource),
+                    vm => vm.NotificationList,
+                    v => v.Notifications.ItemsSource)
             });
         }
     }

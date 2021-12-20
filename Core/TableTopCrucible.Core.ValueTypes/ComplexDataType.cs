@@ -13,7 +13,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         protected abstract IEnumerable<object> getAtomicValues();
 
         public override bool Equals(object obj)
-            => obj.GetType() == this.GetType()
+            => obj.GetType() == GetType()
                && obj is ComplexDataType other
                && getAtomicValues().SequenceEqual(other.getAtomicValues());
 

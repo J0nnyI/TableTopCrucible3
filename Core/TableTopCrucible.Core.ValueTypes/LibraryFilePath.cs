@@ -12,7 +12,7 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public static LibraryFilePath WorkingFile
-            => (LibraryFilePath)(DirectoryPath.AppData + (FileName) "workingDatabase.ttcl");
+            => (LibraryFilePath)(DirectoryPath.AppData + (FileName)"workingDatabase.ttcl");
 
         public static explicit operator LibraryFilePath(FilePath value)
             => From(value.Value);

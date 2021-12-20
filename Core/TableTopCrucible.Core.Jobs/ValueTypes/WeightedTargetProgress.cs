@@ -6,6 +6,6 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
     {
         public static explicit operator WeightedTargetProgress(double value) => From(value);
 
-        public static explicit operator TargetProgress(WeightedTargetProgress value) => (TargetProgress) value.Value;
+        public static explicit operator TargetProgress(WeightedTargetProgress value) => (TargetProgress)value.Value;
     }
 }

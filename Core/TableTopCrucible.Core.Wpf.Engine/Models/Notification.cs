@@ -1,5 +1,4 @@
 ﻿using System;
-
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Models

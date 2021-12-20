@@ -32,8 +32,9 @@ namespace TableTopCrucible.Core.Helper
         private sealed class DisposeEmitter : IDisposable
         {
             public IObservable<Unit> OnDisposed => _onDisposed.AsObservable();
-            private readonly Subject<Unit> _onDisposed = new ();
+            private readonly Subject<Unit> _onDisposed = new();
             private bool disposed = false;
+
             public void Dispose()
             {
                 if (disposed)
@@ -42,7 +43,10 @@ namespace TableTopCrucible.Core.Helper
                 _onDisposed.OnNext(Unit.Default);
                 _onDisposed.Dispose();
             }
-            private DisposeEmitter() { }
+
+            private DisposeEmitter()
+            {
+            }
 
             public static DisposeEmitter ForComposite(CompositeDisposable compositeDisposable)
                 => new DisposeEmitter().DisposeWith(compositeDisposable);

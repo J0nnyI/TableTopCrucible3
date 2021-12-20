@@ -1,8 +1,6 @@
 ﻿using MoreLinq;
-
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +10,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Windows.Input;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
@@ -36,13 +33,16 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         ITrackingViewer StartScan();
         ICommand StartScanCommand { get; }
     }
+
     public class FileSynchronizationService : IFileSynchronizationService
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IScannedFileRepository _fileRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IProgressTrackingService _progressTrackingService;
-        [Reactive] public bool ScanRunning { get; private set; } = false;
+
+        [Reactive]
+        public bool ScanRunning { get; private set; } = false;
 
         public FileSynchronizationService(
             IDirectorySetupRepository directorySetupRepository,
@@ -55,13 +55,14 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             _itemRepository = itemRepository;
             _progressTrackingService = progressTrackingService;
 
-            this.StartScanCommand = ReactiveCommand.Create(
+            StartScanCommand = ReactiveCommand.Create(
                 StartScan,
                 this.WhenAnyValue(s => s.ScanRunning)
                     .Select(x => !x));
         }
 
         public ICommand StartScanCommand { get; }
+
         public ITrackingViewer StartScan()
         {
             if (ScanRunning)
@@ -79,10 +80,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             totalProgress
                 .OnDone()
                 .Take(1)
-                .Subscribe(_ =>
-            {
-                ScanRunning = false;
-            });
+                .Subscribe(_ => { ScanRunning = false; });
 
             Observable.Start(() =>
             {
@@ -138,7 +136,6 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                         hashingTracker.Complete();
                         updateTracker.Complete();
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -146,7 +143,6 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     Debugger.Break();
                     throw;
                 }
-
             }, RxApp.TaskpoolScheduler);
 
             return totalProgress;
@@ -163,22 +159,21 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 found => new RawSyncFileData(null, found),
                 known => new RawSyncFileData(known, null),
                 (found, known) => new RawSyncFileData(known, found));
-
         }
 
         private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetupEntity> directorySetups)
         {
-            return new(directorySetups
-                .SelectMany(directory=>startScanForDirectory(directory)));
+            return new FileSyncListGrouping(directorySetups
+                .SelectMany(directory => startScanForDirectory(directory)));
         }
 
 
         private void _handleChangedFiles(RawSyncFileData[] files)
         {
             var toAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity());
-            var toUpdate = files.Where(x => x.UpdateSource == FileUpdateSource.Updated).Select(file => file.GetNewEntity());
+            var toUpdate = files.Where(x => x.UpdateSource == FileUpdateSource.Updated)
+                .Select(file => file.GetNewEntity());
             _fileRepository.AddRange(toAdd);
-            
         }
     }
 }

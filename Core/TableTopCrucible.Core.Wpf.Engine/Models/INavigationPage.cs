@@ -1,5 +1,4 @@
 ﻿using MaterialDesignThemes.Wpf;
-
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
@@ -10,6 +9,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Models
         Lower,
         Upper
     }
+
     public interface INavigationPage
     {
         PackIconKind? Icon { get; }
@@ -17,5 +17,4 @@ namespace TableTopCrucible.Core.Wpf.Engine.Models
         NavigationPageLocation PageLocation { get; }
         SortingOrder Position { get; }
     }
-
 }

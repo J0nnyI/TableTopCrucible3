@@ -63,13 +63,17 @@ namespace TableTopCrucible.Core.Helper
             this IObservable<IChangeSet<TObject, TKey>> source,
             SortDirection sortDirection = SortDirection.Ascending) where TObject : IComparable
         {
-            return source.Sort((a, b) => a.CompareTo(b) * (sortDirection == SortDirection.Descending ? -1 : 1));
+            return source.Sort((a, b) => a.CompareTo(b) * (sortDirection == SortDirection.Descending
+                ? -1
+                : 1));
         }
 
         public static IObservable<IChangeSet<TObject>> Sort<TObject>(this IObservable<IChangeSet<TObject>> source,
             SortDirection sortDirection = SortDirection.Ascending) where TObject : IComparable
         {
-            return source.Sort((a, b) => a.CompareTo(b) * (sortDirection == SortDirection.Descending ? -1 : 1));
+            return source.Sort((a, b) => a.CompareTo(b) * (sortDirection == SortDirection.Descending
+                ? -1
+                : 1));
         }
 
 
@@ -78,14 +82,18 @@ namespace TableTopCrucible.Core.Helper
             SortDirection sortDirection = SortDirection.Ascending)
         {
             return source.Sort((a, b) => textRetriever(a).CompareTo(textRetriever(b)) *
-                                         (sortDirection == SortDirection.Descending ? -1 : 1));
+                                         (sortDirection == SortDirection.Descending
+                                             ? -1
+                                             : 1));
         }
 
         public static IObservable<IChangeSet<TObject>> Sort<TObject>(this IObservable<IChangeSet<TObject>> source,
             Func<TObject, IComparable> textRetriever, SortDirection sortDirection = SortDirection.Ascending)
         {
             return source.Sort((a, b) => textRetriever(a).CompareTo(textRetriever(b)) *
-                                         (sortDirection == SortDirection.Descending ? -1 : 1));
+                                         (sortDirection == SortDirection.Descending
+                                             ? -1
+                                             : 1));
         }
 
         #endregion

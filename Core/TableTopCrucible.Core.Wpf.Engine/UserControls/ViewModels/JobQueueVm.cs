@@ -6,16 +6,12 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using DynamicData;
 using DynamicData.Aggregation;
 using DynamicData.Binding;
-
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-
 using Splat;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Jobs.JobQueue.Models;
 using TableTopCrucible.Core.Jobs.Progression.Models;
@@ -50,6 +46,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                 .Select(JobToFilter)
                 .Switch();
         }
+
         internal IObservable<bool> JobToFilter(ITrackingViewer job)
         {
             return _filterChanges
@@ -100,7 +97,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                         .Subscribe()
                 };
             });
-
         }
 
         public IJobViewerCard getCardForJob(ITrackingViewer viewer)
@@ -114,8 +110,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
          * default behavior: show all (Observable.Return(true))
          * this will also be used if the value is null
          */
-        [Reactive] public JobFilter JobFilter { get; set; } = JobFilter.All;
-
-
+        [Reactive]
+        public JobFilter JobFilter { get; set; } = JobFilter.All;
     }
 }

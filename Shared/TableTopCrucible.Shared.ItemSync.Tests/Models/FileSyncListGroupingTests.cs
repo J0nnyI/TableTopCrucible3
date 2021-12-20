@@ -25,6 +25,7 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
 
         private IDirectorySetupRepository
             directorySetupRepository;
+
         private IScannedFileRepository fileRepository;
         private IFileSynchronizationService fileSyncService;
 
@@ -48,6 +49,7 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
                 Content = Guid.NewGuid().ToString();
                 NewContent = Guid.NewGuid().ToString();
             }
+
             // prepares data for this file according to its given state
             public ScannedFileDataEntity Prepare()
             {
@@ -82,7 +84,6 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
                 throw new NotImplementedException("has to be redone");
                 // an unchanged file does not need further modifications
                 //return new (HashKey, File, LastWrite, OriginalId);
-
             }
 
             public Unit Test(ScannedFileDataEntity output)
@@ -90,7 +91,9 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
                 output.HashKey.Should().Be(HashKey);
 
                 if (FileUpdateSource == FileUpdateSource.Deleted)
+                {
                     output.Should().BeNull();
+                }
                 else
                 {
                     output.HashKey.Should().Be(TargetHashKey);
@@ -101,8 +104,6 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
 
                 return Unit.Default;
             }
-
-
         }
 
 
@@ -116,9 +117,9 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
 
             public TestSetup()
             {
-                this.directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
-                this.fileRepository = Locator.Current.GetService<IScannedFileRepository>();
-                this.fileSyncService = Locator.Current.GetService<IFileSynchronizationService>();
+                directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
+                fileRepository = Locator.Current.GetService<IScannedFileRepository>();
+                fileSyncService = Locator.Current.GetService<IFileSynchronizationService>();
             }
 
             private void prepare()
@@ -186,21 +187,22 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
         {
             Prepare.ApplicationEnvironment();
 
-            this.directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
-            this.fileRepository = Locator.Current.GetService<IScannedFileRepository>();
-            this.fileSyncService = Locator.Current.GetService<IFileSynchronizationService>();
+            directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
+            fileRepository = Locator.Current.GetService<IScannedFileRepository>();
+            fileSyncService = Locator.Current.GetService<IFileSynchronizationService>();
         }
 
         [Test]
         public void UpdateFileHashesTest()
-        { // feature not implemented yet
+        {
+            // feature not implemented yet
             new TestSetup
             {
                 Directories = new[]
                 {
                     @"C:\First",
                     @"C:\First\Unchanged",
-                    @"C:\second",
+                    @"C:\second"
                 },
                 FileData = new FileSetupData[]
                 {
@@ -213,8 +215,8 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
                     new(@"C:\First\Updated\A.stl", FileUpdateSource.Updated),
                     new(@"C:\First\Updated\B.stl", FileUpdateSource.Updated),
                     new(@"C:\second\A.stl", FileUpdateSource.New),
-                    new(@"C:\second\B.stl", FileUpdateSource.New),
-                },
+                    new(@"C:\second\B.stl", FileUpdateSource.New)
+                }
             }.RunTest();
         }
     }

@@ -1,7 +1,5 @@
 ﻿using ReactiveUI;
-
 using System;
-
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
@@ -17,14 +15,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
             this.WhenActivated(() => new IDisposable[]
             {
                 this.OneWayBind(ViewModel,
-                    vm=>vm.FileSyncCommand,
-                    v=>v.FileSync.Command),
+                    vm => vm.FileSyncCommand,
+                    v => v.FileSync.Command),
                 this.OneWayBind(ViewModel,
                     vm => vm.Files,
                     v => v.Files.ItemsSource),
                 this.OneWayBind(ViewModel,
                     vm => vm.Items,
-                    v => v.Items.ItemsSource),
+                    v => v.Items.ItemsSource)
             });
         }
     }

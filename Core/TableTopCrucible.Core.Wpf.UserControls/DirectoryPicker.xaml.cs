@@ -1,15 +1,12 @@
 ﻿using Ookii.Dialogs.Wpf;
-
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
-
 using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Windows;
-
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.UserControls
@@ -18,12 +15,12 @@ namespace TableTopCrucible.Core.Wpf.UserControls
     {
         [Reactive]
         public string UserText { get; set; }
+
         public DirectoryPickerVm()
         {
             this.WhenActivated(() => new[]
             {
-
-                DirectoryPath.RegisterValidator(this, vm=>vm.UserText, true)
+                DirectoryPath.RegisterValidator(this, vm => vm.UserText, true)
             });
         }
 
@@ -31,13 +28,15 @@ namespace TableTopCrucible.Core.Wpf.UserControls
     }
 
 
-    public partial class DirectoryPicker : ReactiveUserControl<DirectoryPickerVm>, IActivatableView, INotifyDataErrorInfo
+    public partial class DirectoryPicker : ReactiveUserControl<DirectoryPickerVm>, IActivatableView,
+        INotifyDataErrorInfo
     {
         public string Hint
         {
             get => (string)GetValue(HintProperty);
             set => SetValue(HintProperty, value);
         }
+
         public static readonly DependencyProperty HintProperty =
             DependencyProperty.Register(
                 nameof(Hint),
@@ -50,6 +49,7 @@ namespace TableTopCrucible.Core.Wpf.UserControls
             get => (DirectoryPath)GetValue(PathProperty);
             set => SetValue(PathProperty, value);
         }
+
         public static readonly DependencyProperty PathProperty =
             DependencyProperty.Register(
                 nameof(Path),
@@ -62,6 +62,7 @@ namespace TableTopCrucible.Core.Wpf.UserControls
             get => (string)GetValue(UserTextProperty);
             set => SetValue(UserTextProperty, value);
         }
+
         public static readonly DependencyProperty UserTextProperty =
             DependencyProperty.Register(
                 nameof(UserText),
@@ -70,41 +71,41 @@ namespace TableTopCrucible.Core.Wpf.UserControls
                 new PropertyMetadata(string.Empty));
 
 
-
         public DirectoryPicker()
         {
-            this.DataContext = this.ViewModel = new DirectoryPickerVm();
+            DataContext = ViewModel = new DirectoryPickerVm();
             InitializeComponent();
             // sync user text and path
             this.WhenActivated(() => new[]
             {
                 //sync UserText (raw input) and Path (validated input)
                 Observable.CombineLatest(
-                    this.WhenAnyValue(v => v.Path)
-                        .Select(value => new {value, timeStamp = DateTime.Now}),
-                    this.WhenAnyValue(v => v.UserText)
-                        .Select(value => new {value, timeStamp = DateTime.Now}),
-                    (path, userText)=>new {path, userText})
-                .Where(x=>x?.userText?.value != x?.path?.value?.Value)
-                .Subscribe(x =>
-                {
-                    if (x.path.timeStamp > x.userText.timeStamp)
+                        this.WhenAnyValue(v => v.Path)
+                            .Select(value => new { value, timeStamp = DateTime.Now }),
+                        this.WhenAnyValue(v => v.UserText)
+                            .Select(value => new { value, timeStamp = DateTime.Now }),
+                        (path, userText) => new { path, userText })
+                    .Where(x => x?.userText?.value != x?.path?.value?.Value)
+                    .Subscribe(x =>
                     {
-                        this.UserText = Path.Value;
-                        return;
-                    }
-                    if(DirectoryPath.IsValid(x.userText.value) == null)
-                        this.Path = DirectoryPath.From(x.userText.value);
-                }),
+                        if (x.path.timeStamp > x.userText.timeStamp)
+                        {
+                            UserText = Path.Value;
+                            return;
+                        }
+
+                        if (DirectoryPath.IsValid(x.userText.value) == null)
+                            Path = DirectoryPath.From(x.userText.value);
+                    }),
                 // custom 2-way bind between vm.UserText and v.UserText to prevent loosing the initial value (initial sync vm.UserText => v.UserText)
-                this.WhenAnyValue(v=>v.UserText)
-                    .Where(text=>text != ViewModel.UserText)
-                    .BindTo(this, v=>v.ViewModel.UserText),
-                this.ObservableForProperty(v=>v.ViewModel.UserText)
-                    .Select(c=>c.Value)
-                    .Where(text=>text != this.UserText)
-                    .BindTo(this, v=>v.UserText),
-                
+                this.WhenAnyValue(v => v.UserText)
+                    .Where(text => text != ViewModel.UserText)
+                    .BindTo(this, v => v.ViewModel.UserText),
+                this.ObservableForProperty(v => v.ViewModel.UserText)
+                    .Select(c => c.Value)
+                    .Where(text => text != UserText)
+                    .BindTo(this, v => v.UserText)
+
                 // bug: filePicker error popup visible without error
             });
         }
@@ -116,10 +117,7 @@ namespace TableTopCrucible.Core.Wpf.UserControls
                 ViewModel.UserText = dialog.SelectedPath;
         }
 
-        public IEnumerable GetErrors(string propertyName)
-        {
-            return ViewModel.GetErrors(propertyName);
-        }
+        public IEnumerable GetErrors(string propertyName) => ViewModel.GetErrors(propertyName);
 
         public bool HasErrors => ViewModel.HasErrors;
 

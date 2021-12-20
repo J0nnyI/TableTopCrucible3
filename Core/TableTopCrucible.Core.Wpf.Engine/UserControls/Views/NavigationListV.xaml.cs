@@ -1,10 +1,7 @@
 ﻿using DynamicData;
-
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-
 using System.Windows.Input;
-
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
@@ -23,29 +20,32 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
             InitializeComponent();
             this.WhenActivated(() => new[]
             {
-                this.WhenAnyValue(v=>v.ViewModel)
-                    .BindTo(this, v=>v.DataContext),
+                this.WhenAnyValue(v => v.ViewModel)
+                    .BindTo(this, v => v.DataContext),
 
                 this.OneWayBind(ViewModel,
-                    vm=>vm.UpperList,
-                    v=>v.UpperList.ItemsSource),
+                    vm => vm.UpperList,
+                    v => v.UpperList.ItemsSource),
 
                 this.OneWayBind(ViewModel,
-                    vm=>vm.LowerList,
-                    v=>v.LowerList.ItemsSource),
+                    vm => vm.LowerList,
+                    v => v.LowerList.ItemsSource),
 
                 this.Bind(ViewModel,
-                    vm=>vm.UpperSelection,
-                    v=>v.UpperList.SelectedItem,
-                    m=>m.HasContent?m:null,
+                    vm => vm.UpperSelection,
+                    v => v.UpperList.SelectedItem,
+                    m => m.HasContent
+                        ? m
+                        : null,
                     m =>
-                         m as FlaggedNavigationItem ?? new FlaggedNavigationItem(NavigationPageLocation.Upper, true)),
+                        m as FlaggedNavigationItem ?? new FlaggedNavigationItem(NavigationPageLocation.Upper, true)),
                 this.Bind(ViewModel,
-                    vm=>vm.LowerSelection,
-                    v=>v.LowerList.SelectedItem,
-                    m=>m.HasContent?m:null,
-                    m=>m as FlaggedNavigationItem ?? new FlaggedNavigationItem(NavigationPageLocation.Lower, true)),
-
+                    vm => vm.LowerSelection,
+                    v => v.LowerList.SelectedItem,
+                    m => m.HasContent
+                        ? m
+                        : null,
+                    m => m as FlaggedNavigationItem ?? new FlaggedNavigationItem(NavigationPageLocation.Lower, true))
             });
         }
 

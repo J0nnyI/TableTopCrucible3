@@ -1,5 +1,4 @@
 ﻿using ReactiveUI;
-
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
@@ -7,7 +6,6 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Security.Cryptography;
-
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 
@@ -19,12 +17,13 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 
         public RawSyncFileData(ScannedFileDataEntity knownFile, FilePath foundFile)
         {
-            this.KnownFile = knownFile;
-            this.OriginalHashKey = knownFile?.HashKey;
+            KnownFile = knownFile;
+            OriginalHashKey = knownFile?.HashKey;
             FoundFile = foundFile;
-            this.foundFileInfo = FoundFile?.GetInfo();
+            foundFileInfo = FoundFile?.GetInfo();
             UpdateSource = GetFileState();
         }
+
         public ScannedFileDataEntity KnownFile { get; }
         public FilePath FoundFile { get; }
 
@@ -34,7 +33,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 
         public FileHashKey CreateNewHashKey(HashAlgorithm algorithm = null)
         {
-            if (this.NewHashKey != null)
+            if (NewHashKey != null)
                 return NewHashKey;
 
             var hash = FileHashKey.From(
@@ -59,6 +58,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 
             return FileUpdateSource.Updated;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -66,7 +66,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         public ScannedFileDataEntity GetNewEntity()
         {
             if (KnownFile == null)
-                return new(FoundFile, NewHashKey, foundFileInfo.LastWriteTime);
+                return new ScannedFileDataEntity(FoundFile, NewHashKey, foundFileInfo.LastWriteTime);
             KnownFile.HashKey = NewHashKey;
             KnownFile.FileLocation = FoundFile;
             KnownFile.LastWrite = foundFileInfo.LastWriteTime;
@@ -99,14 +99,11 @@ namespace TableTopCrucible.Shared.ItemSync.Models
         {
             // temporary solution: only handle new items
             if (LinkedItemAfterSync is null) // there is no item for the updated file
-            {
                 // todo: autoTagging
-                return new (File.GetFilenameWithoutExtension().ToName(), HashAfterSync);
-            }
+                return new ItemEntity(File.GetFilenameWithoutExtension().ToName(), HashAfterSync);
 
             LinkedItemAfterSync.FileHashKey = HashAfterSync;
             return LinkedItemAfterSync;
         }
-
     }
 }

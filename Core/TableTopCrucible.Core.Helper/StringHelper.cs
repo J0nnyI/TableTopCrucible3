@@ -6,7 +6,7 @@ using ValueOf;
 
 namespace TableTopCrucible.Core.Helper
 {
-    public class SerializedStringList:ValueOf<string, SerializedStringList>
+    public class SerializedStringList : ValueOf<string, SerializedStringList>
     {
         public static SerializedStringList From(IEnumerable<string> list)
             => From(JsonSerializer.Serialize(list ?? Enumerable.Empty<string>()));

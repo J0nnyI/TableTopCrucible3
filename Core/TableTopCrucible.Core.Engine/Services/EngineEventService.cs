@@ -14,7 +14,8 @@ namespace TableTopCrucible.Core.Engine.Services
     {
         Interaction<LibraryFilePath, bool> OnLoad { get; }
     }
-    internal class EngineEventService:IEngineEventService
+
+    internal class EngineEventService : IEngineEventService
     {
         public Interaction<LibraryFilePath, bool> OnLoad { get; } = new();
     }

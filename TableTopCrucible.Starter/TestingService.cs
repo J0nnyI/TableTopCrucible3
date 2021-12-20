@@ -18,7 +18,8 @@ namespace TableTopCrucible.Starter
     {
         void CreateData();
     }
-    class TestingService:ITestingService
+
+    internal class TestingService : ITestingService
     {
         private readonly IProgressTrackingService _progressTrackingService;
 
@@ -26,6 +27,7 @@ namespace TableTopCrucible.Starter
         {
             _progressTrackingService = progressTrackingService;
         }
+
         public void CreateData()
         {
         }

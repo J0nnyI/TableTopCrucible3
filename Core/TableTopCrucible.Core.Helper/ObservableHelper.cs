@@ -33,7 +33,7 @@ namespace TableTopCrucible.Core.Helper
         public static IObservable<PreviousAndCurrentValue<T>> Pairwise<T>(this IObservable<T> src,
             bool skipInitial = true)
         {
-            return src.Scan(new PreviousAndCurrentValue<T> {Type = PCValueType.Seed},
+            return src.Scan(new PreviousAndCurrentValue<T> { Type = PCValueType.Seed },
                     (previous, current) =>
                         new PreviousAndCurrentValue<T>(previous.Current, current, previous.Type))
                 .Where(x =>
@@ -82,7 +82,8 @@ namespace TableTopCrucible.Core.Helper
         /// <param name="source"></param>
         /// <param name="disposeWith"></param>
         /// <returns></returns>
-        public static IConnectableObservable<T> ConnectUntil<T>(this IConnectableObservable<T> source, CompositeDisposable disposeWith)
+        public static IConnectableObservable<T> ConnectUntil<T>(this IConnectableObservable<T> source,
+            CompositeDisposable disposeWith)
         {
             source.Connect().DisposeWith(disposeWith);
             return source;

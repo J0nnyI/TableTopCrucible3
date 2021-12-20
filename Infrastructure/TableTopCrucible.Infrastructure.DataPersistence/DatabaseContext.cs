@@ -14,17 +14,19 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public int SaveChanges();
         public void Migrate();
     }
+
     public class DatabaseContext : DbContextWithTriggers, IDatabaseContext
     {
         public DbSet<ItemEntity> Items { get; set; }
         public DbSet<ScannedFileDataEntity> Files { get; set; }
         public DbSet<DirectorySetupEntity> DirectorySetups { get; set; }
+
         public void Migrate()
-            => this.Database.Migrate();
-        
+            => Database.Migrate();
+
         public DatabaseContext()
         {
-            this.Migrate();
+            Migrate();
         }
 
 

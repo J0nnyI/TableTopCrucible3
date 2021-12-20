@@ -4,9 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using FluentValidation.Results;
-
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using ValueOf;
@@ -20,8 +18,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.ValueTypes
 
         public static JobFilter FromState(JobState filterState)
             => From(viewer => viewer
-                .JobStateChanges
-                .Select(state => state == filterState),
+                    .JobStateChanges
+                    .Select(state => state == filterState),
                 "filter by state " + filterState);
 
         public static JobFilter From(Func<ITrackingViewer, IObservable<bool>> value, string description)

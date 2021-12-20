@@ -6,14 +6,10 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
-
 using DynamicData;
 using DynamicData.Binding;
-
 using FluentAssertions;
-
 using NUnit.Framework;
-
 using ReactiveUI;
 
 namespace TableTopCrucible.Core.Test.Packages
@@ -22,7 +18,7 @@ namespace TableTopCrucible.Core.Test.Packages
     /// testFixture to check if 3rd party code behaves as expected
     /// </summary>
     [TestFixture()]
-    class DynamicDataTests
+    internal class DynamicDataTests
     {
         private void CheckCount(SourceList<Tuple<string, IObservable<bool>>> list, int count)
         {
@@ -31,10 +27,12 @@ namespace TableTopCrucible.Core.Test.Packages
                 .FilterOnObservable(x => x.Item2)
                 .AsObservableList();
             var bindedList = new ObservableCollectionExtended<Tuple<string, IObservable<bool>>>();
-            filteredList.Connect().Transform(x => new Tuple<string, IObservable<bool>>(x.Item1, x.Item2)).Bind(bindedList).Subscribe();
+            filteredList.Connect().Transform(x => new Tuple<string, IObservable<bool>>(x.Item1, x.Item2))
+                .Bind(bindedList).Subscribe();
             filteredList.Items.Should().HaveCount(count);
             bindedList.Should().HaveCount(count);
         }
+
         [Test]
         public void FilterOnObservable()
         {
@@ -44,24 +42,23 @@ namespace TableTopCrucible.Core.Test.Packages
             var list = new SourceList<Tuple<string, IObservable<bool>>>();
             list.AddRange(new Tuple<string, IObservable<bool>>[]
             {
-                new ("first",item1.Replay().RefCount()),
-                new ("second",item2.Replay().RefCount()),
-                new ("third",item3.Replay().RefCount()),
+                new("first", item1.Replay().RefCount()),
+                new("second", item2.Replay().RefCount()),
+                new("third", item3.Replay().RefCount())
             });
             CheckCount(list, 3);
             CheckCount(list, 3);
 
             item1.OnNext(false);
             item2.OnNext(true);
-            item3.OnNext(false); CheckCount(list, 1);
+            item3.OnNext(false);
+            CheckCount(list, 1);
 
 
             item1.OnNext(true);
             item2.OnNext(false);
             item3.OnNext(true);
             CheckCount(list, 2);
-
-
         }
 
         [Test]
@@ -82,8 +79,5 @@ namespace TableTopCrucible.Core.Test.Packages
                     ex => Assert.Fail("exception thrown: {0}", ex) // causes the test to fail
                 );
         }
-
-
-
     }
 }

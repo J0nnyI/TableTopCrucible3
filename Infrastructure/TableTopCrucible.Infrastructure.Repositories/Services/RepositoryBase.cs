@@ -7,11 +7,8 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Navigation;
-
 using DynamicData;
-
 using Microsoft.EntityFrameworkCore;
-
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
@@ -30,32 +27,33 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         public static IObservable<IChangeSet<TEntity, TId>> ToObservableCache<TId, TEntity>(
             this IObservable<CollectionUpdate<TId, TEntity>> updateSource,
             CompositeDisposable disposeWith
-            )
+        )
             where TId : IDataId
             where TEntity : class, IDataEntity<TId>, new()
         {
             return updateSource
                 .Scan(
-                   new SourceCache<TEntity, TId>(entity => entity.Id)
-                       .DisposeWith(disposeWith),
-                   (list, change) =>
-                   {
-                       switch (change.UpdateInfo.ChangeReason)
-                       {
-                           case EntityUpdateChangeReason.Add:
-                               list.AddOrUpdate(change.UpdateInfo.UpdatedEntities.Values);
-                               break;
-                           case EntityUpdateChangeReason.Remove:
-                               list.Remove(change.UpdateInfo.UpdatedEntities.Values);
-                               break;
-                           case EntityUpdateChangeReason.Init:
-                               list.AddOrUpdate(change.Queryable.AsEnumerable());
-                               break;
-                           default:
-                               throw new NotImplementedException();
-                       }
-                       return list;
-                   })
+                    new SourceCache<TEntity, TId>(entity => entity.Id)
+                        .DisposeWith(disposeWith),
+                    (list, change) =>
+                    {
+                        switch (change.UpdateInfo.ChangeReason)
+                        {
+                            case EntityUpdateChangeReason.Add:
+                                list.AddOrUpdate(change.UpdateInfo.UpdatedEntities.Values);
+                                break;
+                            case EntityUpdateChangeReason.Remove:
+                                list.Remove(change.UpdateInfo.UpdatedEntities.Values);
+                                break;
+                            case EntityUpdateChangeReason.Init:
+                                list.AddOrUpdate(change.Queryable.AsEnumerable());
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
+
+                        return list;
+                    })
                 .Select(cache => cache.Connect())
                 .Switch();
         }
@@ -130,6 +128,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         public IQueryable<TEntity> Data => _Data;
         private readonly Subject<EntityUpdate<TId, TEntity>> _changes = new();
         public IObservable<CollectionUpdate<TId, TEntity>> Updates { get; }
+
         public IObservable<TEntity> Watch(TId id)
             => _changes
                 .Where(change =>
@@ -150,11 +149,11 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         protected RepositoryBase(IDatabaseAccessor database, DbSet<TEntity> data)
         {
             _database = database;
-            this._Data = data;
+            _Data = data;
 
 
-            this.Updates = _changes.Select(change =>
-                new CollectionUpdate<TId, TEntity>(Data, change))
+            Updates = _changes.Select(change =>
+                    new CollectionUpdate<TId, TEntity>(Data, change))
                 .Publish()
                 .RefCount()
                 .StartWith(
@@ -182,6 +181,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 )
             );
         }
+
         public void AddRange(IEnumerable<TEntity> entities)
         {
             var newEntities = entities.ToArray();
@@ -194,6 +194,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                     newEntities.Select(entity => new KeyValuePair<TId, TEntity>(entity.Id, entity)))
             ));
         }
+
         public void Remove(TEntity entity)
         {
             _Data.Remove(entity);
@@ -209,6 +210,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 )
             );
         }
+
         public void Remove(TId id)
         {
             Remove(this[id]);
@@ -231,6 +233,5 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         public void RemoveRange(IEnumerable<TId> ids)
             => RemoveRange(Data.Where(entity => ids.Contains(entity.Id)));
-
     }
 }

@@ -13,13 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 using DynamicData;
-
 using ReactiveUI;
-
 using Splat;
-
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Services;
@@ -38,17 +34,17 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
             this.WhenActivated(() => new[]
             {
                 this.OneWayBind(ViewModel,
-                    vm=>vm.Cards,
-                    v=>v.Jobs.ItemsSource),
+                    vm => vm.Cards,
+                    v => v.Jobs.ItemsSource),
 
                 this.WhenAnyValue(
-                    v=>v.ViewModel.Cards.Count)
+                        v => v.ViewModel.Cards.Count)
                     .Select(count => count > 0)
                     .DistinctUntilChanged()
-                    .Select(show=>show
+                    .Select(show => show
                         ? 0
                         : 1)
-                    .BindTo(this, v=>v.EmptyListText.Opacity)
+                    .BindTo(this, v => v.EmptyListText.Opacity)
             });
         }
     }

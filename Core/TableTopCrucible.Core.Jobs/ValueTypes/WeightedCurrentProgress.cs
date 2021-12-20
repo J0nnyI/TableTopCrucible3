@@ -8,6 +8,6 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
 
         public static WeightedCurrentProgress operator
             +(WeightedCurrentProgress valueA, WeightedCurrentProgress valueB) =>
-            (WeightedCurrentProgress) (valueA.Value + valueB.Value);
+            (WeightedCurrentProgress)(valueA.Value + valueB.Value);
     }
 }

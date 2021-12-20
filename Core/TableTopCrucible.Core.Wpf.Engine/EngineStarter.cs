@@ -1,13 +1,9 @@
 ﻿using Microsoft.Extensions.Hosting;
-
 using ReactiveUI;
-
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
-
 using System.Linq;
-
 using TableTopCrucible.Core.DependencyInjection;
 using TableTopCrucible.Core.Helper;
 
@@ -29,29 +25,26 @@ namespace TableTopCrucible.Core.Wpf.Engine
         private static void initializeHost()
         {
             Host
-            .CreateDefaultBuilder()
-            .ConfigureServices(services =>
-            {
-                services.UseMicrosoftDependencyResolver();
-                var resolver = Locator.CurrentMutable;
-                resolver.InitializeSplat();
-                resolver.InitializeReactiveUI();
+                .CreateDefaultBuilder()
+                .ConfigureServices(services =>
+                {
+                    services.UseMicrosoftDependencyResolver();
+                    var resolver = Locator.CurrentMutable;
+                    resolver.InitializeSplat();
+                    resolver.InitializeReactiveUI();
 
 
-                DependencyBuilder.GetServices(services);
-            })
-            .ConfigureLogging(loggingBuilder =>
-            {
-                loggingBuilder.AddSplat();
-            })
-            .UseEnvironment(
+                    DependencyBuilder.GetServices(services);
+                })
+                .ConfigureLogging(loggingBuilder => { loggingBuilder.AddSplat(); })
+                .UseEnvironment(
 #if DEBUG
-                Environments.Development
+                    Environments.Development
 #else
             Environments.Production
 #endif
-            )
-            .Build();
+                )
+                .Build();
         }
 
         private static void initializeWpf()

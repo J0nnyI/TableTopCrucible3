@@ -27,8 +27,8 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
         public void BeforeEach()
         {
             Prepare.ApplicationEnvironment();
-            this.progressService = Locator.Current.GetService<IProgressTrackingService>();
-            _disposables = new();
+            progressService = Locator.Current.GetService<IProgressTrackingService>();
+            _disposables = new CompositeDisposable();
         }
 
         [TearDown]
@@ -56,6 +56,7 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
             srcB.Increment();
             progress.Should().Be((CurrentProgressPercent)0);
         }
+
         [Test]
         public void TotalProgress_LateAdds()
         {
@@ -103,6 +104,5 @@ namespace TableTopCrucible.Core.Jobs.Tests.Models
             emittedValues.Count.Should().Be(1);
             lastProgress.Should().Be((CurrentProgressPercent)0);
         }
-
     }
 }

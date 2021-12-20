@@ -1,7 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
-
 using ReactiveUI;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
@@ -13,8 +11,8 @@ namespace TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels
     [Singleton]
     public interface IDirectorySetupPage : INavigationPage
     {
-
     }
+
     public class DirectorySetupPageVm : IActivatableViewModel, IDirectorySetupPage
     {
         public IDirectorySetupList DirectorySetupList { get; }

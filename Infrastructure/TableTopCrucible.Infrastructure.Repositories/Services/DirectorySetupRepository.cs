@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using DynamicData;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
@@ -15,9 +13,10 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         : IRepository<DirectorySetupId, DirectorySetupEntity>
     {
     }
+
     internal class DirectorySetupRepository
         : RepositoryBase<DirectorySetupId, DirectorySetupEntity>,
-        IDirectorySetupRepository
+            IDirectorySetupRepository
     {
         public DirectorySetupRepository(IDatabaseAccessor database) : base(database, database.DirectorySetup)
         {

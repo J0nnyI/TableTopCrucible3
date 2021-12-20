@@ -13,9 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 using ReactiveUI;
-
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.ValueTypes;
@@ -34,40 +32,40 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
             this.WhenActivated(() => new IDisposable[]
             {
                 this.OneWayBind(ViewModel,
-                    vm=>vm.Viewer.Title.Value,
-                    v=>v.Title.Text),
+                    vm => vm.Viewer.Title.Value,
+                    v => v.Title.Text),
 
                 this.WhenAnyObservable(
-                        v=>v.ViewModel.Viewer.TargetProgressChanges)
-                    .Select(target=>target.Value)
+                        v => v.ViewModel.Viewer.TargetProgressChanges)
+                    .Select(target => target.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this,
-                        v=>v.Progress.Maximum),
+                        v => v.Progress.Maximum),
 
-                this.WhenAnyObservable(v=>v.ViewModel.Viewer.CurrentProgressChanges)
-                    .Select(target=>target.Value)
+                this.WhenAnyObservable(v => v.ViewModel.Viewer.CurrentProgressChanges)
+                    .Select(target => target.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, v=>v.Progress.Value),
+                    .BindTo(this, v => v.Progress.Value),
 
-                this.WhenAnyValue(v=>v.ViewModel.Viewer)
-                    .Select(viewer=>viewer.GetCurrentProgressInPercent())
+                this.WhenAnyValue(v => v.ViewModel.Viewer)
+                    .Select(viewer => viewer.GetCurrentProgressInPercent())
                     .Switch()
-                    .Select(progress=>Math.Round(progress.Value,2))
-                    .Select(progress=>$"{progress,0:0.00}%")
+                    .Select(progress => Math.Round(progress.Value, 2))
+                    .Select(progress => $"{progress,0:0.00}%")
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, v=>v.ProgressPercent.Text),
+                    .BindTo(this, v => v.ProgressPercent.Text),
 
                 this.WhenAnyObservable(
-                    v=>v.ViewModel.Viewer.JobStateChanges)
-                    .Select(state=>state == JobState.InProgress
-                        ?Visibility.Visible
-                        :Visibility.Collapsed)
+                        v => v.ViewModel.Viewer.JobStateChanges)
+                    .Select(state => state == JobState.InProgress
+                        ? Visibility.Visible
+                        : Visibility.Collapsed)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .OutputObservable(out var progressVisibillity)
-                    .BindTo(this, v=>v.Progress.Visibility),
+                    .BindTo(this, v => v.Progress.Visibility),
 
                 progressVisibillity
-                    .BindTo(this, v=>v.ProgressPercent.Visibility)
+                    .BindTo(this, v => v.ProgressPercent.Visibility)
             });
         }
     }

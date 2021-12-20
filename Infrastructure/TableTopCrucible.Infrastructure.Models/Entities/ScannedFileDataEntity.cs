@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
@@ -15,7 +14,6 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 
         public ScannedFileDataEntity()
         {
-
         }
 
         public ScannedFileDataEntity(FilePath fileLocation, FileHashKey hashKey, DateTime lastWrite)

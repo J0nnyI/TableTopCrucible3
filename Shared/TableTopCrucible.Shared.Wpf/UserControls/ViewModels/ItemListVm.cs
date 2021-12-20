@@ -1,12 +1,9 @@
 ﻿using DynamicData;
 using DynamicData.Binding;
-
 using ReactiveUI;
-
 using System;
 using System.Reactive.Linq;
 using System.Windows.Input;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories;
@@ -18,8 +15,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     [Transient]
     public interface IItemList
     {
-
     }
+
     public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel
     {
         private readonly IScannedFileRepository _fileRepository;
@@ -41,18 +38,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             throw new NotImplementedException("has to be rewritten");
             //this.WhenActivated(() => new[]{
 
-                //fileRepository
-                //    .Cache
-                //    .Connect()
-                //    .ObserveOn(RxApp.MainThreadScheduler)
-                //    .Bind(Files)
-                //    .Subscribe(),
-                //itemRepository
-                //    .Cache
-                //    .Connect()
-                //    .ObserveOn(RxApp.MainThreadScheduler)
-                //    .Bind(Items)
-                //    .Subscribe(),
+            //fileRepository
+            //    .Cache
+            //    .Connect()
+            //    .ObserveOn(RxApp.MainThreadScheduler)
+            //    .Bind(Files)
+            //    .Subscribe(),
+            //itemRepository
+            //    .Cache
+            //    .Connect()
+            //    .ObserveOn(RxApp.MainThreadScheduler)
+            //    .Bind(Items)
+            //    .Subscribe(),
             //});
         }
     }

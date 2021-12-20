@@ -16,18 +16,19 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         public static bool operator !=(ComplexValueType<TThis> valueA, ComplexValueType<TThis> valueB)
             => !(valueA == valueB);
     }
+
     public abstract class ComplexValueType<TValueA, TValueB, TThis> : ComplexValueType<TThis>
         where TThis : ComplexValueType<TValueA, TValueB, TThis>, new()
     {
         public TValueA ValueA { get; init; }
         public TValueB ValueB { get; init; }
 
-        public static TThis From(TValueA valueA, TValueB valueB) 
-            => new() {ValueA = valueA, ValueB = valueB};
+        public static TThis From(TValueA valueA, TValueB valueB)
+            => new() { ValueA = valueA, ValueB = valueB };
 
         protected override IEnumerable<object> getAtomicValues()
             => new object[] { ValueA, ValueB };
-        public override string ToString() => $"A: {ValueA} | B: {ValueB}";
 
+        public override string ToString() => $"A: {ValueA} | B: {ValueB}";
     }
 }

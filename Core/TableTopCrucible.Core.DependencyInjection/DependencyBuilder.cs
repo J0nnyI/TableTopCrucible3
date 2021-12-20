@@ -29,7 +29,7 @@ namespace TableTopCrucible.Core.DependencyInjection
         }
 
         public static IServiceProvider BuildDependencyProvider() => GetServices().BuildServiceProvider();
-        
+
 
         private static ILoggerFactory buildLoggingFactory()
         {

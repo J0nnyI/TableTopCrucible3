@@ -10,6 +10,5 @@ namespace TableTopCrucible.Core.ValueTypes
         public FileSize FileSize => ValueB;
 
         public static FileHashKey Create(FilePath file) => From(FileHash.Create(file), file.GetSize());
-        
     }
 }

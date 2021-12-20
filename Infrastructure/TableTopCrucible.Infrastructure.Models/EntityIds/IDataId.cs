@@ -7,14 +7,14 @@ namespace TableTopCrucible.Infrastructure.Models.EntityIds
     {
         Guid Guid { get; init; }
     }
-    public abstract class DataIdBase<TThis>:IdBase<TThis>, IDataId
+
+    public abstract class DataIdBase<TThis> : IdBase<TThis>, IDataId
         where TThis : IdBase<TThis>, new()
     {
         public Guid Guid
         {
-            get=>base.Value;
-            init => base.Value = value;
+            get => Value;
+            init => Value = value;
         }
-        
     }
 }

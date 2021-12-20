@@ -1,7 +1,5 @@
 ﻿using ReactiveUI;
-
 using System;
-
 using TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.Pages.Views

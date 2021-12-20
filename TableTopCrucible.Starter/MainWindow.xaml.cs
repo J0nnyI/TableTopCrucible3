@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using Splat;
-
 using System.Windows;
-
 using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels;
@@ -20,7 +18,7 @@ namespace TableTopCrucible.Starter
         public MainWindow()
         {
             InitializeComponent();
-            this.MainPageContainer.ViewModel = Locator.Current.GetService<IMainPage>();
+            MainPageContainer.ViewModel = Locator.Current.GetService<IMainPage>();
 
 
             var navigationService = Locator.Current.GetService<INavigationService>();

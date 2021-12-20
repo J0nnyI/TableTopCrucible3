@@ -6,9 +6,9 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
     public class CurrentProgressPercent : ValueOf<double, CurrentProgressPercent>
     {
         public static CurrentProgressPercent
-            Min = new() {Value = 0}; // cant use from since it runs through the validator which uses these constants
+            Min = new() { Value = 0 }; // cant use from since it runs through the validator which uses these constants
 
-        public static CurrentProgressPercent Max = new() {Value = 100};
+        public static CurrentProgressPercent Max = new() { Value = 100 };
 
         public static explicit operator CurrentProgressPercent(double value) => From(value);
 

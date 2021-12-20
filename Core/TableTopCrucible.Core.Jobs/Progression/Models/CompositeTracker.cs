@@ -4,9 +4,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-
 using DynamicData;
-
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
@@ -78,7 +76,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
                 .Switch()
                 .StartWith((WeightedCurrentProgress)0)
                 .DistinctUntilChanged()
-                .TakeUntil(this._onDestroy)
+                .TakeUntil(_onDestroy)
                 .Replay()
                 .ConnectUntil(_disposables);
 
@@ -143,8 +141,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         }
 
         public override string ToString() => $"C {Title}";
+
         public void Dispose()
-        => _disposables.Dispose();
+            => _disposables.Dispose();
     }
 
     internal class WeightedCompositeTracker : CompositeTracker, IWeightedTrackingViewer

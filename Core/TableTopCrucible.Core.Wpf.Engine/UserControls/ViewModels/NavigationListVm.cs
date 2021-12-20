@@ -1,18 +1,12 @@
-﻿
-
-using DynamicData;
+﻿using DynamicData;
 using DynamicData.Binding;
-
 using MaterialDesignThemes.Wpf;
-
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
@@ -28,14 +22,15 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public FlaggedNavigationItem(INavigationPage page, bool changedByUser)
         {
             Page = page;
-            this.PageLocation = page.PageLocation;
-            this.ChangedByUser = changedByUser;
+            PageLocation = page.PageLocation;
+            ChangedByUser = changedByUser;
         }
+
         // used for deselection
         public FlaggedNavigationItem(NavigationPageLocation location, bool changedByUser)
         {
-            this.PageLocation = location;
-            this.ChangedByUser = changedByUser;
+            PageLocation = location;
+            ChangedByUser = changedByUser;
         }
 
         public DateTime TimeStamp { get; private set; } = DateTime.Now;
@@ -60,8 +55,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     [Transient]
     public interface INavigationList
     {
-
     }
+
     public class NavigationListVm : ReactiveObject, INavigationList, IActivatableViewModel
     {
         private readonly INavigationService _navigationService;
@@ -82,56 +77,57 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public NavigationListVm(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            this.WhenActivated(() => new[]{
-                this.WhenAnyValue(vm=>vm._navigationService.IsNavigationExpanded)
-                    .ToProperty(this, vm=>vm.IsExpanded, out _isExpanded),
+            this.WhenActivated(() => new[]
+            {
+                this.WhenAnyValue(vm => vm._navigationService.IsNavigationExpanded)
+                    .ToProperty(this, vm => vm.IsExpanded, out _isExpanded),
 
                 // bind listContent
                 navigationService
                     .Pages
                     .Connect()
-                    .Filter(m=>m.PageLocation == NavigationPageLocation.Upper)
-                    .Transform(m=>new FlaggedNavigationItem(m, true))
-                    .Sort(m=>m.Position.Value)
+                    .Filter(m => m.PageLocation == NavigationPageLocation.Upper)
+                    .Transform(m => new FlaggedNavigationItem(m, true))
+                    .Sort(m => m.Position.Value)
                     .Bind(UpperList)
                     .Subscribe(),
                 navigationService
                     .Pages
                     .Connect()
-                    .Filter(m=>m.PageLocation == NavigationPageLocation.Lower)
-                    .Transform(m=>new FlaggedNavigationItem(m, true))
-                    .Sort(m=>m.Position.Value)
+                    .Filter(m => m.PageLocation == NavigationPageLocation.Lower)
+                    .Transform(m => new FlaggedNavigationItem(m, true))
+                    .Sort(m => m.Position.Value)
                     .Bind(LowerList)
                     .Subscribe(),
 
                 // handle selection
                 Observable.CombineLatest(
-                    this.WhenAnyValue(vm=>vm.UpperSelection)
-                        .Do(m=>m.OnSelected())
-                        .Pairwise(false)
-                        .Where(m=>m.Current.Value.ChangedByUser),
-                    this.WhenAnyValue(vm=>vm.LowerSelection)
-                        .Do(m=>m.OnSelected())
-                        .Pairwise(false)
-                        .Where(m=>m.Current.Value.ChangedByUser),
-                    (upper, lower)=>new
-                    {
-                        upper=new
+                        this.WhenAnyValue(vm => vm.UpperSelection)
+                            .Do(m => m.OnSelected())
+                            .Pairwise(false)
+                            .Where(m => m.Current.Value.ChangedByUser),
+                        this.WhenAnyValue(vm => vm.LowerSelection)
+                            .Do(m => m.OnSelected())
+                            .Pairwise(false)
+                            .Where(m => m.Current.Value.ChangedByUser),
+                        (upper, lower) => new
                         {
-                            previous = upper.Previous.Value,
-                            current = upper.Current.Value,
-                        },
-                        lower = new
-                        {
-                            previous = lower.Previous.Value,
-                            current = lower.Current.Value
+                            upper = new
+                            {
+                                previous = upper.Previous.Value,
+                                current = upper.Current.Value
+                            },
+                            lower = new
+                            {
+                                previous = lower.Previous.Value,
+                                current = lower.Current.Value
+                            }
                         }
-                    }
-                )
+                    )
                     .Select(p =>
                     {
-                        FlaggedNavigationItem upper = p.upper.current;
-                        FlaggedNavigationItem lower = p.lower.current;
+                        var upper = p.upper.current;
+                        var lower = p.lower.current;
                         FlaggedNavigationItem result = null;
                         // upper <=> lower
                         if (upper.HasContent && lower.HasContent)
@@ -142,9 +138,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                         }
                         // same => same
                         else if (upper.HasContent)
+                        {
                             result = upper;
+                        }
                         else if (lower.HasContent)
+                        {
                             result = lower;
+                        }
                         // deselect
                         else if (!lower.HasContent && !upper.HasContent)
                         {
@@ -156,7 +156,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                                 : previousLower;
                         }
                         else
+                        {
                             Debugger.Break();
+                        }
+
                         return result;
                     })
                     .Catch((Exception e) =>
@@ -168,41 +171,41 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     {
                         var upper =
                             m.PageLocation == NavigationPageLocation.Upper
-                            ? m
-                            : new FlaggedNavigationItem(NavigationPageLocation.Upper, false);
-                        var lower=
+                                ? m
+                                : new FlaggedNavigationItem(NavigationPageLocation.Upper, false);
+                        var lower =
                             m.PageLocation == NavigationPageLocation.Lower
-                            ? m
-                            : new FlaggedNavigationItem(NavigationPageLocation.Lower, false);
-                        if(upper != UpperSelection)
+                                ? m
+                                : new FlaggedNavigationItem(NavigationPageLocation.Lower, false);
+                        if (upper != UpperSelection)
                             UpperSelection = upper;
-                        if(lower != LowerSelection)
+                        if (lower != LowerSelection)
                             LowerSelection = lower;
                     }),
 
                 Observable.Merge(
-                        this.WhenAnyValue(vm=>vm.UpperSelection),
+                        this.WhenAnyValue(vm => vm.UpperSelection),
                         this.WhenAnyValue(vm => vm.LowerSelection)
                     )
-                    .Select(m=>m.Page)
+                    .Select(m => m.Page)
                     .WhereNotNull()
-                    .BindTo(navigationService, srv=>srv.ActiveWorkArea),
+                    .BindTo(navigationService, srv => srv.ActiveWorkArea),
 
-                this.WhenAnyValue(vm=>vm._navigationService.ActiveWorkArea)
+                this.WhenAnyValue(vm => vm._navigationService.ActiveWorkArea)
                     .WhereNotNull()
                     .Subscribe(selection =>
                     {
                         if (selection.PageLocation == NavigationPageLocation.Upper)
                         {
-                            if (this.UpperSelection.Page != selection)
-                                this.UpperSelection = this.UpperList.First(m => m.Page == selection);
+                            if (UpperSelection.Page != selection)
+                                UpperSelection = UpperList.First(m => m.Page == selection);
                         }
                         else
                         {
-                            if (this.LowerSelection.Page != selection)
-                                this.LowerSelection = this.LowerList.First(m => m.Page == selection);
+                            if (LowerSelection.Page != selection)
+                                LowerSelection = LowerList.First(m => m.Page == selection);
                         }
-                    }),
+                    })
             });
         }
 

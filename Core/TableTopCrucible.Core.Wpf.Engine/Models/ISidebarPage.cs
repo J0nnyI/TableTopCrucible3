@@ -13,7 +13,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Models
     /// </summary>
     public interface ISidebarPage
     {
-         Name Title { get; }
-         SidebarWidth Width { get; }
+        Name Title { get; }
+        SidebarWidth Width { get; }
     }
 }
