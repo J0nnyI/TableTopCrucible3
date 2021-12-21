@@ -20,10 +20,10 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
     [Singleton]
     public interface IDatabaseAccessor
     {
-        public DbSet<ItemEntity> Items { get; }
-        public DbSet<ScannedFileDataEntity> Files { get; }
+        public DbSet<Item> Items { get; }
+        public DbSet<FileData> Files { get; }
 
-        public DbSet<DirectorySetupEntity> DirectorySetup { get; }
+        public DbSet<DirectorySetup> DirectorySetup { get; }
 
         //void Open(LibraryFilePath file);
         void AutoSave();
@@ -52,9 +52,9 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
                 .Subscribe(_ => _database.SaveChanges());
         }
 
-        public DbSet<ItemEntity> Items => _database.Items;
-        public DbSet<ScannedFileDataEntity> Files => _database.Files;
-        public DbSet<DirectorySetupEntity> DirectorySetup => _database.DirectorySetups;
+        public DbSet<Item> Items => _database.Items;
+        public DbSet<FileData> Files => _database.Files;
+        public DbSet<DirectorySetup> DirectorySetup => _database.DirectorySetups;
 
         /// <summary>
         ///     handles automated saving

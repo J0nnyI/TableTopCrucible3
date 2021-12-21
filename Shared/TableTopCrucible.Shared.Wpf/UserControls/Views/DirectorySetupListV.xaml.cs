@@ -37,7 +37,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 {
                     VistaFolderBrowserDialog dialog = new();
                     interaction.SetOutput(dialog.ShowDialog() == true
-                        ? new DirectorySetupEntity((DirectoryPath)dialog.SelectedPath)
+                        ? new DirectorySetup((DirectoryPath)dialog.SelectedPath)
                         : null);
                 })
             });

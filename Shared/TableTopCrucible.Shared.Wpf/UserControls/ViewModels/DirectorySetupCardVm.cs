@@ -23,7 +23,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     public interface IDirectorySetupCard : IComparable<IDirectorySetupCard>, IComparable
     {
         public DirectorySetupId DirectorySetupId { get; set; }
-        public DirectorySetupEntity DirectorySetup { get; }
+        public DirectorySetup DirectorySetup { get; }
         public bool ResetOnSave { get; set; }
     }
 
@@ -31,7 +31,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
-        private ObservableAsPropertyHelper<DirectorySetupEntity> _directorySetup;
+        private ObservableAsPropertyHelper<DirectorySetup> _directorySetup;
 
         private ObservableAsPropertyHelper<bool> _isDirty;
 
@@ -135,7 +135,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ICommand RemoveDirectoryCommand { get; private set; }
 
         public ViewModelActivator Activator { get; } = new();
-        public DirectorySetupEntity DirectorySetup => _directorySetup?.Value;
+        public DirectorySetup DirectorySetup => _directorySetup?.Value;
 
         [Reactive]
         public DirectorySetupId DirectorySetupId { get; set; }

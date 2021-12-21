@@ -1,4 +1,5 @@
-﻿using EntityFrameworkCore.Triggers;
+﻿using System.Reflection;
+using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
@@ -7,9 +8,9 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 {
     public interface IDatabaseContext
     {
-        public DbSet<ItemEntity> Items { get; }
-        public DbSet<ScannedFileDataEntity> Files { get; }
-        public DbSet<DirectorySetupEntity> DirectorySetups { get; }
+        public DbSet<Item> Items { get; }
+        public DbSet<FileData> Files { get; }
+        public DbSet<DirectorySetup> DirectorySetups { get; }
         public int SaveChanges();
         public void Migrate();
     }
@@ -18,12 +19,12 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
     {
         public DatabaseContext()
         {
-            Migrate();
+            //Migrate();
         }
 
-        public DbSet<ItemEntity> Items { get; set; }
-        public DbSet<ScannedFileDataEntity> Files { get; set; }
-        public DbSet<DirectorySetupEntity> DirectorySetups { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<FileData> Files { get; set; }
+        public DbSet<DirectorySetup> DirectorySetups { get; set; }
 
         public void Migrate()
             => Database.Migrate();
@@ -34,18 +35,10 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
-
-            modelBuilder.Entity<ItemEntity>()
-                .HasKey(item => item.Id);
-            modelBuilder.Entity<ItemEntity>()
-                .HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
-
-            modelBuilder.Entity<ScannedFileDataEntity>()
-                .HasKey(file => file.Id);
-            modelBuilder.Entity<DirectorySetupEntity>()
-                .HasKey(directorySetup => directorySetup.Id);
-
+            //modelBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("TableTopCrucible.Infrastructure.Models"));
+            
+            
             base.OnModelCreating(modelBuilder);
         }
     }

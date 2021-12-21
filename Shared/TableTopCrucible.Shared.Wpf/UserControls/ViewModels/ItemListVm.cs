@@ -19,8 +19,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         private readonly IScannedFileRepository _fileRepository;
         private readonly IFileSynchronizationService _fileSynchronizationService;
 
-        public ObservableCollectionExtended<ScannedFileDataEntity> Files = new();
-        public ObservableCollectionExtended<ItemEntity> Items = new();
+        public ObservableCollectionExtended<FileData> Files = new();
+        public ObservableCollectionExtended<Item> Items = new();
 
         public ItemListVm(
             IScannedFileRepository fileRepository,

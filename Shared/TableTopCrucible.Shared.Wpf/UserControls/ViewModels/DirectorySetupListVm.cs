@@ -67,7 +67,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             //});
         }
 
-        public Interaction<Unit, DirectorySetupEntity> GetDirectoryDialog { get; } = new();
+        public Interaction<Unit, DirectorySetup> GetDirectoryDialog { get; } = new();
 
         public ICommand CreateDirectory { get; private set; }
         public IObservable<double> HintOpacity { get; }

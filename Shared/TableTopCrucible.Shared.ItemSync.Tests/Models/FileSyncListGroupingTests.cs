@@ -58,7 +58,7 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
             public ScannedFileDataId OriginalId { get; private set; }
 
             // prepares data for this file according to its given state
-            public ScannedFileDataEntity Prepare()
+            public FileData Prepare()
             {
                 TargetLastWrite = LastWrite = DateTime.Now.AddMinutes(-10);
                 OriginalId = ScannedFileDataId.New();
@@ -93,7 +93,7 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
                 //return new (HashKey, File, LastWrite, OriginalId);
             }
 
-            public Unit Test(ScannedFileDataEntity output)
+            public Unit Test(FileData output)
             {
                 output.HashKey.Should().Be(HashKey);
 

@@ -6,12 +6,12 @@ using TableTopCrucible.Infrastructure.Models.EntityIds;
 namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
     [Singleton]
-    public interface IItemRepository : IRepository<ItemId, ItemEntity>
+    public interface IItemRepository : IRepository<ItemId, Item>
     {
     }
 
     internal class ItemRepository
-        : RepositoryBase<ItemId, ItemEntity>,
+        : RepositoryBase<ItemId, Item>,
             IItemRepository
     {
         public ItemRepository(IDatabaseAccessor database)

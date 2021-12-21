@@ -145,7 +145,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             return totalProgress;
         }
 
-        private IEnumerable<RawSyncFileData> startScanForDirectory(DirectorySetupEntity directory)
+        private IEnumerable<RawSyncFileData> startScanForDirectory(DirectorySetup directory)
         {
             var foundFiles = directory.Path.GetFiles(FileType.Image, FileType.Model).ToArray();
             var knownFiles = _fileRepository.Data;
@@ -158,7 +158,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 (found, known) => new RawSyncFileData(known, found));
         }
 
-        private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetupEntity> directorySetups)
+        private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetup> directorySetups)
         {
             return new FileSyncListGrouping(directorySetups
                 .SelectMany(directory => startScanForDirectory(directory)));

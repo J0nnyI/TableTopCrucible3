@@ -28,6 +28,10 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             Id = new TId { Guid = Guid.NewGuid() };
         }
 
+        public Guid Guid {
+            get=> Id.Guid;
+            init => Id = new TId { Guid = value };
+        }
         [Key]
         public TId Id
         {
@@ -61,7 +65,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         /// <param name="field"></param>
         /// <param name="value"></param>
         /// <param name="name"></param>
-        public void RaiseAndSetRequiredIfChanged<TValue>(ref TValue field, TValue value,
+        public void SetRequiredValue<TValue>(ref TValue field, TValue value,
             [CallerMemberName] string name = "")
         {
             if (value is null)

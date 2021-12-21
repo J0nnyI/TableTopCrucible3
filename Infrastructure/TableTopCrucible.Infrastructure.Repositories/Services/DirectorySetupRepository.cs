@@ -7,12 +7,12 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
     [Singleton]
     public interface IDirectorySetupRepository
-        : IRepository<DirectorySetupId, DirectorySetupEntity>
+        : IRepository<DirectorySetupId, DirectorySetup>
     {
     }
 
     internal class DirectorySetupRepository
-        : RepositoryBase<DirectorySetupId, DirectorySetupEntity>,
+        : RepositoryBase<DirectorySetupId, DirectorySetup>,
             IDirectorySetupRepository
     {
         public DirectorySetupRepository(IDatabaseAccessor database) : base(database, database.DirectorySetup)
