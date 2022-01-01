@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Windows.Input;
+using DynamicData;
 using DynamicData.Binding;
 using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Services;
@@ -30,22 +33,21 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             _fileRepository = fileRepository;
             _fileSynchronizationService = fileSynchronizationService;
 
-            throw new NotImplementedException("has to be rewritten");
-            //this.WhenActivated(() => new[]{
+            this.WhenActivated(disposable => new[]{
 
-            //fileRepository
-            //    .Cache
-            //    .Connect()
-            //    .ObserveOn(RxApp.MainThreadScheduler)
-            //    .Bind(Files)
-            //    .Subscribe(),
-            //itemRepository
-            //    .Cache
-            //    .Connect()
-            //    .ObserveOn(RxApp.MainThreadScheduler)
-            //    .Bind(Items)
-            //    .Subscribe(),
-            //});
+            fileRepository
+                .Updates
+                .ToObservableCache(disposable)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Bind(Files)
+                .Subscribe(),
+            itemRepository
+                .Updates
+                .ToObservableCache(disposable)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Bind(Items)
+                .Subscribe(),
+            });
         }
 
         public ICommand FileSyncCommand => _fileSynchronizationService.StartScanCommand;

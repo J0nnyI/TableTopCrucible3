@@ -85,7 +85,8 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
             if (!file.IsWorkingFile)
                 file.Copy(LibraryFilePath.WorkingFile);
 
-            _database = new DatabaseContext();
+            _database = new TtcDbContext(false);
+            _database.Migrate();
         }
     }
 }

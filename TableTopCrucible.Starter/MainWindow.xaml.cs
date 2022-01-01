@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using Splat;
 using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
@@ -22,11 +23,18 @@ namespace TableTopCrucible.Starter
 
             var navigationService = Locator.Current.GetService<INavigationService>();
             var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
-
-            if (directorySetupRepository.Data.Count() == 0)
-                navigationService.ActiveWorkArea = Locator.Current.GetService<IDirectorySetupPage>();
-            else
-                navigationService.ActiveWorkArea = Locator.Current.GetService<ILibraryPage>();
+            try
+            {
+                if (directorySetupRepository.Data.Count() == 0)
+                    navigationService.ActiveWorkArea = Locator.Current.GetService<IDirectorySetupPage>();
+                else
+                    navigationService.ActiveWorkArea = Locator.Current.GetService<ILibraryPage>();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

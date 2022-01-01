@@ -39,13 +39,20 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
     {
         public void Configure(EntityTypeBuilder<DirectorySetup> builder)
         {
-            builder.ToTable("Directories");
             builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
 
-            builder.OwnsOne(x => x.Name);
-            builder.OwnsOne(x => x.Path);
-            builder.OwnsOne(x => x.Id);
-            builder.HasKey(x => x.Guid);
+            builder.OwnsOne(x => x.Name)
+                .Property(x=>x.Value)
+                .HasColumnName(nameof(DirectorySetup.Name));
+
+            builder.OwnsOne(x => x.Path)
+                .Property(x=>x.Value)
+                .HasColumnName(nameof(DirectorySetup.Path));
+
+            builder.Ignore(x => x.Id);
+
+            builder.HasKey(x => x.Guid)
+                .HasName(nameof(DirectorySetup.Id));
         }
     }
 }

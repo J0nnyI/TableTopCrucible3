@@ -39,7 +39,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         {
             _directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
             _notificationService = Locator.Current.GetService<INotificationService>();
-            throw new NotImplementedException("has to be rewritten");
 
             this.WhenActivated(() => new[]
                 {
@@ -70,6 +69,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     //DirectorySetupEntity.RegisterValidator(this, vm=>vm.Path),
 
                     // Commands
+                    // save changes
                     ReactiveCommandHelper.Create(() =>
                         {
                             //_directorySetupRepository.Update(new DirectorySetupChangeSet(
@@ -87,6 +87,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             (isDirty, hasErrors) => isDirty && !hasErrors),
                         c => SaveChangesCommand = c
                     ),
+
+                    // undo changes
                     ReactiveCommandHelper.Create(() =>
                         {
                             Name = DirectorySetup.Name.Value;
@@ -99,6 +101,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         isDirtyChanges,
                         c => UndoChangesCommand = c
                     ),
+
+                    // remove directory
                     ReactiveCommandHelper.Create(() =>
                         {
                             ConfirmDeletionInteraction.Handle(Unit.Default)

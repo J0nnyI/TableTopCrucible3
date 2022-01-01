@@ -32,7 +32,6 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             get=> Id.Guid;
             init => Id = new TId { Guid = value };
         }
-        [Key]
         public TId Id
         {
             get => _id;

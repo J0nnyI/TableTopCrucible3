@@ -67,26 +67,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                 .HasColumnName("Id")
                 .IsRequired();
             itemBuilder.OwnsOne(
-                fileData => fileData.FileKey3d,
-                hashKeyBuilder =>
-                {
-                    hashKeyBuilder.OwnsOne(
-                        hashKey => hashKey.Hash,
-                        hashBuilder => hashBuilder
-                            .Property(hash => hash.Value)
-                            .HasColumnName("HashKey3d_Hash")
-                            .IsRequired()
-                    );
-                    hashKeyBuilder.OwnsOne(
-                        hashKey => hashKey.FileSize,
-                        fileSizeBuilder => fileSizeBuilder
-                            .Property(fileSize => fileSize.Value)
-                            .HasColumnName("HashKey3d_FileSize")
-                            .IsRequired()
-                    );
-                    hashKeyBuilder.Ignore(x => x.ValueA);
-                    hashKeyBuilder.Ignore(x => x.ValueB);
-                });
+                fileData => fileData.FileKey3d);
             itemBuilder.HasIndex(x => x.FileKey3d_Raw);
             itemBuilder.OwnsMany(x => x.Tags);
             

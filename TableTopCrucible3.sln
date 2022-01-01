@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.30717.126
+VisualStudioVersion = 16.0.32002.261
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{0B8C5D57-D557-4A37-87B9-87FED3044BF9}"
 	ProjectSection(SolutionItems) = preProject
@@ -98,11 +98,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Jobs.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Wpf.Engine.Tests", "Core\TableTopCrucible.Core.Wpf.Engine.Tests\TableTopCrucible.Core.Wpf.Engine.Tests.csproj", "{6C770675-1D44-4E1B-A8E3-89EDC3290C2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Core.Engine", "Core\TableTopCrucible.Core.Engine\TableTopCrucible.Core.Engine.csproj", "{2ED51CB7-6A11-4436-B79A-FC19C341BB51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Core.Engine", "Core\TableTopCrucible.Core.Engine\TableTopCrucible.Core.Engine.csproj", "{2ED51CB7-6A11-4436-B79A-FC19C341BB51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Infrastructure.Models", "Infrastructure\TableTopCrucible.Infrastructure.Models\TableTopCrucible.Infrastructure.Models.csproj", "{EF197FFE-9344-4B5F-B5BB-DDA269AA936C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Infrastructure.Models", "Infrastructure\TableTopCrucible.Infrastructure.Models\TableTopCrucible.Infrastructure.Models.csproj", "{EF197FFE-9344-4B5F-B5BB-DDA269AA936C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Infrastructure.DataPersistence", "Infrastructure\TableTopCrucible.Infrastructure.DataPersistence\TableTopCrucible.Infrastructure.DataPersistence.csproj", "{0DDA2824-6A1B-49F6-A4D9-8FB389F6FF6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Infrastructure.DataPersistence.Tests", "Infrastructure\TableTopCrucible.Infrastructure.DataPersistence.Tests\TableTopCrucible.Infrastructure.DataPersistence.Tests.csproj", "{290A6525-3D41-4875-A926-EADA125CBBBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -658,11 +660,32 @@ Global
 		{0DDA2824-6A1B-49F6-A4D9-8FB389F6FF6F}.Release|x64.Build.0 = Release|Any CPU
 		{0DDA2824-6A1B-49F6-A4D9-8FB389F6FF6F}.Release|x86.ActiveCfg = Release|Any CPU
 		{0DDA2824-6A1B-49F6-A4D9-8FB389F6FF6F}.Release|x86.Build.0 = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|ARM.Build.0 = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|x64.Build.0 = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Debug|x86.Build.0 = Debug|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|ARM.ActiveCfg = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|ARM.Build.0 = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|ARM64.Build.0 = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|x64.ActiveCfg = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|x64.Build.0 = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|x86.ActiveCfg = Release|Any CPU
+		{290A6525-3D41-4875-A926-EADA125CBBBF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{0B8C5D57-D557-4A37-87B9-87FED3044BF9} = {A441084A-67A2-42D5-A7BC-C96EF7064427}
 		{FBF72B0F-C058-43B7-89F5-AC7F3D2B8A10} = {24FDC793-9F76-4F81-86F3-26F1AEDF31FD}
 		{051245BC-0785-47CA-9D11-B060DDC72A07} = {07B444ED-E145-493E-A509-3E24A0115E5C}
 		{07B444ED-E145-493E-A509-3E24A0115E5C} = {6F4C7055-E7C1-4256-8779-53D38AA7D2FF}
@@ -697,6 +720,7 @@ Global
 		{2ED51CB7-6A11-4436-B79A-FC19C341BB51} = {07B444ED-E145-493E-A509-3E24A0115E5C}
 		{EF197FFE-9344-4B5F-B5BB-DDA269AA936C} = {62C65F8F-761F-48C2-B9BB-23FA95E9084C}
 		{0DDA2824-6A1B-49F6-A4D9-8FB389F6FF6F} = {62C65F8F-761F-48C2-B9BB-23FA95E9084C}
+		{290A6525-3D41-4875-A926-EADA125CBBBF} = {62C65F8F-761F-48C2-B9BB-23FA95E9084C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {339A61EA-C5C5-4D0C-BBBD-073C2CCC4A53}

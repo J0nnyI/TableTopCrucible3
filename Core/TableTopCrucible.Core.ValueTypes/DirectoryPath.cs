@@ -7,11 +7,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Extensions;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
+
 using ValueOf;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -183,8 +186,8 @@ namespace TableTopCrucible.Core.ValueTypes
 
     public class DirectoryPath : DirectoryPath<DirectoryPath>
     {
-        public static DirectoryPath AppData =>
-            From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) +
+        public static DirectoryPath AppData { get; } 
+            = From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) +
             DirectoryName.From("TableTopCrucible");
 
         public static FilePath operator +(DirectoryPath directory, FileName fileName) =>

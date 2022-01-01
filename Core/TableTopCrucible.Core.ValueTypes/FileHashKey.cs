@@ -1,22 +1,27 @@
 ﻿using System;
+using System.Security.Cryptography;
 
 using TableTopCrucible.Infrastructure.Models.Entities;
 
+using ValueOf;
+
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class FileHashKey : ComplexValueType<FileHash, FileSize, FileHashKey>
+    public class FileHashKey : ValueOf<string, FileHashKey>
     {
-        public FileHash Hash
+        public static FileHashKey Create(FilePath file, HashAlgorithm hashAlgorithm = null)
         {
-            get => ValueA;
-            init => ValueA = value;
+            var useHash = hashAlgorithm ?? new SHA512Managed();
+            
+            var res = From(file.GetSize(), FileHash.Create(file, useHash));
+
+            if(hashAlgorithm ==null)
+                useHash.Dispose();
+
+            return res;
         }
-        public FileSize FileSize
-        {
-            get => ValueB;
-            init => ValueB = value;
-        }
-        public static FileHashKey Create(FilePath file) => From(FileHash.Create(file), file.GetSize());
-        public override string ToString() => FileSize + "_" + BitConverter.ToString(Hash.Value);
+
+        public static FileHashKey From(FileSize fileSize, FileHash hash)
+            => From(fileSize.Value + "_" + BitConverter.ToString(hash.Value));
     }
 }

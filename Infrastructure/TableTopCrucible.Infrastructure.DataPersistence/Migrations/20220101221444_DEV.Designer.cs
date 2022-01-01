@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TableTopCrucible.Infrastructure.DataPersistence;
 
 namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 {
-    [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(TtcDbContext))]
+    [Migration("20220101221444_DEV")]
+    partial class DEV
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +26,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 
                     b.HasKey("Guid");
 
-                    b.ToTable("Directories");
+                    b.ToTable("DirectorySetups");
                 });
 
             modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.FileData", b =>
@@ -71,11 +73,12 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Value")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("TEXT")
+                                .HasColumnName("Path");
 
                             b1.HasKey("DirectorySetupGuid");
 
-                            b1.ToTable("Directories");
+                            b1.ToTable("DirectorySetups");
 
                             b1.WithOwner()
                                 .HasForeignKey("DirectorySetupGuid");
@@ -87,36 +90,16 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Value")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("TEXT")
+                                .HasColumnName("Name");
 
                             b1.HasKey("DirectorySetupGuid");
 
-                            b1.ToTable("Directories");
+                            b1.ToTable("DirectorySetups");
 
                             b1.WithOwner()
                                 .HasForeignKey("DirectorySetupGuid");
                         });
-
-                    b.OwnsOne("TableTopCrucible.Infrastructure.Models.EntityIds.DirectorySetupId", "Id", b1 =>
-                        {
-                            b1.Property<Guid>("DirectorySetupGuid")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<Guid>("Guid")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<Guid>("Value")
-                                .HasColumnType("TEXT");
-
-                            b1.HasKey("DirectorySetupGuid");
-
-                            b1.ToTable("Directories");
-
-                            b1.WithOwner()
-                                .HasForeignKey("DirectorySetupGuid");
-                        });
-
-                    b.Navigation("Id");
 
                     b.Navigation("Name");
 

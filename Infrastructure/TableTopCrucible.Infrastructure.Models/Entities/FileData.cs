@@ -63,41 +63,17 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
     {
         public void Configure(EntityTypeBuilder<FileData> fileBuilder)
         {
-            fileBuilder.ToTable("Files");
             fileBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
 
             fileBuilder.OwnsOne(x => x.FileLocation)
                 .Property(x => x.Value)
                 .HasColumnName("FileLocation")
                 .IsRequired();
-            fileBuilder.OwnsOne(x => x.Id)
-                .Property(x => x.Guid)
-                .HasColumnName("Id")
-                .IsRequired();
             fileBuilder
                 .Property(x => x.LastWrite)
                 .IsRequired();
             fileBuilder.OwnsOne(
-                fileData => fileData.HashKey,
-                hashKeyBuilder =>
-                {
-                    hashKeyBuilder.OwnsOne(
-                        hashKey => hashKey.Hash,
-                        hashBuilder => hashBuilder
-                            .Property(hash => hash.Value)
-                            .HasColumnName("HashKey_Hash")
-                            .IsRequired()
-                        );
-                    hashKeyBuilder.OwnsOne(
-                        hashKey => hashKey.FileSize,
-                        fileSizeBuilder => fileSizeBuilder
-                            .Property(fileSize => fileSize.Value)
-                            .HasColumnName("HashKey_FileSize")
-                            .IsRequired()
-                        );
-                    hashKeyBuilder.Ignore(x => x.ValueA);
-                    hashKeyBuilder.Ignore(x => x.ValueB);
-                });
+                fileData => fileData.HashKey);
 
             fileBuilder.HasIndex(x => x.HashKey_Raw);
 
@@ -106,7 +82,9 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                 .HasForeignKey(file => file.HashKey_Raw)
                 .HasPrincipalKey(item => item.FileKey3d_Raw);
 
-            fileBuilder.HasKey(x => x.Guid);
+            fileBuilder.Ignore(x => x.Id);
+            fileBuilder.HasKey(x => x.Guid)
+                .HasName("Id");
         }
     }
 }

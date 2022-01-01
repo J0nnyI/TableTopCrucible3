@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -88,5 +89,8 @@ namespace TableTopCrucible.Core.Helper
             Initial = 2,
             Full = 3
         }
+
+        public static void OnNext(this ISubject<Unit> subject)
+            => subject.OnNext(Unit.Default);
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows;
 using Ookii.Dialogs.Wpf;
 using ReactiveUI;
@@ -109,6 +110,9 @@ namespace TableTopCrucible.Core.Wpf.UserControls
             set => SetValue(UserTextProperty, value);
         }
 
+        private Subject<DirectoryPath> _dialogConfirmed = new();
+        public IObservable<DirectoryPath> DialogConfirmed => _dialogConfirmed;
+
         public IEnumerable GetErrors(string propertyName) => ViewModel.GetErrors(propertyName);
 
         public bool HasErrors => ViewModel.HasErrors;
@@ -123,7 +127,10 @@ namespace TableTopCrucible.Core.Wpf.UserControls
         {
             VistaFolderBrowserDialog dialog = new();
             if (dialog.ShowDialog() == true)
+            {
                 ViewModel.UserText = dialog.SelectedPath;
+                _dialogConfirmed.OnNext((DirectoryPath)dialog.SelectedPath);
+            }
         }
     }
 }

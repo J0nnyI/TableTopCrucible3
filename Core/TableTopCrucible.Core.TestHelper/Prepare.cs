@@ -27,9 +27,6 @@ namespace TableTopCrucible.Core.TestHelper
                     DependencyBuilder.GetServices(services);
 
                     services.ReplaceFileSystem<MockFileSystem>();
-                    services.UseMicrosoftDependencyResolver();
-                    Locator.CurrentMutable.InitializeSplat();
-                    Locator.CurrentMutable.InitializeReactiveUI();
                 })
                 .ConfigureLogging(loggingBuilder => { loggingBuilder.AddSplat(); })
                 .UseEnvironment(

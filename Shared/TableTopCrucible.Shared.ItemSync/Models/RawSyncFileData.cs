@@ -34,9 +34,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             if (NewHashKey != null)
                 return NewHashKey;
 
-            var hash = FileHashKey.From(
-                FileHash.Create(FoundFile, algorithm ?? new SHA512Managed()),
-                FileSize.From(foundFileInfo.Length));
+            var hash = FileHashKey.Create(FoundFile, algorithm ?? new SHA512Managed());
             NewHashKey = hash;
             return hash;
         }

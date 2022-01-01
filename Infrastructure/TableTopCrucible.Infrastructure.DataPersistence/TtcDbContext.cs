@@ -1,11 +1,22 @@
 ﻿using System.Reflection;
 using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 
+//dotnet ef migrations add DEV
+//dotnet ef migrations remove
 namespace TableTopCrucible.Infrastructure.DataPersistence
 {
+    public class TtcDbContextFactory : IDesignTimeDbContextFactory<TtcDbContext>
+    {
+        public TtcDbContext CreateDbContext(string[] args)
+        {
+            return new(false);
+        }
+    }
+
     public interface IDatabaseContext
     {
         public DbSet<Item> Items { get; }
@@ -15,11 +26,12 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public void Migrate();
     }
 
-    public class DatabaseContext : DbContextWithTriggers, IDatabaseContext
+    public class TtcDbContext : DbContextWithTriggers, IDatabaseContext
     {
-        public DatabaseContext()
+        internal TtcDbContext(bool migrate = true)
         {
-            //Migrate();
+            if(migrate)
+                Migrate();
         }
 
         public DbSet<Item> Items { get; set; }
@@ -27,7 +39,10 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public DbSet<DirectorySetup> DirectorySetups { get; set; }
 
         public void Migrate()
-            => Database.Migrate();
+        {
+            LibraryFilePath.WorkingFile.GetDirectoryPath().Create();
+            Database.Migrate();
+        }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -37,8 +52,8 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         {
             //modelBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("TableTopCrucible.Infrastructure.Models"));
-            
-            
+
+
             base.OnModelCreating(modelBuilder);
         }
     }

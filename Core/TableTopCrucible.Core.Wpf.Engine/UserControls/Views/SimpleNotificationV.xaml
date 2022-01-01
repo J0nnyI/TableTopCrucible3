@@ -14,7 +14,7 @@
     <UserControl.Resources>
         <Style TargetType="md:Card">
             <Setter Property="Foreground"
-                    Value="{StaticResource MaterialDesignLightForeground}" />
+                    Value="{StaticResource MaterialDesignDarkForeground}" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=Type}"
                              Value="{x:Static vt:NotificationType.Confirmation}">
