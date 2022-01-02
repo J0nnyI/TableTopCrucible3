@@ -12,8 +12,8 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                 columns: table => new
                 {
                     Guid = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Path = table.Column<string>(type: "TEXT", nullable: true)
+                    Name_Value = table.Column<string>(type: "TEXT", nullable: true),
+                    Path_Value = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -26,8 +26,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                 {
                     Guid = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
-                    HashKey3d_Hash = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    HashKey3d_FileSize = table.Column<long>(type: "INTEGER", nullable: true),
+                    FileKey3d_Value = table.Column<string>(type: "TEXT", nullable: true),
                     FileKey3d_Raw = table.Column<string>(type: "TEXT", nullable: false),
                     Id = table.Column<Guid>(type: "TEXT", nullable: true),
                     Id_Guid = table.Column<Guid>(type: "TEXT", nullable: true)
@@ -44,16 +43,12 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                 {
                     Guid = table.Column<Guid>(type: "TEXT", nullable: false),
                     FileLocation = table.Column<string>(type: "TEXT", nullable: true),
-                    HashKey_Hash = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    HashKey_FileSize = table.Column<long>(type: "INTEGER", nullable: true),
                     HashKey_Raw = table.Column<string>(type: "TEXT", nullable: true),
-                    LastWrite = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Id_Value = table.Column<Guid>(type: "TEXT", nullable: true),
-                    Id = table.Column<Guid>(type: "TEXT", nullable: true)
+                    LastWrite = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Files", x => x.Guid);
+                    table.PrimaryKey("Id", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_Files_Items_HashKey_Raw",
                         column: x => x.HashKey_Raw,

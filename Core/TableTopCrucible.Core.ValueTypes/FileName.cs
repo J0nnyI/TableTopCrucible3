@@ -1,4 +1,4 @@
-﻿using ValueOf;
+﻿using TableTopCrucible.Infrastructure.Models.Entities;
 using static TableTopCrucible.Core.Helper.FileSystemHelper;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -6,7 +6,7 @@ namespace TableTopCrucible.Core.ValueTypes
     /// <summary>
     ///     the name of a file without a path but with extension
     /// </summary>
-    public class FileName : ValueOf<string, FileName>
+    public class FileName : ValueType<string, FileName>
     {
         public FileExtension GetExtension(bool toLower = false) =>
             FileExtension.From(Path.GetExtension(toLower

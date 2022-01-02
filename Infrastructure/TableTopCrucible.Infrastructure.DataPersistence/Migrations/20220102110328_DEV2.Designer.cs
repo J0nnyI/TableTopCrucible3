@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TableTopCrucible.Infrastructure.DataPersistence;
 
 namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 {
     [DbContext(typeof(TtcDbContext))]
-    partial class TtcDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220102110328_DEV2")]
+    partial class DEV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,7 +75,6 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Value")
-                                .IsRequired()
                                 .HasColumnType("TEXT")
                                 .HasColumnName("Path");
 

@@ -1,8 +1,8 @@
-﻿using ValueOf;
+﻿using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class FileSize : ValueOf<long, FileSize>
+    public class FileSize : ValueType<long, FileSize>
     {
     }
 }

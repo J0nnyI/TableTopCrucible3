@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TableTopCrucible.Infrastructure.DataPersistence;
 
 namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 {
     [DbContext(typeof(TtcDbContext))]
-    partial class TtcDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220102105629_DEV")]
+    partial class DEV
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,8 +22,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                 {
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Id");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Guid");
 
@@ -73,9 +74,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("TEXT")
-                                .HasColumnName("Path");
+                                .HasColumnType("TEXT");
 
                             b1.HasKey("DirectorySetupGuid");
 
@@ -91,8 +90,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Value")
-                                .HasColumnType("TEXT")
-                                .HasColumnName("Name");
+                                .HasColumnType("TEXT");
 
                             b1.HasKey("DirectorySetupGuid");
 

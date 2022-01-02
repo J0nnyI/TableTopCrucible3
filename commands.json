@@ -1,0 +1,9 @@
+{
+  "commands": {
+    "createDevMigration": {
+      "fileName": "cmd.exe",
+      "workingDirectory": ".",
+      "arguments": "/c Infrastructure\\TableTopCrucible.Infrastructure.DataPersistence\\createDevMigration.bat"
+    }
+  }
+}

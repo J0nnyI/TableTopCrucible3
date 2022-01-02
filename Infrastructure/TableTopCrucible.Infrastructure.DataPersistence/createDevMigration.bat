@@ -1,4 +1,3 @@
-echo off
-dotnet ef migrations remove
-dotnet ef migrations add DEV
+rem dotnet ef migrations remove
+dotnet ef migrations add DEV3
 pause

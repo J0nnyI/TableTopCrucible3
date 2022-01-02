@@ -3,11 +3,9 @@ using System.Security.Cryptography;
 
 using TableTopCrucible.Infrastructure.Models.Entities;
 
-using ValueOf;
-
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class FileHashKey : ValueOf<string, FileHashKey>
+    public class FileHashKey : ValueType<string, FileHashKey>
     {
         public static FileHashKey Create(FilePath file, HashAlgorithm hashAlgorithm = null)
         {

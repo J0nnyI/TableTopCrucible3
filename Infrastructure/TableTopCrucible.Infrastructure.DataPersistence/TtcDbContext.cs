@@ -28,8 +28,11 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
     public class TtcDbContext : DbContextWithTriggers, IDatabaseContext
     {
-        internal TtcDbContext(bool migrate = true)
+        private readonly LibraryFilePath _path;
+
+        internal TtcDbContext(bool migrate = true, LibraryFilePath path = null)
         {
+            _path = path ?? LibraryFilePath.WorkingFile;
             if(migrate)
                 Migrate();
         }
@@ -46,7 +49,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={LibraryFilePath.WorkingFile}");
+            => options.UseSqlite($"Data Source={_path}");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

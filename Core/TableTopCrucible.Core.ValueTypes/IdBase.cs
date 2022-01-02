@@ -1,10 +1,10 @@
 ﻿using System;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using ValueOf;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public abstract class IdBase<TThis> : ValueOf<Guid, TThis>
+    public abstract class IdBase<TThis> : ValueType<Guid, TThis>
         where TThis : IdBase<TThis>, new()
     {
         public Guid GetGuid() => Value;

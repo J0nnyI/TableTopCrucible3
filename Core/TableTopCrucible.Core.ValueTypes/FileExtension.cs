@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ValueOf;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class FileExtension : ValueOf<string, FileExtension>
+    public class FileExtension : ValueType<string, FileExtension>
     {
         public static readonly FileExtension JSON = From(".json");
         public static readonly IEnumerable<FileExtension> SlicerProject = FromList(".3mf");

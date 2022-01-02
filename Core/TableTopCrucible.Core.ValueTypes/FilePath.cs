@@ -4,11 +4,11 @@ using System.IO.Abstractions;
 using System.Text.Json;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using ValueOf;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class FilePath<TThis> : ValueOf<string, TThis> where TThis : FilePath<TThis>, new()
+    public class FilePath<TThis> : ValueType<string, TThis> where TThis : FilePath<TThis>, new()
     {
         public FileExtension GetExtension(bool toLower = false) =>
             FileExtension.From(FileSystemHelper.Path.GetExtension(toLower

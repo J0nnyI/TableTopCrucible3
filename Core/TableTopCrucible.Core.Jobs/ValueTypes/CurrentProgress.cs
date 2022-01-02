@@ -1,8 +1,9 @@
-﻿using ValueOf;
+﻿using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.Jobs.ValueTypes
 {
-    public class CurrentProgress : ValueOf<double, CurrentProgress>
+    public class CurrentProgress : ValueType<double, CurrentProgress>
     {
         public static explicit operator CurrentProgress(double value) => From(value);
 

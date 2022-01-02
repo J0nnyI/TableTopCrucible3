@@ -1,8 +1,8 @@
-﻿using ValueOf;
+﻿using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class SingleLineDescription : ValueOf<string, SingleLineDescription>
+    public class SingleLineDescription : ValueType<string, SingleLineDescription>
     {
     }
 }

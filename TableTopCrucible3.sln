@@ -68,6 +68,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A441084A-67A2-42D5-A7BC-C96EF7064427}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		commands.json = commands.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Domain.Library.Wpf", "Domain\TableTopCrucible.Domain.Library.Wpf\TableTopCrucible.Domain.Library.Wpf.csproj", "{6F43138A-0D8D-4B50-BB66-72BBDDAB07B5}"
@@ -104,7 +105,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Infrastruc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Infrastructure.DataPersistence", "Infrastructure\TableTopCrucible.Infrastructure.DataPersistence\TableTopCrucible.Infrastructure.DataPersistence.csproj", "{0DDA2824-6A1B-49F6-A4D9-8FB389F6FF6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Infrastructure.DataPersistence.Tests", "Infrastructure\TableTopCrucible.Infrastructure.DataPersistence.Tests\TableTopCrucible.Infrastructure.DataPersistence.Tests.csproj", "{290A6525-3D41-4875-A926-EADA125CBBBF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Infrastructure.DataPersistence.Tests", "Infrastructure\TableTopCrucible.Infrastructure.DataPersistence.Tests\TableTopCrucible.Infrastructure.DataPersistence.Tests.csproj", "{290A6525-3D41-4875-A926-EADA125CBBBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

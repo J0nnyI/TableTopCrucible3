@@ -5,11 +5,11 @@ using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Extensions;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using ValueOf;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class Name : ValueOf<string, Name>, IComparable<Name>
+    public class Name : ValueType<string, Name>, IComparable<Name>
     {
         public int CompareTo(Name other) => Value?.CompareTo(other?.Value) ?? 0;
 

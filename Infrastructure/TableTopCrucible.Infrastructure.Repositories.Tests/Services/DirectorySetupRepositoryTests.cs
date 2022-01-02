@@ -14,6 +14,7 @@ using FluentAssertions;
 using Splat;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
@@ -22,13 +23,16 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services.Tests
     [TestFixture()]
     public class DirectorySetupRepositoryTests
     {
-        private DirectorySetupRepository _repository;
+        private IDatabaseAccessor _databaseAccessor;
+        private IDirectorySetupRepository _repository;
         private CompositeDisposable _disposables;
         [SetUp]
         public void BeforeEach()
         {
             Prepare.ApplicationEnvironment();
-            _repository = Locator.Current.GetService<DirectorySetupRepository>();
+
+            _repository = Locator.Current.GetService<IDirectorySetupRepository>();
+            _databaseAccessor = Locator.Current.GetService<IDatabaseAccessor>();
             _disposables = new();
         }
 
@@ -44,9 +48,20 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services.Tests
             _repository.Should().NotBeNull();
             _disposables.Should().NotBeNull();
         }
-
         [TestCase]
-        public void Add()
+        [Ignore("todo")]
+        public void Indexer()
+        {
+
+        }
+        [TestCase]
+        [Ignore("todo")]
+        public void Watch()
+        {
+
+        }
+        [TestCase]
+        public void Updates()
         {
             var bufferClose = new Subject<Unit>().DisposeWith(_disposables);
             IList<CollectionUpdate<DirectorySetupId, DirectorySetup>> bufferContent = null;

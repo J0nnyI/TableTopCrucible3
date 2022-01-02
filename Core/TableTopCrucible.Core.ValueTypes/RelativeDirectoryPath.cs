@@ -1,9 +1,9 @@
-﻿using ValueOf;
+﻿using TableTopCrucible.Infrastructure.Models.Entities;
 using static TableTopCrucible.Core.Helper.FileSystemHelper;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class RelativeDirectoryPath : ValueOf<string, RelativeDirectoryPath>
+    public class RelativeDirectoryPath : ValueType<string, RelativeDirectoryPath>
     {
         public static DirectoryPath operator +(DirectoryPath directory, RelativeDirectoryPath relativeDirectory) =>
             DirectoryPath.From(Path.Combine(directory.Value, relativeDirectory.Value));

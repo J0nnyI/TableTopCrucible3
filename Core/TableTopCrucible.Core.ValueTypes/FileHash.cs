@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Security.Cryptography;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using ValueOf;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class FileHash : ValueOf<byte[], FileHash>
+    public class FileHash : ValueType<byte[], FileHash>
     {
         public static int SHA512_Size = 64;
 
@@ -34,8 +34,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public override bool Equals(object obj) =>
             obj is FileHash hash &&
             Value.SequenceEqual(hash.Value);
-
-        protected override bool Equals(ValueOf<byte[], FileHash> other) => Equals(other as object);
+        
 
         public override int GetHashCode()
             // ReSharper disable once NonReadonlyMemberInGetHashCode

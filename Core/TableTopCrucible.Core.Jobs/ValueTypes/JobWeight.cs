@@ -1,8 +1,9 @@
-﻿using ValueOf;
+﻿using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.Jobs.ValueTypes
 {
-    public class JobWeight : ValueOf<double, JobWeight>
+    public class JobWeight : ValueType<double, JobWeight>
     {
         public static JobWeight Default { get; } = From(1);
 

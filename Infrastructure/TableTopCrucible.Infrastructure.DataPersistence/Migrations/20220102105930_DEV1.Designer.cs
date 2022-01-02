@@ -9,8 +9,8 @@ using TableTopCrucible.Infrastructure.DataPersistence;
 namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 {
     [DbContext(typeof(TtcDbContext))]
-    [Migration("20220101221444_DEV")]
-    partial class DEV
+    [Migration("20220102105930_DEV1")]
+    partial class DEV1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,8 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Guid");
+                    b.HasKey("Guid")
+                        .HasName("Id");
 
                     b.ToTable("DirectorySetups");
                 });
@@ -41,7 +42,8 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                     b.Property<DateTime>("LastWrite")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Guid");
+                    b.HasKey("Guid")
+                        .HasName("Id");
 
                     b.HasIndex("HashKey_Raw");
 
@@ -113,58 +115,6 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                         .HasForeignKey("HashKey_Raw")
                         .HasPrincipalKey("FileKey3d_Raw");
 
-                    b.OwnsOne("TableTopCrucible.Core.ValueTypes.FileHashKey", "HashKey", b1 =>
-                        {
-                            b1.Property<Guid>("FileDataGuid")
-                                .HasColumnType("TEXT");
-
-                            b1.HasKey("FileDataGuid");
-
-                            b1.ToTable("Files");
-
-                            b1.WithOwner()
-                                .HasForeignKey("FileDataGuid");
-
-                            b1.OwnsOne("TableTopCrucible.Core.ValueTypes.FileHash", "Hash", b2 =>
-                                {
-                                    b2.Property<Guid>("FileHashKeyFileDataGuid")
-                                        .HasColumnType("TEXT");
-
-                                    b2.Property<byte[]>("Value")
-                                        .IsRequired()
-                                        .HasColumnType("BLOB")
-                                        .HasColumnName("HashKey_Hash");
-
-                                    b2.HasKey("FileHashKeyFileDataGuid");
-
-                                    b2.ToTable("Files");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("FileHashKeyFileDataGuid");
-                                });
-
-                            b1.OwnsOne("TableTopCrucible.Core.ValueTypes.FileSize", "FileSize", b2 =>
-                                {
-                                    b2.Property<Guid>("FileHashKeyFileDataGuid")
-                                        .HasColumnType("TEXT");
-
-                                    b2.Property<long>("Value")
-                                        .HasColumnType("INTEGER")
-                                        .HasColumnName("HashKey_FileSize");
-
-                                    b2.HasKey("FileHashKeyFileDataGuid");
-
-                                    b2.ToTable("Files");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("FileHashKeyFileDataGuid");
-                                });
-
-                            b1.Navigation("FileSize");
-
-                            b1.Navigation("Hash");
-                        });
-
                     b.OwnsOne("TableTopCrucible.Core.ValueTypes.FilePath", "FileLocation", b1 =>
                         {
                             b1.Property<Guid>("FileDataGuid")
@@ -183,31 +133,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasForeignKey("FileDataGuid");
                         });
 
-                    b.OwnsOne("TableTopCrucible.Infrastructure.Models.EntityIds.ScannedFileDataId", "Id", b1 =>
-                        {
-                            b1.Property<Guid>("FileDataGuid")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<Guid>("Guid")
-                                .HasColumnType("TEXT")
-                                .HasColumnName("Id");
-
-                            b1.Property<Guid>("Value")
-                                .HasColumnType("TEXT");
-
-                            b1.HasKey("FileDataGuid");
-
-                            b1.ToTable("Files");
-
-                            b1.WithOwner()
-                                .HasForeignKey("FileDataGuid");
-                        });
-
                     b.Navigation("FileLocation");
-
-                    b.Navigation("HashKey");
-
-                    b.Navigation("Id");
 
                     b.Navigation("Item");
                 });
@@ -219,51 +145,15 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                             b1.Property<Guid>("ItemGuid")
                                 .HasColumnType("TEXT");
 
+                            b1.Property<string>("Value")
+                                .HasColumnType("TEXT");
+
                             b1.HasKey("ItemGuid");
 
                             b1.ToTable("Items");
 
                             b1.WithOwner()
                                 .HasForeignKey("ItemGuid");
-
-                            b1.OwnsOne("TableTopCrucible.Core.ValueTypes.FileHash", "Hash", b2 =>
-                                {
-                                    b2.Property<Guid>("FileHashKeyItemGuid")
-                                        .HasColumnType("TEXT");
-
-                                    b2.Property<byte[]>("Value")
-                                        .IsRequired()
-                                        .HasColumnType("BLOB")
-                                        .HasColumnName("HashKey3d_Hash");
-
-                                    b2.HasKey("FileHashKeyItemGuid");
-
-                                    b2.ToTable("Items");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("FileHashKeyItemGuid");
-                                });
-
-                            b1.OwnsOne("TableTopCrucible.Core.ValueTypes.FileSize", "FileSize", b2 =>
-                                {
-                                    b2.Property<Guid>("FileHashKeyItemGuid")
-                                        .HasColumnType("TEXT");
-
-                                    b2.Property<long>("Value")
-                                        .HasColumnType("INTEGER")
-                                        .HasColumnName("HashKey3d_FileSize");
-
-                                    b2.HasKey("FileHashKeyItemGuid");
-
-                                    b2.ToTable("Items");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("FileHashKeyItemGuid");
-                                });
-
-                            b1.Navigation("FileSize");
-
-                            b1.Navigation("Hash");
                         });
 
                     b.OwnsOne("TableTopCrucible.Core.ValueTypes.Name", "Name", b1 =>

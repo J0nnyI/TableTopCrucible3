@@ -1,8 +1,10 @@
-﻿using ValueOf;
+﻿using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.Jobs.ValueTypes
 {
-    public class WeightedCurrentProgress : ValueOf<double, WeightedCurrentProgress>
+    public class WeightedCurrentProgress : ValueType<double, WeightedCurrentProgress>
     {
         public static explicit operator WeightedCurrentProgress(double value) => From(value);
 

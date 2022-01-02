@@ -11,7 +11,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
     public interface IDataEntity<TId>
         where TId : IDataId
     {
-        TId Id { get; init; }
+        TId Id { get; }
+        Guid Guid { get; }
     }
 
     /// <summary>
@@ -21,7 +22,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
     public abstract class DataEntity<TId> : ReactiveObject, IDataEntity<TId>
         where TId : IDataId, new()
     {
-        private readonly TId _id;
+        private TId _id;
 
         protected DataEntity()
         {
@@ -30,12 +31,12 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 
         public Guid Guid {
             get=> Id.Guid;
-            init => Id = new TId { Guid = value };
+            set => Id = new TId { Guid = value };
         }
         public TId Id
         {
             get => _id;
-            init
+            set
             {
                 if (value is null)
                     throw new NullReferenceException(nameof(Id));

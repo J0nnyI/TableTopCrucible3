@@ -156,7 +156,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                     change.UpdatedEntities.ContainsKey(id))
                 .Select(change =>
                     change.UpdatedEntities[id])
-                .StartWith(Data.SingleOrDefault(entity => entity.Id.Equals(id)));
+                .StartWith(this[id]);
 
         public IObservable<TEntity> Watch(IObservable<TId> idChanges)
             => idChanges.Select(Watch)
@@ -165,7 +165,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 .RefCount();
 
         public TEntity this[TId id]
-            => _Data.Single(entity => entity.Id.Equals(id));
+            => _Data.SingleOrDefault(entity => entity.Guid.Equals(id));
 
         public void Add(TEntity entity)
         {

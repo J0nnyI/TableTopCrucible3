@@ -2,11 +2,12 @@
 using System.Reactive.Linq;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.ValueTypes;
-using ValueOf;
+using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.Wpf.Engine.ValueTypes
 {
-    public class JobFilter : ValueOf<Func<ITrackingViewer, IObservable<bool>>, JobFilter>
+    public class JobFilter : ValueType<Func<ITrackingViewer, IObservable<bool>>, JobFilter>
     {
         public static readonly JobFilter All = From(_ => Observable.Return(true), "All Jobs");
         public string Description { get; private set; }

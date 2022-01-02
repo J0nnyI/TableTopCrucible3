@@ -31,18 +31,13 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             set => SetRequiredValue(ref _fileLocation, value);
         }
         
-        private FileHashKey _hashKey;
-        public FileHashKey HashKey
+        public FileHashKey HashKey { get; set; }
+
+        internal string HashKey_Raw
         {
-            get => _hashKey;
-            set
-            {
-                SetRequiredValue(ref _hashKey, value);
-                SetRequiredValue(ref _hashKey_Raw, value.ToString(), nameof(HashKey_Raw));
-            }
+            get => HashKey.Value;
+            set => HashKey = FileHashKey.From(value);
         }
-        private string _hashKey_Raw;
-        internal string HashKey_Raw => _hashKey_Raw;
 
         private DateTime _lastWrite;
         public DateTime LastWrite
@@ -72,9 +67,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             fileBuilder
                 .Property(x => x.LastWrite)
                 .IsRequired();
-            fileBuilder.OwnsOne(
+            fileBuilder.Ignore(
                 fileData => fileData.HashKey);
-
             fileBuilder.HasIndex(x => x.HashKey_Raw);
 
             fileBuilder.HasOne(file => file.Item)
