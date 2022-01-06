@@ -122,11 +122,11 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                         filesToHash
                             .AsParallel()
                             .WithDegreeOfParallelism(SettingsHelper.ThreadCount)
-                            .ForAll(item =>
+                            .ForAll(fileData =>
                             {
-                                item.CreateNewHashKey();
-                                hashingTracker.Increment((ProgressIncrement)item.FoundFile.Value.Length);
-                                updatePipeline.OnNext(item);
+                                fileData.CreateNewHashKey();
+                                hashingTracker.Increment((ProgressIncrement)fileData.FoundFile.Value.Length);
+                                updatePipeline.OnNext(fileData);
                             });
                     }
                     else
@@ -180,19 +180,28 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             return new FileSyncListGrouping(deletedFiles.Concat(filesOfUnregisteredDirs));
         }
 
-
+        private object _itemUpdateLocker = new();
         private void _handleChangedFiles(RawSyncFileData[] files)
         {
             var filesToAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity()).ToArray();
-            var itemsToAdd = filesToAdd
-                .DistinctBy(x => x.HashKey)
-                .Where(file => !_fileRepository.Data.Any(registeredFile => registeredFile.HashKey_Raw == file.HashKey_Raw))// exclude all known files since they are already linked
-                .Select(file => new Item(
-                        file.Path.GetFilenameWithoutExtension().ToName(),
-                        file.HashKey
-                    )
-                );
-            _itemRepository.AddRange(itemsToAdd);
+            lock(_itemUpdateLocker)
+            {
+                var itemsToAdd = filesToAdd
+                    .DistinctBy(x=>x.HashKey_Raw)
+                    .Where(file =>
+                        !_itemRepository.Data.Any(item=>item.FileKey3d_Raw == file.HashKey_Raw)) // all linked files have to be checked manually in case there was no file with a given hash found before
+                    .Select(file => new Item(
+                            file.Path.GetFilenameWithoutExtension().ToName(),
+                            file.HashKey
+                        )
+                    ).ToArray();
+
+                var tsta = _itemRepository.Data.ToArray();
+                var tst = tsta.Concat(itemsToAdd);
+                var tst2 = tst.Select(x=>x.FileKey3d_Raw).Distinct(); 
+
+                _itemRepository.AddRange(itemsToAdd);
+            }
             _fileRepository.AddRange(filesToAdd);
         }
     }

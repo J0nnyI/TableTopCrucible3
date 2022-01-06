@@ -9,7 +9,112 @@
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800"
                           d:DataContext="{d:DesignInstance vm:LibraryPageVm}">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock"
+               x:Key="PlaceHolder">
+            <Setter Property="FontSize"
+                    Value="40"/>
+            <Setter Property="Background"
+                    Value="DarkRed"/>
+            <Setter Property="Margin"
+                    Value="4"/>
+        </Style>
+        <Style TargetType="TextBlock"
+               x:Key="VerticalExpanderHeader">
+        <Setter Property="RenderTransformOrigin"
+                Value=".5,.5"/>
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <RotateTransform Angle="90"/>
+                </Setter.Value>
+            </Setter>
+        <Setter Property="FontSize"
+                Value="{DynamicResource SidebarTitleFontSize}"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        <rxui:ViewModelViewHost x:Name="ItemList" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Header and Filter overview"
+                   Style="{StaticResource PlaceHolder}"
+                   Margin="4 4 12 4"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="2"/>
+
+        <TextBlock Text="Model viewer TabStrip"
+                   Style="{StaticResource PlaceHolder}"
+                   Grid.Row="0"
+                   Grid.Column="2"
+                   Grid.ColumnSpan="2"/>
+
+        <Expander ExpandDirection="Right"
+                  Grid.Column="0"
+                  Grid.Row="1">
+            <Expander.Header>
+                <TextBlock Text="filter"
+                           Style="{StaticResource VerticalExpanderHeader}"/>
+            </Expander.Header>
+            <TextBlock Text="Filter"
+                       Style="{StaticResource PlaceHolder}"/>
+        </Expander>
+
+        <rxui:ViewModelViewHost x:Name="ItemList" 
+                                Margin="4 4 12 4"
+                                Grid.Column="1"
+                                Grid.Row="1"/>
+
+        <TextBlock Text="Item Viewer"
+                   Style="{StaticResource PlaceHolder}"
+                   Grid.Row="1"
+                   Grid.Column="2"/>
+
+        <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
+                    TabStripPlacement="Top"
+                    Grid.Column="2"
+                    Grid.Row="1">
+            <TabItem Header="3d Model">
+                <TextBlock Text="Item Viewer"
+                           Style="{StaticResource PlaceHolder}"/>
+            </TabItem>
+            <TabItem Header="Gallery">
+                <TextBlock Text="Gallery"
+                           Style="{StaticResource PlaceHolder}"/>
+            </TabItem>
+            <TabItem Header="Files">
+                <TextBlock Text="Files"
+                           Style="{StaticResource PlaceHolder}"/>
+            </TabItem>
+        </TabControl>
+
+        <GridSplitter Width="{DynamicResource GridSplitterWidth}"
+                      Margin="{DynamicResource GridSplitterMargin}"
+                      Grid.Column="1"
+                      Grid.Row="0"
+                      Grid.RowSpan="2"/>
+
+        <Expander ExpandDirection="Left"
+                  Grid.Column="3"
+                  Grid.Row="1">
+            <Expander.Header>
+                <TextBlock Text="Tools"
+                           Style="{StaticResource VerticalExpanderHeader}"/>
+            </Expander.Header>
+            <TextBlock Text="Tools"
+                       Style="{StaticResource PlaceHolder}"
+            />
+        </Expander>
+
+
     </Grid>
 </rxui:ReactiveUserControl>

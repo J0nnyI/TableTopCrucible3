@@ -14,6 +14,9 @@
     <sys:Double x:Key="SidebarTitleFontSize">20</sys:Double>
     <sys:Double x:Key="SidebarSubTitleFontSize">16</sys:Double>
     <sys:Double x:Key="SidebarContentFontSize">16</sys:Double>
+    <sys:Double x:Key="GridSplitterWidth">4</sys:Double>
+    <Thickness x:Key="GridSplitterMargin">4</Thickness>
+    <sys:Double x:Key="TotalGridSplitterSize">12</sys:Double>
     <Style TargetType="TextBlock"
            x:Key="SidebarTitle">
         <Setter Property="FontSize" Value="{DynamicResource SidebarTitleFontSize}" />
