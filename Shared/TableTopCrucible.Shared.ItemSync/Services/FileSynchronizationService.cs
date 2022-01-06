@@ -34,13 +34,13 @@ namespace TableTopCrucible.Shared.ItemSync.Services
     public class FileSynchronizationService : IFileSynchronizationService
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
-        private readonly IScannedFileRepository _fileRepository;
+        private readonly IFileRepository _fileRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IProgressTrackingService _progressTrackingService;
 
         public FileSynchronizationService(
             IDirectorySetupRepository directorySetupRepository,
-            IScannedFileRepository fileRepository,
+            IFileRepository fileRepository,
             IItemRepository itemRepository,
             IProgressTrackingService progressTrackingService)
         {
@@ -152,7 +152,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             return foundFiles.FullJoin(
                 knownFiles,
                 foundFile => foundFile.Value,
-                knownFile => knownFile.FileLocation.Value,
+                knownFile => knownFile.Path.Value,
                 found => new RawSyncFileData(null, found),
                 known => new RawSyncFileData(known, null),
                 (found, known) => new RawSyncFileData(known, found));
@@ -160,17 +160,24 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
         private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetup> directorySetups)
         {
-            return new FileSyncListGrouping(directorySetups
+            return new FileSyncListGrouping(directorySetups.ToArray()
                 .SelectMany(directory => startScanForDirectory(directory)));
         }
 
 
         private void _handleChangedFiles(RawSyncFileData[] files)
         {
-            var toAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity());
-            var toUpdate = files.Where(x => x.UpdateSource == FileUpdateSource.Updated)
-                .Select(file => file.GetNewEntity());
-            _fileRepository.AddRange(toAdd);
+            var filesToAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity()).ToArray();
+            var itemsToAdd = filesToAdd
+                .DistinctBy(x => x.HashKey)
+                .Where(file=>!_fileRepository.Data.Any(registeredFile=>registeredFile.HashKey_Raw == file.HashKey_Raw))// exclude all known files since they are already linked
+                .Select(file => new Item(
+                        file.Path.GetFilenameWithoutExtension().ToName(),
+                        file.HashKey
+                    )
+                );
+            _itemRepository.AddRange(itemsToAdd);
+            _fileRepository.AddRange(filesToAdd);
         }
     }
 }

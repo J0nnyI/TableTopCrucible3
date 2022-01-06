@@ -6,14 +6,14 @@ using TableTopCrucible.Infrastructure.Models.EntityIds;
 namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
     [Singleton]
-    public interface IScannedFileRepository
+    public interface IFileRepository
         : IRepository<FileDataId, FileData>
     {
     }
 
     internal class FileRepository
         : RepositoryBase<FileDataId, FileData>,
-            IScannedFileRepository
+            IFileRepository
     {
         public FileRepository(IDatabaseAccessor database)
             : base(database, database.Files)

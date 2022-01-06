@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+
 using DynamicData;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
@@ -39,41 +44,57 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             {
                 SetRequiredValue(ref _fileKey3d, value);
                 SetRequiredValue(ref _fileKey3d_Raw, value.ToString(), nameof(FileKey3d_Raw));
-            } 
+            }
         }
         private string _fileKey3d_Raw;
-        internal string FileKey3d_Raw => _fileKey3d_Raw;
-        
+        public string FileKey3d_Raw => _fileKey3d_Raw;// required to be public by database queries
+
         public ObservableCollection<Tag> Tags { get; } = new();
         public ObservableCollection<FileData> Files { get; } = new();
+
+        internal string RawTags
+        {
+            get => SerializedStringList.From(Tags.Select(tag => tag.Value)).Value;
+            set
+            {
+                var newTags = SerializedStringList.From(value).Deserialize().Select(tag => (Tag)tag);
+                Tags.AddRange(newTags.Except(Tags));
+            }
+        }
 
         protected override IEnumerable<object> getAtomicValues()
             => new object[] { Id, Name, FileKey3d, Tags };
     }
 
-    public class ItemConfiguration:IEntityTypeConfiguration<Item>
+    public class ItemConfiguration : IEntityTypeConfiguration<Item>
     {
         public static string TableName => "Items";
 
-        public void Configure(EntityTypeBuilder<Item> itemBuilder)
+        public void Configure(EntityTypeBuilder<Item> builder)
         {
-            itemBuilder.ToTable(TableName);
-            itemBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
+            builder.ToTable(TableName);
+            builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
 
-            itemBuilder.OwnsOne(x => x.Name)
-                .Property(x=>x.Value)
+            builder.OwnsOne(x => x.Name)
+                .Property(x => x.Value)
                 .HasColumnName("Name")
                 .IsRequired();
-            itemBuilder.OwnsOne(x => x.Id)
-                .Property(x=>x.Value)
+            builder.OwnsOne(x => x.Id)
+                .Property(x => x.Value)
                 .HasColumnName("Id")
                 .IsRequired();
-            itemBuilder.OwnsOne(
-                fileData => fileData.FileKey3d);
-            itemBuilder.HasIndex(x => x.FileKey3d_Raw);
-            itemBuilder.OwnsMany(x => x.Tags);
+
+            builder.Property(fileData => fileData.FileKey3d_Raw);
+            builder.HasIndex(x => x.FileKey3d_Raw);
             
-            itemBuilder.HasKey(x => x.Guid);
+            builder.Property(x => x.RawTags);
+            
+            builder.Ignore(x => x.Tags);
+            builder.Ignore(x => x.FileKey3d);
+
+            builder.Ignore(x => x.Id);
+            builder.HasKey(x => x.Guid)
+                .HasName("Id");
         }
     }
 }

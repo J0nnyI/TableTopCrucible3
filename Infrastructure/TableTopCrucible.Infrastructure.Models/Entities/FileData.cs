@@ -17,23 +17,23 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         {
         }
 
-        public FileData(FilePath fileLocation, FileHashKey hashKey, DateTime lastWrite)
+        public FileData(FilePath path, FileHashKey hashKey, DateTime lastWrite)
         {
-            FileLocation = fileLocation;
+            Path = path;
             HashKey = hashKey;
             LastWrite = lastWrite;
         }
 
-        private FilePath _fileLocation;
-        public FilePath FileLocation
+        private FilePath _path;
+        public FilePath Path
         {
-            get => _fileLocation;
-            set => SetRequiredValue(ref _fileLocation, value);
+            get => _path;
+            set => SetRequiredValue(ref _path, value);
         }
         
         public FileHashKey HashKey { get; set; }
 
-        internal string HashKey_Raw
+        public string HashKey_Raw // required to be public by database queries
         {
             get => HashKey.Value;
             set => HashKey = FileHashKey.From(value);
@@ -51,7 +51,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         public Item Item { get; set; }
 
         protected override IEnumerable<object> getAtomicValues()
-            => new object[] { Id, FileLocation, HashKey, LastWrite };
+            => new object[] { Id, Path, HashKey, LastWrite };
     }
 
     public class FileDataConfiguration : IEntityTypeConfiguration<FileData>
@@ -62,7 +62,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             builder.ToTable(TableName);
             builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
 
-            builder.OwnsOne(x => x.FileLocation)
+            builder.OwnsOne(x => x.Path)
                 .Property(x => x.Value)
                 .HasColumnName("FileLocation")
                 .IsRequired();
@@ -71,12 +71,15 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                 .IsRequired();
             builder.Ignore(
                 fileData => fileData.HashKey);
-            builder.HasIndex(x => x.HashKey_Raw);
+            builder.HasIndex(x => x.HashKey_Raw)
+                .HasDatabaseName("FileKey3d");
 
             builder.HasOne(file => file.Item)
                 .WithMany(item => item.Files)
                 .HasForeignKey(file => file.HashKey_Raw)
-                .HasPrincipalKey(item => item.FileKey3d_Raw);
+                .IsRequired(false)
+                .HasPrincipalKey(item => item.FileKey3d_Raw)
+                .IsRequired(false);
 
             builder.Ignore(x => x.Id);
             builder.HasKey(x => x.Guid)

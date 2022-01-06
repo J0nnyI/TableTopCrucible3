@@ -19,14 +19,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
     public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel
     {
-        private readonly IScannedFileRepository _fileRepository;
+        private readonly IFileRepository _fileRepository;
         private readonly IFileSynchronizationService _fileSynchronizationService;
 
         public ObservableCollectionExtended<FileData> Files = new();
         public ObservableCollectionExtended<Item> Items = new();
 
         public ItemListVm(
-            IScannedFileRepository fileRepository,
+            IFileRepository fileRepository,
             IFileSynchronizationService fileSynchronizationService,
             IItemRepository itemRepository)
         {

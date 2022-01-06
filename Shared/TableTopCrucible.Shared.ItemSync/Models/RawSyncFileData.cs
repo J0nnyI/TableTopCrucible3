@@ -61,7 +61,7 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             if (KnownFile == null)
                 return new FileData(FoundFile, NewHashKey, foundFileInfo.LastWriteTime);
             KnownFile.HashKey = NewHashKey;
-            KnownFile.FileLocation = FoundFile;
+            KnownFile.Path = FoundFile;
             KnownFile.LastWrite = foundFileInfo.LastWriteTime;
             return KnownFile;
         }

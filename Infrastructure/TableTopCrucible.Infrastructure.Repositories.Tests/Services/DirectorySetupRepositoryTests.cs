@@ -7,13 +7,19 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
+
 using DynamicData;
+
 using FluentAssertions;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Reactive.Testing;
+
 using NUnit.Framework;
+
 using Splat;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
@@ -119,7 +125,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Tests.Services
             _repository.Add(_falseEntity);
             _repository.Watch(_entity.Id)
                 .Buffer(bufferClose)
-                .Subscribe(x =>bufferContent = x)
+                .Subscribe(x => bufferContent = x)
                 .DisposeWith(_disposables);
 
             bufferClose.OnNext();

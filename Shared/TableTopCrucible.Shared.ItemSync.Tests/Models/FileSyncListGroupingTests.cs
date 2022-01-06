@@ -25,7 +25,7 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
             Prepare.ApplicationEnvironment();
 
             directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
-            fileRepository = Locator.Current.GetService<IScannedFileRepository>();
+            fileRepository = Locator.Current.GetService<IFileRepository>();
             fileSyncService = Locator.Current.GetService<IFileSynchronizationService>();
         }
 
@@ -34,7 +34,7 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
         private IDirectorySetupRepository
             directorySetupRepository;
 
-        private IScannedFileRepository fileRepository;
+        private IFileRepository fileRepository;
         private IFileSynchronizationService fileSyncService;
 
         internal class FileSetupData
@@ -104,7 +104,7 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
                 else
                 {
                     output.HashKey.Should().Be(TargetHashKey);
-                    output.FileLocation.Should().Be(File);
+                    output.Path.Should().Be(File);
                     output.LastWrite.Should().Be(TargetLastWrite);
                     output.Id.Should().Be(OriginalId);
                 }
@@ -117,13 +117,13 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
         internal class TestSetup
         {
             private readonly IDirectorySetupRepository directorySetupRepository;
-            private readonly IScannedFileRepository fileRepository;
+            private readonly IFileRepository fileRepository;
             private readonly IFileSynchronizationService fileSyncService;
 
             public TestSetup()
             {
                 directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
-                fileRepository = Locator.Current.GetService<IScannedFileRepository>();
+                fileRepository = Locator.Current.GetService<IFileRepository>();
                 fileSyncService = Locator.Current.GetService<IFileSynchronizationService>();
             }
 
