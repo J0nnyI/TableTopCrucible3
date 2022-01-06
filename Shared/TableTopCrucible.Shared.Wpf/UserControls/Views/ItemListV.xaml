@@ -15,7 +15,6 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <GridSplitter Width="4"
                       Margin=" 0 4 -2 4"
@@ -25,32 +24,12 @@
                 HorizontalAlignment="Left"
                 Grid.Column="0"
                 Grid.Row="0" />
-        <TextBlock Text="files"
-                   HorizontalAlignment="Center"
-                   Grid.Column="0"
-                   Grid.Row="0" />
-        <ListView x:Name="Files"
-                  Margin="5"
-                  Grid.Row="1"
-                  Grid.Column="0">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}" />
-                    <GridViewColumn Header="HashKey"
-                                    DisplayMemberBinding="{Binding HashKey}"
-                                    Width="300" />
-                    <GridViewColumn Header="Last Write" DisplayMemberBinding="{Binding LastWrite}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
         <TextBlock Text="items"
                    HorizontalAlignment="Center"
-                   Grid.Column="1"
                    Grid.Row="0" />
         <ListView x:Name="Items"
                   Margin="5"
-                  Grid.Row="1"
-                  Grid.Column="1">
+                  Grid.Row="1">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />

@@ -16,7 +16,25 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.Views
             {
                 this.Bind(ViewModel,
                     vm => vm.ItemList,
-                    v => v.ItemList.ViewModel)
+                    v => v.ItemList.ViewModel),
+                this.Bind(ViewModel,
+                    vm=>vm.ListHeader,
+                    v=>v.ListHeader.ViewModel),
+                this.Bind(ViewModel,
+                    vm=>vm.Filter,
+                    v=>v.Filter.ViewModel),
+                this.Bind(ViewModel,
+                    vm=>vm.ModelViewer,
+                    v=>v.ModelViewer.ViewModel),
+                this.Bind(ViewModel,
+                    vm=>vm.DataViewer,
+                    v=>v.DataViewer.ViewModel),
+                this.Bind(ViewModel,
+                    vm=>vm.Actions,
+                    v=>v.Actions.ViewModel),
+                this.Bind(ViewModel,
+                    vm=>vm.ViewerHeader,
+                    v=>v.ViewerHeader.ViewModel),
             });
         }
     }

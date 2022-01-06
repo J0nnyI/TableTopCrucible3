@@ -11,14 +11,14 @@ using TableTopCrucible.Infrastructure.Models.Entities;
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
     [Transient]
-    public interface IItemModelViewer
+    public interface IItemDataViewer
     {
-        public Item Item{get; set; }
+        Item Item { get; set; }
     }
-    public class ItemModelViewerVm:ReactiveObject,IActivatableViewModel, IItemModelViewer
+    public class ItemDataViewerVm:ReactiveObject, IItemDataViewer, IActivatableViewModel
     {
-        public ViewModelActivator Activator { get; } = new();
         [Reactive]
         public Item Item { get; set; }
+        public ViewModelActivator Activator { get; } = new();
     }
 }

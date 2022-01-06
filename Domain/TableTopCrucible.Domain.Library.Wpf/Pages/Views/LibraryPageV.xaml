@@ -45,28 +45,26 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Header and Filter overview"
-                   Style="{StaticResource PlaceHolder}"
-                   Margin="4 4 12 4"
-                   Grid.Row="0"
-                   Grid.Column="0"
-                   Grid.ColumnSpan="2"/>
+        <rxui:ViewModelViewHost x:Name="ListHeader"
+                                Margin="4 4 12 4"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"/>
 
-        <TextBlock Text="Model viewer TabStrip"
-                   Style="{StaticResource PlaceHolder}"
-                   Grid.Row="0"
-                   Grid.Column="2"
-                   Grid.ColumnSpan="2"/>
+        <rxui:ViewModelViewHost Name="ViewerHeader"
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Grid.ColumnSpan="2"/>
 
         <Expander ExpandDirection="Right"
+                  IsExpanded="True"
                   Grid.Column="0"
                   Grid.Row="1">
             <Expander.Header>
-                <TextBlock Text="filter"
+                <TextBlock Text="Filter"
                            Style="{StaticResource VerticalExpanderHeader}"/>
             </Expander.Header>
-            <TextBlock Text="Filter"
-                       Style="{StaticResource PlaceHolder}"/>
+            <rxui:ViewModelViewHost x:Name="Filter"/>
         </Expander>
 
         <rxui:ViewModelViewHost x:Name="ItemList" 
@@ -74,18 +72,15 @@
                                 Grid.Column="1"
                                 Grid.Row="1"/>
 
-        <TextBlock Text="Item Viewer"
-                   Style="{StaticResource PlaceHolder}"
-                   Grid.Row="1"
-                   Grid.Column="2"/>
-
         <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
                     TabStripPlacement="Top"
                     Grid.Column="2"
                     Grid.Row="1">
             <TabItem Header="3d Model">
-                <TextBlock Text="Item Viewer"
-                           Style="{StaticResource PlaceHolder}"/>
+                <rxui:ViewModelViewHost x:Name="ModelViewer"/>
+            </TabItem>
+            <TabItem Header="Data">
+                <rxui:ViewModelViewHost x:Name="DataViewer"/>
             </TabItem>
             <TabItem Header="Gallery">
                 <TextBlock Text="Gallery"
@@ -104,15 +99,14 @@
                       Grid.RowSpan="2"/>
 
         <Expander ExpandDirection="Left"
+                  IsExpanded="True"
                   Grid.Column="3"
                   Grid.Row="1">
             <Expander.Header>
                 <TextBlock Text="Tools"
                            Style="{StaticResource VerticalExpanderHeader}"/>
             </Expander.Header>
-            <TextBlock Text="Tools"
-                       Style="{StaticResource PlaceHolder}"
-            />
+            <rxui:ViewModelViewHost x:Name="Actions"/>
         </Expander>
 
 
