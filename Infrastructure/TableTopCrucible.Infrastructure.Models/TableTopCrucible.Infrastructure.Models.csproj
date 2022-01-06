@@ -8,4 +8,7 @@
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
   </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="ReactiveUI.Fody" Version="16.3.10" />
+    </ItemGroup>
 </Project>

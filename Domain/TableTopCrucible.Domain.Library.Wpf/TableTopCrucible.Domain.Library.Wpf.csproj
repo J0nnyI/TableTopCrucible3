@@ -1,28 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
-    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Wpf.Engine\TableTopCrucible.Core.Wpf.Engine.csproj" />
-    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
-    <ProjectReference Include="..\..\Shared\TableTopCrucible.Shared.Wpf\TableTopCrucible.Shared.Wpf.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+        <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Wpf.Engine\TableTopCrucible.Core.Wpf.Engine.csproj" />
+        <ProjectReference Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
+        <ProjectReference Include="..\..\Shared\TableTopCrucible.Shared.Wpf\TableTopCrucible.Shared.Wpf.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="DummyApp.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Update="DummyApp.xaml.cs">
+            <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Page Update="DummyApp.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="ReactiveUI.Fody" Version="16.3.10" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Page Update="DummyApp.xaml">
+            <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+    </ItemGroup>
 
 </Project>

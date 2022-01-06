@@ -50,7 +50,17 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         public string FileKey3d_Raw => _fileKey3d_Raw;// required to be public by database queries
 
         public ObservableCollection<Tag> Tags { get; } = new();
-        public ObservableCollection<FileData> Files { get; } = new();
+        private ObservableCollection<FileData> _files = new();
+
+        public ObservableCollection<FileData> Files
+        {
+            get => _files;
+            set
+            {
+                _files.AddRange(value.Except(_files));
+                _files.RemoveMany(_files.Except(value));
+            }
+        } 
 
         internal string RawTags
         {

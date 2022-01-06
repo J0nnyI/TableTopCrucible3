@@ -35,6 +35,9 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.Views
                 this.Bind(ViewModel,
                     vm=>vm.ViewerHeader,
                     v=>v.ViewerHeader.ViewModel),
+                this.Bind(ViewModel,
+                    vm=>vm.FileList,
+                    v=>v.FileList.ViewModel),
             });
         }
     }

@@ -32,7 +32,8 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             IItemModelViewer modelViewer, 
             IItemActions actions, 
             IItemDataViewer dataViewer,
-            IItemViewerHeader viewerHeader)
+            IItemViewerHeader viewerHeader,
+            IItemFileList fileList)
         {
             ItemList = itemList.DisposeWith(_disposables);
             ListHeader = listHeader;
@@ -41,6 +42,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             Actions = actions;
             DataViewer = dataViewer;
             ViewerHeader = viewerHeader;
+            FileList = fileList.DisposeWith(_disposables);
 
             var itemChanges = ItemList.SelectedItems
                 .Connect()
@@ -55,6 +57,9 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             itemChanges
                 .BindTo(this, vm => vm.ViewerHeader.Item)
                 .DisposeWith(_disposables);
+            itemChanges
+                .BindTo(this, vm => vm.FileList.Item)
+                .DisposeWith(_disposables);
 
         }
 
@@ -66,6 +71,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         public IItemActions Actions { get; }
         public IItemDataViewer DataViewer { get; }
         public IItemViewerHeader ViewerHeader { get; }
+        public IItemFileList FileList { get; }
         public ViewModelActivator Activator { get; } = new();
         public PackIconKind? Icon => PackIconKind.Bookshelf;
         public Name Title => Name.From("Item Library");

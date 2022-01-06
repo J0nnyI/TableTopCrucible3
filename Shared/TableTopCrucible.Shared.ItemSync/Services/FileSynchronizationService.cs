@@ -126,7 +126,10 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                             {
                                 fileData.CreateNewHashKey();
                                 hashingTracker.Increment((ProgressIncrement)fileData.FoundFile.Value.Length);
-                                updatePipeline.OnNext(fileData);
+                                lock(updatePipeline)
+                                {
+                                    updatePipeline.OnNext(fileData);
+                                }
                             });
                     }
                     else
@@ -195,10 +198,6 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                             file.HashKey
                         )
                     ).ToArray();
-
-                var tsta = _itemRepository.Data.ToArray();
-                var tst = tsta.Concat(itemsToAdd);
-                var tst2 = tst.Select(x=>x.FileKey3d_Raw).Distinct(); 
 
                 _itemRepository.AddRange(itemsToAdd);
             }

@@ -16,9 +16,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <GridSplitter Width="4"
-                      Margin=" 0 4 -2 4"
-                      Grid.RowSpan="2" />
         <Button x:Name="FileSync"
                 Content="Start Sync"
                 HorizontalAlignment="Left"

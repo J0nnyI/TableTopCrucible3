@@ -87,8 +87,7 @@
                            Style="{StaticResource PlaceHolder}"/>
             </TabItem>
             <TabItem Header="Files">
-                <TextBlock Text="Files"
-                           Style="{StaticResource PlaceHolder}"/>
+                <rxui:ViewModelViewHost x:Name="FileList"/>
             </TabItem>
         </TabControl>
 
