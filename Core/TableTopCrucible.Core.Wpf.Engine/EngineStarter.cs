@@ -29,12 +29,11 @@ namespace TableTopCrucible.Core.Wpf.Engine
                 .ConfigureServices(services =>
                 {
                     services.UseMicrosoftDependencyResolver();
+                    services.AddTtcServices();
+                  
                     var resolver = Locator.CurrentMutable;
                     resolver.InitializeSplat();
                     resolver.InitializeReactiveUI();
-
-
-                    DependencyBuilder.GetServices(services);
                 })
                 .ConfigureLogging(loggingBuilder => { loggingBuilder.AddSplat(); })
                 .UseEnvironment(

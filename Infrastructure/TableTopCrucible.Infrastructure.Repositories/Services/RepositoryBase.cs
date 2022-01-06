@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.ComponentModel;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,11 +7,16 @@ using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+
 using DynamicData;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Repositories.Exceptions;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
@@ -42,7 +48,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                                 list.AddOrUpdate(change.UpdateInfo.UpdatedEntities.Values);
                                 break;
                             case EntityUpdateChangeReason.Remove:
-                                list.Remove(change.UpdateInfo.UpdatedEntities.Values);
+                                list.Remove(change.UpdateInfo.UpdatedEntities.Keys);
                                 break;
                             case EntityUpdateChangeReason.Init:
                                 list.AddOrUpdate(change.Queryable.AsEnumerable());
@@ -150,14 +156,23 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         public IQueryable<TEntity> Data => _Data;
         public IObservable<CollectionUpdate<TId, TEntity>> Updates { get; }
 
+        /// <summary>
+        /// only updates on init, add and delete, updates have to be consumed via <see cref="INotifyPropertyChanged"/>
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public IObservable<TEntity> Watch(TId id)
             => _changes
                 .Where(change =>
                     change.UpdatedEntities.ContainsKey(id))
-                .Select(change =>
-                    change.UpdatedEntities[id])
+                .Select(change => change.UpdatedEntities[id])
                 .StartWith(this[id]);
 
+        /// <summary>
+        /// only updates on init, add and delete, updates have to be consumed via <see cref="INotifyPropertyChanged"/>
+        /// </summary>
+        /// <param name="idChanges"></param>
+        /// <returns></returns>
         public IObservable<TEntity> Watch(IObservable<TId> idChanges)
             => idChanges.Select(Watch)
                 .Switch()
@@ -165,21 +180,33 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 .RefCount();
 
         public TEntity this[TId id]
-            => _Data.SingleOrDefault(entity => entity.Guid.Equals(id));
+            => _Data.SingleOrDefault(entity => entity.Guid.Equals(id.Guid));
+        public abstract string TableName { get; }
 
         public void Add(TEntity entity)
         {
-            _Data.Add(entity);
-            _database.AutoSave();
-            _changes.OnNext(new EntityUpdate<TId, TEntity>
-                (
-                    EntityUpdateChangeReason.Add,
-                    new Dictionary<TId, TEntity>
-                    {
-                        { entity.Id, entity }
-                    }
-                )
-            );
+            try
+            {
+                _Data.Add(entity);
+                _database.AutoSave();
+
+                _changes.OnNext(new EntityUpdate<TId, TEntity>
+                    (
+                        EntityUpdateChangeReason.Add,
+                        new Dictionary<TId, TEntity>
+                        {
+                            { entity.Id, entity }
+                        }
+                    )
+                );
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.InnerException.Message == $"SQLite Error 19: 'UNIQUE constraint failed: {TableName}.Id'.")
+                    throw new EntityAlreadyAddedException<TId, TEntity>(e, entity);
+
+                throw;
+            }
         }
 
         public void AddRange(IEnumerable<TEntity> entities)
@@ -226,7 +253,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 (
                     EntityUpdateChangeReason.Remove,
                     new Dictionary<TId, TEntity>(
-                        entitiesToDelete.Select(entity => new KeyValuePair<TId, TEntity>(entity.Id, entity)))
+                        entitiesToDelete.Select(entity => new KeyValuePair<TId, TEntity>(entity.Id, null)))
                 )
             );
         }

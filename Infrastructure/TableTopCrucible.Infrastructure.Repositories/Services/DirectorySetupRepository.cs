@@ -24,5 +24,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         public DirectorySetup this[DirectoryPath path]
             => this.Data.SingleOrDefault(dir => dir.Path.Value == path.Value);
+
+        public override string TableName => DirectorySetupConfiguration.TableName;
     }
 }

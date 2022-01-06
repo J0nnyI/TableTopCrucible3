@@ -1,3 +1,3 @@
 rem dotnet ef migrations remove
-dotnet ef migrations add DEV3
+dotnet ef migrations add DEV
 pause

@@ -45,18 +45,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         }
 
         protected abstract IEnumerable<object> getAtomicValues();
-
-        public override bool Equals(object obj)
-            => obj.GetType() == GetType()
-               && obj is DataEntity<TId> other
-               && Id.Equals(other.Id)
-               && getAtomicValues().SequenceEqual(other.getAtomicValues());
-
-        public override int GetHashCode()
-            => getAtomicValues()
-                .Select(x => x?.GetHashCode() ?? 0)
-                .Aggregate(HashCode.Combine);
-
+        
         /// <summary>
         ///     same as <see cref="IReactiveObjectExtensions.RaiseAndSetIfChanged{TObj,TRet}" /> but it throws an
         ///     <see cref="NullReferenceException" /> if the value is null

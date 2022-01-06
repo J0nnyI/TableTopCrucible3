@@ -55,13 +55,13 @@ namespace TableTopCrucible.Shared.ItemSync.Tests.Models
             public FileHashKey TargetHashKey { get; private set; }
             public DateTime LastWrite { get; private set; }
             public DateTime TargetLastWrite { get; private set; }
-            public ScannedFileDataId OriginalId { get; private set; }
+            public FileDataId OriginalId { get; private set; }
 
             // prepares data for this file according to its given state
             public FileData Prepare()
             {
                 TargetLastWrite = LastWrite = DateTime.Now.AddMinutes(-10);
-                OriginalId = ScannedFileDataId.New();
+                OriginalId = FileDataId.New();
 
                 // create local file
                 if (FileUpdateSource != FileUpdateSource.Deleted)

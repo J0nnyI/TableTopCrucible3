@@ -9,8 +9,8 @@ using TableTopCrucible.Infrastructure.DataPersistence;
 namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 {
     [DbContext(typeof(TtcDbContext))]
-    [Migration("20220102105930_DEV1")]
-    partial class DEV1
+    [Migration("20220106011351_DEV")]
+    partial class DEV
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,12 +22,12 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                 {
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Id");
 
-                    b.HasKey("Guid")
-                        .HasName("Id");
+                    b.HasKey("Guid");
 
-                    b.ToTable("DirectorySetups");
+                    b.ToTable("Directories");
                 });
 
             modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.FileData", b =>
@@ -75,12 +75,13 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Value")
+                                .IsRequired()
                                 .HasColumnType("TEXT")
                                 .HasColumnName("Path");
 
                             b1.HasKey("DirectorySetupGuid");
 
-                            b1.ToTable("DirectorySetups");
+                            b1.ToTable("Directories");
 
                             b1.WithOwner()
                                 .HasForeignKey("DirectorySetupGuid");
@@ -92,12 +93,13 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Value")
+                                .IsRequired()
                                 .HasColumnType("TEXT")
                                 .HasColumnName("Name");
 
                             b1.HasKey("DirectorySetupGuid");
 
-                            b1.ToTable("DirectorySetups");
+                            b1.ToTable("Directories");
 
                             b1.WithOwner()
                                 .HasForeignKey("DirectorySetupGuid");

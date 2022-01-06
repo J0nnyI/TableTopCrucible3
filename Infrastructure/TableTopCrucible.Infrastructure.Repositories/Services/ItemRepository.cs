@@ -18,5 +18,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             : base(database, database.Items)
         {
         }
+
+        public override string TableName => ItemConfiguration.TableName;
     }
 }

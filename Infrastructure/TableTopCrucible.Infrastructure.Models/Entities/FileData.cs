@@ -11,7 +11,7 @@ using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
 {
-    public sealed class FileData : DataEntity<ScannedFileDataId>
+    public sealed class FileData : DataEntity<FileDataId>
     {
         public FileData()
         {
@@ -56,28 +56,30 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 
     public class FileDataConfiguration : IEntityTypeConfiguration<FileData>
     {
-        public void Configure(EntityTypeBuilder<FileData> fileBuilder)
+        public static string TableName => "Files";
+        public void Configure(EntityTypeBuilder<FileData> builder)
         {
-            fileBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
+            builder.ToTable(TableName);
+            builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
 
-            fileBuilder.OwnsOne(x => x.FileLocation)
+            builder.OwnsOne(x => x.FileLocation)
                 .Property(x => x.Value)
                 .HasColumnName("FileLocation")
                 .IsRequired();
-            fileBuilder
+            builder
                 .Property(x => x.LastWrite)
                 .IsRequired();
-            fileBuilder.Ignore(
+            builder.Ignore(
                 fileData => fileData.HashKey);
-            fileBuilder.HasIndex(x => x.HashKey_Raw);
+            builder.HasIndex(x => x.HashKey_Raw);
 
-            fileBuilder.HasOne(file => file.Item)
+            builder.HasOne(file => file.Item)
                 .WithMany(item => item.Files)
                 .HasForeignKey(file => file.HashKey_Raw)
                 .HasPrincipalKey(item => item.FileKey3d_Raw);
 
-            fileBuilder.Ignore(x => x.Id);
-            fileBuilder.HasKey(x => x.Guid)
+            builder.Ignore(x => x.Id);
+            builder.HasKey(x => x.Guid)
                 .HasName("Id");
         }
     }

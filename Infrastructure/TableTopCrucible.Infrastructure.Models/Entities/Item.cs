@@ -53,9 +53,11 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 
     public class ItemConfiguration:IEntityTypeConfiguration<Item>
     {
+        public static string TableName => "Items";
+
         public void Configure(EntityTypeBuilder<Item> itemBuilder)
         {
-            itemBuilder.ToTable("Items");
+            itemBuilder.ToTable(TableName);
             itemBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
 
             itemBuilder.OwnsOne(x => x.Name)

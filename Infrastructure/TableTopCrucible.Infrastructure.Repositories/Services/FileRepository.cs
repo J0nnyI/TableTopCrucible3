@@ -7,17 +7,20 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
     [Singleton]
     public interface IScannedFileRepository
-        : IRepository<ScannedFileDataId, FileData>
+        : IRepository<FileDataId, FileData>
     {
     }
 
-    internal class ScannedFileRepository
-        : RepositoryBase<ScannedFileDataId, FileData>,
+    internal class FileRepository
+        : RepositoryBase<FileDataId, FileData>,
             IScannedFileRepository
     {
-        public ScannedFileRepository(IDatabaseAccessor database)
+        public FileRepository(IDatabaseAccessor database)
             : base(database, database.Files)
         {
+
         }
+
+        public override string TableName => FileDataConfiguration.TableName;
     }
 }

@@ -2,40 +2,38 @@
 
 namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 {
-    public partial class DEV2 : Migration
+    public partial class DEV : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropPrimaryKey(
-                name: "Id",
+                name: "PK_DirectorySetups",
                 table: "DirectorySetups");
 
-            migrationBuilder.RenameColumn(
-                name: "Guid",
-                table: "DirectorySetups",
-                newName: "Id");
+            migrationBuilder.RenameTable(
+                name: "DirectorySetups",
+                newName: "Directories");
 
             migrationBuilder.AddPrimaryKey(
-                name: "PK_DirectorySetups",
-                table: "DirectorySetups",
+                name: "PK_Directories",
+                table: "Directories",
                 column: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropPrimaryKey(
-                name: "PK_DirectorySetups",
-                table: "DirectorySetups");
+                name: "PK_Directories",
+                table: "Directories");
 
-            migrationBuilder.RenameColumn(
-                name: "Id",
-                table: "DirectorySetups",
-                newName: "Guid");
+            migrationBuilder.RenameTable(
+                name: "Directories",
+                newName: "DirectorySetups");
 
             migrationBuilder.AddPrimaryKey(
-                name: "Id",
+                name: "PK_DirectorySetups",
                 table: "DirectorySetups",
-                column: "Guid");
+                column: "Id");
         }
     }
 }

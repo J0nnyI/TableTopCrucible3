@@ -1,4 +1,5 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ReactiveUI;
 using Splat;
@@ -12,27 +13,35 @@ namespace TableTopCrucible.Core.TestHelper
     public static class Prepare
     {
         // prepares an integration application environment
-        public static void ApplicationEnvironment()
+        public static IHost ApplicationEnvironment()
         {
-            Host
+            return Host
                 .CreateDefaultBuilder()
-                .ConfigureServices(services =>
-                {
-                    services.UseMicrosoftDependencyResolver();
-                    var resolver = Locator.CurrentMutable;
-                    resolver.InitializeSplat();
-                    resolver.InitializeReactiveUI();
-
-
-                    DependencyBuilder.GetServices(services);
-
-                    services.ReplaceFileSystem<MockFileSystem>();
-                })
+                .ConfigureServices(Services)
                 .ConfigureLogging(loggingBuilder => { loggingBuilder.AddSplat(); })
                 .UseEnvironment(
                     Environments.Development
                 )
                 .Build();
+        }
+
+        public static IServiceCollection Services()
+        {
+            var services = new ServiceCollection();
+            Services(services);
+            return services;
+        }
+        public static void Services(IServiceCollection services)
+        {
+            services.UseMicrosoftDependencyResolver();
+            var resolver = Locator.CurrentMutable;
+            resolver.InitializeSplat();
+            resolver.InitializeReactiveUI();
+
+
+            DependencyBuilder.AddTtcServices(services);
+
+            services.ReplaceFileSystem<MockFileSystem>();
         }
     }
 }

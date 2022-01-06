@@ -25,7 +25,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 
                     b.HasKey("Guid");
 
-                    b.ToTable("DirectorySetups");
+                    b.ToTable("Directories");
                 });
 
             modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.FileData", b =>
@@ -79,7 +79,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 
                             b1.HasKey("DirectorySetupGuid");
 
-                            b1.ToTable("DirectorySetups");
+                            b1.ToTable("Directories");
 
                             b1.WithOwner()
                                 .HasForeignKey("DirectorySetupGuid");
@@ -91,12 +91,13 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Value")
+                                .IsRequired()
                                 .HasColumnType("TEXT")
                                 .HasColumnName("Name");
 
                             b1.HasKey("DirectorySetupGuid");
 
-                            b1.ToTable("DirectorySetups");
+                            b1.ToTable("Directories");
 
                             b1.WithOwner()
                                 .HasForeignKey("DirectorySetupGuid");

@@ -37,12 +37,16 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 
         protected override IEnumerable<object> getAtomicValues()
             => new object[] { Name, Path };
+
+        public override string ToString() => $"Name:'{Name}' | Path:'{Path}' | Id:'{Id}'";
     }
 
     public class DirectorySetupConfiguration : IEntityTypeConfiguration<DirectorySetup>
     {
+        public static string TableName => "Directories";
         public void Configure(EntityTypeBuilder<DirectorySetup> builder)
         {
+            builder.ToTable(TableName);
             builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
 
             builder.OwnsOne(x => x.Name,o=>

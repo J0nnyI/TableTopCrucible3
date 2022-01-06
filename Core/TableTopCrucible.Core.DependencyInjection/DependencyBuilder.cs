@@ -8,27 +8,20 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using Splat;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace TableTopCrucible.Core.DependencyInjection
 {
-    public class DependencyBuilder
+    public static class DependencyBuilder
     {
-        public static IServiceCollection GetServices()
-        {
-            var services = new ServiceCollection();
-            GetServices(services);
-            return services;
-        }
-
-        public static void GetServices(IServiceCollection services)
+        public static void AddTtcServices(this IServiceCollection services)
         {
             services.AddSingleton<IFileSystem, FileSystem>();
             services.TryAddEnumerable(DiAttributeCollector.GenerateServiceProvider());
             services.AddSingleton(typeof(ILoggerFactory), buildLoggingFactory());
         }
-
-        public static IServiceProvider BuildDependencyProvider() => GetServices().BuildServiceProvider();
-
+        
 
         private static ILoggerFactory buildLoggingFactory()
         {
