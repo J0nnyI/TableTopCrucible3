@@ -5,9 +5,12 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore;
 using MoreLinq;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
@@ -105,8 +108,6 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
                         var updatePipeline = new Subject<RawSyncFileData>();
 
-                        var dbgItems = new List<IEnumerable<RawSyncFileData>>();
-
                         updatePipeline
                             .ObserveOn(RxApp.TaskpoolScheduler)
                             .Buffer(SettingsHelper.PipelineBufferTime)
@@ -138,6 +139,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 {
                     Console.WriteLine(e);
                     Debugger.Break();
+                    stepTracker.Complete();
+                    hashingTracker.Complete();
+                    updateTracker.Complete();
                     throw;
                 }
             }, RxApp.TaskpoolScheduler);
@@ -160,8 +164,20 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
         private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetup> directorySetups)
         {
-            return new FileSyncListGrouping(directorySetups.ToArray()
-                .SelectMany(directory => startScanForDirectory(directory)));
+            var dirs = _directorySetupRepository.Data.Select(dir => dir.Path);
+            var deletedFiles = directorySetups
+                .ToArray()
+                .SelectMany(directory => startScanForDirectory(directory))
+                .ToArray();
+
+            var filesOfUnregisteredDirs = _fileRepository
+                .Data
+                .ToArray()
+                .Where(file => !dirs.Any(dir=> file.Path.Value.ToLower().StartsWith(dir.Value)))
+                .Select(file => new RawSyncFileData(file, null))
+                .ToArray();
+            
+            return new FileSyncListGrouping(deletedFiles.Concat(filesOfUnregisteredDirs));
         }
 
 
@@ -170,7 +186,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             var filesToAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity()).ToArray();
             var itemsToAdd = filesToAdd
                 .DistinctBy(x => x.HashKey)
-                .Where(file=>!_fileRepository.Data.Any(registeredFile=>registeredFile.HashKey_Raw == file.HashKey_Raw))// exclude all known files since they are already linked
+                .Where(file => !_fileRepository.Data.Any(registeredFile => registeredFile.HashKey_Raw == file.HashKey_Raw))// exclude all known files since they are already linked
                 .Select(file => new Item(
                         file.Path.GetFilenameWithoutExtension().ToName(),
                         file.HashKey

@@ -20,12 +20,12 @@ namespace TableTopCrucible.Infrastructure.Repositories.Exceptions
         where TId : IDataId
         where TEntity : class, IDataEntity<TId>, new()
     {
-        public TEntity Entity { get; }
+        public IEnumerable<TEntity> Entitieses { get; }
 
-        public EntityAlreadyAddedException(Exception innerException, TEntity entity):base(innerException)
+        public EntityAlreadyAddedException(Exception innerException,IEnumerable<TEntity> entities):base(innerException)
         {
-            Entity = entity;
-            this.Data.Add("entity",entity);
+            Entitieses = entities;
+            this.Data.Add("entity",entities);
         }
     }
 }

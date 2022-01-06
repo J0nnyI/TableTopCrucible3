@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
@@ -12,7 +13,7 @@ using DynamicData;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
@@ -202,24 +203,42 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             }
             catch (DbUpdateException e)
             {
-                if (e.InnerException.Message == $"SQLite Error 19: 'UNIQUE constraint failed: {TableName}.Id'.")
-                    throw new EntityAlreadyAddedException<TId, TEntity>(e, entity);
-
+                HandleDbUpdateException(e,entity.AsArray());
                 throw;
             }
         }
 
         public void AddRange(IEnumerable<TEntity> entities)
         {
-            var newEntities = entities.ToArray();
-            _Data.AddRange(newEntities);
-            _database.AutoSave();
-            _changes.OnNext(new EntityUpdate<TId, TEntity>
-            (
-                EntityUpdateChangeReason.Add,
-                new Dictionary<TId, TEntity>(
-                    newEntities.Select(entity => new KeyValuePair<TId, TEntity>(entity.Id, entity)))
-            ));
+            try
+            {
+                var newEntities = entities.ToArray();
+                _Data.AddRange(newEntities);
+                _database.AutoSave();
+                _changes.OnNext(new EntityUpdate<TId, TEntity>
+                (
+                    EntityUpdateChangeReason.Add,
+                    new Dictionary<TId, TEntity>(
+                        newEntities.Select(entity => new KeyValuePair<TId, TEntity>(entity.Id, entity)))
+                ));
+            }
+            catch (DbUpdateException e)
+            {
+                HandleDbUpdateException(e, entities);
+                Debugger.Break();
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debugger.Break();
+                throw;
+            }
+        }
+
+        private void HandleDbUpdateException(DbUpdateException e,IEnumerable<TEntity> entities)
+        {
+            if (e.InnerException.Message == $"SQLite Error 19: 'UNIQUE constraint failed: {TableName}.Id'.")
+                throw new EntityAlreadyAddedException<TId, TEntity>(e, entities);
         }
 
         public void Remove(TEntity entity)

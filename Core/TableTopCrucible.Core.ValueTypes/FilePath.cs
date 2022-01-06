@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Text.Json;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
@@ -46,6 +47,12 @@ namespace TableTopCrucible.Core.ValueTypes
             if(this.Exists())
                 FileSystemHelper.File.Copy(Value, newPath.Value, overwrite);
         }
+
+        public bool IsLocatedIn(DirectoryPath directory)
+            => directory.Value.ToLower() == Value.ToLower();
+
+        public bool IsLocatedInAny(params DirectoryPath[] directories)
+            => directories.Any(IsLocatedIn);
 
         public void WriteAllText(string text)
         {

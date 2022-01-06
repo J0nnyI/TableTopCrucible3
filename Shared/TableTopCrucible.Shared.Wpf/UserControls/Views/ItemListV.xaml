@@ -35,7 +35,7 @@
                   Grid.Column="0">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Path" DisplayMemberBinding="{Binding FileLocation}" />
+                    <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}" />
                     <GridViewColumn Header="HashKey"
                                     DisplayMemberBinding="{Binding HashKey}"
                                     Width="300" />
