@@ -9,8 +9,8 @@ using TableTopCrucible.Infrastructure.DataPersistence;
 namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 {
     [DbContext(typeof(TtcDbContext))]
-    [Migration("20220106033332_DEV3")]
-    partial class DEV3
+    [Migration("20220106211915_DEV")]
+    partial class DEV
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,7 +45,8 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                     b.HasKey("Guid")
                         .HasName("Id");
 
-                    b.HasIndex("HashKey_Raw");
+                    b.HasIndex("HashKey_Raw")
+                        .HasDatabaseName("FileKey3d");
 
                     b.ToTable("Files");
                 });

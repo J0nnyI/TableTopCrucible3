@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
+
 using ReactiveUI;
+
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
@@ -29,8 +31,9 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             Id = new TId { Guid = Guid.NewGuid() };
         }
 
-        public Guid Guid {
-            get=> Id.Guid;
+        public Guid Guid
+        {
+            get => Id.Guid;
             set => Id = new TId { Guid = value };
         }
         public TId Id
@@ -44,8 +47,19 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             }
         }
 
-        protected abstract IEnumerable<object> getAtomicValues();
-        
+        public void SetRequiredValue<TValue>(ref TValue field, TValue value,
+            params string[] names)
+        {
+            if (value is null)
+                throw new NullReferenceException(string.Join(", ", names));
+
+            if (field?.Equals(value) == true)
+                return;
+
+            field = value;
+            foreach (var name in names)
+                this.RaisePropertyChanged(name);
+        }
         /// <summary>
         ///     same as <see cref="IReactiveObjectExtensions.RaiseAndSetIfChanged{TObj,TRet}" /> but it throws an
         ///     <see cref="NullReferenceException" /> if the value is null
@@ -56,10 +70,6 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         /// <param name="name"></param>
         public void SetRequiredValue<TValue>(ref TValue field, TValue value,
             [CallerMemberName] string name = "")
-        {
-            if (value is null)
-                throw new NullReferenceException(name);
-            this.RaiseAndSetIfChanged(ref field, value, name);
-        }
+            => SetRequiredValue(ref field, value, new[] { name });
     }
 }

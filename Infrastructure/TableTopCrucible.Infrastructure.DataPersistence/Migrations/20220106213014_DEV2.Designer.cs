@@ -9,7 +9,7 @@ using TableTopCrucible.Infrastructure.DataPersistence;
 namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 {
     [DbContext(typeof(TtcDbContext))]
-    [Migration("20220106030454_DEV2")]
+    [Migration("20220106213014_DEV2")]
     partial class DEV2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,7 +45,8 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                     b.HasKey("Guid")
                         .HasName("Id");
 
-                    b.HasIndex("HashKey_Raw");
+                    b.HasIndex("HashKey_Raw")
+                        .HasDatabaseName("FileKey3d");
 
                     b.ToTable("Files");
                 });
@@ -63,11 +64,30 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                     b.Property<string>("RawTags")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Guid");
+                    b.HasKey("Guid")
+                        .HasName("Id");
 
                     b.HasIndex("FileKey3d_Raw");
 
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.EntityIds.ItemId", b =>
+                {
+                    b.Property<int>("ItemTempId2")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("Value")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Id");
+
+                    b.HasKey("ItemTempId2");
+
+                    b.ToTable("ItemId");
                 });
 
             modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.DirectorySetup", b =>
@@ -120,7 +140,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                         .HasForeignKey("HashKey_Raw")
                         .HasPrincipalKey("FileKey3d_Raw");
 
-                    b.OwnsOne("TableTopCrucible.Core.ValueTypes.FilePath", "FileLocation", b1 =>
+                    b.OwnsOne("TableTopCrucible.Core.ValueTypes.FilePath", "Path", b1 =>
                         {
                             b1.Property<Guid>("FileDataGuid")
                                 .HasColumnType("TEXT");
@@ -138,29 +158,13 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasForeignKey("FileDataGuid");
                         });
 
-                    b.Navigation("FileLocation");
-
                     b.Navigation("Item");
+
+                    b.Navigation("Path");
                 });
 
             modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.Item", b =>
                 {
-                    b.OwnsOne("TableTopCrucible.Core.ValueTypes.FileHashKey", "FileKey3d", b1 =>
-                        {
-                            b1.Property<Guid>("ItemGuid")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<string>("Value")
-                                .HasColumnType("TEXT");
-
-                            b1.HasKey("ItemGuid");
-
-                            b1.ToTable("Items");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ItemGuid");
-                        });
-
                     b.OwnsOne("TableTopCrucible.Core.ValueTypes.Name", "Name", b1 =>
                         {
                             b1.Property<Guid>("ItemGuid")
@@ -178,30 +182,6 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ItemGuid");
                         });
-
-                    b.OwnsOne("TableTopCrucible.Infrastructure.Models.EntityIds.ItemId", "Id", b1 =>
-                        {
-                            b1.Property<Guid>("ItemGuid")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<Guid>("Guid")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<Guid>("Value")
-                                .HasColumnType("TEXT")
-                                .HasColumnName("Id");
-
-                            b1.HasKey("ItemGuid");
-
-                            b1.ToTable("Items");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ItemGuid");
-                        });
-
-                    b.Navigation("FileKey3d");
-
-                    b.Navigation("Id");
 
                     b.Navigation("Name");
                 });

@@ -34,7 +34,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("HashKey_Raw")
+                    b.Property<string>("HashKeyRaw")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("LastWrite")
@@ -43,9 +43,28 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                     b.HasKey("Guid")
                         .HasName("Id");
 
-                    b.HasIndex("HashKey_Raw");
+                    b.HasIndex("HashKeyRaw")
+                        .HasDatabaseName("HashKey");
 
                     b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.ImageData", b =>
+                {
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HashKeyRaw")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Guid")
+                        .HasName("Id");
+
+                    b.HasIndex("HashKeyRaw")
+                        .IsUnique();
+
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.Item", b =>
@@ -54,8 +73,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FileKey3d_Raw")
-                        .IsRequired()
+                    b.Property<string>("FileKey3dRaw")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RawTags")
@@ -64,27 +82,10 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                     b.HasKey("Guid")
                         .HasName("Id");
 
-                    b.HasIndex("FileKey3d_Raw");
+                    b.HasIndex("FileKey3dRaw")
+                        .IsUnique();
 
                     b.ToTable("Items");
-                });
-
-            modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.EntityIds.ItemId", b =>
-                {
-                    b.Property<int>("ItemTempId2")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("Guid")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("Value")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Id");
-
-                    b.HasKey("ItemTempId2");
-
-                    b.ToTable("ItemId");
                 });
 
             modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.DirectorySetup", b =>
@@ -132,11 +133,6 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
 
             modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.FileData", b =>
                 {
-                    b.HasOne("TableTopCrucible.Infrastructure.Models.Entities.Item", "Item")
-                        .WithMany("Files")
-                        .HasForeignKey("HashKey_Raw")
-                        .HasPrincipalKey("FileKey3d_Raw");
-
                     b.OwnsOne("TableTopCrucible.Core.ValueTypes.FilePath", "Path", b1 =>
                         {
                             b1.Property<Guid>("FileDataGuid")
@@ -155,9 +151,30 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasForeignKey("FileDataGuid");
                         });
 
-                    b.Navigation("Item");
-
                     b.Navigation("Path");
+                });
+
+            modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.ImageData", b =>
+                {
+                    b.OwnsOne("TableTopCrucible.Core.ValueTypes.Name", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("ImageDataGuid")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("Name");
+
+                            b1.HasKey("ImageDataGuid");
+
+                            b1.ToTable("Images");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ImageDataGuid");
+                        });
+
+                    b.Navigation("Name");
                 });
 
             modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.Item", b =>
@@ -180,12 +197,29 @@ namespace TableTopCrucible.Infrastructure.DataPersistence.Migrations
                                 .HasForeignKey("ItemGuid");
                         });
 
-                    b.Navigation("Name");
-                });
+                    b.OwnsOne("TableTopCrucible.Infrastructure.Models.EntityIds.ItemId", "Id", b1 =>
+                        {
+                            b1.Property<Guid>("ItemGuid")
+                                .HasColumnType("TEXT");
 
-            modelBuilder.Entity("TableTopCrucible.Infrastructure.Models.Entities.Item", b =>
-                {
-                    b.Navigation("Files");
+                            b1.Property<Guid>("Guid")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<Guid>("Value")
+                                .HasColumnType("TEXT")
+                                .HasColumnName("Id");
+
+                            b1.HasKey("ItemGuid");
+
+                            b1.ToTable("Items");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemGuid");
+                        });
+
+                    b.Navigation("Id");
+
+                    b.Navigation("Name");
                 });
 #pragma warning restore 612, 618
         }

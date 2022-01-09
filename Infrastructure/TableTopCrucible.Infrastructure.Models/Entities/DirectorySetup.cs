@@ -34,9 +34,6 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             get => _path;
             set => SetRequiredValue(ref _path, value);
         }
-
-        protected override IEnumerable<object> getAtomicValues()
-            => new object[] { Name, Path };
         
         public override string ToString() => $"Name:'{Name}' | Path:'{Path}' | Id:'{Id}'";
     }

@@ -64,7 +64,8 @@
                 <TextBlock Text="Filter"
                            Style="{StaticResource VerticalExpanderHeader}"/>
             </Expander.Header>
-            <rxui:ViewModelViewHost x:Name="Filter"/>
+            <rxui:ViewModelViewHost x:Name="Filter"
+                                    MinWidth="300"/>
         </Expander>
 
         <rxui:ViewModelViewHost x:Name="ItemList" 
@@ -105,7 +106,8 @@
                 <TextBlock Text="Tools"
                            Style="{StaticResource VerticalExpanderHeader}"/>
             </Expander.Header>
-            <rxui:ViewModelViewHost x:Name="Actions"/>
+            <rxui:ViewModelViewHost x:Name="Actions"
+                                    MinWidth="300"/>
         </Expander>
 
 

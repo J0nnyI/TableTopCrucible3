@@ -55,26 +55,6 @@ namespace TableTopCrucible.Infrastructure.Repositories.Tests.Services
             _itemRepo.Clear();
             _disposables.Dispose();
         }
-
-
-        [TestCase]
-        public void File_Item()
-        {
-            var hash = Enumerable.Range(1, 64).Select(x => (byte)x).ToArray();
-
-            var hashKey = FileHashKey.From((FileSize)100, (FileHash)hash);
-
-            var item = new Item((Name)"item",hashKey,new []{(Tag)"firstTag",(Tag)"secondTag"});
-
-            var file = new FileData((FilePath)@"G:\TestDir", hashKey, DateTime.Now);
-
-            _itemRepo.Add(item);
-            _fileRepo.Add(file);
-            item.Files.Should().HaveCount(1);
-            item.Files[0].Should().Be(file);
-            file.Item.Should().Be(item);
-
-        }
-
+        
     }
 }

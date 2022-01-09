@@ -14,6 +14,7 @@ using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Infrastructure.Repositories.Services;
 
 namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
 {
@@ -31,34 +32,23 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
 
         public ObservableCollection<FileData> Files { get; } = new();
 
-        public ItemFileListVm()
+        public ItemFileListVm(IFileRepository fileRepository)
         {
             this.WhenActivated(()=>new []
             {
                 this.WhenAnyValue(vm => vm.Item)
-                    .Do(x=>{})
-                    .Pairwise(false)
-                    .Subscribe(pair =>
+                    .Select(item=>item?.FileKey3d)
+                    .Select(fileRepository.Watch)
+                    .Switch()
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Subscribe(files =>
                     {
-                        if (pair.Previous.HasValue)
-                            pair.Previous.Value.Files.CollectionChanged -= Files_CollectionChanged;
-
-                        if (!pair.Current.HasValue)
-                            return;
-
-                        pair.Current.Value.Files.CollectionChanged += Files_CollectionChanged;
                         Files.Clear();
-                        Files.AddRange(pair.Current.Value.Files);
+                        Files.AddRange(files);
                     })
             });
         }
-
-        private void Files_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            Files.Clear();
-            Files.AddRange(Item.Files);
-        }
-
+        
         public void Dispose()
             => _disposables.Dispose();
     }

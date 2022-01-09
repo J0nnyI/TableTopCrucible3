@@ -3,6 +3,7 @@
                                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                                xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                                 xmlns:local="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.Views"
                                 xmlns:reactiveUi="http://reactiveui.net"
@@ -10,7 +11,19 @@
                                 xmlns:viewModels="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                                 mc:Ignorable="d" 
                                 d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            <TextBlock Text="list filter"/>
-    </Grid>
+    <StackPanel>
+
+        <TextBlock Text="Include"/>
+        <TextBox x:Name="WhitelistName"
+                 md:HintAssist.Hint="Name"/>
+        <TextBox x:Name="WhitelistPath"
+                 md:HintAssist.Hint="File Path"/>
+
+        <TextBlock Text="Exclude"/>
+        <TextBox x:Name="BlacklistName"
+                 md:HintAssist.Hint="Name"/>
+        <TextBox x:Name="BlacklistPath"
+                 md:HintAssist.Hint="File Path"/>
+
+    </StackPanel>
 </reactiveUi:ReactiveUserControl>

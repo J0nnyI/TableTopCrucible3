@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
+
 using Microsoft.EntityFrameworkCore;
+
 using MoreLinq;
 
 using ReactiveUI;
@@ -126,7 +129,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                             {
                                 fileData.CreateNewHashKey();
                                 hashingTracker.Increment((ProgressIncrement)fileData.FoundFile.Value.Length);
-                                lock(updatePipeline)
+                                lock (updatePipeline)
                                 {
                                     updatePipeline.OnNext(fileData);
                                 }
@@ -176,10 +179,10 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             var filesOfUnregisteredDirs = _fileRepository
                 .Data
                 .ToArray()
-                .Where(file => !dirs.Any(dir=> file.Path.Value.ToLower().StartsWith(dir.Value)))
+                .Where(file => !dirs.Any(dir => file.Path.Value.ToLower().StartsWith(dir.Value)))
                 .Select(file => new RawSyncFileData(file, null))
                 .ToArray();
-            
+
             return new FileSyncListGrouping(deletedFiles.Concat(filesOfUnregisteredDirs));
         }
 
@@ -187,21 +190,39 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private void _handleChangedFiles(RawSyncFileData[] files)
         {
             var filesToAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity()).ToArray();
-            lock(_itemUpdateLocker)
+            _fileRepository.AddRange(filesToAdd);
+            lock (_itemUpdateLocker)
             {
-                var itemsToAdd = filesToAdd
-                    .DistinctBy(x=>x.HashKey_Raw)
+                var modelFiles = filesToAdd
+                    .Where(file => file.Path.GetExtension().IsModel())
+                    .ToArray();
+                var itemsToAdd = modelFiles
+                    .DistinctBy(x => x.HashKeyRaw)
                     .Where(file =>
-                        !_itemRepository.Data.Any(item=>item.FileKey3d_Raw == file.HashKey_Raw)) // all linked files have to be checked manually in case there was no file with a given hash found before
+                        !_itemRepository.Data.Any(item => item.FileKey3dRaw == file.HashKeyRaw)) // all linked files have to be checked manually in case there was no file with a given hash found before
                     .Select(file => new Item(
                             file.Path.GetFilenameWithoutExtension().ToName(),
                             file.HashKey
                         )
                     ).ToArray();
 
+                modelFiles.ForEach(modelFile =>
+                {
+                    var tags = GetTagsByPath(modelFile.Path);
+                    var item = _itemRepository.Data.Single(item => item.FileKey3dRaw == modelFile.HashKeyRaw);
+                    item.AddTags(tags);
+                });
+
                 _itemRepository.AddRange(itemsToAdd);
             }
-            _fileRepository.AddRange(filesToAdd);
+        }
+
+        private IEnumerable<Tag> GetTagsByPath(FilePath filePath)
+        {
+            var dir = _directorySetupRepository.Data
+                .Where(dir => dir.Path.ContainsFilepath(filePath))
+                .Aggregate(string.Empty, (path, dir) => dir.Path.Value.Length > path.Length ? dir.Path.Value : path);
+            return dir.Split(Path.DirectorySeparatorChar).Select(Tag.From);
         }
     }
 }

@@ -7,7 +7,7 @@ using DynamicData;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
+using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
@@ -40,28 +40,15 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         public FileHashKey FileKey3d
         {
             get => _fileKey3d;
-            set
-            {
-                SetRequiredValue(ref _fileKey3d, value);
-                SetRequiredValue(ref _fileKey3d_Raw, value.ToString(), nameof(FileKey3d_Raw));
-            }
+            set => SetRequiredValue(ref _fileKey3d, value, nameof(FileKey3d), nameof(FileKey3dRaw));
         }
-        private string _fileKey3d_Raw;
-        public string FileKey3d_Raw => _fileKey3d_Raw;// required to be public by database queries
+        public string FileKey3dRaw // required to be public by database queries
+        {
+            get => _fileKey3d.Value;
+            set => SetRequiredValue(ref _fileKey3d, (FileHashKey)value, nameof(FileKey3d), nameof(FileKey3dRaw));
+        }
 
         public ObservableCollection<Tag> Tags { get; } = new();
-        private ObservableCollection<FileData> _files = new();
-
-        public ObservableCollection<FileData> Files
-        {
-            get => _files;
-            set
-            {
-                _files.AddRange(value.Except(_files));
-                _files.RemoveMany(_files.Except(value));
-            }
-        } 
-
         internal string RawTags
         {
             get => SerializedStringList.From(Tags.Select(tag => tag.Value)).Value;
@@ -72,8 +59,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             }
         }
 
-        protected override IEnumerable<object> getAtomicValues()
-            => new object[] { Id, Name, FileKey3d, Tags };
+        public void AddTags(IEnumerable<Tag> tags)
+           => Tags.Add(tags.Except(Tags));
     }
 
     public class ItemConfiguration : IEntityTypeConfiguration<Item>
@@ -85,26 +72,29 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             builder.ToTable(TableName);
             builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
 
+            //indices
+            builder.Ignore(x => x.Id);
+            builder.HasKey(x => x.Guid)
+                .HasName("Id");
+
+            builder.Ignore(x => x.FileKey3d);
+            builder.HasIndex(x => x.FileKey3dRaw)
+                .IsUnique();
+
+            //properties
             builder.OwnsOne(x => x.Name)
                 .Property(x => x.Value)
                 .HasColumnName("Name")
                 .IsRequired();
+
             builder.OwnsOne(x => x.Id)
                 .Property(x => x.Value)
                 .HasColumnName("Id")
                 .IsRequired();
 
-            builder.Property(fileData => fileData.FileKey3d_Raw);
-            builder.HasIndex(x => x.FileKey3d_Raw);
-            
             builder.Property(x => x.RawTags);
-            
             builder.Ignore(x => x.Tags);
-            builder.Ignore(x => x.FileKey3d);
 
-            builder.Ignore(x => x.Id);
-            builder.HasKey(x => x.Guid)
-                .HasName("Id");
         }
     }
 }

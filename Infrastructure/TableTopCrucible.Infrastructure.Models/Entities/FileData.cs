@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ReactiveUI.Fody.Helpers;
 
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
@@ -30,14 +32,19 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             get => _path;
             set => SetRequiredValue(ref _path, value);
         }
-        
-        public FileHashKey HashKey { get; set; }
 
-        public string HashKey_Raw // required to be public by database queries
+        private FileHashKey _hashKey;
+        public FileHashKey HashKey
         {
-            get => HashKey.Value;
-            set => HashKey = FileHashKey.From(value);
+            get => _hashKey;
+            set => SetRequiredValue(ref _hashKey, value, nameof(HashKey), nameof(HashKeyRaw));
         }
+        public string HashKeyRaw // required to be public by database queries
+        {
+            get => _hashKey.Value;
+            set => SetRequiredValue(ref _hashKey, (FileHashKey)value, nameof(HashKey), nameof(HashKeyRaw));
+        }
+
 
         private DateTime _lastWrite;
         public DateTime LastWrite
@@ -45,23 +52,26 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             get => _lastWrite;
             set => SetRequiredValue(ref _lastWrite, value);
         }
-        
-
-        [Reactive]
-        public Item Item { get; set; }
-
-        protected override IEnumerable<object> getAtomicValues()
-            => new object[] { Id, Path, HashKey, LastWrite };
     }
-
+    
     public class FileDataConfiguration : IEntityTypeConfiguration<FileData>
     {
-        public static string TableName => "Files";
+        public static string ImageTableName => "Files";
         public void Configure(EntityTypeBuilder<FileData> builder)
         {
-            builder.ToTable(TableName);
+            builder.ToTable(ImageTableName);
             builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
 
+            //Indices
+            builder.Ignore(x => x.Id);
+            builder.HasKey(x => x.Guid)
+                .HasName("Id");
+
+            builder.Ignore(fileData => fileData.HashKey);
+            builder.HasIndex(x => x.HashKeyRaw)
+                .HasDatabaseName("HashKey");
+
+            //properties
             builder.OwnsOne(x => x.Path)
                 .Property(x => x.Value)
                 .HasColumnName("FileLocation")
@@ -69,21 +79,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             builder
                 .Property(x => x.LastWrite)
                 .IsRequired();
-            builder.Ignore(
-                fileData => fileData.HashKey);
-            builder.HasIndex(x => x.HashKey_Raw)
-                .HasDatabaseName("FileKey3d");
 
-            builder.HasOne(file => file.Item)
-                .WithMany(item => item.Files)
-                .HasForeignKey(file => file.HashKey_Raw)
-                .IsRequired(false)
-                .HasPrincipalKey(item => item.FileKey3d_Raw)
-                .IsRequired(false);
 
-            builder.Ignore(x => x.Id);
-            builder.HasKey(x => x.Guid)
-                .HasName("Id");
         }
     }
 }

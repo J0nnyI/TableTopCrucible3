@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Configuration;
+using System.Reflection;
 using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -22,6 +23,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public DbSet<Item> Items { get; }
         public DbSet<FileData> Files { get; }
         public DbSet<DirectorySetup> DirectorySetups { get; }
+        public DbSet<ImageData> Images { get; }
         public int SaveChanges();
         public void Migrate();
     }
@@ -40,6 +42,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public DbSet<Item> Items { get; set; }
         public DbSet<FileData> Files { get; set; }
         public DbSet<DirectorySetup> DirectorySetups { get; set; }
+        public DbSet<ImageData> Images { get; set; }
 
         public void Migrate()
         {

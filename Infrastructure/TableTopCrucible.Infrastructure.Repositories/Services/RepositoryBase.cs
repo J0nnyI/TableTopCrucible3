@@ -264,6 +264,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         public void RemoveRange(IEnumerable<TEntity> entities)
         {
+            if (!entities.Any())
+                return;
             var entitiesToDelete = entities.ToArray();
             _Data.RemoveRange(entitiesToDelete);
             _database.AutoSave();

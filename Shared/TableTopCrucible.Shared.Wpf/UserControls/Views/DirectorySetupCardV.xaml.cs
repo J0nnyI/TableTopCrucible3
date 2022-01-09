@@ -36,7 +36,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     .DialogConfirmed
                     .Select(dir=>dir.GetDirectoryName().ToName())
                     .BindTo(this, 
-                        v=>v.ViewModel.DirectorySetup.Name),
+                        v=>v.ViewModel.Name),
                 this.Bind(
                     ViewModel,
                     vm => vm.RemoveDirectoryCommand,
