@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -8,21 +9,9 @@ namespace TableTopCrucible.Core.ValueTypes
     ///     used for complex value types like FileHashKey
     /// </summary>
     /// <typeparam name="TThis"></typeparam>
-    public abstract class ValueType<TThis> : ComplexDataType
+    public abstract class ValueType<TThis>
         where TThis : ValueType<TThis>
     {
-        public static bool operator ==(ValueType<TThis> valueA, ValueType<TThis> valueB)
-            => valueA is null && valueB is null
-               || valueA?.Equals(valueB) == true;
-
-        public static bool operator !=(ValueType<TThis> valueA, ValueType<TThis> valueB)
-            => !(valueA == valueB);
-
-        protected virtual void Validate() { }
-
-        protected virtual bool _Equals(TThis other) => base._Equals(other);
-        protected override bool _Equals(ComplexDataType other) => this._Equals(other as TThis);
-
     }
 
     public abstract class ValueType<TValue, TThis> : ValueType<TThis>
@@ -34,23 +23,36 @@ namespace TableTopCrucible.Core.ValueTypes
             get => _value;
             init
             {
+                Validate(value);
                 _value = Sanitize(value);
-                Validate();
             }
         }
 
         public static TThis From(TValue valueA)
             => new() { Value = valueA };
 
-        protected override IEnumerable<object> getAtomicValues()
-            => new object[] { Value };
 
+        protected virtual void Validate(TValue value)
+        {
+            if (value is null)
+                throw new InvalidValueException(nameof(value));
+        }
         public override string ToString() => Value.ToString();
         protected virtual TValue Sanitize(TValue value) => value;
-        protected override bool _Equals(TThis other) => this.Value.Equals(other.Value);
+
+        public override bool Equals(object other)
+            => other is TThis otherValue && this.Value.Equals(otherValue.Value);
+        public override int GetHashCode()
+            => Value.GetHashCode();
+        public static bool operator ==(ValueType<TValue, TThis> valueA, TThis valueB)
+            => valueA is null && valueB is null
+               || valueA?.Equals(valueB) == true;
+        public static bool operator !=(ValueType<TValue, TThis> valueA, TThis valueB)
+            => !(valueA == valueB);
+
 
         public static explicit operator ValueType<TValue, TThis>(TValue value)
-            => new TThis { Value = value };
+            => value is null ? null : new TThis { Value = value };
     }
 
     public abstract class ValueType<TValueA, TValueB, TThis> : ValueType<TThis>
@@ -62,7 +64,7 @@ namespace TableTopCrucible.Core.ValueTypes
             get => _valueA;
             init
             {
-                Validate();
+                Validate(value, ValueB);
                 _valueA = value;
             }
         }
@@ -72,7 +74,7 @@ namespace TableTopCrucible.Core.ValueTypes
             get => _valueB;
             init
             {
-                Validate();
+                Validate(ValueA, value);
                 _valueB = value;
             }
         }
@@ -80,12 +82,17 @@ namespace TableTopCrucible.Core.ValueTypes
         public static TThis From(TValueA valueA, TValueB valueB)
             => new() { ValueA = valueA, ValueB = valueB };
 
-        protected override IEnumerable<object> getAtomicValues()
-            => new object[] { ValueA, ValueB };
-
+        protected virtual void Validate(TValueA valueA, TValueB valueB) { }
         public override string ToString() => $"A: {ValueA} | B: {ValueB}";
-        protected override bool _Equals(TThis other) =>
-            this.ValueA.Equals(other.ValueA)
-            && this.ValueB.Equals(other.ValueB);
+
+        public override bool Equals(object other)
+            => other is TThis otherValue && this.ValueA.Equals(otherValue.ValueA) && this.ValueB.Equals(otherValue.ValueB);
+        public override int GetHashCode()
+            => HashCode.Combine(ValueA, ValueB);
+        public static bool operator ==(ValueType<TValueA, TValueB, TThis> valueA, TThis valueB)
+            => valueA is null && valueB is null
+               || valueA?.Equals(valueB) == true;
+        public static bool operator !=(ValueType<TValueA, TValueB, TThis> valueA, TThis valueB)
+            => !(valueA == valueB);
     }
 }

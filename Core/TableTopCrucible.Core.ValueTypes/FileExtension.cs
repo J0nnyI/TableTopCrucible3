@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {

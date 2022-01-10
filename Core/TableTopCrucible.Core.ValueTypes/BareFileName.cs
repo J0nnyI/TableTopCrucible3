@@ -1,5 +1,4 @@
-﻿using TableTopCrucible.Infrastructure.Models.Entities;
-
+﻿
 namespace TableTopCrucible.Core.ValueTypes
 {
     /// <summary>

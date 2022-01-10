@@ -8,7 +8,7 @@ namespace TableTopCrucible.Core.Helper
     {
         public static bool AutoSaveEnabled = true;
         public static TimeSpan NotificationDelay => new(0, 0, 0, 5);
-
+        public static int FileMinLoadingScreenSize => 500000;
         public static double NotificationResolution => NotificationDelay / AnimationResolution;
 
         //notifications

@@ -5,7 +5,6 @@ using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Extensions;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -13,9 +12,9 @@ namespace TableTopCrucible.Core.ValueTypes
     {
         public int CompareTo(Name other) => Value?.CompareTo(other?.Value) ?? 0;
 
-        protected override void Validate()
+        protected override void Validate(string value)
         {
-            if (string.IsNullOrWhiteSpace(Value))
+            if (string.IsNullOrWhiteSpace(value))
                 throw new InvalidNameException("The name must not be empty");
         }
 

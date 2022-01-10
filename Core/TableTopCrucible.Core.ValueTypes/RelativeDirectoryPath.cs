@@ -1,5 +1,4 @@
-﻿using TableTopCrucible.Infrastructure.Models.Entities;
-using static TableTopCrucible.Core.Helper.FileSystemHelper;
+﻿using static TableTopCrucible.Core.Helper.FileSystemHelper;
 
 namespace TableTopCrucible.Core.ValueTypes
 {

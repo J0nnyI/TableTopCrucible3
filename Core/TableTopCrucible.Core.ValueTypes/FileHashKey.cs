@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -14,9 +13,9 @@ namespace TableTopCrucible.Core.ValueTypes
         public static explicit operator IdBase<TThis>(Guid id)
             => From(id);
 
-        protected override void Validate()
+        protected override void Validate(Guid value)
         {
-            if (Value == default)
+            if (value == default)
                 throw new InvalidIdException("Id must not be default");
         }
     }

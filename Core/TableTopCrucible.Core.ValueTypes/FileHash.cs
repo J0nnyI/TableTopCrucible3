@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Security.Cryptography;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -10,11 +9,11 @@ namespace TableTopCrucible.Core.ValueTypes
     {
         public static int SHA512_Size = 64;
 
-        protected override void Validate()
+        protected override void Validate(byte[] value)
         {
-            if (Value == null)
+            if (value == null)
                 throw new NullReferenceException("The hash must not be empty");
-            if (Value.Length != SHA512_Size)
+            if (value.Length != SHA512_Size)
                 throw new InvalidHashSizeException(Value.Length);
         }
 

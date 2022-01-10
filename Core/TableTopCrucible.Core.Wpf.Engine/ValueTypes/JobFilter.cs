@@ -24,11 +24,5 @@ namespace TableTopCrucible.Core.Wpf.Engine.ValueTypes
             res.Description = description;
             return res;
         }
-
-        protected override void Validate()
-        {
-            if (Value == null)
-                throw new ArgumentNullException(nameof(Value));
-        }
     }
 }

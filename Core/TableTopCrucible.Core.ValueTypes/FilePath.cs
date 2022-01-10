@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.Json;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -65,13 +64,6 @@ namespace TableTopCrucible.Core.ValueTypes
                 throw new FileWriteFailedException(ex);
             }
         }
-
-        protected override void Validate()
-        {
-            if (Value == null)
-                throw new InvalidValueException(nameof(Value));
-        }
-
         public void WriteObject(object data, bool createDirectory = true)
         {
             GetDirectoryPath().Create();

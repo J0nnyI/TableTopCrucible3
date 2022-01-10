@@ -25,6 +25,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
         public ItemModelViewerV()
         {
             InitializeComponent();
+            this.WhenActivated(() => new[]
+            {
+                this.Bind(ViewModel,
+                    vm=>vm.ModelViewer,
+                    v=>v.ModelViewer.ViewModel)
+            });
         }
     }
 }

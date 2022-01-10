@@ -1,4 +1,5 @@
-﻿using TableTopCrucible.Core.ValueTypes.Exceptions;
+﻿using System.IO;
+using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -10,11 +11,11 @@ namespace TableTopCrucible.Core.ValueTypes
         public bool IsWorkingFile
             => this == WorkingFile;
 
-        protected override void Validate()
+        protected override void Validate(string value)
         {
-            if (!IsLibrary())
-                throw new InvalidFileTypeException($"{Value} is not a valid library file");
-            base.Validate();
+            base.Validate(value);
+            if (!FileExtension.From(Path.GetExtension(value)).IsLibrary())
+                throw new InvalidFileTypeException($"{value} is not a valid library file");
         }
 
         public static explicit operator LibraryFilePath(FilePath value)

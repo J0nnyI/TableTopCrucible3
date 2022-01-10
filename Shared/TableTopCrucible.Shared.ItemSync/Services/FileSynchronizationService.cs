@@ -171,9 +171,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetup> directorySetups)
         {
             var dirs = _directorySetupRepository.Data.Select(dir => dir.Path);
-            var deletedFiles = directorySetups
+            var foundFiles = directorySetups
                 .ToArray()
-                .SelectMany(directory => startScanForDirectory(directory))
+                .SelectMany(startScanForDirectory)
                 .ToArray();
 
             var filesOfUnregisteredDirs = _fileRepository
@@ -183,7 +183,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 .Select(file => new RawSyncFileData(file, null))
                 .ToArray();
 
-            return new FileSyncListGrouping(deletedFiles.Concat(filesOfUnregisteredDirs));
+            return new FileSyncListGrouping(foundFiles.Concat(filesOfUnregisteredDirs));
         }
 
         private object _itemUpdateLocker = new();

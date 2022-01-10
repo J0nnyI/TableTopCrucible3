@@ -15,8 +15,6 @@ using ReactiveUI.Validation.Extensions;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
-using TableTopCrucible.Infrastructure.Models.Entities;
-
 namespace TableTopCrucible.Core.ValueTypes
 {
     /// <summary>
@@ -26,11 +24,6 @@ namespace TableTopCrucible.Core.ValueTypes
         : ValueType<string, TThis>
         where TThis : DirectoryPath<TThis>, new()
     {
-        new public string Value
-        {
-            init => base.Value = value;
-            get => base.Value;
-        }
         public static FilePath operator +(DirectoryPath<TThis> directory, FileName fileName) =>
             FilePath.From(FileSystemHelper.Path.Combine(directory.Value, fileName.Value));
 
@@ -64,9 +57,9 @@ namespace TableTopCrucible.Core.ValueTypes
             return null;
         }
 
-        protected override void Validate()
+        protected override void Validate(string value)
         {
-            var ex = IsValid(Value);
+            var ex = IsValid(value);
             if (ex != null) throw ex;
         }
 

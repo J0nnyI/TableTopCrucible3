@@ -1,6 +1,4 @@
-﻿using TableTopCrucible.Infrastructure.Models.Entities;
-
-namespace TableTopCrucible.Core.ValueTypes
+﻿namespace TableTopCrucible.Core.ValueTypes
 {
     /// <summary>
     ///     the name of a directory without a path
