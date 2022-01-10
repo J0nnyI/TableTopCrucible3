@@ -11,7 +11,8 @@
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <hx:HelixViewport3D x:Name="Viewport">
+        <hx:HelixViewport3D x:Name="Viewport"
+                            ZoomExtentsWhenLoaded="True">
             <hx:DefaultLights/>
             <ModelVisual3D x:Name="ContainerVisual"/>
         </hx:HelixViewport3D>

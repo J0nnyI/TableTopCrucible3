@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -22,9 +23,13 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-
+using Splat;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.Wpf.Engine.Services;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
+using TableTopCrucible.Core.WPF.Helper;
+using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
@@ -36,13 +41,19 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
     {
         public ModelViewerV()
         {
+
             InitializeComponent();
             this.WhenActivated(() => new[]
             {
                 ViewModel!.BringIntoView.RegisterHandler(context =>
-                    {
-                        context.SetOutput(Unit.Default);
-                    }),
+                {
+                    var bounds = ViewModel.ViewportContent.Bounds;
+                    this.Viewport.Camera.ZoomExtents(Viewport.Viewport,bounds);
+                    context.SetOutput(Unit.Default);
+                }),
+                ViewModel!.GenerateThumbnail.RegisterHandler(context =>
+                    context.SetOutput(createThumbnail(context.Input))
+                ),
 
                 this.WhenAnyValue(v=>v.ViewModel.PlaceholderText.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
@@ -61,6 +72,53 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.ContainerVisual.Content),
             });
+        }
+
+        private ImageFilePath createThumbnail(ModelFilePath model)
+        {
+            var notificationService = Locator.Current.GetService<INotificationService>();
+
+            try
+            {
+                if (model is null)
+                    throw new InvalidOperationException("could not create a screen shot, the model is null");
+
+                var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
+                
+                var directory = directorySetupRepository.ByFilepath(model.ToFilePath()).FirstOrDefault().Path + (DirectoryName)"Thumbnails";
+                var fileName = (model.GetFilenameWithoutExtension() +
+                                (BareFileName)$"_{DateTime.Now:yyyyMMdd_HHmmssss}" +
+                                FileExtension.UncompressedImage);
+                var path = ImageFilePath.From(directory +fileName);
+
+                var source = Viewport.CreateBitmap(Viewport.ActualWidth, Viewport.ActualHeight);
+                
+                directory.Create();
+
+                using var fileStream = path.OpenWrite();
+
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(source));
+                encoder.Save(fileStream);
+
+                notificationService.AddNotification(
+                    (Name)"Image creation successful",
+                    (Description)$"The Image for the File {model} was generated successfully",
+                    NotificationType.Confirmation);
+                return path;
+            }
+            catch (Exception ex)
+            {
+                notificationService.AddNotification(
+                    (Name)"Image creation failed",
+                    (Description) string.Join(Environment.NewLine, 
+                        $"The Image for the File {model} could not be created",
+                        "Details:",
+                        ex.ToString()
+                        ),
+                    NotificationType.Confirmation);
+                throw;
+            }
         }
     }
 }

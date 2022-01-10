@@ -47,18 +47,22 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             }
         }
 
-        public void SetRequiredValue<TValue>(ref TValue field, TValue value,
+        public void SetValue<TValue>(ref TValue field, TValue value,
             params string[] names)
         {
-            if (value is null)
-                throw new NullReferenceException(string.Join(", ", names));
-
             if (field?.Equals(value) == true)
                 return;
 
             field = value;
             foreach (var name in names)
                 this.RaisePropertyChanged(name);
+        }
+        public void SetRequiredValue<TValue>(ref TValue field, TValue value,
+            params string[] names)
+        {
+            if (value is null)
+                throw new NullReferenceException(string.Join(", ", names));
+            SetValue(ref field, value, names);
         }
         /// <summary>
         ///     same as <see cref="IReactiveObjectExtensions.RaiseAndSetIfChanged{TObj,TRet}" /> but it throws an

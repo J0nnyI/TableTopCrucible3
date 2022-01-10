@@ -13,6 +13,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         : IRepository<DirectorySetupId, DirectorySetup>
     {
         public DirectorySetup this[DirectoryPath path] { get; }
+        public IQueryable<DirectorySetup> ByFilepath(FilePath path);
     }
 
     internal class DirectorySetupRepository
@@ -26,5 +27,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             => this.Data.SingleOrDefault(dir => dir.Path.Value == path.Value);
 
         public override string TableName => DirectorySetupConfiguration.TableName;
+
+        public IQueryable<DirectorySetup> ByFilepath(FilePath path)
+            => this.Data.Where(dir => path.Value.ToLower().StartsWith(dir.Path.Value.ToLower()));
     }
 }

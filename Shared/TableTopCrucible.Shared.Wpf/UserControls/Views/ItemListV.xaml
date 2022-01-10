@@ -57,9 +57,11 @@
                                                        CommandParameter="{Binding ElementName=grd_item}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>-->
-                    <Image Source="{Binding Path=Item.LatestThumbnail.AbsolutePath}" 
-                               Width="200px"
-                               Height="180px">
+                    <Image Width="200px"
+                           Height="180px">
+                        <Image.Source>
+                            <BitmapImage DecodePixelWidth="200"/>
+                        </Image.Source>
                     </Image>
                     <md:PackIcon Visibility="Visible" 
                                      Kind="Image"

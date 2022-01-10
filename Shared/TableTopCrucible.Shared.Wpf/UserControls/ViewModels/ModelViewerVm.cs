@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 
 using HelixToolkit.Wpf;
@@ -15,6 +19,9 @@ using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.WPF.Helper;
+using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Infrastructure.Repositories.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
@@ -27,6 +34,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     }
     public class ModelViewerVm : ReactiveObject, IModelViewer, IActivatableViewModel
     {
+        private readonly IDirectorySetupRepository _directorySetupRepository;
+        public ReactiveCommand<Unit,  ImageData> GenerateThumbnailCommand { get; }
         public ViewModelActivator Activator { get; } = new();
 
         [Reactive]
@@ -41,8 +50,30 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public Model3DGroup ViewportContent { get; set; }
 
         public Interaction<Unit, Unit> BringIntoView { get; } = new();
-        public ModelViewerVm()
+        public Interaction<ModelFilePath, ImageFilePath> GenerateThumbnail = new();
+        public ModelViewerVm(IDirectorySetupRepository directorySetupRepository, IFileRepository fileRepository, IImageDataRepository imageDataRepository)
         {
+            _directorySetupRepository = directorySetupRepository;
+            GenerateThumbnailCommand = ReactiveCommand.Create<Unit, ImageData>( _ =>
+            {
+                var imagePath =  GenerateThumbnail.Handle(Model).Wait();
+                var newFile = new FileData(
+                    imagePath.ToFilePath(), 
+                    FileHashKey.Create(imagePath.ToFilePath()),
+                    imagePath.GetLastWriteTime());
+                fileRepository.Add(newFile);
+
+
+                var image = imageDataRepository.Data.SingleOrDefault(file => file.HashKey == newFile.HashKey);
+
+                if(image is null)
+                {
+                    image = new ImageData(Model.GetFilenameWithoutExtension().ToName(), newFile.HashKey);
+                    imageDataRepository.Add(image);
+                }
+
+                return image;
+            });
             this.WhenActivated(() => new[]
                 {
                     this.WhenAnyValue(
@@ -91,12 +122,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             RxApp.MainThreadScheduler.Schedule(model, (_, model) =>
                             {
                                 ViewportContent = model;
-                                BringIntoView.Handle(Unit.Default);
+                                BringIntoView.Handle(Unit.Default).Subscribe();
                                 IsLoading = false;
                                 return null;
                             });
-                        })
+                        }),
             });
         }
+
+
     }
 }

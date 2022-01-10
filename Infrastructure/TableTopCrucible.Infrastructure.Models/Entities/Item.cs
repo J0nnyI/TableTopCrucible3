@@ -7,7 +7,9 @@ using DynamicData;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
@@ -56,6 +58,16 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             {
                 var newTags = SerializedStringList.From(value).Deserialize().Select(tag => (Tag)tag);
                 Tags.AddRange(newTags.Except(Tags));
+            }
+        }
+
+        private readonly ObservableCollection<ImageData> _images = new();
+        public ObservableCollection<ImageData> Images
+        {
+            get => _images;
+            set {
+                _images.Add(value.Except(_images));
+                _images.Remove(_images.Except(value));
             }
         }
 

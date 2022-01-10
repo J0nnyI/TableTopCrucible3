@@ -27,6 +27,32 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             get => _hashKey.Value;
             set => SetRequiredValue(ref _hashKey, (FileHashKey)value, nameof(HashKey), nameof(HashKeyRaw));
         }
+
+        private ItemId _itemId;
+        public ItemId ItemId
+        {
+            get => _itemId;
+            set => SetValue(ref _itemId, value, nameof(ItemId), nameof(ItemIdRaw));
+        }
+        public Guid ItemIdRaw
+        {
+            get => _itemId.Value;
+            set => SetValue(ref _itemId,ItemId.From(value), nameof(ItemId), nameof(ItemIdRaw));
+        }
+
+        public ImageData()
+        {
+                
+        }
+
+        [Reactive]
+        public Item Item { get; set; }
+
+        public ImageData(Name name, FileHashKey hashKey)
+        {
+            _hashKey = hashKey;
+            Name = name;
+        }
     }
 
     public class ImageDataConfiguration : IEntityTypeConfiguration<ImageData>
@@ -45,6 +71,14 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             builder.Ignore(x => x.Id);
             builder.HasKey(x => x.Guid)
                 .HasName("Id");
+
+            //foreign keys
+            builder.Ignore(image => image.ItemId);
+            builder.HasOne(image => image.Item)
+                .WithMany(item => item.Images)
+                .HasForeignKey(image => image.ItemIdRaw)
+                .HasConstraintName("ItemId")
+                .IsRequired(false);
 
             //properties
             builder.OwnsOne(x => x.Name)

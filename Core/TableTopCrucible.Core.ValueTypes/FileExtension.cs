@@ -13,7 +13,8 @@ namespace TableTopCrucible.Core.ValueTypes
         public static readonly IEnumerable<FileExtension> Model = FromList(".stl", ".obj", ".off", ".objz", ".lwo",
             ".3ds");
 
-        public static readonly IEnumerable<FileExtension> Image = FromList(".png", ".jpg", ".jpeg", ".bmp", ".gif",
+        public static readonly FileExtension UncompressedImage = (FileExtension)".bmp";
+        public static readonly IEnumerable<FileExtension> Image = FromList(".png", ".jpg", ".jpeg", UncompressedImage.Value, ".gif",
             ".hdp", ".jp2", ".pbm", ".psd", ".tga", ".tiff", ".img");
 
         public static readonly FileExtension Library = From(".ttcl");

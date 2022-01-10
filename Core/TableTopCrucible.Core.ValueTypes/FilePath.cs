@@ -26,6 +26,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public FileType GetFileType() => GetExtension().GetFileType();
 
         public Stream OpenRead() => FileSystemHelper.File.OpenRead(Value);
+        public Stream OpenWrite() => FileSystemHelper.File.OpenWrite(Value);
 
         public void Delete()
         {
@@ -94,6 +95,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         // uses GetInfo, if you need other properties use that method instead
         public FileSize GetSize() => FileSize.From(GetInfo().Length);
+        public DateTime GetLastWriteTime() => GetInfo().LastWriteTime;
 
         public override int GetHashCode() => Value.ToLower().GetHashCode();
 
