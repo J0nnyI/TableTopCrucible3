@@ -6,6 +6,7 @@
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                           xmlns:local="clr-namespace:TableTopCrucible.Domain.Library.Wpf.UserControls.Views"
                           xmlns:rxui="http://reactiveui.net"
+                          xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           xmlns:vm="clr-namespace:TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels"
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
@@ -16,10 +17,14 @@
                     Value="8"/>
         </Style>
     </UserControl.Resources>
-    <StackPanel>
-        <TextBlock Text="Item Actions - Not implemented yet"/>
-        <Button Content="Create Thumbnails"/>
-        <Button Content="Delete Items Without Files"/>
-        <Button Content="Start Sync"/>
-    </StackPanel>
+    <md:DialogHost>
+        <StackPanel>
+            <TextBlock Text="Item Actions - Not implemented yet"/>
+            <Button Content="Create Thumbnails"/>
+            <Button Content="Delete Items Without Files"/>
+            <Button x:Name="StartSync" Content="Start Sync"/>
+            <Button x:Name="DeleteAllData" Content="DeleteAllData"
+                    ToolTip="deletes all data except directory setups"/>
+        </StackPanel>
+    </md:DialogHost>
 </rxui:ReactiveUserControl>

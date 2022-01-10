@@ -69,11 +69,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         .ToProperty(this, vm => vm.DirectorySetup, out _directorySetup),
 
                     this.WhenAnyValue(
-                            vm => vm.DirectorySetup,
+                            vm => vm.DirectorySetup.Name,
+                            vm => vm.DirectorySetup.Path,
                             vm => vm.Name,
                             vm => vm.Path,
-                            (dir, Name, path) =>
-                                dir?.Name?.Value != Name || dir?.Path?.Value != path)
+                            (savedName, savedPath, Name, path) =>
+                                savedName?.Value != Name || savedPath?.Value != path)
                         .OutputObservable(out var isDirtyChanges)
                         .ToProperty(this, vm => vm.IsDirty, out _isDirty),
 
@@ -85,14 +86,25 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     // save changes
                     ReactiveCommandHelper.Create(() =>
                         {
-                            //_directorySetupRepository.Update(new DirectorySetupChangeSet(
-                            //    (vtName)Name,
-                            //    (DirectorySetupEntity)Path,
-                            //    DirectorySetup.Id));
-                            _notificationService.AddNotification(
-                                (vtName)"Directory saved successfully",
-                                (Description)$"The directory '{Name}' has been saved successfully",
-                                NotificationType.Confirmation);
+                            try
+                            {
+                                DirectorySetup.Name = (vtName)Name;
+                                DirectorySetup.Path = (DirectoryPath)Path;
+                                _database.AutoSave();
+                                _notificationService.AddNotification(
+                                    (vtName)"Directory saved successfully",
+                                    (Description)$"The directory '{Name}' has been saved successfully",
+                                    NotificationType.Confirmation);
+                            }
+                            catch (Exception e)
+                            {
+                                _notificationService.AddNotification(
+                                    (vtName)"Directory could not be saved",
+                                    (Description)string.Join(Environment.NewLine, $"The directory '{Name}' could not be saved.","Error:",e.ToString()),
+                                    NotificationType.Error);
+                                throw;
+                            }
+
                         },
                         this.WhenAnyValue(
                             vm => vm.IsDirty,
@@ -104,12 +116,24 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     // undo changes
                     ReactiveCommandHelper.Create(() =>
                         {
-                            Name = DirectorySetup.Name.Value;
-                            Path = DirectorySetup.Path.Value;
-                            _notificationService.AddNotification(
-                                (vtName)"Directory undo successful",
-                                (Description)$"The changes in directory '{Name}' have been undone successfully",
-                                NotificationType.Confirmation);
+                            try
+                            {
+                                Name = DirectorySetup.Name.Value;
+                                Path = DirectorySetup.Path.Value;
+
+                                _notificationService.AddNotification(
+                                    (vtName)"Directory undo successful",
+                                    (Description)$"The changes in directory '{Name}' have been undone successfully",
+                                    NotificationType.Confirmation);
+                            }
+                            catch (Exception e)
+                            {
+                                _notificationService.AddNotification(
+                                    (vtName)"Directory undo failed",
+                                    (Description)string.Join(Environment.NewLine, $"The directory changes for '{Name}' could not be undone.","Error:",e.ToString()),
+                                    NotificationType.Error);
+                                throw;
+                            }
                         },
                         isDirtyChanges,
                         c => UndoChangesCommand = c

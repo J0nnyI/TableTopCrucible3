@@ -29,7 +29,7 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public static TThis From(TValue valueA)
-            => new() { Value = valueA };
+            => valueA is null ? null : new() { Value = valueA };
 
 
         protected virtual void Validate(TValue value)

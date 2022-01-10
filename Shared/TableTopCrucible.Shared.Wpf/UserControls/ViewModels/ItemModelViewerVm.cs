@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
@@ -31,15 +33,34 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(vm=>vm.Item.FileKey3d)
-                    .Select(fileRepository.Watch)
+                    .Select(item=>
+                        fileRepository
+                            .Watch(item)
+                            .Select(files =>
+                            new {
+                                item,
+                                files
+                            }))
                     .Switch()
-                    .Select(files=>files.FirstOrDefault()?.Path)
+                    .Publish()
+                    .RefCount()
+                    .OutputObservable(out var filesChanges)
+                    .Select(x=>x.files.FirstOrDefault()?.Path)
                     .Select(ModelFilePath.From)
                     .Catch((Exception e) =>
                     {
+                        Debugger.Break();
                         return Observable.Never<ModelFilePath>();
                     })
-                    .BindTo(this, vm=>vm.ModelViewer.Model)
+                    .BindTo(this, vm=>vm.ModelViewer.Model),
+
+                filesChanges
+                    .Select(x=>x.item is null
+                        ? (Message)"No Item selected"
+                        : x.files.Any()
+                            ? null
+                            : (Message)"No Model found for this Item")
+                    .BindTo(this, vm=>vm.ModelViewer.PlaceholderMessage)
             });
         }
 

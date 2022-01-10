@@ -20,7 +20,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     public class ItemViewerHeaderVm : ReactiveObject, IItemViewerHeader, IActivatableViewModel
     {
         public ViewModelActivator Activator { get; } = new();
+        
         [Reactive]
         public Item Item { get; set; }
+
+        public ItemViewerHeaderVm()
+        {
+        }
+        
     }
 }

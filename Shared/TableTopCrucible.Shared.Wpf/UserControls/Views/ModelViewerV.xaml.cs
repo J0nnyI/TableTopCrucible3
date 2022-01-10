@@ -44,7 +44,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                         context.SetOutput(Unit.Default);
                     }),
 
-                this.WhenAnyValue(v=>v.ViewModel.PlaceholderText)
+                this.WhenAnyValue(v=>v.ViewModel.PlaceholderText.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v=>v.PlaceholderText.Text),
 

@@ -3,6 +3,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using DynamicData;
 using ReactiveUI;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
@@ -20,18 +22,16 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
             this.WhenActivated(() => new []
             {
                 this.OneWayBind(ViewModel,
-                    vm => vm.FileSyncCommand,
-                    v => v.FileSync.Command),
-                this.OneWayBind(ViewModel,
                     vm => vm.Items,
-                    v => v.Items.ItemsSource),
-                this.Items.Events().SelectionChanged
-                    .Subscribe(args =>
-                        ViewModel.UpdateSelection(
-                            args.AddedItems.Cast<Item>(),
-                            args.RemovedItems.Cast<Item>())
-                    )
+                    v => v.Items.ItemsSource)
             });
+        }
+
+        private void ListViewItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is ListViewItem lstItem && 
+                lstItem.Content is ItemSelectionInfo itemInfo)
+                ViewModel.OnItemClicked(itemInfo,e);
         }
     }
 }

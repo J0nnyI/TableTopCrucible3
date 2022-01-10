@@ -33,17 +33,17 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         public IObservable<IQueryable<FileData>> Watch(FileHashKey hashKey)
         {
             return
-                Updates.Where(x =>
-                    x.UpdateInfo.ChangeReason == EntityUpdateChangeReason.Init ||
-                    x.UpdateInfo
+                Updates.Where(update =>
+                    update.UpdateInfo.ChangeReason == EntityUpdateChangeReason.Init ||
+                    update.UpdateInfo
                         .UpdatedEntities
                         .Any(x =>
                             x.Value.HashKey == hashKey)
                 )
-                .Select(x =>
+                .Select(update =>
                     hashKey is null
                         ? Enumerable.Empty<FileData>().AsQueryable()
-                        : x.Queryable.Where(file => file.HashKeyRaw == hashKey.Value));
+                        : update.Queryable.Where(file => file.HashKeyRaw == hashKey.Value));
         }
         public IObservable<IQueryable<FileData>> Watch(IObservable<FileHashKey> hashKeyChanges)
             => hashKeyChanges

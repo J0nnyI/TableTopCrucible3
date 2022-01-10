@@ -22,6 +22,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     public interface IModelViewer
     {
         public ModelFilePath Model { get; set; }
+        // will be shown instead of the model if set
+        public Message PlaceholderMessage { get; set; }
     }
     public class ModelViewerVm : ReactiveObject, IModelViewer, IActivatableViewModel
     {
@@ -30,33 +32,39 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         [Reactive]
         public ModelFilePath Model { get; set; }
         [Reactive]
+        public Message PlaceholderMessage { get; set; }
+        [Reactive]
         public bool IsLoading { get; set; }
         [Reactive]
-        public string PlaceholderText { get; set; }
+        public Message PlaceholderText { get; set; }
         [Reactive]
         public Model3DGroup ViewportContent { get; set; }
 
         public Interaction<Unit, Unit> BringIntoView { get; } = new();
         public ModelViewerVm()
         {
-            this.WhenActivated(() =>
-            {
-                var res = new[]
+            this.WhenActivated(() => new[]
                 {
-                    this.WhenAnyValue(v => v.Model)
-                        .ObserveOn(RxApp.TaskpoolScheduler)
-                        .Do(model =>
+                    this.WhenAnyValue(
+                            v => v.Model, 
+                            v=>v.PlaceholderMessage,
+                            (model, message)=>new{model, message})
+                        .Do((x) =>
                         {
                             PlaceholderText =
-                                model is null
-                                    ? "No File selected"
-                                    : "Loading";
-                            if(model is not null && 
-                               model.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize)
+                                x.message ??
+                                (x.model is null
+                                    ? (Message)"No File selected"
+                                    : (Message)"Loading");
+                            if(x.model is null || 
+                               x.message is not null ||
+                               x.model.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
+                               )
                                 IsLoading = true;
 
                             ViewportContent = null;
                         })
+                        .Select(x=>x.model)
                         .WhereNotNull()
                         .Select(file =>
                         {
@@ -78,16 +86,16 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         .Subscribe(model =>
                         {
                             if (model is null)
-                            {
                                 return;
-                            }
 
-                            ViewportContent = model;
-                            BringIntoView.Handle(Unit.Default);
-                            IsLoading = false;
+                            RxApp.MainThreadScheduler.Schedule(model, (_, model) =>
+                            {
+                                ViewportContent = model;
+                                BringIntoView.Handle(Unit.Default);
+                                IsLoading = false;
+                                return null;
+                            });
                         })
-                };
-                return res;
             });
         }
     }

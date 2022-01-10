@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,7 +13,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 using ReactiveUI;
+using Splat;
+using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
@@ -25,6 +29,23 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
         public ItemActionsV()
         {
             InitializeComponent();
+            this.WhenActivated(() => new[]
+            {
+                this.Bind(ViewModel,
+                    vm => vm.StartSyncCommand,
+                    v => v.StartSync.Command),
+                this.Bind(ViewModel,
+                    vm => vm.DeleteAllDataCommand,
+                    v => v.DeleteAllData.Command),
+                this.ViewModel.DeletionConfirmation.RegisterHandler(async interaction =>
+                {
+                    var dialog = Locator.Current
+                        .GetService<IDialogService>()
+                        .OpenYesNoDialog("Do you really want to delete all your data?" + Environment.NewLine +
+                                         "Only your directory setups will remain.");
+                    interaction.SetOutput(await dialog.Result);
+                })
+            });
         }
     }
 }

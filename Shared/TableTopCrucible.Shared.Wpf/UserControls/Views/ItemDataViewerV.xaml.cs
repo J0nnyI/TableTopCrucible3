@@ -25,6 +25,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
         public ItemDataViewerV()
         {
             InitializeComponent();
+            this.WhenActivated(() => new[]
+            {
+                this.OneWayBind(ViewModel,
+                    vm => vm.Item.FileKey3d.Value,
+                    v=>v.HashKey.Text)
+            });
         }
     }
 }

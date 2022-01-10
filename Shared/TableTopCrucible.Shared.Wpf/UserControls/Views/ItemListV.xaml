@@ -6,32 +6,84 @@
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
+                                xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
+                                xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                                xmlns:entities="clr-namespace:TableTopCrucible.Infrastructure.Models.Entities;assembly=TableTopCrucible.Infrastructure.Models"
                                 mc:Ignorable="d"
                                 d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Button x:Name="FileSync"
-                Content="Start Sync"
-                HorizontalAlignment="Left"
-                Grid.Column="0"
-                Grid.Row="0" />
-        <TextBlock Text="items"
-                   HorizontalAlignment="Center"
-                   Grid.Row="0" />
-        <ListView x:Name="Items"
-                  Margin="5"
-                  Grid.Row="1">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
-    </Grid>
+    <ListView x:Name="Items"
+              Margin="5">
+        <ListView.Resources>
+            <Style TargetType="ContentPresenter">
+                <Setter Property="Margin" 
+                        Value="10"/>
+                <Setter Property="Opacity" Value=".5"/>
+            </Style>
+        </ListView.Resources>
+        <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem" >
+                <Setter Property="HorizontalContentAlignment" 
+                        Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" 
+                        Value="Stretch" />
+                <EventSetter Event="PreviewMouseDown"
+                             Handler="ListViewItem_PreviewMouseDown"/>
+                <Setter Property="IsSelected" 
+                        Value="{Binding IsSelected, Mode=TwoWay}"/>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected"
+                             Value="True">
+                        <Setter Property="Background"
+                                Value="Blue"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ListView.ItemContainerStyle>
+        <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+                <wpftk:VirtualizingWrapPanel Orientation="Vertical"
+                                             SpacingMode="None"
+                                             StretchItems="False"
+                                             ItemSize="216,216"/>
+            </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+        <ListView.ItemTemplate>
+            <DataTemplate d:DataContext="{d:DesignInstance vm:ItemSelectionInfo}">
+                <Grid VerticalAlignment="Stretch"
+                          x:Name="grd_item">
+                    <!--<i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                            <i:InvokeCommandAction Command="{Binding ItemLeftMouseButtonDownCommand}"
+                                                       CommandParameter="{Binding ElementName=grd_item}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>-->
+                    <Image Source="{Binding Path=Item.LatestThumbnail.AbsolutePath}" 
+                               Width="200px"
+                               Height="180px">
+                    </Image>
+                    <md:PackIcon Visibility="Visible" 
+                                     Kind="Image"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center"
+                                     Foreground="LightGray"
+                                     Width="150px"
+                                     Height="150px"/>
+
+                    <TextBlock Text="{Binding Item.Name}"
+                                   VerticalAlignment="Bottom"
+                                   HorizontalAlignment="Stretch"
+                                   MaxWidth="208"
+                                   Margin="-4 0 -4 -4"
+                                   FontSize="18"
+                                   TextAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="WrapWithOverflow"
+                                   Padding="8px"
+                                   Background="#77000000"
+                                   Foreground="white">
+                    </TextBlock>
+                </Grid>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 </reactiveUi:ReactiveUserControl>

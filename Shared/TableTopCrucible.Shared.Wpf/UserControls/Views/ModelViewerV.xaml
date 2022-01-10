@@ -20,8 +20,8 @@
                HorizontalContentAlignment="Center">
             <Grid>
                 <Rectangle 
-                    Width="{Binding ElementName=tb_vpCover, Path=ActualWidth, Mode=OneWay}"
-                    Height="{Binding ElementName=tb_vpCover, Path=ActualHeight, Mode=OneWay}"
+                    Width="{Binding ElementName=PlaceholderText, Path=ActualWidth, Mode=OneWay}"
+                    Height="{Binding ElementName=PlaceholderText, Path=ActualHeight, Mode=OneWay}"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
                     Fill="#FFFFFF">
@@ -30,6 +30,8 @@
                     </Rectangle.Effect>
                 </Rectangle>
                 <TextBlock x:Name="PlaceholderText"
+                           Foreground="{StaticResource MaterialDesignLightForeground}"
+                           HorizontalAlignment="Center"
                            Padding="40"
                            FontSize="30"/>
             </Grid>

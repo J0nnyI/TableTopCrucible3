@@ -10,6 +10,8 @@
                                 mc:Ignorable="d" 
                                 d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TextBlock Text="Data Viewer"/>
+        <TextBox x:Name="HashKey"
+                 IsReadOnly="True" 
+                 VerticalAlignment="Top"/>
     </Grid>
 </rxui:ReactiveUserControl>

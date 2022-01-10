@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -18,6 +19,6 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public static ModelFilePath From(FilePath path)
-            => From(path.Value);
+            => path is null ? null : From(path.Value);
     }
 }

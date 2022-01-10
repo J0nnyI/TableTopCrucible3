@@ -41,11 +41,11 @@ namespace TableTopCrucible.Shared.ItemSync.Models
 
         private FileUpdateSource GetFileState()
         {
-            if (FoundFile == null && KnownFile == null)
+            if (FoundFile is null && KnownFile is null)
                 throw new ArgumentNullException(nameof(FoundFile), "at least one file must be set");
-            if (FoundFile != null && KnownFile == null)
+            if (FoundFile is not null && KnownFile is null)
                 return FileUpdateSource.New;
-            if (FoundFile == null && KnownFile != null)
+            if (FoundFile is null && KnownFile is not null)
                 return FileUpdateSource.Deleted;
             if (foundFileInfo.LastWriteTime == KnownFile!.LastWrite)
                 return FileUpdateSource.Unchanged;
@@ -65,39 +65,6 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             KnownFile.LastWrite = foundFileInfo.LastWriteTime;
             return KnownFile;
         }
-
-        public ItemUpdateHelper GetItemUpdateHelper(IQueryable<Item> items)
-            => new(this, items);
-    }
-
-    internal class ItemUpdateHelper
-    {
-        public ItemUpdateHelper(RawSyncFileData fileHelper, IQueryable<Item> items)
-        {
-            HashAfterSync = fileHelper.NewHashKey;
-            File = fileHelper.FoundFile;
-            UpdateSource = fileHelper.UpdateSource;
-
-            LinkedItemAfterSync = items.Single(item => item.FileKey3d == HashAfterSync);
-        }
-
-        public FileHashKey HashAfterSync { get; }
-        public FileUpdateSource UpdateSource { get; }
-        public FilePath File { get; }
-
-        /// item which is linked to
-        /// <see cref="HashAfterSync" />
-        public Item LinkedItemAfterSync { get; }
-
-        public Item GetItemUpdate()
-        {
-            // temporary solution: only handle new items
-            if (LinkedItemAfterSync is null) // there is no item for the updated file
-                // todo: autoTagging
-                return new Item(File.GetFilenameWithoutExtension().ToName(), HashAfterSync);
-
-            LinkedItemAfterSync.FileKey3d = HashAfterSync;
-            return LinkedItemAfterSync;
-        }
+        
     }
 }

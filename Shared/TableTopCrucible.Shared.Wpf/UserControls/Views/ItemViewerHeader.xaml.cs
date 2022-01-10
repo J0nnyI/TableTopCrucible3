@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,16 +21,17 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
     /// <summary>
     /// Interaction logic for ModelHeaderV.xaml
     /// </summary>
-    public partial class ModelHeaderV : ReactiveUserControl<ItemViewerHeaderVm>
+    public partial class ItemViewerHeaderV : ReactiveUserControl<ItemViewerHeaderVm>
     {
-        public ModelHeaderV()
+        public ItemViewerHeaderV()
         {
             InitializeComponent();
             this.WhenActivated(() => new[]
             {
-                this.Bind(ViewModel,
-                    vm => vm.Item.Name.Value,
-                    v => v.Name.Text)
+                this.WhenAnyValue(v=>v.ViewModel.Item.Name)
+                    .Select(name=>name.Value)
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .BindTo(this, v=>v.Name.Text)
             });
         }
     }

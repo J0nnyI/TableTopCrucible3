@@ -166,7 +166,10 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             => _changes
                 .Where(change =>
                     change.UpdatedEntities.ContainsKey(id))
-                .Select(change => change.UpdatedEntities[id])
+                .Select(change =>
+                    change.ChangeReason == EntityUpdateChangeReason.Remove
+                        ? null
+                        : change.UpdatedEntities[id])
                 .StartWith(this[id]);
 
         /// <summary>
@@ -203,7 +206,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             }
             catch (DbUpdateException e)
             {
-                HandleDbUpdateException(e,entity.AsArray());
+                HandleDbUpdateException(e, entity.AsArray());
                 throw;
             }
         }
@@ -235,7 +238,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             }
         }
 
-        private void HandleDbUpdateException(DbUpdateException e,IEnumerable<TEntity> entities)
+        private void HandleDbUpdateException(DbUpdateException e, IEnumerable<TEntity> entities)
         {
             if (e.InnerException.Message == $"SQLite Error 19: 'UNIQUE constraint failed: {TableName}.Id'.")
                 throw new EntityAlreadyAddedException<TId, TEntity>(e, entities);
@@ -251,7 +254,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                     EntityUpdateChangeReason.Remove,
                     new Dictionary<TId, TEntity>
                     {
-                        { entity.Id, null }
+                        { entity.Id, entity }
                     }
                 )
             );
@@ -274,7 +277,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 (
                     EntityUpdateChangeReason.Remove,
                     new Dictionary<TId, TEntity>(
-                        entitiesToDelete.Select(entity => new KeyValuePair<TId, TEntity>(entity.Id, null)))
+                        entitiesToDelete.Distinct().Select(entity => new KeyValuePair<TId, TEntity>(entity.Id, entity)))
                 )
             );
         }

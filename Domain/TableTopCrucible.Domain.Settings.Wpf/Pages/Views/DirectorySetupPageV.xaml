@@ -9,16 +9,7 @@
                           xmlns:pvm="clr-namespace:TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <md:DialogHost Identifier="List" Grid.Row="0"
-                       Grid.RowSpan="2">
-            <rxui:ViewModelViewHost x:Name="DirectorySetupList"
-                                    MaxWidth="1000"
-                                    Margin="20" />
-        </md:DialogHost>
-    </Grid>
+    <rxui:ViewModelViewHost x:Name="DirectorySetupList"
+                            MaxWidth="1000"
+                            Margin="20" />
 </rxui:ReactiveUserControl>

@@ -1,5 +1,5 @@
 ﻿<rxui:ReactiveUserControl x:TypeArguments="vm:ItemViewerHeaderVm"
-                          x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.ModelHeaderV"
+                          x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.ItemViewerHeaderV"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

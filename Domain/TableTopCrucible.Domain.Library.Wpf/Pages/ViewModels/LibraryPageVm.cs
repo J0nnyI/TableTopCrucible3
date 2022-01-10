@@ -29,8 +29,8 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             IItemList itemList,
             IFilteredListHeader listHeader,
             IItemListFilter filter,
-            IItemModelViewer modelViewer, 
-            IItemActions actions, 
+            IItemModelViewer modelViewer,
+            IItemActions actions,
             IItemDataViewer dataViewer,
             IItemViewerHeader viewerHeader,
             IItemFileList fileList)
@@ -47,20 +47,20 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             var itemChanges = ItemList.SelectedItems
                 .Connect()
                 .ToCollection()
-                .Select(x => x.FirstOrDefault());
-            itemChanges
-                .BindTo(this, vm => vm.ModelViewer.Item)
-                .DisposeWith(_disposables);
-            itemChanges
-                .BindTo(this, vm => vm.DataViewer.Item)
-                .DisposeWith(_disposables);
-            itemChanges
-                .BindTo(this, vm => vm.ViewerHeader.Item)
-                .DisposeWith(_disposables);
-            itemChanges
-                .BindTo(this, vm => vm.FileList.Item)
-                .DisposeWith(_disposables);
-
+                .Select(x => x.FirstOrDefault())
+                .Publish()
+                .RefCount();
+            this.WhenActivated(() => new[]
+            {
+                itemChanges
+                    .BindTo(this, vm => vm.ModelViewer.Item),
+                itemChanges
+                    .BindTo(this, vm => vm.DataViewer.Item),
+                itemChanges
+                    .BindTo(this, vm => vm.ViewerHeader.Item),
+                itemChanges
+                    .BindTo(this, vm => vm.FileList.Item),
+            });
         }
 
         private readonly CompositeDisposable _disposables = new();

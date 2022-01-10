@@ -158,11 +158,11 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private IEnumerable<RawSyncFileData> startScanForDirectory(DirectorySetup directory)
         {
             var foundFiles = directory.Path.GetFiles(FileType.Image, FileType.Model).ToArray();
-            var knownFiles = _fileRepository.Data;
+            var knownFiles = _fileRepository.Data.Where(file=>file.Path.Value.ToLower().StartsWith(directory.Path.Value.ToLower()));
             return foundFiles.FullJoin(
                 knownFiles,
-                foundFile => foundFile.Value,
-                knownFile => knownFile.Path.Value,
+                foundFile => foundFile.Value.ToLower(),
+                knownFile => knownFile.Path.Value.ToLower(),
                 found => new RawSyncFileData(null, found),
                 known => new RawSyncFileData(known, null),
                 (found, known) => new RawSyncFileData(known, found));
@@ -179,11 +179,13 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             var filesOfUnregisteredDirs = _fileRepository
                 .Data
                 .ToArray()
-                .Where(file => !dirs.Any(dir => file.Path.Value.ToLower().StartsWith(dir.Value)))
+                .Where(file => !dirs.Any(dir =>  file.Path.Value.ToLower().StartsWith(dir.Value.ToLower())))
                 .Select(file => new RawSyncFileData(file, null))
                 .ToArray();
 
-            return new FileSyncListGrouping(foundFiles.Concat(filesOfUnregisteredDirs));
+            var groupings = new FileSyncListGrouping(foundFiles.Concat(filesOfUnregisteredDirs));
+
+            return groupings;
         }
 
         private object _itemUpdateLocker = new();
@@ -209,7 +211,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 modelFiles.ForEach(modelFile =>
                 {
                     var tags = GetTagsByPath(modelFile.Path);
-                    var item = _itemRepository.Data.Single(item => item.FileKey3dRaw == modelFile.HashKeyRaw);
+                    var item = 
+                        itemsToAdd.SingleOrDefault(item=>item.FileKey3d == modelFile.HashKey) ??
+                        _itemRepository.Data.Single(item => item.FileKey3dRaw == modelFile.HashKeyRaw);
                     item.AddTags(tags);
                 });
 
@@ -219,7 +223,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
         private IEnumerable<Tag> GetTagsByPath(FilePath filePath)
         {
-            var dir = _directorySetupRepository.Data
+            var dir = _directorySetupRepository
+                .Data
+                .ToArray()
                 .Where(dir => dir.Path.ContainsFilepath(filePath))
                 .Aggregate(string.Empty, (path, dir) => dir.Path.Value.Length > path.Length ? dir.Path.Value : path);
             return dir.Split(Path.DirectorySeparatorChar).Select(Tag.From);
