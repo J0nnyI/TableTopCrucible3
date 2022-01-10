@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence;
@@ -29,6 +30,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         public override string TableName => DirectorySetupConfiguration.TableName;
 
         public IQueryable<DirectorySetup> ByFilepath(FilePath path)
-            => this.Data.Where(dir => path.Value.ToLower().StartsWith(dir.Path.Value.ToLower()));
+        {
+            return this.Data.Where(dir => path.Value.ToLower().StartsWith(dir.Path.Value.ToLower()));
+        }
     }
 }

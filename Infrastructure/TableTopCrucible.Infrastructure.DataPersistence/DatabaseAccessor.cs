@@ -22,6 +22,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
     {
         public DbSet<Item> Items { get; }
         public DbSet<FileData> Files { get; }
+        public DbSet<ImageData> Images { get; }
 
         public DbSet<DirectorySetup> DirectorySetup { get; }
 
@@ -55,6 +56,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public DbSet<Item> Items => _database.Items;
         public DbSet<FileData> Files => _database.Files;
         public DbSet<DirectorySetup> DirectorySetup => _database.DirectorySetups;
+        public DbSet<ImageData> Images => _database.Images;
 
         /// <summary>
         ///     handles automated saving

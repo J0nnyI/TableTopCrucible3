@@ -86,9 +86,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
                 
                 var directory = directorySetupRepository.ByFilepath(model.ToFilePath()).FirstOrDefault().Path + (DirectoryName)"Thumbnails";
-                var fileName = (model.GetFilenameWithoutExtension() +
-                                (BareFileName)$"_{DateTime.Now:yyyyMMdd_HHmmssss}" +
-                                FileExtension.UncompressedImage);
+                var fileName = model.GetFilenameWithoutExtension() +
+                                BareFileName.TimeSuffix +
+                                FileExtension.UncompressedImage;
                 var path = ImageFilePath.From(directory +fileName);
 
                 var source = Viewport.CreateBitmap(Viewport.ActualWidth, Viewport.ActualHeight);

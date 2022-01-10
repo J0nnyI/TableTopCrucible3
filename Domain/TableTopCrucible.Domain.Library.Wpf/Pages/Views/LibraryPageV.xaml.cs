@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
+using System.Windows;
 using ReactiveUI;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.Pages.Views
@@ -38,7 +41,22 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.Views
                 this.Bind(ViewModel,
                     vm=>vm.FileList,
                     v=>v.FileList.ViewModel),
+                this.Bind(ViewModel,
+                    vm=>vm.Gallery,
+                    v=>v.Gallery.ViewModel),
             });
+        }
+
+        private void UIElement_OnDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent("FileDrop"))
+            {
+                var paths = 
+                    (e.Data.GetData("FileDrop") as string[])
+                    .Select(FilePath.From).ToArray()
+                    .ToArray();
+                ViewModel.HandleFileDrop(paths);
+            }
         }
     }
 }

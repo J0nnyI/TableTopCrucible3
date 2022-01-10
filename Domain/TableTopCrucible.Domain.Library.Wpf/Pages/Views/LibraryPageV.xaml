@@ -11,25 +11,16 @@
                           d:DataContext="{d:DesignInstance vm:LibraryPageVm}">
     <UserControl.Resources>
         <Style TargetType="TextBlock"
-               x:Key="PlaceHolder">
-            <Setter Property="FontSize"
-                    Value="40"/>
-            <Setter Property="Background"
-                    Value="DarkRed"/>
-            <Setter Property="Margin"
-                    Value="4"/>
-        </Style>
-        <Style TargetType="TextBlock"
                x:Key="VerticalExpanderHeader">
-        <Setter Property="RenderTransformOrigin"
-                Value=".5,.5"/>
-            <Setter Property="LayoutTransform">
-                <Setter.Value>
-                    <RotateTransform Angle="90"/>
-                </Setter.Value>
-            </Setter>
-        <Setter Property="FontSize"
-                Value="{DynamicResource SidebarTitleFontSize}"/>
+            <Setter Property="RenderTransformOrigin"
+                    Value=".5,.5"/>
+                <Setter Property="LayoutTransform">
+                    <Setter.Value>
+                        <RotateTransform Angle="90"/>
+                    </Setter.Value>
+                </Setter>
+            <Setter Property="FontSize"
+                    Value="{DynamicResource SidebarTitleFontSize}"/>
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -75,6 +66,8 @@
 
         <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
                     TabStripPlacement="Top"
+                    AllowDrop="True"
+                    Drop="UIElement_OnDrop"
                     Grid.Column="2"
                     Grid.Row="1">
             <TabItem Header="3d Model">
@@ -84,8 +77,7 @@
                 <rxui:ViewModelViewHost x:Name="DataViewer"/>
             </TabItem>
             <TabItem Header="Gallery">
-                <TextBlock Text="Gallery"
-                           Style="{StaticResource PlaceHolder}"/>
+                <rxui:ViewModelViewHost x:Name="Gallery"/>
             </TabItem>
             <TabItem Header="Files">
                 <rxui:ViewModelViewHost x:Name="FileList"/>

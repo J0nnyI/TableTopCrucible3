@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace TableTopCrucible.Core.ValueTypes
 {
     /// <summary>
@@ -11,6 +13,8 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static FileName operator +(BareFileName fileName, FileExtension extension) =>
             FileName.From(fileName.Value + extension.Value);
+
+        public static BareFileName TimeSuffix => (BareFileName)$"_{DateTime.Now:yyyyMMdd_HHmmssss}";
 
         public Name ToName()
             => (Name)Value;

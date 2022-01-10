@@ -91,6 +91,8 @@ namespace TableTopCrucible.Core.ValueTypes
             FileSystemHelper.File.SetCreationTime(Value, time);
         }
 
+        public Uri ToUri()
+            => new(Value);
         public IFileInfo GetInfo() => FileSystemHelper.FileInfo.FromFileName(Value);
 
         // uses GetInfo, if you need other properties use that method instead

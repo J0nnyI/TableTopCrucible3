@@ -33,6 +33,12 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             set => SetRequiredValue(ref _path, value);
         }
 
+        public string PathRaw
+        {
+            get => _path.Value;
+            set => SetRequiredValue(ref _path, FilePath.From(value), nameof(Path), nameof(PathRaw) );
+        }
+
         private FileHashKey _hashKey;
         public FileHashKey HashKey
         {
@@ -72,8 +78,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                 .HasDatabaseName("HashKey");
 
             //properties
-            builder.OwnsOne(x => x.Path)
-                .Property(x => x.Value)
+            builder.Ignore(x => x.Path);
+            builder.Property(x => x.PathRaw)
                 .HasColumnName("FileLocation")
                 .IsRequired();
             builder

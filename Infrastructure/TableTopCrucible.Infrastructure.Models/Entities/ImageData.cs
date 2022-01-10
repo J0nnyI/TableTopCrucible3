@@ -65,8 +65,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 
             //indices
             builder.Ignore(img => img.HashKey);
-            builder.HasIndex(img => img.HashKeyRaw)
-                .IsUnique();
+            builder.HasIndex(img => img.HashKeyRaw);
 
             builder.Ignore(x => x.Id);
             builder.HasKey(x => x.Guid)

@@ -21,6 +21,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             Name = path.GetDirectoryName().ToName();
         }
 
+        public DirectoryPath ThumbnailDirectory => Path + (DirectoryName)"Thumbnails";
+
         private Name _name;
         public Name Name
         {

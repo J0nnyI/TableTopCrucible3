@@ -18,6 +18,9 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
     {
         IObservable<IQueryable<FileData>> Watch(FileHashKey hashKey);
         IObservable<IQueryable<FileData>> Watch(IObservable<FileHashKey> hashKeyChanges);
+        public IQueryable<FileData> this[FileHashKey hashKey] { get; }
+        public FileData ByFilepath(FilePath path);
+        public IQueryable<FileData> ByFilepath(IEnumerable<FilePath> filePaths);
     }
 
     internal class FileRepository
@@ -29,6 +32,11 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         {
 
         }
+
+        public IQueryable<FileData> this[FileHashKey hashKey]
+            =>hashKey is null
+                ? Enumerable.Empty<FileData>().AsQueryable()
+                : this.Data.Where(file => file.HashKeyRaw == hashKey.Value);
 
         public IObservable<IQueryable<FileData>> Watch(FileHashKey hashKey)
         {
@@ -49,6 +57,12 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             => hashKeyChanges
                 .Select(Watch)
                 .Switch();
+
+        public FileData ByFilepath(FilePath path)
+            => this.Data.SingleOrDefault(dir => path.Value.ToLower().StartsWith(dir.Path.Value.ToLower()));
+
+        public IQueryable<FileData> ByFilepath(IEnumerable<FilePath> filePaths)
+            => this.Data.Where(file =>filePaths.Select(path=>path.Value).Contains(file.PathRaw));
 
         public override string TableName => FileDataConfiguration.ImageTableName;
     }
