@@ -10,8 +10,21 @@
                                 mc:Ignorable="d" 
                                 d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <TextBox x:Name="HashKey"
                  IsReadOnly="True" 
-                 VerticalAlignment="Top"/>
+                 VerticalAlignment="Top"
+                 Grid.Row="0"/>
+        <ListView x:Name="Tags"
+                  Grid.Row="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Tags"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </rxui:ReactiveUserControl>

@@ -9,6 +9,7 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Repositories.Models;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Services
 {

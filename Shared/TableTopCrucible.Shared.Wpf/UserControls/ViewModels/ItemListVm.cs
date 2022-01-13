@@ -15,7 +15,7 @@ using System.Reactive.Disposables;
 using MoreLinq;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.WPF.Helper;
+using TableTopCrucible.Infrastructure.Repositories.Helper;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {

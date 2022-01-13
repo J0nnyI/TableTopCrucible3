@@ -27,6 +27,8 @@ using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Exceptions;
+using TableTopCrucible.Infrastructure.Repositories.Helper;
+using TableTopCrucible.Infrastructure.Repositories.Models;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Infrastructure.Repositories.Tests.Helper;
 

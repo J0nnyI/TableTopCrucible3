@@ -10,14 +10,6 @@ using TableTopCrucible.Infrastructure.Models.Entities;
 //dotnet ef migrations remove
 namespace TableTopCrucible.Infrastructure.DataPersistence
 {
-    public class TtcDbContextFactory : IDesignTimeDbContextFactory<TtcDbContext>
-    {
-        public TtcDbContext CreateDbContext(string[] args)
-        {
-            return new(false);
-        }
-    }
-
     public interface IDatabaseContext
     {
         public DbSet<Item> Items { get; }

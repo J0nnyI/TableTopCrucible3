@@ -15,6 +15,7 @@ using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Infrastructure.Repositories.Helper;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels

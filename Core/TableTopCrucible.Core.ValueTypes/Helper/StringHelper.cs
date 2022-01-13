@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Helper
+namespace TableTopCrucible.Core.ValueTypes.Helper
 {
     public class SerializedStringList : ValueType<string, SerializedStringList>
     {

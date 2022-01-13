@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TableTopCrucible.Core.ValueTypes;
-
-namespace TableTopCrucible.Core.Helper
+namespace TableTopCrucible.Core.ValueTypes.Helper
 {
     public static class EntityFrameworkHelper
     {

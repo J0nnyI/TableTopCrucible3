@@ -1,29 +1,22 @@
-﻿using Microsoft.Win32.SafeHandles;
-
-using ReactiveUI;
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-
+using Microsoft.Win32.SafeHandles;
 using Image = System.Drawing.Image;
 using Matrix = System.Windows.Media.Matrix;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
 
-namespace TableTopCrucible.Core.WPF.Helper
+namespace TableTopCrucible.Core.Wpf.Helper
 {
     public static class VisualUtility
     {

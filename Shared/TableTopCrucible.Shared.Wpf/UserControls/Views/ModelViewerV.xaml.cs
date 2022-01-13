@@ -28,7 +28,7 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
-using TableTopCrucible.Core.WPF.Helper;
+using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 

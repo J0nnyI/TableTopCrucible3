@@ -42,10 +42,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                                 files
                             }))
                     .Switch()
-                    .Publish()
-                    .RefCount()
                     .OutputObservable(out var filesChanges)
-                    .Select(x=>x.files.FirstOrDefault()?.Path)
+                    .Select(x=>x.files.FirstOrDefault()?.PathRaw)
                     .Select(ModelFilePath.From)
                     .Catch((Exception e) =>
                     {

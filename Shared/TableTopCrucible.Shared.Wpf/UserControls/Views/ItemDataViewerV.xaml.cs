@@ -29,7 +29,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
             {
                 this.OneWayBind(ViewModel,
                     vm => vm.Item.FileKey3d.Value,
-                    v=>v.HashKey.Text)
+                    v=>v.HashKey.Text),
+                this.OneWayBind(ViewModel,
+                    vm=>vm.Item.Tags,
+                    v=>v.Tags.ItemsSource)
             });
         }
     }

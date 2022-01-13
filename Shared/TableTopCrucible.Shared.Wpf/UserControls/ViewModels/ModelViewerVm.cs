@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -19,7 +21,6 @@ using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Core.WPF.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
@@ -62,7 +63,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     FileHashKey.Create(imagePath.ToFilePath()),
                     imagePath.GetLastWriteTime());
                 fileRepository.Add(newFile);
-
 
                 var image = imageDataRepository.Data.SingleOrDefault(file => file.HashKey == newFile.HashKey);
 
@@ -108,7 +108,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                                     {
                                         DefaultMaterial = material
                                     }.Load(file.Value);
-                                    model.PlaceAtOrigin();
                                     model.Freeze();
                                     return model;
                                 }, RxApp.TaskpoolScheduler);
@@ -121,6 +120,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
                             RxApp.MainThreadScheduler.Schedule(model, (_, model) =>
                             {
+                                if (model is null)// happens when a new item has been loaded while the scheduler was queued
+                                    return null;
                                 ViewportContent = model;
                                 BringIntoView.Handle(Unit.Default).Subscribe();
                                 IsLoading = false;

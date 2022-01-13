@@ -12,6 +12,7 @@ using ReactiveUI.Fody.Helpers;
 
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.ValueTypes.Helper;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
@@ -98,13 +99,9 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                 .Property(x => x.Value)
                 .HasColumnName("Name")
                 .IsRequired();
-
-            builder.OwnsOne(x => x.Id)
-                .Property(x => x.Value)
-                .HasColumnName("Id")
-                .IsRequired();
-
-            builder.Property(x => x.RawTags);
+            
+            builder.Property(x => x.RawTags)
+                .HasColumnName("Tags");
             builder.Ignore(x => x.Tags);
 
         }

@@ -73,6 +73,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 
             //foreign keys
             builder.Ignore(image => image.ItemId);
+            builder.Property(x => x.ItemIdRaw)
+                .HasColumnName("ItemId");
             builder.HasOne(image => image.Item)
                 .WithMany(item => item.Images)
                 .HasForeignKey(image => image.ItemIdRaw)

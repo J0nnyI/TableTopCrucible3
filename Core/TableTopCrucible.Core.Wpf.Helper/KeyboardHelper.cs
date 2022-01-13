@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
-namespace TableTopCrucible.Core.WPF.Helper
+namespace TableTopCrucible.Core.Wpf.Helper
 {
     public static class KeyboardHelper
     {

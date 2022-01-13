@@ -1,16 +1,11 @@
 ﻿using System.ComponentModel;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reactive.Disposables;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-
-using DynamicData;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TableTopCrucible.Core.Helper;
@@ -18,95 +13,10 @@ using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Exceptions;
+using TableTopCrucible.Infrastructure.Repositories.Models;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
-    public enum EntityUpdateChangeReason
-    {
-        Add,
-        Remove,
-        Init
-    }
-
-    public static class CollectionUpdateHelper
-    {
-        public static IObservable<IChangeSet<TEntity, TId>> ToObservableCache<TId, TEntity>(
-            this IObservable<CollectionUpdate<TId, TEntity>> updateSource,
-            CompositeDisposable disposeWith
-        )
-            where TId : IDataId
-            where TEntity : class, IDataEntity<TId>, new()
-        {
-            return updateSource
-                .Scan(
-                    new SourceCache<TEntity, TId>(entity => entity.Id)
-                        .DisposeWith(disposeWith),
-                    (list, change) =>
-                    {
-                        switch (change.UpdateInfo.ChangeReason)
-                        {
-                            case EntityUpdateChangeReason.Add:
-                                list.AddOrUpdate(change.UpdateInfo.UpdatedEntities.Values);
-                                break;
-                            case EntityUpdateChangeReason.Remove:
-                                list.Remove(change.UpdateInfo.UpdatedEntities.Keys);
-                                break;
-                            case EntityUpdateChangeReason.Init:
-                                list.AddOrUpdate(change.Queryable.AsEnumerable());
-                                break;
-                            default:
-                                throw new NotImplementedException();
-                        }
-
-                        return list;
-                    })
-                .Select(cache => cache.Connect())
-                .Switch();
-        }
-    }
-
-    public class EntityUpdate<TId, TEntity>
-        where TId : IDataId
-        where TEntity : IDataEntity<TId>
-    {
-        public EntityUpdate(EntityUpdateChangeReason changeReason, IReadOnlyDictionary<TId, TEntity> updatedEntities)
-        {
-            ChangeReason = changeReason;
-            UpdatedEntities = updatedEntities;
-        }
-
-        public EntityUpdateChangeReason ChangeReason { get; }
-        public IReadOnlyDictionary<TId, TEntity> UpdatedEntities { get; }
-    }
-
-    public class CollectionUpdate<TId, TEntity> : IQueryable<TEntity>
-        where TId : IDataId
-        where TEntity : IDataEntity<TId>
-    {
-        public CollectionUpdate(IQueryable<TEntity> queryable, EntityUpdate<TId, TEntity> updateInfo)
-        {
-            Queryable = queryable;
-            UpdateInfo = updateInfo;
-        }
-
-        public IQueryable<TEntity> Queryable { get; }
-        public EntityUpdate<TId, TEntity> UpdateInfo { get; }
-
-        #region Queryable
-
-        public IEnumerator<TEntity> GetEnumerator() => Queryable.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)Queryable).GetEnumerator();
-
-        public Type ElementType => Queryable.ElementType;
-
-        public Expression Expression => Queryable.Expression;
-
-        public IQueryProvider Provider => Queryable.Provider;
-
-        #endregion
-    }
-
     public interface IRepository<TId, TEntity>
         where TId : IDataId
         where TEntity : class, IDataEntity<TId>, new()
@@ -131,6 +41,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
     {
         private readonly Subject<EntityUpdate<TId, TEntity>> _changes = new();
         private readonly IDatabaseAccessor _database;
+        protected static readonly object _databaseLock = new();
 
         protected RepositoryBase(IDatabaseAccessor database, DbSet<TEntity> data)
         {
@@ -191,9 +102,10 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         {
             try
             {
-                _Data.Add(entity);
-                _database.AutoSave();
-
+                lock (_databaseLock){
+                    _Data.Add(entity);
+                    _database.AutoSave();
+                }
                 _changes.OnNext(new EntityUpdate<TId, TEntity>
                     (
                         EntityUpdateChangeReason.Add,
@@ -216,8 +128,13 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             try
             {
                 var newEntities = entities.ToArray();
-                _Data.AddRange(newEntities);
-                _database.AutoSave();
+                lock (_databaseLock)
+                {
+
+                    _Data.AddRange(newEntities);
+                    _database.AutoSave();
+                }
+
                 _changes.OnNext(new EntityUpdate<TId, TEntity>
                 (
                     EntityUpdateChangeReason.Add,
@@ -246,8 +163,13 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         public void Remove(TEntity entity)
         {
-            _Data.Remove(entity);
-            _database.AutoSave();
+            lock (_databaseLock)
+            {
+
+                _Data.Remove(entity);
+                _database.AutoSave();
+            }
+
             _changes.OnNext(
                 new EntityUpdate<TId, TEntity>
                 (
@@ -270,8 +192,12 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             if (!entities.Any())
                 return;
             var entitiesToDelete = entities.ToArray();
-            _Data.RemoveRange(entitiesToDelete);
-            _database.AutoSave();
+            lock (_databaseLock)
+            {
+                _Data.RemoveRange(entitiesToDelete);
+                _database.AutoSave();
+            }
+
             _changes.OnNext(
                 new EntityUpdate<TId, TEntity>
                 (

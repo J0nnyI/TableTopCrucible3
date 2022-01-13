@@ -158,7 +158,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private IEnumerable<RawSyncFileData> startScanForDirectory(DirectorySetup directory)
         {
             var foundFiles = directory.Path.GetFiles(FileType.Image, FileType.Model).ToArray();
-            var knownFiles = _fileRepository.Data.Where(file=>file.Path.Value.ToLower().StartsWith(directory.Path.Value.ToLower()));
+            var knownFiles = _fileRepository.Data.Where(file=>file.PathRaw.ToLower().StartsWith(directory.Path.Value.ToLower()));
             return foundFiles.FullJoin(
                 knownFiles,
                 foundFile => foundFile.Value.ToLower(),
@@ -170,15 +170,15 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
         private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetup> directorySetups)
         {
-            var dirs = _directorySetupRepository.Data.Select(dir => dir.Path);
+            var dirs = _directorySetupRepository.Data.AsEnumerable().Select(dir => dir.Path);
             var foundFiles = directorySetups
-                .ToArray()
+                .AsEnumerable()
                 .SelectMany(startScanForDirectory)
                 .ToArray();
 
             var filesOfUnregisteredDirs = _fileRepository
                 .Data
-                .ToArray()
+                .AsEnumerable()
                 .Where(file => !dirs.Any(dir =>  file.Path.Value.ToLower().StartsWith(dir.Value.ToLower())))
                 .Select(file => new RawSyncFileData(file, null))
                 .ToArray();
@@ -228,7 +228,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 .ToArray()
                 .Where(dir => dir.Path.ContainsFilepath(filePath))
                 .Aggregate(string.Empty, (path, dir) => dir.Path.Value.Length > path.Length ? dir.Path.Value : path);
-            return dir.Split(Path.DirectorySeparatorChar).Select(Tag.From);
+
+            var fileSubPath =filePath.Value.Remove(0,dir.Length);
+            return fileSubPath.Split(Path.DirectorySeparatorChar).Select(Tag.From);
         }
     }
 }

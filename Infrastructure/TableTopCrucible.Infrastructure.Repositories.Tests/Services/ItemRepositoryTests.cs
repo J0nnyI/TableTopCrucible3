@@ -1,12 +1,6 @@
 ﻿using NUnit.Framework;
-using TableTopCrucible.Infrastructure.Repositories.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TableTopCrucible.Infrastructure.Repositories.Services.Tests
+namespace TableTopCrucible.Infrastructure.Repositories.Tests.Services
 {
     [TestFixture()]
     public class ItemRepositoryTests
