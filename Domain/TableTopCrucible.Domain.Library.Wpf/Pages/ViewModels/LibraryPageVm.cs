@@ -111,7 +111,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         {
             try
             {
-                if (!_directorySetupRepository.Data.Any())
+                if (!_directorySetupRepository.Data.Any("library page - file drop"))
                 {
                     _notificationService.AddNotification((Name)"Could not add Images",
                         (Description)"You have to configure your directories first.", NotificationType.Error);
@@ -153,12 +153,17 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                             if (foundFileData is null)
                             {
                                 var itemFile = _fileRepository[item.FileKey3d].FirstOrDefault();
-                                var modelFile = itemFile is null?null: _fileRepository[itemFile.HashKey].FirstOrDefault();
+                                var modelFile = itemFile is null ? null : _fileRepository[itemFile.HashKey].FirstOrDefault();
                                 relatedDirSetup ??=
                                     (itemFile is null
                                         ? null
                                         : _directorySetupRepository.ByFilepath(modelFile.Path).FirstOrDefault())
-                                    ?? _directorySetupRepository.Data.FirstOrDefault();
+                                    ?? _directorySetupRepository
+                                        .Data
+                                        .Get(
+                                            "library page - create thumbnail - dir setup backup",
+                                            x => x)
+                                        .FirstOrDefault();
 
 
                                 var newPath = relatedDirSetup.ThumbnailDirectory +
@@ -203,7 +208,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                 Debugger.Break();
 
                 _notificationService.AddNotification((Name)"Could not add Images",
-                    (Description)string.Join(Environment.NewLine,"The Operation failed due to an internal error.","error:",e.ToString()), NotificationType.Error);
+                    (Description)string.Join(Environment.NewLine, "The Operation failed due to an internal error.", "error:", e.ToString()), NotificationType.Error);
                 throw;
             }
         }

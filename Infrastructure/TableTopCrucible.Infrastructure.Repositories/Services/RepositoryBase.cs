@@ -21,7 +21,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         where TId : IDataId
         where TEntity : class, IDataEntity<TId>, new()
     {
-        IQueryable<TEntity> Data { get; }
+        IDbSetManager<TId, TEntity> Data { get; }
         TEntity this[TId id] { get; }
         IObservable<CollectionUpdate<TId, TEntity>> Updates { get; }
         IObservable<TEntity> Watch(TId id);
@@ -41,12 +41,11 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
     {
         private readonly Subject<EntityUpdate<TId, TEntity>> _changes = new();
         private readonly IDatabaseAccessor _database;
-        protected static readonly object _databaseLock = new();
 
-        protected RepositoryBase(IDatabaseAccessor database, DbSet<TEntity> data)
+        protected RepositoryBase(IDatabaseAccessor database, IDbSetManager<TId, TEntity> data)
         {
             _database = database;
-            _Data = data;
+            Data = data;
 
 
             Updates = _changes.Select(change =>
@@ -64,8 +63,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 );
         }
 
-        protected DbSet<TEntity> _Data { get; }
-        public IQueryable<TEntity> Data => _Data;
+        public IDbSetManager<TId, TEntity> Data { get; }
         public IObservable<CollectionUpdate<TId, TEntity>> Updates { get; }
 
         /// <summary>
@@ -95,17 +93,15 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 .RefCount();
 
         public TEntity this[TId id]
-            => _Data.SingleOrDefault(entity => entity.Guid.Equals(id.Guid));
+            => Data.GetSingle($"by id {id}", data => data.SingleOrDefault(entity => entity.Guid.Equals(id.Guid)));
         public abstract string TableName { get; }
 
         public void Add(TEntity entity)
         {
             try
             {
-                lock (_databaseLock){
-                    _Data.Add(entity);
-                    _database.AutoSave();
-                }
+                Data.Add($"add {entity.Id}", entity);
+                _database.AutoSave();
                 _changes.OnNext(new EntityUpdate<TId, TEntity>
                     (
                         EntityUpdateChangeReason.Add,
@@ -128,12 +124,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             try
             {
                 var newEntities = entities.ToArray();
-                lock (_databaseLock)
-                {
-
-                    _Data.AddRange(newEntities);
-                    _database.AutoSave();
-                }
+                Data.AddRange($"AddRange {entities}", newEntities);
+                _database.AutoSave();
 
                 _changes.OnNext(new EntityUpdate<TId, TEntity>
                 (
@@ -163,12 +155,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         public void Remove(TEntity entity)
         {
-            lock (_databaseLock)
-            {
-
-                _Data.Remove(entity);
-                _database.AutoSave();
-            }
+            Data.Remove($"remove {entity}", entity);
+            _database.AutoSave();
 
             _changes.OnNext(
                 new EntityUpdate<TId, TEntity>
@@ -192,11 +180,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             if (!entities.Any())
                 return;
             var entitiesToDelete = entities.ToArray();
-            lock (_databaseLock)
-            {
-                _Data.RemoveRange(entitiesToDelete);
-                _database.AutoSave();
-            }
+            Data.RemoveRange($"RemoveRange {entities}",entitiesToDelete);
+            _database.AutoSave();
 
             _changes.OnNext(
                 new EntityUpdate<TId, TEntity>
@@ -209,6 +194,9 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         }
 
         public void RemoveRange(IEnumerable<TId> ids)
-            => RemoveRange(Data.Where(entity => ids.Contains(entity.Id)));
+        {
+            var entities = Data.Get($"removeRange, {ids}",data => data.Where(entity => ids.Contains(entity.Id)));
+            RemoveRange(entities);
+        }
     }
 }

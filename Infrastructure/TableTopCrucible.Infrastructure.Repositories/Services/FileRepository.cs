@@ -17,11 +17,11 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
     public interface IFileRepository
         : IRepository<FileDataId, FileData>
     {
-        IObservable<IQueryable<FileData>> Watch(FileHashKey hashKey);
-        IObservable<IQueryable<FileData>> Watch(IObservable<FileHashKey> hashKeyChanges);
-        public IQueryable<FileData> this[FileHashKey hashKey] { get; }
+        IObservable<IEnumerable<FileData>> Watch(FileHashKey hashKey);
+        IObservable<IEnumerable<FileData>> Watch(IObservable<FileHashKey> hashKeyChanges);
+        public IEnumerable<FileData> this[FileHashKey hashKey] { get; }
         public FileData ByFilepath(FilePath path);
-        public IQueryable<FileData> ByFilepath(IEnumerable<FilePath> filePaths);
+        public IEnumerable<FileData> ByFilepath(IEnumerable<FilePath> filePaths);
     }
 
     internal class FileRepository
@@ -34,12 +34,12 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         }
 
-        public IQueryable<FileData> this[FileHashKey hashKey]
-            =>hashKey is null
-                ? Enumerable.Empty<FileData>().AsQueryable()
-                : this.Data.Where(file => file.HashKeyRaw == hashKey.Value);
+        public IEnumerable<FileData> this[FileHashKey hashKey]
+            => hashKey is null
+                ? Enumerable.Empty<FileData>()
+                : this.Data.Get($"file by HashKey {hashKey}", data => data.Where(file => file.HashKeyRaw == hashKey.Value));
 
-        public IObservable<IQueryable<FileData>> Watch(FileHashKey hashKey)
+        public IObservable<IEnumerable<FileData>> Watch(FileHashKey hashKey)
         {
             return
                 Updates.Where(update =>
@@ -51,19 +51,19 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 )
                 .Select(update =>
                     hashKey is null
-                        ? Enumerable.Empty<FileData>().AsQueryable()
-                        : update.Queryable.Where(file => file.HashKeyRaw == hashKey.Value));
+                        ? Enumerable.Empty<FileData>()
+                        : update.DbSet.Get($"watch by hashKey {hashKey}",data=>data.Where(file => file.HashKeyRaw == hashKey.Value)));
         }
-        public IObservable<IQueryable<FileData>> Watch(IObservable<FileHashKey> hashKeyChanges)
+        public IObservable<IEnumerable<FileData>> Watch(IObservable<FileHashKey> hashKeyChanges)
             => hashKeyChanges
                 .Select(Watch)
                 .Switch();
 
         public FileData ByFilepath(FilePath path)
-            => this.Data.SingleOrDefault(dir => path.Value.ToLower().StartsWith(dir.Path.Value.ToLower()));
+            => this.Data.GetSingle($"file by filePath {path}", data => data.SingleOrDefault(dir => path.Value.ToLower().StartsWith(dir.Path.Value.ToLower())));
 
-        public IQueryable<FileData> ByFilepath(IEnumerable<FilePath> filePaths)
-            => this.Data.Where(file =>filePaths.Select(path=>path.Value).Contains(file.PathRaw));
+        public IEnumerable<FileData> ByFilepath(IEnumerable<FilePath> filePaths)
+            => this.Data.Get($"file by filePaths {filePaths}", data => data.Where(file => filePaths.Select(path => path.Value).Contains(file.PathRaw)));
 
         public override string TableName => FileDataConfiguration.ImageTableName;
     }

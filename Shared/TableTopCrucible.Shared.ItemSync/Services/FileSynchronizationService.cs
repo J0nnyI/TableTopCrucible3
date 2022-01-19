@@ -91,7 +91,8 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 {
                     var files = getFileGroups(
                         _directorySetupRepository
-                            .Data);
+                            .Data
+                            .Get("file sync - dirs", data => data));
 
                     stepTracker.Increment();
 
@@ -158,7 +159,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private IEnumerable<RawSyncFileData> startScanForDirectory(DirectorySetup directory)
         {
             var foundFiles = directory.Path.GetFiles(FileType.Image, FileType.Model).ToArray();
-            var knownFiles = _fileRepository.Data.Where(file=>file.PathRaw.ToLower().StartsWith(directory.Path.Value.ToLower()));
+            var knownFiles = _fileRepository.Data.Get("file sync, get known files", data => data.Where(file => file.PathRaw.ToLower().StartsWith(directory.Path.Value.ToLower())));
             return foundFiles.FullJoin(
                 knownFiles,
                 foundFile => foundFile.Value.ToLower(),
@@ -168,9 +169,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 (found, known) => new RawSyncFileData(known, found));
         }
 
-        private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetup> directorySetups)
+        private FileSyncListGrouping getFileGroups(IEnumerable<DirectorySetup> directorySetups)
         {
-            var dirs = _directorySetupRepository.Data.AsEnumerable().Select(dir => dir.Path);
+            var dirs = _directorySetupRepository.Data.Get("file sync - get file groups - dirs", data => data).Select(dir => dir.Path);
             var foundFiles = directorySetups
                 .AsEnumerable()
                 .SelectMany(startScanForDirectory)
@@ -178,8 +179,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
             var filesOfUnregisteredDirs = _fileRepository
                 .Data
+                .Get("file sync - get file groups - files", data => data)
                 .AsEnumerable()
-                .Where(file => !dirs.Any(dir =>  file.Path.Value.ToLower().StartsWith(dir.Value.ToLower())))
+                .Where(file => !dirs.Any(dir => file.Path.Value.ToLower().StartsWith(dir.Value.ToLower())))
                 .Select(file => new RawSyncFileData(file, null))
                 .ToArray();
 
@@ -191,32 +193,29 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private object _itemUpdateLocker = new();
         private void _handleChangedFiles(RawSyncFileData[] files)
         {
-            var filesToAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity()).ToArray();
+            var filesToAdd = files
+                .Where(x => x.UpdateSource == FileUpdateSource.New)
+                .Select(file => file.GetNewEntity())
+                .ToArray();
             _fileRepository.AddRange(filesToAdd);
+
             lock (_itemUpdateLocker)
             {
-                var modelFiles = filesToAdd
-                    .Where(file => file.Path.GetExtension().IsModel())
-                    .ToArray();
-                var itemsToAdd = modelFiles
-                    .DistinctBy(x => x.HashKeyRaw)
-                    .Where(file =>
-                        !_itemRepository.Data.Any(item => item.FileKey3dRaw == file.HashKeyRaw)) // all linked files have to be checked manually in case there was no file with a given hash found before
-                    .Select(file => new Item(
-                            file.Path.GetFilenameWithoutExtension().ToName(),
-                            file.HashKey
-                        )
-                    ).ToArray();
-
-                modelFiles.ForEach(modelFile =>
+                List<Item> itemsToAdd = new();
+                foreach (var file in filesToAdd.Where(file => file.Path.GetExtension().IsModel()).DistinctBy(x=>x.HashKey))
                 {
-                    var tags = GetTagsByPath(modelFile.Path);
-                    var item = 
-                        itemsToAdd.SingleOrDefault(item=>item.FileKey3d == modelFile.HashKey) ??
-                        _itemRepository.Data.Single(item => item.FileKey3dRaw == modelFile.HashKeyRaw);
-                    item.AddTags(tags);
-                });
+                    var item = _itemRepository[file.HashKey].FirstOrDefault();
+                    var tags = GetTagsByPath(file.Path);
 
+                    if (item is null)
+                        item = new Item(file.Path.GetFilenameWithoutExtension().ToName(), file.HashKey, tags);
+                    else
+                        item.AddTags(tags);
+
+                    itemsToAdd.Add(item);
+                }
+
+                var preItems = _itemRepository.Data.Get("dbg", x => x);
                 _itemRepository.AddRange(itemsToAdd);
             }
         }
@@ -225,12 +224,12 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         {
             var dir = _directorySetupRepository
                 .Data
-                .ToArray()
+                .Get("FileSync - tags by filePath", data => data)
                 .Where(dir => dir.Path.ContainsFilepath(filePath))
                 .Aggregate(string.Empty, (path, dir) => dir.Path.Value.Length > path.Length ? dir.Path.Value : path);
 
-            var fileSubPath =filePath.Value.Remove(0,dir.Length);
-            return fileSubPath.Split(Path.DirectorySeparatorChar).Select(Tag.From);
+            var fileSubPath = filePath.Value.Remove(0, dir.Length);
+            return fileSubPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Select(Tag.From);
         }
     }
 }

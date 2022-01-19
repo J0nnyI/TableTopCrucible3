@@ -52,9 +52,9 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
                         {
                             try
                             {
-                                imageRepository.RemoveRange(imageRepository.Data);
-                                itemRepository.RemoveRange(itemRepository.Data);
-                                fileRepository.RemoveRange(fileRepository.Data);
+                                imageRepository.RemoveRange(imageRepository.Data.Get("item action - clear images", x => x));
+                                itemRepository.RemoveRange(itemRepository.Data.Get("item action - clear items", x => x));
+                                fileRepository.RemoveRange(fileRepository.Data.Get("item action - clear files", x => x));
                                 _notificationService.AddNotification((Name)"Removal sucessfull",
                                     (Description)"all Files, Items & Images have been removed successfully",
                                     NotificationType.Confirmation);

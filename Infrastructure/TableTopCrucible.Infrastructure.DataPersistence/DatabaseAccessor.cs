@@ -1,13 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
+
 using Microsoft.EntityFrameworkCore;
+
 using ReactiveUI;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.DataPersistence
 {
@@ -20,11 +29,10 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
     [Singleton]
     public interface IDatabaseAccessor
     {
-        public DbSet<Item> Items { get; }
-        public DbSet<FileData> Files { get; }
-        public DbSet<ImageData> Images { get; }
-
-        public DbSet<DirectorySetup> DirectorySetup { get; }
+        public IDbSetManager<ItemId, Item> Items { get; }
+        public IDbSetManager<FileDataId, FileData> Files { get; }
+        public IDbSetManager<ImageDataId, ImageData> Images { get; }
+        public IDbSetManager<DirectorySetupId, DirectorySetup> DirectorySetup { get; }
 
         //void Open(LibraryFilePath file);
         void AutoSave();
@@ -53,10 +61,10 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
                 .Subscribe(_ => _database.SaveChanges());
         }
 
-        public DbSet<Item> Items => _database.Items;
-        public DbSet<FileData> Files => _database.Files;
-        public DbSet<DirectorySetup> DirectorySetup => _database.DirectorySetups;
-        public DbSet<ImageData> Images => _database.Images;
+        public IDbSetManager<ItemId, Item> Items => _database.Items;
+        public IDbSetManager<FileDataId, FileData> Files => _database.Files;
+        public IDbSetManager<DirectorySetupId, DirectorySetup> DirectorySetup => _database.DirectorySetups;
+        public IDbSetManager<ImageDataId, ImageData> Images => _database.Images;
 
         /// <summary>
         ///     handles automated saving

@@ -161,7 +161,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     ReactiveCommandHelper.Create<DirectoryPath>(path =>
                     {
                         var takenDir = _directorySetupRepository.
-                            Data.SingleOrDefault(dir => dir.Path.Value == path.Value);
+                            Data.GetSingleOrDefault($"dirCard - change path - takenDir {path}",dir => dir.Path.Value == path.Value);
 
                         if (takenDir is not null)
                         {

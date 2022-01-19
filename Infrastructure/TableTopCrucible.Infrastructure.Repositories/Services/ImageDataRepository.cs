@@ -15,7 +15,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
     [Singleton]
     public interface IImageDataRepository:IRepository<ImageDataId, ImageData>
     {
-        public IQueryable<ImageData> this[FileHashKey hashKey] { get; }
+        public IEnumerable<ImageData> this[FileHashKey hashKey] { get; }
 
     }
         class ImageDataRepository:RepositoryBase<ImageDataId, ImageData>,IImageDataRepository
@@ -24,10 +24,10 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         {
         }
 
-        public IQueryable<ImageData> this[FileHashKey hashKey]
+        public IEnumerable<ImageData> this[FileHashKey hashKey]
             => hashKey is null
                 ? Enumerable.Empty<ImageData>().AsQueryable()
-                : this.Data.Where(image => image.HashKeyRaw == hashKey.Value);
+                : this.Data.Get($"image by hashKey {hashKey}",data=>data.Where(image => image.HashKeyRaw == hashKey.Value));
 
         public override string TableName => ImageDataConfiguration.TableName;
     }

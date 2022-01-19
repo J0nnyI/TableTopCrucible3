@@ -77,7 +77,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Tests.Services
             _databaseAccessor.Should().NotBeNull();
             _repository.Should().NotBeNull();
             _disposables.Should().NotBeNull();
-            _repository.Data.Should().BeEmpty();
+            _repository.Data.Get("",x=>x).Should().BeEmpty();
         }
 
         [TestCase]
@@ -85,7 +85,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Tests.Services
         {
             _repository.Add(_entity);
             _repository.Add(_falseEntity);
-            _repository.Data.Should().HaveCount(2);
+            _repository.Data.Get("", x => x).Should().HaveCount(2);
             new Action(() => _repository.Add(_entity)).Should().ThrowExactly<EntityAlreadyAddedException<DirectorySetupId, DirectorySetup>>();
         }
         [TestCase]
@@ -99,9 +99,9 @@ namespace TableTopCrucible.Infrastructure.Repositories.Tests.Services
         {
             var count = 5;
             _repository.AddRange(getMultiple(5));
-            _repository.Data.Should().HaveCount(count);
+            _repository.Data.Get("", x => x).Should().HaveCount(count);
             _repository.Clear();
-            _repository.Data.Should().BeEmpty();
+            _repository.Data.Get("", x => x).Should().BeEmpty();
         }
 
         [TestCase]
@@ -218,9 +218,9 @@ namespace TableTopCrucible.Infrastructure.Repositories.Tests.Services
             bufferContent.Should().HaveCount(1);
             var updatedItems = bufferContent.First();
 
-            updatedItems.Should().HaveCount(1);
+            updatedItems.DbSet.Get("", x => x).Should().HaveCount(1);
 
-            var newItem = updatedItems.First();
+            var newItem = updatedItems.DbSet.Get("", x => x).First();
 
             newItem.Name.Should().Be(newEntity.Name);
             newItem.Path.Should().Be(newEntity.Path);

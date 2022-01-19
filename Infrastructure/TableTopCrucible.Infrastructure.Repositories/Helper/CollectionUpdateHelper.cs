@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+
 using DynamicData;
+
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Models;
@@ -33,7 +35,12 @@ namespace TableTopCrucible.Infrastructure.Repositories.Helper
                                 list.Remove(change.UpdateInfo.UpdatedEntities.Keys);
                                 break;
                             case EntityUpdateChangeReason.Init:
-                                ObservableCacheEx.AddOrUpdate<TEntity, TId>(list, Enumerable.AsEnumerable<TEntity>(change.Queryable));
+                                list.AddOrUpdate(
+                                    change
+                                        .DbSet
+                                        .Get($"source cache re-init {list}",
+                                            data => data)
+                                        .AsEnumerable());
                                 break;
                             default:
                                 throw new NotImplementedException();

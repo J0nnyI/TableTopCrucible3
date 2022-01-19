@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -14,7 +15,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         : IRepository<DirectorySetupId, DirectorySetup>
     {
         public DirectorySetup this[DirectoryPath path] { get; }
-        public IQueryable<DirectorySetup> ByFilepath(FilePath path);
+        public IEnumerable<DirectorySetup> ByFilepath(FilePath path);
     }
 
     internal class DirectorySetupRepository
@@ -25,13 +26,13 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         { }
 
         public DirectorySetup this[DirectoryPath path]
-            => this.Data.SingleOrDefault(dir => dir.Path.Value == path.Value);
+            => this.Data.GetSingle($"Single by path {path}",data=>data.SingleOrDefault(dir => dir.Path.Value == path.Value));
 
         public override string TableName => DirectorySetupConfiguration.TableName;
 
-        public IQueryable<DirectorySetup> ByFilepath(FilePath path)
+        public IEnumerable<DirectorySetup> ByFilepath(FilePath path)
         {
-            return this.Data.Where(dir => path.Value.ToLower().StartsWith(dir.Path.Value.ToLower()));
+            return this.Data.Get($"ByFilepath {path}",data=>data.Where(dir => path.Value.ToLower().StartsWith(dir.Path.Value.ToLower())));
         }
     }
 }

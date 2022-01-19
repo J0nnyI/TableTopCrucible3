@@ -15,6 +15,6 @@ namespace TableTopCrucible.Infrastructure.Repositories.Tests.Helper
         public static void Clear<TId, TEntity>(this IRepository<TId, TEntity> repository)
             where TId : IDataId
             where TEntity : class, IDataEntity<TId>, new()
-        => repository.RemoveRange(repository.Data);
+        => repository.RemoveRange(repository.Data.Get("repo test helper - clear",x=>x));
     }
 }
