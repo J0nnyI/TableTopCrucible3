@@ -64,13 +64,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     imagePath.GetLastWriteTime());
                 fileRepository.Add(newFile);
 
-                var image = imageDataRepository.Data.SingleOrDefault(file => file.HashKey == newFile.HashKey);
+                var image = imageDataRepository[newFile.HashKey].FirstOrDefault();
 
-                if(image is null)
-                {
-                    image = new ImageData(Model.GetFilenameWithoutExtension().ToName(), newFile.HashKey);
-                    imageDataRepository.Add(image);
-                }
+                if (image is not null)
+                    return image;
+
+                image = new ImageData(Model.GetFilenameWithoutExtension().ToName(), newFile.HashKey);
+                imageDataRepository.Add(image);
 
                 return image;
             });

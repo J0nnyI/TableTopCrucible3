@@ -53,8 +53,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             this.WhenActivated(disposables => new[]
             {
                 _directorySetupRepository
-                    .Updates
-                    .ToObservableCache(disposables)
+                    .Data
+                    .Connect()
                     .Transform(dir=>
                     {
                         var card = Locator.Current.GetService<IDirectorySetupCard>();

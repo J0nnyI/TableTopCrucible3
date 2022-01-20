@@ -95,4 +95,54 @@ namespace TableTopCrucible.Core.ValueTypes
         public static bool operator !=(ValueType<TValueA, TValueB, TThis> valueA, TThis valueB)
             => !(valueA == valueB);
     }
+    public abstract class ValueType<TValueA, TValueB, TValueC, TThis> : ValueType<TThis>
+        where TThis : ValueType<TValueA, TValueB, TValueC, TThis>, new()
+    {
+        private readonly TValueA _valueA;
+        public TValueA ValueA
+        {
+            get => _valueA;
+            init
+            {
+                Validate(value, ValueB, ValueC);
+                _valueA = value;
+            }
+        }
+        private readonly TValueB _valueB;
+        public TValueB ValueB
+        {
+            get => _valueB;
+            init
+            {
+                Validate(ValueA, value, ValueC);
+                _valueB = value;
+            }
+        }
+        private readonly TValueC _valueC;
+        public TValueC ValueC
+        {
+            get => _valueC;
+            init
+            {
+                Validate(ValueA, ValueB, value);
+                _valueC = value;
+            }
+        }
+
+        public static TThis From(TValueA valueA, TValueB valueB, TValueC valueC)
+            => new() { ValueA = valueA, ValueB = valueB, ValueC = valueC };
+
+        protected virtual void Validate(TValueA valueA, TValueB valueB, TValueC valueC) { }
+        public override string ToString() => $"A: {ValueA} | B: {ValueB}";
+
+        public override bool Equals(object other)
+            => other is TThis otherValue && this.ValueA.Equals(otherValue.ValueA) && this.ValueB.Equals(otherValue.ValueB);
+        public override int GetHashCode()
+            => HashCode.Combine(ValueA, ValueB);
+        public static bool operator ==(ValueType<TValueA, TValueB,TValueC, TThis> valueA, TThis valueB)
+            => valueA is null && valueB is null
+               || valueA?.Equals(valueB) == true;
+        public static bool operator !=(ValueType<TValueA, TValueB,TValueC, TThis> valueA, TThis valueB)
+            => !(valueA == valueB);
+    }
 }

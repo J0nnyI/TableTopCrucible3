@@ -32,7 +32,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
             IProgressTrackingService progressService,
             INotificationList notificationList,
             IJobQueuePage jobQueuePage,
-            IDatabaseAccessor database)
+            IStorageController storageController)
         {
             _navigationService = navigationService;
             _progressService = progressService;
@@ -70,7 +70,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                                     : jobQueuePage;
                         },
                         cmd => ShowJobSidebarCommand = cmd),
-                    ReactiveCommandHelper.Create(() => database.ManualSave(),
+                    ReactiveCommandHelper.Create(() => storageController.Save(),
                         cmd => SaveCommand = cmd)
                 };
             });

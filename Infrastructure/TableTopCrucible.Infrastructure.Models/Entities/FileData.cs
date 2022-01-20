@@ -33,60 +33,18 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             set => SetRequiredValue(ref _path, value);
         }
 
-        public string PathRaw
-        {
-            get => _path.Value;
-            set => SetRequiredValue(ref _path, FilePath.From(value), nameof(Path), nameof(PathRaw) );
-        }
-
         private FileHashKey _hashKey;
         public FileHashKey HashKey
         {
             get => _hashKey;
-            set => SetRequiredValue(ref _hashKey, value, nameof(HashKey), nameof(HashKeyRaw));
+            set => SetRequiredValue(ref _hashKey, value, nameof(HashKey));
         }
-        public string HashKeyRaw // required to be public by database queries
-        {
-            get => _hashKey.Value;
-            set => SetRequiredValue(ref _hashKey, (FileHashKey)value, nameof(HashKey), nameof(HashKeyRaw));
-        }
-
 
         private DateTime _lastWrite;
         public DateTime LastWrite
         {
             get => _lastWrite;
             set => SetRequiredValue(ref _lastWrite, value);
-        }
-    }
-    
-    public class FileDataConfiguration : IEntityTypeConfiguration<FileData>
-    {
-        public static string ImageTableName => "Files";
-        public void Configure(EntityTypeBuilder<FileData> builder)
-        {
-            builder.ToTable(ImageTableName);
-            builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
-
-            //Indices
-            builder.Ignore(x => x.Id);
-            builder.HasKey(x => x.Guid)
-                .HasName("Id");
-
-            builder.Ignore(fileData => fileData.HashKey);
-            builder.HasIndex(x => x.HashKeyRaw)
-                .HasDatabaseName("HashKey");
-
-            //properties
-            builder.Ignore(x => x.Path);
-            builder.Property(x => x.PathRaw)
-                .HasColumnName("FileLocation")
-                .IsRequired();
-            builder
-                .Property(x => x.LastWrite)
-                .IsRequired();
-
-
         }
     }
 }

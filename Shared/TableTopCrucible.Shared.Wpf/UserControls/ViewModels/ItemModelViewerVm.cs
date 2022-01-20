@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -36,6 +37,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Select(item=>
                         fileRepository
                             .Watch(item)
+                            .ToCollection()
                             .Select(files =>
                             new {
                                 item,
@@ -43,7 +45,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             }))
                     .Switch()
                     .OutputObservable(out var filesChanges)
-                    .Select(x=>x.files.FirstOrDefault()?.PathRaw)
+                    .Select(x=>x.files.FirstOrDefault()?.Path)
                     .Select(ModelFilePath.From)
                     .Catch((Exception e) =>
                     {

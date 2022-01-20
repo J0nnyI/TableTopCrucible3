@@ -41,17 +41,17 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         private ObservableAsPropertyHelper<DirectorySetup> _directorySetup;
 
         private ObservableAsPropertyHelper<bool> _isDirty;
-        private readonly IDatabaseAccessor _database;
+        private readonly IStorageController _storageController;
 
         public DirectorySetupCardVm(
             IDirectorySetupRepository directorySetupRepository,
             INotificationService notificationService,
-            IDatabaseAccessor database
+            IStorageController storageController
             )
         {
             _directorySetupRepository = directorySetupRepository;
             _notificationService = notificationService;
-            _database = database;
+            _storageController = storageController;
 
             this.WhenActivated(() => new[]
                 {
@@ -90,7 +90,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             {
                                 DirectorySetup.Name = (vtName)Name;
                                 DirectorySetup.Path = (DirectoryPath)Path;
-                                _database.AutoSave();
+                                _storageController.AutoSave();
                                 _notificationService.AddNotification(
                                     (vtName)"Directory saved successfully",
                                     (Description)$"The directory '{Name}' has been saved successfully",
@@ -160,8 +160,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     // change path
                     ReactiveCommandHelper.Create<DirectoryPath>(path =>
                     {
-                        var takenDir = _directorySetupRepository.
-                            Data.SingleOrDefault(dir => dir.Path.Value == path.Value);
+                        var takenDir = _directorySetupRepository[path];
 
                         if (takenDir is not null)
                         {
@@ -173,7 +172,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
                         Path = path.Value;
                         Name = path.GetDirectoryName().ToName().Value;
-                        _database.AutoSave();
+                        _storageController.AutoSave();
 
                     },c=>changePathCommand = c)
                 },

@@ -40,7 +40,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             _disposables.Add(
                 fileRepository
                     .Watch(this.WhenAnyValue(vm => vm.Image.HashKey))
-                    .Select(img => img.FirstOrDefault())
+                    .ToCollection()
+                    .Select(files=>files.FirstOrDefault())
                     .Subscribe(fileData =>
                     {
                         FilePath = fileData?.Path?.ToUri();
@@ -69,17 +70,16 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ViewModelActivator Activator { get; } = new();
         private ReadOnlyObservableCollection<GalleryItem> _images;
         public ReadOnlyObservableCollection<GalleryItem> Images => _images;
-        public GalleryVm(IFileRepository fileRepository)
+        public GalleryVm(IFileRepository fileRepository, IImageDataRepository imageDataRepository)
         {
             this.WhenActivated(()=>new []
             {
-                this.WhenAnyValue(vm=>vm.Item.Images)
-                    .Select(images=>images.ToObservableChangeSet())
+                this.WhenAnyValue(vm=>vm.Item)
+                    .Select(item=>imageDataRepository.ByItemId(item.Id))
                     .Switch()
                     .Transform(image=>new GalleryItem(image, fileRepository))
                     .Bind(out _images)
                     .Subscribe()
-
             });
         }
     }

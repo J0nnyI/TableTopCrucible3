@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
-
+using DynamicData;
 using Microsoft.EntityFrameworkCore;
 
 using MoreLinq;
@@ -89,9 +89,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             {
                 try
                 {
-                    var files = getFileGroups(
-                        _directorySetupRepository
-                            .Data);
+                    var files = getFileGroups(_directorySetupRepository.Data.Items);
 
                     stepTracker.Increment();
 
@@ -158,7 +156,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private IEnumerable<RawSyncFileData> startScanForDirectory(DirectorySetup directory)
         {
             var foundFiles = directory.Path.GetFiles(FileType.Image, FileType.Model).ToArray();
-            var knownFiles = _fileRepository.Data.Where(file=>file.PathRaw.ToLower().StartsWith(directory.Path.Value.ToLower()));
+            var knownFiles = _fileRepository[directory.Path];
             return foundFiles.FullJoin(
                 knownFiles,
                 foundFile => foundFile.Value.ToLower(),
@@ -168,9 +166,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 (found, known) => new RawSyncFileData(known, found));
         }
 
-        private FileSyncListGrouping getFileGroups(IQueryable<DirectorySetup> directorySetups)
+        private FileSyncListGrouping getFileGroups(IEnumerable<DirectorySetup> directorySetups)
         {
-            var dirs = _directorySetupRepository.Data.AsEnumerable().Select(dir => dir.Path);
+            var dirs = _directorySetupRepository.Data.Items.Select(dir => dir.Path);
             var foundFiles = directorySetups
                 .AsEnumerable()
                 .SelectMany(startScanForDirectory)
@@ -178,7 +176,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
 
             var filesOfUnregisteredDirs = _fileRepository
                 .Data
-                .AsEnumerable()
+                .Items
                 .Where(file => !dirs.Any(dir =>  file.Path.Value.ToLower().StartsWith(dir.Value.ToLower())))
                 .Select(file => new RawSyncFileData(file, null))
                 .ToArray();
@@ -199,9 +197,8 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     .Where(file => file.Path.GetExtension().IsModel())
                     .ToArray();
                 var itemsToAdd = modelFiles
-                    .DistinctBy(x => x.HashKeyRaw)
-                    .Where(file =>
-                        !_itemRepository.Data.Any(item => item.FileKey3dRaw == file.HashKeyRaw)) // all linked files have to be checked manually in case there was no file with a given hash found before
+                    .DistinctBy(x => x.HashKey)
+                    .Where(file =>!_itemRepository.ByModelHash(file.HashKey).Any())
                     .Select(file => new Item(
                             file.Path.GetFilenameWithoutExtension().ToName(),
                             file.HashKey
@@ -211,10 +208,11 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 modelFiles.ForEach(modelFile =>
                 {
                     var tags = GetTagsByPath(modelFile.Path);
-                    var item = 
-                        itemsToAdd.SingleOrDefault(item=>item.FileKey3d == modelFile.HashKey) ??
-                        _itemRepository.Data.Single(item => item.FileKey3dRaw == modelFile.HashKeyRaw);
-                    item.AddTags(tags);
+                    var item =
+                        itemsToAdd.Where(item => item.FileKey3d == modelFile.HashKey).ToList();
+                    if(!item.Any())
+                        item = _itemRepository.ByModelHash(modelFile.HashKey).ToList();
+                    item.ForEach(item=>item.Tags.AddRange(tags));
                 });
 
                 _itemRepository.AddRange(itemsToAdd);
@@ -225,7 +223,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         {
             var dir = _directorySetupRepository
                 .Data
-                .ToArray()
+                .Items
                 .Where(dir => dir.Path.ContainsFilepath(filePath))
                 .Aggregate(string.Empty, (path, dir) => dir.Path.Value.Length > path.Length ? dir.Path.Value : path);
 

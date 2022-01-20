@@ -1,5 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Windows.Navigation;
+
+using DynamicData;
+
+using TableTopCrucible.Core.Helper.Exceptions;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -15,6 +22,71 @@ namespace TableTopCrucible.Core.Helper
             return observable.Select(value =>
                 new Func<TCache, bool>(item => filter(item, value))
             );
+        }
+
+        /// <summary>
+        /// adds the given objects to the cache<br/>
+        /// throws an exception if the key is already taken
+        /// </summary>
+        /// <typeparam name="TObject"></typeparam>
+        /// <typeparam name="TId"></typeparam>
+        /// <param name="cache"></param>
+        /// <param name="objects"></param>
+        /// <exception cref="UniqueConstraintFailedException{TId, TObject}">thrown when multiple objects with the same ID are added or the id is already taken</exception>
+        public static void Add<TObject, TId>(this ISourceCache<TObject, TId> cache, params TObject[] objects)
+        {
+            cache.Edit(updater =>
+            {
+                var alreadyAddedObjects =
+                    objects
+                        .Select(x =>
+                           new
+                           {
+                               oldObject = updater.Lookup(cache.KeySelector(x)),
+                               newObject = x
+                           })
+                        .Where(x => x.oldObject.HasValue)
+                        .Select(x => new
+                        {
+                            oldObject = x.oldObject.Value, 
+                            x.newObject
+                        })
+                        .ToArray();
+
+
+                if (alreadyAddedObjects.Any())
+                {
+                    throw new UniqueConstraintFailedException<TId, TObject>(
+                        alreadyAddedObjects
+                            .Select(x =>
+                                new ExceptionObjectInfo<TObject, TId>()
+                                {
+                                    Id = cache.KeySelector(x.oldObject),
+                                    OldObject = x.oldObject,
+                                    NewObjects = objects.Where(y=>cache.KeySelector(y).Equals(cache.KeySelector(x.oldObject)))
+                                }));
+                }
+
+                var duplicateAdds =
+                    objects
+                        .GroupBy(cache.KeySelector)
+                        .Where(g => g.Count() > 2)
+                        .ToArray();
+
+                if (duplicateAdds.Any())
+                {
+                    throw new UniqueConstraintFailedException<TId, TObject>(
+                        duplicateAdds
+                            .Select(x =>
+                                new ExceptionObjectInfo<TObject, TId>()
+                                {
+                                    Id = x.Key,
+                                    NewObjects = x
+                                }));
+                }
+
+                cache.AddOrUpdate(objects);
+            });
         }
     }
 }

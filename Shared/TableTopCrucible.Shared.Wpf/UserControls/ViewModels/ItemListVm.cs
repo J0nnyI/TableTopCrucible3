@@ -44,8 +44,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ItemListVm(IItemRepository itemRepository)
         {
             var itemSelectionSrc = itemRepository
-                .Updates
-                .ToObservableCache(_disposables)
+                .Data
+                .Connect()
                 .Transform(item => new ItemSelectionInfo(item))
                 .AsObservableCache()// required to make sure that all subscriber share the same item instance
                 .Connect();

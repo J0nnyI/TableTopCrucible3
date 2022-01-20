@@ -34,6 +34,7 @@ namespace TableTopCrucible.Core.Helper
             return fileList;
         }
 
-
+        public static bool None<T>(this IEnumerable<T> list)
+            => !list.Any();
     }
 }

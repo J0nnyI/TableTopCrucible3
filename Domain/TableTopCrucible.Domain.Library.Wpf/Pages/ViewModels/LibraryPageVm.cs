@@ -13,6 +13,7 @@ using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.Services;
@@ -111,7 +112,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         {
             try
             {
-                if (!_directorySetupRepository.Data.Any())
+                if (_directorySetupRepository.Data.Items.None())
                 {
                     _notificationService.AddNotification((Name)"Could not add Images",
                         (Description)"You have to configure your directories first.", NotificationType.Error);
@@ -140,7 +141,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                         {
                             var hashKey = FileHashKey.Create(filePath, hash);
                             var foundFileData = _fileRepository[hashKey].FirstOrDefault();
-                            var foundImageData = item.Images.Where(x => x.HashKeyRaw == hashKey.Value);
+                            var foundImageData = _imageDataRepository[hashKey].Where(img => img.ItemId == item.Id);
                             /*** priority:
                              * 1.- dir setup of the thumbnail (null if it is not in any tracked directory)
                              * 2.- dir setup of the related model file (null if no model is linked to this item)
@@ -158,7 +159,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                                     (itemFile is null
                                         ? null
                                         : _directorySetupRepository.ByFilepath(modelFile.Path).FirstOrDefault())
-                                    ?? _directorySetupRepository.Data.FirstOrDefault();
+                                    ?? _directorySetupRepository.Data.Items.FirstOrDefault();
 
 
                                 var newPath = relatedDirSetup.ThumbnailDirectory +

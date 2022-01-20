@@ -41,11 +41,13 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
                     .Select(fileRepository.Watch)
                     .Switch()
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(files =>
+                    .OnItemAdded(file =>
                     {
                         Files.Clear();
-                        Files.AddRange(files);
+                        Files.Add(file);
+
                     })
+                    .Subscribe()
             });
         }
         

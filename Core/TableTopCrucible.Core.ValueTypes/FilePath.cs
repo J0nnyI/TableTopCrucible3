@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
@@ -39,6 +40,8 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public string ReadAllText() => FileSystemHelper.File.ReadAllText(Value);
+        public T ReadAllJson<T>() => JsonSerializer.Deserialize<T>(ReadAllText());
+        public void WriteAllJson(object data) => WriteAllText(JsonSerializer.Serialize(data));
 
         public bool Exists() => FileSystemHelper.File.Exists(Value);
 

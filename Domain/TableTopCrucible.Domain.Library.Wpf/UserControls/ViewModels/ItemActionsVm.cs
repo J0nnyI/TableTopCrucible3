@@ -13,6 +13,7 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
+using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Services;
@@ -33,13 +34,11 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
         public ICommand DeleteAllDataCommand { get; }
         public Interaction<Unit, YesNoDialogResult> DeletionConfirmation { get; } = new();
 
-        public ItemActionsVm(IFileSynchronizationService fileSynchronizationService,
-            IFileRepository fileRepository,
-            IItemRepository itemRepository,
-            IImageDataRepository imageRepository,
+        public ItemActionsVm(
+            IFileSynchronizationService fileSynchronizationService,
+            IStorageController storageController,
             INotificationService notificationService)
         {
-            _imageRepository = imageRepository;
             _notificationService = notificationService;
             this.StartSyncCommand = fileSynchronizationService.StartScanCommand;
 
@@ -52,9 +51,9 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
                         {
                             try
                             {
-                                imageRepository.RemoveRange(imageRepository.Data);
-                                itemRepository.RemoveRange(itemRepository.Data);
-                                fileRepository.RemoveRange(fileRepository.Data);
+                                storageController.Files.Clear();
+                                storageController.Images.Clear();
+                                storageController.Items.Clear();
                                 _notificationService.AddNotification((Name)"Removal sucessfull",
                                     (Description)"all Files, Items & Images have been removed successfully",
                                     NotificationType.Confirmation);

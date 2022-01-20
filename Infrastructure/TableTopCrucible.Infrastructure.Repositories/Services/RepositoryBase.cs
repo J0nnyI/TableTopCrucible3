@@ -6,9 +6,11 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using DynamicData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
@@ -21,9 +23,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         where TId : IDataId
         where TEntity : class, IDataEntity<TId>, new()
     {
-        IQueryable<TEntity> Data { get; }
+        SourceCache<TEntity, TId> Data { get; }
         TEntity this[TId id] { get; }
-        IObservable<CollectionUpdate<TId, TEntity>> Updates { get; }
         IObservable<TEntity> Watch(TId id);
         IObservable<TEntity> Watch(IObservable<TId> idChanges);
         void Add(TEntity entity);
@@ -40,33 +41,15 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         where TEntity : class, IDataEntity<TId>, new()
     {
         private readonly Subject<EntityUpdate<TId, TEntity>> _changes = new();
-        private readonly IDatabaseAccessor _database;
-        protected static readonly object _databaseLock = new();
+        private readonly IStorageController _storageController;
 
-        protected RepositoryBase(IDatabaseAccessor database, DbSet<TEntity> data)
+        protected RepositoryBase(IStorageController storageController, SourceCache<TEntity, TId> data)
         {
-            _database = database;
-            _Data = data;
-
-
-            Updates = _changes.Select(change =>
-                    new CollectionUpdate<TId, TEntity>(Data, change))
-                .Publish()
-                .RefCount()
-                .StartWith(
-                    new CollectionUpdate<TId, TEntity>(
-                        Data,
-                        new EntityUpdate<TId, TEntity>(
-                            EntityUpdateChangeReason.Init,
-                            new Dictionary<TId, TEntity>()
-                        )
-                    )
-                );
+            _storageController = storageController;
+            this.Data = data;
         }
 
-        protected DbSet<TEntity> _Data { get; }
-        public IQueryable<TEntity> Data => _Data;
-        public IObservable<CollectionUpdate<TId, TEntity>> Updates { get; }
+        public SourceCache<TEntity, TId> Data { get; }
 
         /// <summary>
         /// only updates on init, add and delete, updates have to be consumed via <see cref="INotifyPropertyChanged"/>
@@ -95,120 +78,39 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 .RefCount();
 
         public TEntity this[TId id]
-            => _Data.SingleOrDefault(entity => entity.Guid.Equals(id.Guid));
-        public abstract string TableName { get; }
+            => Data.Lookup(id).ToNullable();
 
         public void Add(TEntity entity)
         {
-            try
-            {
-                lock (_databaseLock){
-                    _Data.Add(entity);
-                    _database.AutoSave();
-                }
-                _changes.OnNext(new EntityUpdate<TId, TEntity>
-                    (
-                        EntityUpdateChangeReason.Add,
-                        new Dictionary<TId, TEntity>
-                        {
-                            { entity.Id, entity }
-                        }
-                    )
-                );
-            }
-            catch (DbUpdateException e)
-            {
-                HandleDbUpdateException(e, entity.AsArray());
-                throw;
-            }
+            Data.Add(entity);
+            _storageController.AutoSave();
         }
 
         public void AddRange(IEnumerable<TEntity> entities)
         {
-            try
-            {
-                var newEntities = entities.ToArray();
-                lock (_databaseLock)
-                {
-
-                    _Data.AddRange(newEntities);
-                    _database.AutoSave();
-                }
-
-                _changes.OnNext(new EntityUpdate<TId, TEntity>
-                (
-                    EntityUpdateChangeReason.Add,
-                    new Dictionary<TId, TEntity>(
-                        newEntities.Select(entity => new KeyValuePair<TId, TEntity>(entity.Id, entity)))
-                ));
-            }
-            catch (DbUpdateException e)
-            {
-                HandleDbUpdateException(e, entities);
-                Debugger.Break();
-                throw;
-            }
-            catch (Exception e)
-            {
-                Debugger.Break();
-                throw;
-            }
-        }
-
-        private void HandleDbUpdateException(DbUpdateException e, IEnumerable<TEntity> entities)
-        {
-            if (e.InnerException.Message == $"SQLite Error 19: 'UNIQUE constraint failed: {TableName}.Id'.")
-                throw new EntityAlreadyAddedException<TId, TEntity>(e, entities);
+            Data.Add(entities.ToArray());
+            _storageController.AutoSave();
         }
 
         public void Remove(TEntity entity)
         {
-            lock (_databaseLock)
-            {
-
-                _Data.Remove(entity);
-                _database.AutoSave();
-            }
-
-            _changes.OnNext(
-                new EntityUpdate<TId, TEntity>
-                (
-                    EntityUpdateChangeReason.Remove,
-                    new Dictionary<TId, TEntity>
-                    {
-                        { entity.Id, entity }
-                    }
-                )
-            );
+            Data.Remove(entity);
+            _storageController.AutoSave();
         }
 
         public void Remove(TId id)
         {
             Remove(this[id]);
+            _storageController.AutoSave();
         }
 
         public void RemoveRange(IEnumerable<TEntity> entities)
-        {
-            if (!entities.Any())
-                return;
-            var entitiesToDelete = entities.ToArray();
-            lock (_databaseLock)
-            {
-                _Data.RemoveRange(entitiesToDelete);
-                _database.AutoSave();
-            }
-
-            _changes.OnNext(
-                new EntityUpdate<TId, TEntity>
-                (
-                    EntityUpdateChangeReason.Remove,
-                    new Dictionary<TId, TEntity>(
-                        entitiesToDelete.Distinct().Select(entity => new KeyValuePair<TId, TEntity>(entity.Id, entity)))
-                )
-            );
-        }
+            => RemoveRange(entities.Select(x => x.Id));
 
         public void RemoveRange(IEnumerable<TId> ids)
-            => RemoveRange(Data.Where(entity => ids.Contains(entity.Id)));
+        {
+            Data.RemoveKeys(ids);
+            _storageController.AutoSave();
+        }
     }
 }

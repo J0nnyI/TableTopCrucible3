@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-
+using System.Text.Json.Serialization;
 using DynamicData;
 
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +19,6 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 {
     public sealed class Item : DataEntity<ItemId>
     {
-        private Name _name;
 
         public Item()
         {
@@ -33,6 +32,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                 Tags.AddRange(tags);
         }
 
+        [JsonIgnore]
+        private Name _name;
         public Name Name
         {
             get => _name;
@@ -43,67 +44,9 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         public FileHashKey FileKey3d
         {
             get => _fileKey3d;
-            set => SetRequiredValue(ref _fileKey3d, value, nameof(FileKey3d), nameof(FileKey3dRaw));
+            set => SetRequiredValue(ref _fileKey3d, value);
         }
-        public string FileKey3dRaw // required to be public by database queries
-        {
-            get => _fileKey3d.Value;
-            set => SetRequiredValue(ref _fileKey3d, (FileHashKey)value, nameof(FileKey3d), nameof(FileKey3dRaw));
-        }
-
-        public ObservableCollection<Tag> Tags { get; } = new();
-        internal string RawTags
-        {
-            get => SerializedStringList.From(Tags.Select(tag => tag.Value)).Value;
-            set
-            {
-                var newTags = SerializedStringList.From(value).Deserialize().Select(tag => (Tag)tag);
-                Tags.AddRange(newTags.Except(Tags));
-            }
-        }
-
-        private readonly ObservableCollection<ImageData> _images = new();
-        public ObservableCollection<ImageData> Images
-        {
-            get => _images;
-            set {
-                _images.Add(value.Except(_images));
-                _images.Remove(_images.Except(value));
-            }
-        }
-
-        public void AddTags(IEnumerable<Tag> tags)
-           => Tags.Add(tags.Except(Tags));
-    }
-
-    public class ItemConfiguration : IEntityTypeConfiguration<Item>
-    {
-        public static string TableName => "Items";
-
-        public void Configure(EntityTypeBuilder<Item> builder)
-        {
-            builder.ToTable(TableName);
-            builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
-
-            //indices
-            builder.Ignore(x => x.Id);
-            builder.HasKey(x => x.Guid)
-                .HasName("Id");
-
-            builder.Ignore(x => x.FileKey3d);
-            builder.HasIndex(x => x.FileKey3dRaw)
-                .IsUnique();
-
-            //properties
-            builder.OwnsOne(x => x.Name)
-                .Property(x => x.Value)
-                .HasColumnName("Name")
-                .IsRequired();
-            
-            builder.Property(x => x.RawTags)
-                .HasColumnName("Tags");
-            builder.Ignore(x => x.Tags);
-
-        }
+        public SourceList<Tag> Tags { get; } = new();
+        
     }
 }
