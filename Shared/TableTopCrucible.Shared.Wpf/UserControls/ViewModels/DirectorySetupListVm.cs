@@ -10,6 +10,8 @@ using ReactiveUI;
 using ReactiveUI.Validation.Helpers;
 using Splat;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Engine.Services;
+using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;

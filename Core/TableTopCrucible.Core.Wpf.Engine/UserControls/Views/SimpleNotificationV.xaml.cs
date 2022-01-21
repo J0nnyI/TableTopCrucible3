@@ -2,6 +2,7 @@
 using System.Windows;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
+using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 

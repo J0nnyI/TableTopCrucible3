@@ -30,7 +30,5 @@ namespace TableTopCrucible.Core.ValueTypes
 
             return disposables;
         }
-
-        public static explicit operator Name(string value) => From(value);
     }
 }

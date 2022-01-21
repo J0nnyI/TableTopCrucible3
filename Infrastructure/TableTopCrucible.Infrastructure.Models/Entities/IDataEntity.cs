@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
-
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using ReactiveUI;
 
 using TableTopCrucible.Infrastructure.Models.EntityIds;
@@ -31,6 +32,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             Id = new TId { Guid = Guid.NewGuid() };
         }
 
+        [JsonProperty]
         public Guid Guid
         {
             get => Id.Guid;

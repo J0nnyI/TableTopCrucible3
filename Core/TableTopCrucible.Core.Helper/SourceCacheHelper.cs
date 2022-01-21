@@ -88,5 +88,14 @@ namespace TableTopCrucible.Core.Helper
                 cache.AddOrUpdate(objects);
             });
         }
+
+        public static void RemoveWhere<TObject, TId>(
+            this ISourceCache<TObject, TId> cache,
+            Func<TObject, bool> selector)
+        {
+            cache.Edit(updater =>
+                updater.Remove(updater.Items.Where(selector))
+            );
+        }
     }
 }

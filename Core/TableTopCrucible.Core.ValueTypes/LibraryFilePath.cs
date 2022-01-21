@@ -1,15 +1,16 @@
 ﻿using System.IO;
+
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
     public class LibraryFilePath : FilePath<LibraryFilePath>
     {
-        public static LibraryFilePath WorkingFile
-            => (LibraryFilePath)(DirectoryPath.AppData + (FileName)"workingDatabase.ttcl");
+        public static LibraryFilePath DefaultFile
+            => (LibraryFilePath)(DirectoryPath.AppData + ((BareFileName)"workingDatabase" + FileExtension.JSonLibrary));
 
         public bool IsWorkingFile
-            => this == WorkingFile;
+            => this == DefaultFile;
 
         protected override void Validate(string value)
         {

@@ -2,15 +2,24 @@
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
     public class FilePath<TThis> : ValueType<string, TThis> where TThis : FilePath<TThis>, new()
     {
+        protected override void Validate(string value)
+        {
+            base.Validate(value);
+            if (!Path.HasExtension(value))
+                throw new InvalidValueException($"the filepath '{value}' does not contain an extension");
+            if (!Path.IsPathRooted(value))
+                throw new InvalidValueException($"the filepath '{value}' is incomplete (i.e. missing a drive letter)");
+        }
+
         public FileExtension GetExtension(bool toLower = false) =>
             FileExtension.From(FileSystemHelper.Path.GetExtension(toLower
                 ? Value.ToLower()
@@ -40,8 +49,8 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public string ReadAllText() => FileSystemHelper.File.ReadAllText(Value);
-        public T ReadAllJson<T>() => JsonSerializer.Deserialize<T>(ReadAllText());
-        public void WriteAllJson(object data) => WriteAllText(JsonSerializer.Serialize(data));
+        public T ReadAllJson<T>() => JsonSerializer.Deserialize<T>( ReadAllText());
+        public void WriteAllJson(object data) => WriteAllText(JsonConvert.SerializeObject(data));
 
         public bool Exists() => FileSystemHelper.File.Exists(Value);
 
@@ -116,6 +125,26 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static explicit operator FilePath<TThis>(string path)
             => From(path);
+
+        /// <summary>
+        /// moves this file to a new location
+        /// </summary>
+        /// <param name="newPath"></param>
+        public void Move(FilePath<TThis> newPath)
+            => File.Move(Value, newPath?.Value ?? throw new NullReferenceException(nameof(newPath)));
+
+        /// <summary>
+        /// returns a new FilePath with the given extension. does not change the value of the object
+        /// </summary>
+        /// <param name="extension"></param>
+        /// <returns></returns>
+        public FilePath<TThis> ChangeExtension(FileExtension extension)
+            =>  From(Path.ChangeExtension(Value, extension.Value));
+
+        public FilePath<TThis> From(DirectoryPath directory, FileName fileName)
+            => From(Path.Combine(directory.Value, fileName.Value));
+        public FilePath<TThis> From(DirectoryPath directory, BareFileName fileName, FileExtension extension)
+            => From(Path.Combine(directory.Value, fileName.Value+extension));
     }
 
     /// <summary>

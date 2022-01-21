@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.Json.Serialization;
 using DynamicData;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
+using Newtonsoft.Json;
 using ReactiveUI.Fody.Helpers;
 
 using TableTopCrucible.Core.Helper;
@@ -17,6 +16,7 @@ using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public sealed class Item : DataEntity<ItemId>
     {
 
@@ -32,8 +32,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                 Tags.AddRange(tags);
         }
 
-        [JsonIgnore]
         private Name _name;
+        [JsonProperty]
         public Name Name
         {
             get => _name;
@@ -41,6 +41,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         }
 
         private FileHashKey _fileKey3d;
+        [JsonProperty]
         public FileHashKey FileKey3d
         {
             get => _fileKey3d;

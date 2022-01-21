@@ -31,13 +31,23 @@ namespace TableTopCrucible.Core.ValueTypes
         public static TThis From(TValue valueA)
             => valueA is null ? null : new() { Value = valueA };
 
-
+        /// <summary>
+        /// base implementation: null value check => exception
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="InvalidValueException"></exception>
         protected virtual void Validate(TValue value)
         {
             if (value is null)
                 throw new InvalidValueException(nameof(value));
         }
         public override string ToString() => Value.ToString();
+
+        /// <summary>
+        /// base implementation: empty
+        /// </summary>
+        /// <param name="value">the input value</param>
+        /// <returns>the sanitized value</returns>
         protected virtual TValue Sanitize(TValue value) => value;
 
         public override bool Equals(object other)
@@ -50,9 +60,9 @@ namespace TableTopCrucible.Core.ValueTypes
         public static bool operator !=(ValueType<TValue, TThis> valueA, TThis valueB)
             => !(valueA == valueB);
 
-
+        
         public static explicit operator ValueType<TValue, TThis>(TValue value)
-            => value is null ? null : new TThis { Value = value };
+            => From(value);
     }
 
     public abstract class ValueType<TValueA, TValueB, TThis> : ValueType<TThis>

@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
+using Newtonsoft.Json;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class DirectorySetup : DataEntity<DirectorySetupId>
     {
         public DirectorySetup()
@@ -24,6 +29,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         public DirectoryPath ThumbnailDirectory => Path + (DirectoryName)"Thumbnails";
 
         private Name _name;
+        [JsonProperty]
         public Name Name
         {
             get => _name;
@@ -31,6 +37,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         }
 
         private DirectoryPath _path;
+        [JsonProperty]
         public DirectoryPath Path
         {
             get => _path;
@@ -39,42 +46,5 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         
         public override string ToString() => $"Name:'{Name}' | Path:'{Path}' | Id:'{Id}'";
     }
-
-    public class DirectorySetupConfiguration : IEntityTypeConfiguration<DirectorySetup>
-    {
-        public static string TableName => "Directories";
-        public void Configure(EntityTypeBuilder<DirectorySetup> builder)
-        {
-            builder.ToTable(TableName);
-            builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
-
-            builder.OwnsOne(x => x.Name,o=>
-                {
-                    o.WithOwner();
-                    o.Property(x => x.Value)
-                        .IsRequired()
-                        .HasColumnName("Name")
-                        .UsePropertyAccessMode(PropertyAccessMode.Property);
-                });
-            
-            builder.OwnsOne(x => x.Path, o =>
-                {
-                    o.WithOwner();
-                    o.Property(x => x.Value)
-                        .IsRequired()
-                        .HasColumnName("Path")
-                        .UsePropertyAccessMode(PropertyAccessMode.Field);
-                });
-
-
-            builder.Ignore(x => x.Id);
-
-            builder.Property(x => x.Guid)
-                .HasColumnName("Id")
-                .IsRequired()
-                .ValueGeneratedOnAdd()
-                .HasValueGenerator<GuidValueGenerator>();
-            builder.HasKey(x => x.Guid);
-        }
-    }
+    
 }

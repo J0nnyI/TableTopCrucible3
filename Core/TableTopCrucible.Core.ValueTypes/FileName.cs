@@ -1,4 +1,5 @@
-﻿using static TableTopCrucible.Core.Helper.FileSystemHelper;
+﻿using TableTopCrucible.Core.ValueTypes.Exceptions;
+using static TableTopCrucible.Core.Helper.FileSystemHelper;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -20,5 +21,12 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static explicit operator FileName(string value)
             => From(value);
+
+        protected override void Validate(string value)
+        {
+            base.Validate(value);
+            if (!Path.HasExtension(value))
+                throw new InvalidValueException($"The given name '{value}' does not contain an extension");
+        }
     }
 }

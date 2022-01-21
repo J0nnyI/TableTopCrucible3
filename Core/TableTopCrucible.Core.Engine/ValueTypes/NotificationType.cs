@@ -1,4 +1,4 @@
-﻿namespace TableTopCrucible.Core.Wpf.Engine.ValueTypes
+﻿namespace TableTopCrucible.Core.Engine.ValueTypes
 {
     public enum NotificationType
     {

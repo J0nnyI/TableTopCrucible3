@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
     public class FileExtension : ValueType<string, FileExtension>
     {
+        public static readonly FileExtension JSonLibrary = From(".ttcjl");
+        public static readonly FileExtension TemporaryJSonLibrary = From(".ttcjlt");
         public static readonly FileExtension JSON = From(".json");
+        public static readonly IEnumerable<FileExtension> LibraryFile = new []{JSonLibrary, TemporaryJSonLibrary};
         public static readonly IEnumerable<FileExtension> SlicerProject = FromList(".3mf");
         public static readonly IEnumerable<FileExtension> SlicedFile = FromList(".photon", ".gcode");
         public static readonly IEnumerable<FileExtension> Archive = FromList(".zip");
@@ -22,6 +26,15 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static IEnumerable<FileExtension> FromList(params string[] values) => values.Select(From);
 
+        protected override void Validate(string value)
+        {
+            base.Validate(value);
+            if (!value.StartsWith('.'))
+                throw new InvalidValueException("The extension has to start a '.'");
+        }
+
+        protected override string Sanitize(string value) => value.ToLower();
+
         public FileExtension ToLower() => From(Value.ToLower());
 
         public bool IsModel() => Model.Contains(ToLower());
@@ -34,7 +47,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public bool IsArchive() => Archive.Contains(ToLower());
 
-        public bool IsLibrary() => Library == ToLower();
+        public bool IsLibrary() => LibraryFile.Contains(ToLower());
 
         public bool IsTable() => Table == ToLower();
 

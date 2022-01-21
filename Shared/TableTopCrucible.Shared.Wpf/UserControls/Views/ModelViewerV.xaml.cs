@@ -24,6 +24,8 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Splat;
+using TableTopCrucible.Core.Engine.Services;
+using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Services;

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
+using Newtonsoft.Json;
 using ReactiveUI.Fody.Helpers;
 
 using TableTopCrucible.Core.ValueTypes;
@@ -13,6 +13,7 @@ using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public sealed class FileData : DataEntity<FileDataId>
     {
         public FileData()
@@ -27,6 +28,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         }
 
         private FilePath _path;
+        [JsonProperty]
         public FilePath Path
         {
             get => _path;
@@ -34,6 +36,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         }
 
         private FileHashKey _hashKey;
+        [JsonProperty]
         public FileHashKey HashKey
         {
             get => _hashKey;
@@ -41,6 +44,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         }
 
         private DateTime _lastWrite;
+        [JsonProperty]
         public DateTime LastWrite
         {
             get => _lastWrite;

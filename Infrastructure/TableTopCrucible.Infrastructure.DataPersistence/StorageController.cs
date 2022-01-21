@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using DynamicData;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Engine.Services;
+using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence.Exceptions;
@@ -39,12 +41,27 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
     }
     internal class StorageController : IStorageController
     {
+        private readonly INotificationService _notificationService;
         public SourceCache<Item, ItemId> Items { get; } = new(item => item.Id);
         public SourceCache<ImageData, ImageDataId> Images { get; } = new(image => image.Id);
         public SourceCache<FileData, FileDataId> Files { get; } = new(file => file.Id);
         public SourceCache<DirectorySetup, DirectorySetupId> DirectorySetups { get; } = new(dir => dir.Id);
 
         private LibraryFilePath _currentFile;
+
+        public StorageController(INotificationService notificationService)
+        {
+            _notificationService = notificationService;
+            OnStartup();
+        }
+
+        public void OnStartup()
+        {
+            if (LibraryFilePath.DefaultFile.Exists())
+                Load(LibraryFilePath.DefaultFile);
+            else
+                this._currentFile = LibraryFilePath.DefaultFile;
+        }
 
         public void Load(LibraryFilePath file)
         {
@@ -81,12 +98,24 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
             if(SettingsHelper.AutoSaveEnabled)
                 this.Save();
         }
+
+        /// <summary>
+        /// saves to the given file
+        /// </summary>
+        /// <param name="file">the target file.<br/>
+        /// file is null (default) => save to CurrentFile<br/>
+        /// file is null and CurrentFile is null => <see cref="NullReferenceException"/> </param>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="LibraryLoadException"></exception>
         public void Save(LibraryFilePath file = null)
         {
-            file = file ?? _currentFile ?? throw new NullReferenceException("no file selected");
+            file ??= _currentFile ?? throw new NullReferenceException("no file selected");
+
+            var tmpFile = file.ChangeExtension(FileExtension.TemporaryJSonLibrary);
+
             try
             {
-                file.WriteAllJson(
+                tmpFile.WriteAllJson(
                     new StorageMasterObject
                     {
                         Version = Version.From(1, 0, 0),
@@ -95,10 +124,20 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
                         DirectorySetups = DirectorySetups.Items.ToArray(),
                         Images = Images.Items.ToArray(),
                     });
+                file.Delete();
+                tmpFile.Move(file);
+
+
+                _notificationService.AddNotification((Name)"Save Successful",
+                    (Description)$"The changes have been saved to {file}", NotificationType.Confirmation);
             }
             catch (Exception e)
             {
                 Debugger.Break();
+                _notificationService.AddNotification(
+                    (Name)"Save successful",
+                    (Description)($"The changes could not be saved to {file}:" + Environment.NewLine + e),
+                    NotificationType.Error);
                 throw new LibraryLoadException(file, e);
             }
         }

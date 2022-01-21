@@ -67,10 +67,10 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 .Switch();
 
         public FileData ByFilepath(FilePath path)
-            => this.Data.Items.Single(file => file.Path == path);
+            => this.Data.Items.SingleOrDefault(file => file.Path == path);
 
         public IEnumerable<FileData> ByFilepath(IEnumerable<FilePath> filePaths)
-            => filePaths.Select(ByFilepath);
+            => filePaths.Select(ByFilepath).Where(file=>file != null);
 
     }
 }

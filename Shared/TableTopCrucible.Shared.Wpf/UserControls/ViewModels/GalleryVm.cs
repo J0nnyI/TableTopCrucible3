@@ -7,8 +7,10 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+
 using DynamicData;
 using DynamicData.Binding;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -16,11 +18,12 @@ using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    public class GalleryItem:ReactiveObject, IDisposable
+    public class GalleryItem : ReactiveObject, IDisposable
     {
         public ImageData Image { get; }
 
@@ -41,7 +44,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 fileRepository
                     .Watch(this.WhenAnyValue(vm => vm.Image.HashKey))
                     .ToCollection()
-                    .Select(files=>files.FirstOrDefault())
+                    .Select(files => files.FirstOrDefault())
                     .Subscribe(fileData =>
                     {
                         FilePath = fileData?.Path?.ToUri();
@@ -72,10 +75,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ReadOnlyObservableCollection<GalleryItem> Images => _images;
         public GalleryVm(IFileRepository fileRepository, IImageDataRepository imageDataRepository)
         {
-            this.WhenActivated(()=>new []
+            this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(vm=>vm.Item)
-                    .Select(item=>imageDataRepository.ByItemId(item.Id))
+                    .Select(item=>
+                        item is not null
+                        ? imageDataRepository.ByItemId(item.Id)
+                        : Observable.Return(ChangeSet<ImageData, ImageDataId>.Empty))
                     .Switch()
                     .Transform(image=>new GalleryItem(image, fileRepository))
                     .Bind(out _images)
