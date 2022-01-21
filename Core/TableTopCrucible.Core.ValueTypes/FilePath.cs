@@ -2,9 +2,12 @@
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+
 using Newtonsoft.Json;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
+
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -49,14 +52,14 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public string ReadAllText() => FileSystemHelper.File.ReadAllText(Value);
-        public T ReadAllJson<T>() => JsonSerializer.Deserialize<T>( ReadAllText());
+        public T ReadAllJson<T>() => JsonSerializer.Deserialize<T>(ReadAllText());
         public void WriteAllJson(object data) => WriteAllText(JsonConvert.SerializeObject(data));
 
         public bool Exists() => FileSystemHelper.File.Exists(Value);
 
         public void Copy(FilePath<TThis> newPath, bool overwrite = true)
         {
-            if(this.Exists())
+            if (this.Exists())
                 FileSystemHelper.File.Copy(Value, newPath.Value, overwrite);
         }
 
@@ -139,12 +142,12 @@ namespace TableTopCrucible.Core.ValueTypes
         /// <param name="extension"></param>
         /// <returns></returns>
         public FilePath<TThis> ChangeExtension(FileExtension extension)
-            =>  From(Path.ChangeExtension(Value, extension.Value));
+            => From(Path.ChangeExtension(Value, extension.Value));
 
         public FilePath<TThis> From(DirectoryPath directory, FileName fileName)
             => From(Path.Combine(directory.Value, fileName.Value));
         public FilePath<TThis> From(DirectoryPath directory, BareFileName fileName, FileExtension extension)
-            => From(Path.Combine(directory.Value, fileName.Value+extension));
+            => From(Path.Combine(directory.Value, fileName.Value + extension));
     }
 
     /// <summary>
@@ -152,5 +155,7 @@ namespace TableTopCrucible.Core.ValueTypes
     /// </summary>
     public class FilePath : FilePath<FilePath>
     {
+        public ImageFilePath ToImagePath()
+        => ImageFilePath.From(Value);
     }
 }

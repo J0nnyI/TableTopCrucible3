@@ -40,7 +40,7 @@
                   Background="{DynamicResource HeaderBackground}"
                   Foreground="{DynamicResource MaterialDesignDarkForeground}">
         <DockPanel UseLayoutRounding="True">
-            <!--   Left   -->
+            <!--   Left  -->
             <StackPanel Orientation="Horizontal"
                         DockPanel.Dock="Left">
                 <ToggleButton x:Name="IsNavigationBarExpanded"

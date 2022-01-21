@@ -125,11 +125,13 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
                         Images = Images.Items.ToArray(),
                     });
                 file.Delete();
+                if(!file.Exists())
+                    file.GetDirectoryPath().Create();
                 tmpFile.Move(file);
 
 
                 _notificationService.AddNotification((Name)"Save Successful",
-                    (Description)$"The changes have been saved to {file}", NotificationType.Confirmation);
+                    (Description)$"The changes have been saved to {file}", NotificationType.Confirmation, (NotificationIdentifier)"StorageController.Save");
             }
             catch (Exception e)
             {

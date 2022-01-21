@@ -75,6 +75,9 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                 .Connect()
                 .ToCollection()
                 .Select(x => x.FirstOrDefault())
+                .Buffer(TimeSpan.FromMilliseconds(500))
+                .Where(buffer=>buffer.Any())
+                .Select(buffer=>buffer.Last())
                 .Publish()
                 .RefCount();
             this.WhenActivated(() => new[]
@@ -142,7 +145,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                         .Select(filePath =>
                         {
                             var hashKey = FileHashKey.Create(filePath, hash);
-                            var foundFileData = _fileRepository[hashKey].FirstOrDefault();
+                            var foundFileData = _fileRepository[hashKey].Where(file=>file.Path.Exists()).FirstOrDefault();
                             var foundImageData = _imageDataRepository[hashKey].Where(img => img.ItemId == item.Id);
                             /*** priority:
                              * 1.- dir setup of the thumbnail (null if it is not in any tracked directory)

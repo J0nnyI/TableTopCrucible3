@@ -17,14 +17,25 @@
                                   md:ShadowAssist.Darken="True"
                                   md:ShadowAssist.ShadowDepth="Depth3"
                                   DockPanel.Dock="Top" />
-            <rx:ViewModelViewHost x:Name="NavigationList"
+            <!--  left  -->
+            <md:ColorZone UseLayoutRounding="True"
+                          VerticalAlignment="Stretch"
+                          md:ShadowAssist.ShadowDepth="Depth2"
+                          Mode="Custom"
+                          Background="{DynamicResource HeaderBackground}"
+                          Foreground="{DynamicResource MaterialDesignDarkForeground}">
+                <rx:ViewModelViewHost x:Name="NavigationList"
                                   DockPanel.Dock="Left" />
+            </md:ColorZone>
+
             <md:DrawerHost x:Name="DrawerHost"
                            md:ShadowAssist.ShadowDepth="Depth0"
                            OpenMode="Standard">
+                <!--  right  -->
                 <md:DrawerHost.RightDrawerContent>
                     <md:ColorZone Mode="Dark"
-                                  Background="{DynamicResource SidebarBackground}"
+                                  Background="{DynamicResource HeaderBackground}"
+                                  Foreground="{DynamicResource MaterialDesignDarkForeground}"
                                   VerticalAlignment="Stretch">
                         <Grid x:Name="SidebarGrid">
                             <Grid.RowDefinitions>
@@ -57,6 +68,7 @@
                 </md:DrawerHost.RightDrawerContent>
 
 
+                <!--  center  -->
                 <md:ColorZone VerticalAlignment="Stretch"
                               Background="{DynamicResource WorkspaceBackground}">
                     <Grid>

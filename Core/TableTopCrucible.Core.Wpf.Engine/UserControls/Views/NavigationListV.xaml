@@ -79,23 +79,17 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <md:ColorZone md:ShadowAssist.ShadowDepth="Depth2"
-                  md:ShadowAssist.ShadowEdges="Right"
-                  Mode="Dark"
-                  Background="{DynamicResource SidebarBackground}"
-                  VerticalAlignment="Stretch">
-        <DockPanel VerticalAlignment="Stretch">
-            <ListBox x:Name="UpperList"
+    <DockPanel VerticalAlignment="Stretch">
+        <ListBox x:Name="UpperList"
                      DockPanel.Dock="Top"
                      ItemContainerStyle="{StaticResource ItemStyle}"
                      ItemTemplate="{StaticResource ItemTemplate}"
                      PreviewMouseDown="BlockOnControl" />
-            <ListBox x:Name="LowerList"
+        <ListBox x:Name="LowerList"
                      DockPanel.Dock="Bottom"
                      ItemContainerStyle="{StaticResource ItemStyle}"
                      ItemTemplate="{StaticResource ItemTemplate}"
                      PreviewMouseDown="BlockOnControl" />
-            <Rectangle />
-        </DockPanel>
-    </md:ColorZone>
+        <Rectangle />
+    </DockPanel>
 </rxui:ReactiveUserControl>

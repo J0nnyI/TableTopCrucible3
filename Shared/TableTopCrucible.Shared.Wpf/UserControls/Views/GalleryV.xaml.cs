@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,11 +28,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
         public GalleryV()
         {
             InitializeComponent();
-            this.WhenActivated(() => new[]
+            this.WhenActivated(() => new IDisposable[]
             {
                 this.OneWayBind(ViewModel,
                     vm => vm.Images,
-                    v => v.Images.ItemsSource)
+                    v => v.Images.ItemsSource),
+                this.OneWayBind(ViewModel,
+                    vm=>vm.SelectedImageViewer,
+                    v=>v.SelectedImage.ViewModel),
+                this.WhenAnyValue(v=>v.Images.SelectedItem)
+                    .Cast<GalleryItem>()
+                    .Select(galleryItem=>galleryItem?.Image)
+                    .BindTo(this,v=>v.ViewModel.SelectedImage)
             });
         }
     }

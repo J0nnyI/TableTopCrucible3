@@ -97,5 +97,9 @@ namespace TableTopCrucible.Core.Helper
                 updater.Remove(updater.Items.Where(selector))
             );
         }
+
+        public static IObservable<TObject> WatchFirstOrDefault<TObject, TKey>(
+            this IObservable<IChangeSet<TObject, TKey>> cache)
+            => cache.ToCollection().Select(col => col.FirstOrDefault());
     }
 }

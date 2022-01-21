@@ -228,7 +228,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 .Aggregate(string.Empty, (path, dir) => dir.Path.Value.Length > path.Length ? dir.Path.Value : path);
 
             var fileSubPath =filePath.Value.Remove(0,dir.Length);
-            return fileSubPath.Split(Path.DirectorySeparatorChar).Select(Tag.From);
+            return fileSubPath
+                .Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)
+                .Select(Tag.From);
         }
     }
 }

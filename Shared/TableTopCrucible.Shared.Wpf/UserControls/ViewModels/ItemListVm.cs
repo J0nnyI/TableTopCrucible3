@@ -78,13 +78,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         {
             var curItem = itemInfo;
             var prevItem = previouslyClickedItem;
-            var isStrgPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Control);
+            var isCtrlPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Control);
             var isShiftPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Shift);
             var isAltPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Alt);
 
             if (isAltPressed)
                 return;
-            if (isStrgPressed)
+            if (isCtrlPressed)
                 _toggleSelection(curItem);
             else if (isShiftPressed)
             {

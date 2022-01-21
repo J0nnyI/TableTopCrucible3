@@ -69,12 +69,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     }
     public class GalleryVm : ReactiveObject, IGallery, IActivatableViewModel
     {
+        public IImageViewer SelectedImageViewer { get; }
         [Reactive] public Item Item { get; set; }
+        [Reactive] public ImageData SelectedImage { get; set; }
+
         public ViewModelActivator Activator { get; } = new();
         private ReadOnlyObservableCollection<GalleryItem> _images;
         public ReadOnlyObservableCollection<GalleryItem> Images => _images;
-        public GalleryVm(IFileRepository fileRepository, IImageDataRepository imageDataRepository)
+
+        public GalleryVm(IImageViewer selectedImageViewer, IFileRepository fileRepository, IImageDataRepository imageDataRepository)
         {
+            SelectedImageViewer = selectedImageViewer;
+
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(vm=>vm.Item)
@@ -83,9 +89,29 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         ? imageDataRepository.ByItemId(item.Id)
                         : Observable.Return(ChangeSet<ImageData, ImageDataId>.Empty))
                     .Switch()
+                    .SortBy(x=>x.Name.Value)
+                    .OutputObservable(out var images)
                     .Transform(image=>new GalleryItem(image, fileRepository))
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .Bind(out _images)
-                    .Subscribe()
+                    .Subscribe(),
+
+                images
+                    .WatchFirstOrDefault()
+                    .Select(img =>
+                        fileRepository[img?.HashKey].FirstOrDefault()?.Path?.ToImagePath()
+                    )
+                    .BindTo(this, vm=>vm.SelectedImageViewer.ImageFile),
+
+                this.WhenAnyValue(vm=>vm.SelectedImage)
+                    .Select(img =>fileRepository.Watch(img?.HashKey))
+                    .Switch()
+                    .WatchFirstOrDefault()
+                    .Select(img =>
+                        fileRepository[img?.HashKey].FirstOrDefault()?.Path?.ToImagePath()
+                    )
+                    .BindTo(this, vm=>vm.SelectedImageViewer.ImageFile)
+
             });
         }
     }
