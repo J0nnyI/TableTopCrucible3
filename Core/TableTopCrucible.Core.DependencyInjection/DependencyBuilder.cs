@@ -1,13 +1,5 @@
-﻿using System;
-using System.IO;
-using System.IO.Abstractions;
+﻿using System.IO;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Events;
-using Serilog.Formatting.Compact;
 using Splat;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
@@ -21,7 +13,7 @@ namespace TableTopCrucible.Core.DependencyInjection
             services.TryAddEnumerable(DiAttributeCollector.GenerateServiceProvider());
             services.AddSingleton(typeof(ILoggerFactory), buildLoggingFactory());
         }
-        
+
 
         private static ILoggerFactory buildLoggingFactory()
         {

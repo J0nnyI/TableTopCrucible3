@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using ReactiveUI;
 using Splat;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;

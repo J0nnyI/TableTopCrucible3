@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 using ReactiveUI;
-
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
@@ -38,6 +32,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             get => Id.Guid;
             set => Id = new TId { Guid = value };
         }
+
         public TId Id
         {
             get => _id;
@@ -59,6 +54,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             foreach (var name in names)
                 this.RaisePropertyChanged(name);
         }
+
         public void SetRequiredValue<TValue>(ref TValue field, TValue value,
             params string[] names)
         {
@@ -66,6 +62,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
                 throw new NullReferenceException(string.Join(", ", names));
             SetValue(ref field, value, names);
         }
+
         /// <summary>
         ///     same as <see cref="IReactiveObjectExtensions.RaiseAndSetIfChanged{TObj,TRet}" /> but it throws an
         ///     <see cref="NullReferenceException" /> if the value is null

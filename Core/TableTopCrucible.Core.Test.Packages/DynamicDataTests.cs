@@ -2,9 +2,6 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using DynamicData;
-using DynamicData.Binding;
-using FluentAssertions;
 using NUnit.Framework;
 
 namespace TableTopCrucible.Core.Test.Packages

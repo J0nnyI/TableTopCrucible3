@@ -2,8 +2,6 @@
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using ReactiveUI;
-using ReactiveUI.Validation.Abstractions;
-using ReactiveUI.Validation.Extensions;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
 using ReactiveUI;
 using TableTopCrucible.Core.Helper;
 
@@ -25,7 +23,9 @@ namespace TableTopCrucible.Core.Wpf.Helper
                 return disposables;
             });
         }
-        public static void WhenActivated(this IActivatableViewModel src, Func<CompositeDisposable, IEnumerable<IDisposable>> acc)
+
+        public static void WhenActivated(this IActivatableViewModel src,
+            Func<CompositeDisposable, IEnumerable<IDisposable>> acc)
         {
             src.WhenActivated(() =>
             {

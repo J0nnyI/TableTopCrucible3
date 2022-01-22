@@ -6,11 +6,14 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
     public class CurrentProgressPercent : ValueType<double, CurrentProgressPercent>
     {
         private static double _min;
-        public static CurrentProgressPercent
-            Min { get; }= new() { Value = _min }; // cant use from since it runs through the validator which uses these constants
 
         private static double _max;
-        public static CurrentProgressPercent Max { get; }= new() { Value = _max };
+
+        public static CurrentProgressPercent
+            Min { get; } =
+            new() { Value = _min }; // cant use from since it runs through the validator which uses these constants
+
+        public static CurrentProgressPercent Max { get; } = new() { Value = _max };
 
         public static explicit operator CurrentProgressPercent(double value) => From(value);
 
@@ -23,14 +26,11 @@ namespace TableTopCrucible.Core.Jobs.ValueTypes
         public static CurrentProgressPercent From(CurrentProgress current, TargetProgress target) =>
             From(current.Value / target.Value * 100);
 
-        protected override double Sanitize(double value)
-        {
-            return
-                Value < _min
+        protected override double Sanitize(double value) =>
+            Value < _min
                 ? _min
                 : Value > _max
                     ? _max
                     : value;
-        }
     }
 }

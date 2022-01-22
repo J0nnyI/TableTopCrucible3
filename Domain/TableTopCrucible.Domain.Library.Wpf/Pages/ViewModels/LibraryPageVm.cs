@@ -1,30 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Security.Cryptography;
-
 using DynamicData;
-
-using MaterialDesignThemes.Wpf;
-
 using ReactiveUI;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
-using TableTopCrucible.Core.Engine.ValueTypes;
-using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
-using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
-using TableTopCrucible.Domain.Library.Services;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
-using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
-using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
@@ -36,11 +22,13 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 
     public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage, IDisposable
     {
+        private readonly IDirectorySetupRepository _directorySetupRepository;
+
+        private readonly CompositeDisposable _disposables = new();
         private readonly IFileRepository _fileRepository;
+        private readonly IGalleryService _galleryService;
         private readonly IImageDataRepository _imageDataRepository;
         private readonly IItemRepository _itemRepository;
-        private readonly IDirectorySetupRepository _directorySetupRepository;
-        private readonly IGalleryService _galleryService;
         private readonly INotificationService _notificationService;
 
         public LibraryPageVm(
@@ -82,8 +70,8 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                 .ToCollection()
                 .Select(x => x.FirstOrDefault())
                 .Buffer(TimeSpan.FromMilliseconds(500))
-                .Where(buffer=>buffer.Any())
-                .Select(buffer=>buffer.Last())
+                .Where(buffer => buffer.Any())
+                .Select(buffer => buffer.Last())
                 .Publish()
                 .RefCount();
             this.WhenActivated(() => new[]
@@ -97,11 +85,10 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                 itemChanges
                     .BindTo(this, vm => vm.FileList.Item),
                 itemChanges
-                    .BindTo(this, vm => vm.Gallery.Item),
+                    .BindTo(this, vm => vm.Gallery.Item)
             });
         }
 
-        private readonly CompositeDisposable _disposables = new();
         public IItemList ItemList { get; }
         public IFilteredListHeader ListHeader { get; }
         public IItemListFilter Filter { get; }
@@ -112,22 +99,24 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         public IGallery Gallery { get; }
         public IItemFileList FileList { get; }
         public ViewModelActivator Activator { get; } = new();
+
+        public void Dispose()
+            => _disposables.Dispose();
+
         public PackIconKind? Icon => PackIconKind.Bookshelf;
         public Name Title => Name.From("Item Library");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
         public SortingOrder Position => SortingOrder.From(1);
-        public void Dispose()
-            => _disposables.Dispose();
 
         public void HandleFileDrop(FilePath[] filePaths)
         {
-            var images = 
+            var images =
                 filePaths
                     .Where(file => file.IsImage())
                     .Select(img => img.ToImagePath())
                     .ToArray();
             var item = ItemList.SelectedItems.Items.FirstOrDefault();
-            _galleryService.AddImagesToItem(item,images);
+            _galleryService.AddImagesToItem(item, images);
         }
     }
 }

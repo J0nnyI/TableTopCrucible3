@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reactive.Subjects;
 using System.Windows.Input;
-using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels

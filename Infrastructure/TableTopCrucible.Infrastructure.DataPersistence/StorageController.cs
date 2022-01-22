@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
-
 using DynamicData;
-using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
@@ -19,17 +14,16 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence.Exceptions;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
-
 using Version = TableTopCrucible.Core.ValueTypes.Version;
 
 namespace TableTopCrucible.Infrastructure.DataPersistence
 {
     /// <summary>
-    /// accessed by the application to read and write data<br/>
-    /// <u>responsibilities:</u><br/>
-    /// provide a easy to use data structure<br/>
-    /// writing data to disk<br/>
-    /// loading data from disk<br/>
+    ///     accessed by the application to read and write data<br />
+    ///     <u>responsibilities:</u><br />
+    ///     provide a easy to use data structure<br />
+    ///     writing data to disk<br />
+    ///     loading data from disk<br />
     /// </summary>
     [Singleton]
     public interface IStorageController
@@ -42,14 +36,11 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         void Save(LibraryFilePath file = null);
         void AutoSave();
     }
+
     internal class StorageController : IStorageController
     {
         private readonly INotificationService _notificationService;
-        public SourceCache<Item, ItemId> Items { get; } = new(item => item.Id);
-        public SourceCache<ImageData, ImageDataId> Images { get; } = new(image => image.Id);
-        public SourceCache<FileData, FileDataId> Files { get; } = new(file => file.Id);
-        public SourceCache<DirectorySetup, DirectorySetupId> DirectorySetups { get; } = new(dir => dir.Id);
-        private Subject<Unit> _autoSaveThrottle = new();
+        private readonly Subject<Unit> _autoSaveThrottle = new();
 
         private LibraryFilePath _currentFile;
 
@@ -58,23 +49,18 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
             _notificationService = notificationService;
 
             if (SettingsHelper.AutoSaveEnabled)
-            {
-                this._autoSaveThrottle
+                _autoSaveThrottle
                     .Buffer(SettingsHelper.AutoSaveThrottle)
-                    .Where(buffer=>buffer.Any())
-                    .Subscribe(_=>this.Save());
-            }
+                    .Where(buffer => buffer.Any())
+                    .Subscribe(_ => Save());
 
             OnStartup();
         }
 
-        public void OnStartup()
-        {
-            if (LibraryFilePath.DefaultFile.Exists())
-                Load(LibraryFilePath.DefaultFile);
-            else
-                this._currentFile = LibraryFilePath.DefaultFile;
-        }
+        public SourceCache<Item, ItemId> Items { get; } = new(item => item.Id);
+        public SourceCache<ImageData, ImageDataId> Images { get; } = new(image => image.Id);
+        public SourceCache<FileData, FileDataId> Files { get; } = new(file => file.Id);
+        public SourceCache<DirectorySetup, DirectorySetupId> DirectorySetups { get; } = new(dir => dir.Id);
 
         public void Load(LibraryFilePath file)
         {
@@ -107,14 +93,16 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         }
 
         public void AutoSave()
-            =>  this._autoSaveThrottle.OnNext();
+            => _autoSaveThrottle.OnNext();
 
         /// <summary>
-        /// saves to the given file
+        ///     saves to the given file
         /// </summary>
-        /// <param name="file">the target file.<br/>
-        /// file is null (default) => save to CurrentFile<br/>
-        /// file is null and CurrentFile is null => <see cref="NullReferenceException"/> </param>
+        /// <param name="file">
+        ///     the target file.<br />
+        ///     file is null (default) => save to CurrentFile<br />
+        ///     file is null and CurrentFile is null => <see cref="NullReferenceException" />
+        /// </param>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="LibraryLoadException"></exception>
         public void Save(LibraryFilePath file = null)
@@ -132,7 +120,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
                         Items = Items.Items.ToArray(),
                         Files = Files.Items.ToArray(),
                         DirectorySetups = DirectorySetups.Items.ToArray(),
-                        Images = Images.Items.ToArray(),
+                        Images = Images.Items.ToArray()
                     });
                 file.Delete();
                 if (!file.Exists())
@@ -141,7 +129,8 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
 
                 _notificationService.AddNotification((Name)"Save Successful",
-                    (Description)$"The changes have been saved to {file}", NotificationType.Confirmation, (NotificationIdentifier)"StorageController.Save");
+                    (Description)$"The changes have been saved to {file}", NotificationType.Confirmation,
+                    (NotificationIdentifier)"StorageController.Save");
             }
             catch (Exception e)
             {
@@ -154,6 +143,14 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
             }
         }
 
+        public void OnStartup()
+        {
+            if (LibraryFilePath.DefaultFile.Exists())
+                Load(LibraryFilePath.DefaultFile);
+            else
+                _currentFile = LibraryFilePath.DefaultFile;
+        }
+
         private void ClearAllData()
         {
             Items.Clear();
@@ -164,7 +161,6 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
     }
 
     /// <summary>
-    /// 
     /// </summary>
     internal class StorageMasterObject
     {

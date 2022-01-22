@@ -1,6 +1,4 @@
-﻿using System.Reactive.Linq;
-using ReactiveUI;
-using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
+﻿using TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views

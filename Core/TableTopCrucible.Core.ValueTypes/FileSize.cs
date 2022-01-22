@@ -1,5 +1,4 @@
-﻿
-namespace TableTopCrucible.Core.ValueTypes
+﻿namespace TableTopCrucible.Core.ValueTypes
 {
     public class FileSize : ValueType<long, FileSize>
     {

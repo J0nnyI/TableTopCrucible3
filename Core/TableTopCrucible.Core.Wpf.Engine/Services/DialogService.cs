@@ -1,6 +1,4 @@
-﻿using MaterialDesignThemes.Wpf;
-using ReactiveUI;
-using TableTopCrucible.Core.DependencyInjection.Attributes;
+﻿using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Services

@@ -1,14 +1,7 @@
-﻿using DynamicData;
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
-using System.Text;
+using DynamicData;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -22,8 +15,12 @@ namespace TableTopCrucible.Core.Helper
         {
             var indexA = list.IndexOf(elementA);
             var indexB = list.IndexOf(elementB);
-            var first = indexA < indexB ? indexA : indexB;
-            var last = indexA > indexB ? indexA : indexB;
+            var first = indexA < indexB
+                ? indexA
+                : indexB;
+            var last = indexA > indexB
+                ? indexA
+                : indexB;
             return list.Skip(first).Take(last - first + 1);
         }
 

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-
-namespace TableTopCrucible.Core.ValueTypes
+﻿namespace TableTopCrucible.Core.ValueTypes
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class Version : ValueType<int, int, int, Version>
@@ -16,12 +9,14 @@ namespace TableTopCrucible.Core.ValueTypes
             get => ValueA;
             init => ValueA = value;
         }
+
         [JsonProperty]
         public int Minor
         {
             get => ValueB;
             init => ValueB = value;
         }
+
         [JsonProperty]
         public int Patch
         {

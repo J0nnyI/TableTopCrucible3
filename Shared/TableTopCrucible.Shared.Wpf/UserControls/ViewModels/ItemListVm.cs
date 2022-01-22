@@ -1,45 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using DynamicData;
 using DynamicData.Binding;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
-using TableTopCrucible.Shared.ItemSync.Services;
-using System.Linq;
-using System.Reactive.Disposables;
-using MoreLinq;
-using ReactiveUI.Fody.Helpers;
-using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Infrastructure.Repositories.Helper;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    public class ItemSelectionInfo:ReactiveObject
+    public class ItemSelectionInfo : ReactiveObject
     {
-        [Reactive]
-        public bool IsSelected { get; set; }
-        public Item Item { get; }
         public ItemSelectionInfo(Item item)
         {
-            this.Item = item;
+            Item = item;
         }
+
+        [Reactive]
+        public bool IsSelected { get; set; }
+
+        public Item Item { get; }
     }
+
     [Transient]
     public interface IItemList : IDisposable
     {
         IObservableList<Item> SelectedItems { get; }
     }
-    public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel,IDisposable
+
+    public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel, IDisposable
     {
-        public ObservableCollectionExtended<ItemSelectionInfo> Items = new();
-        private readonly List<ItemSelectionInfo> _selectedItems = new();
-        public IObservableList<Item> SelectedItems { get; }
         private readonly CompositeDisposable _disposables = new();
+        private readonly List<ItemSelectionInfo> _selectedItems = new();
+        public ObservableCollectionExtended<ItemSelectionInfo> Items = new();
+
+        private ItemSelectionInfo previouslyClickedItem;
 
         public ItemListVm(IItemRepository itemRepository)
         {
@@ -47,7 +49,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 .Data
                 .Connect()
                 .Transform(item => new ItemSelectionInfo(item))
-                .AsObservableCache()// required to make sure that all subscriber share the same item instance
+                .AsObservableCache() // required to make sure that all subscriber share the same item instance
                 .Connect();
 
             SelectedItems =
@@ -60,20 +62,22 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .AsObservableList();
             SelectedItems.Connect().Subscribe();
 
-            this.WhenActivated(() => new[]{
+            this.WhenActivated(() => new[]
+            {
                 itemSelectionSrc
-                    .SortBy(itemInfo=>itemInfo.Item.Name.Value)
+                    .SortBy(itemInfo => itemInfo.Item.Name.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Bind(Items)
-                    .Subscribe(),
+                    .Subscribe()
             });
         }
-        
+
         public ViewModelActivator Activator { get; } = new();
+        public IObservableList<Item> SelectedItems { get; }
+
         public void Dispose()
             => _disposables.Dispose();
 
-        private ItemSelectionInfo previouslyClickedItem = null;
         public void OnItemClicked(ItemSelectionInfo itemInfo, MouseButtonEventArgs e)
         {
             var curItem = itemInfo;
@@ -85,11 +89,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             if (isAltPressed)
                 return;
             if (isCtrlPressed)
+            {
                 _toggleSelection(curItem);
+            }
             else if (isShiftPressed)
             {
                 var section =
-                    this.Items
+                    Items
                         .Subsection(curItem, prevItem)
                         .ToArray();
 
@@ -100,26 +106,26 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             }
             else
             {
-                this._deselectItems(this._selectedItems.Where(x=>x != curItem).ToArray());
-                this._selectItem(curItem);
+                _deselectItems(_selectedItems.Where(x => x != curItem).ToArray());
+                _selectItem(curItem);
             }
 
             e.Handled = true;
             previouslyClickedItem = curItem;
-
         }
 
         private void _toggleSelection(ItemSelectionInfo item)
         {
-            if(item.IsSelected)
+            if (item.IsSelected)
                 _deselectItems(item);
             else
                 _selectItem(item);
         }
+
         private void _selectItem(params ItemSelectionInfo[] items)
         {
-            _selectedItems.AddRange(items.Where(item=>!item.IsSelected));
-            items.ToList().ForEach(item=>item.IsSelected = true);
+            _selectedItems.AddRange(items.Where(item => !item.IsSelected));
+            items.ToList().ForEach(item => item.IsSelected = true);
         }
 
         private void _deselectItems(params ItemSelectionInfo[] items)

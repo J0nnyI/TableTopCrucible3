@@ -2,39 +2,38 @@
                           x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.ModelViewerV"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                          xmlns:local="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.Views"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                           xmlns:hx="http://helix-toolkit.org/wpf"
-                          mc:Ignorable="d" 
+                          mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <hx:HelixViewport3D x:Name="Viewport"
                             ZoomExtentsWhenLoaded="True">
-            <hx:DefaultLights/>
-            <ModelVisual3D x:Name="ContainerVisual"/>
+            <hx:DefaultLights />
+            <ModelVisual3D x:Name="ContainerVisual" />
         </hx:HelixViewport3D>
         <Label x:Name="PlaceholderContainer" Background="#AAAAAAAA"
                VerticalContentAlignment="Center"
                HorizontalContentAlignment="Center">
             <Grid>
-                <Rectangle 
+                <Rectangle
                     Width="{Binding ElementName=PlaceholderText, Path=ActualWidth, Mode=OneWay}"
                     Height="{Binding ElementName=PlaceholderText, Path=ActualHeight, Mode=OneWay}"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
                     Fill="#FFFFFF">
                     <Rectangle.Effect>
-                        <BlurEffect Radius="10"/>
+                        <BlurEffect Radius="10" />
                     </Rectangle.Effect>
                 </Rectangle>
                 <TextBlock x:Name="PlaceholderText"
                            Foreground="{StaticResource MaterialDesignLightForeground}"
                            HorizontalAlignment="Center"
                            Padding="40"
-                           FontSize="30"/>
+                           FontSize="30" />
             </Grid>
         </Label>
     </Grid>

@@ -1,5 +1,4 @@
-﻿
-using TableTopCrucible.Core.ValueTypes.Exceptions;
+﻿using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
 {

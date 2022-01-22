@@ -25,7 +25,7 @@
                           Background="{DynamicResource HeaderBackground}"
                           Foreground="{DynamicResource MaterialDesignDarkForeground}">
                 <rx:ViewModelViewHost x:Name="NavigationList"
-                                  DockPanel.Dock="Left" />
+                                      DockPanel.Dock="Left" />
             </md:ColorZone>
 
             <md:DrawerHost x:Name="DrawerHost"

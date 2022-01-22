@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Security.Cryptography;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
@@ -21,13 +20,15 @@ namespace TableTopCrucible.Shared.Services
         void SetImageToThumbnail(ImageData image);
         void AddThumbnailToItem(Item item, ImageFilePath file);
     }
+
     internal class GalleryService : IGalleryService
     {
+        private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IFileRepository _fileRepository;
         private readonly IImageDataRepository _imageDataRepository;
         private readonly IItemRepository _itemRepository;
-        private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
+
         public GalleryService(
             IFileRepository fileRepository,
             IImageDataRepository imageDataRepository,
@@ -40,21 +41,20 @@ namespace TableTopCrucible.Shared.Services
             _itemRepository = itemRepository;
             _directorySetupRepository = directorySetupRepository;
             _notificationService = notificationService;
-
         }
 
         /// <summary>
-        /// does not generate a thumbnail, use <see cref="IThumbnailGenerationService.GenerateThumbnail"/> instead
+        ///     does not generate a thumbnail, use <see cref="IThumbnailGenerationService.GenerateThumbnail" /> instead
         /// </summary>
         /// <param name="item"></param>
         /// <param name="file"></param>
         public void AddThumbnailToItem(Item item, ImageFilePath file)
         {
             var image = AddImagesToItem(item, file).First();
-            this.SetImageToThumbnail(image);
+            SetImageToThumbnail(image);
         }
+
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="item"></param>
         /// <param name="files"></param>
@@ -76,7 +76,6 @@ namespace TableTopCrucible.Shared.Services
                     _notificationService.AddNotification((Name)"Could not add Images",
                         (Description)"You have to select an Item first.", NotificationType.Error);
                     return Enumerable.Empty<ImageData>();
-
                 }
 
                 // fileData
@@ -92,7 +91,8 @@ namespace TableTopCrucible.Shared.Services
                         .Select(filePath =>
                         {
                             var hashKey = FileHashKey.Create(filePath, hash);
-                            var foundFileData = _fileRepository[hashKey].Where(file => file.Path.Exists()).FirstOrDefault();
+                            var foundFileData = _fileRepository[hashKey].Where(file => file.Path.Exists())
+                                .FirstOrDefault();
                             var foundImageData = _imageDataRepository[hashKey].Where(img => img.ItemId == item.Id);
                             /*** priority:
                              * 1.- dir setup of the thumbnail (null if it is not in any tracked directory)
@@ -106,7 +106,9 @@ namespace TableTopCrucible.Shared.Services
                             if (foundFileData is null)
                             {
                                 var itemFile = _fileRepository[item.FileKey3d].FirstOrDefault();
-                                var modelFile = itemFile is null ? null : _fileRepository[itemFile.HashKey].FirstOrDefault();
+                                var modelFile = itemFile is null
+                                    ? null
+                                    : _fileRepository[itemFile.HashKey].FirstOrDefault();
                                 relatedDirSetup ??=
                                     (itemFile is null
                                         ? null
@@ -148,7 +150,8 @@ namespace TableTopCrucible.Shared.Services
                 var newImages =
                     hashInfo
                         .Where(x => !x.foundImageData.Any())
-                        .Select(x => new ImageData(x.filePath.GetFilenameWithoutExtension().ToName(), x.hashKey) { ItemId = item.Id })
+                        .Select(x => new ImageData(x.filePath.GetFilenameWithoutExtension().ToName(), x.hashKey)
+                            { ItemId = item.Id })
                         .ToArray();
                 _imageDataRepository.AddRange(newImages);
                 return hashInfo.SelectMany(info => info.foundImageData)
@@ -160,7 +163,8 @@ namespace TableTopCrucible.Shared.Services
                 Debugger.Break();
 
                 _notificationService.AddNotification((Name)"Could not add Images",
-                    (Description)string.Join(Environment.NewLine, "The Operation failed due to an internal error.", "error:", e.ToString()), NotificationType.Error);
+                    (Description)string.Join(Environment.NewLine, "The Operation failed due to an internal error.",
+                        "error:", e.ToString()), NotificationType.Error);
                 throw;
             }
         }
@@ -169,9 +173,9 @@ namespace TableTopCrucible.Shared.Services
         {
             _imageDataRepository
                 .GetMany(image.ItemId)
-                .Where(img=>img.IsThumbnail && img != image)
+                .Where(img => img.IsThumbnail && img != image)
                 .ToList()
-                .ForEach(img=>img.IsThumbnail = false);
+                .ForEach(img => img.IsThumbnail = false);
             image.IsThumbnail = true;
         }
     }

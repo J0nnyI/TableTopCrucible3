@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using DynamicData;
 using DynamicData.Binding;
 using TableTopCrucible.Core.Engine.Models;
@@ -7,9 +6,7 @@ using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
-using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Services
 {
@@ -29,13 +26,14 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
 
         public IObservableList<INotification> Notifications { get; }
 
-        public NotificationId AddNotification(Name title, Description content, NotificationType type, NotificationIdentifier identifier = null)
+        public NotificationId AddNotification(Name title, Description content, NotificationType type,
+            NotificationIdentifier identifier = null)
         {
             var newNotification = new SimpleNotificationVm(title, content, type, identifier);
 
             if (identifier is not null)
                 _notifications.RemoveWhere(notification => notification.Identifier == identifier);
-            
+
             _notifications.AddOrUpdate(newNotification);
             return newNotification.Id;
         }

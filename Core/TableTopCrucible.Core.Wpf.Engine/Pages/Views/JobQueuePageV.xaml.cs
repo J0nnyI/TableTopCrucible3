@@ -24,23 +24,20 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.Views
                     vm => vm.DoneQueue,
                     v => v.DoneHost.ViewModel),
 
-                this.WhenAnyObservable(v => v.ViewModel.TodoQueue.JobCountChanges)
-                    .Select(count => count.Value == 0
-                        ? null
-                        : count)
-                    .ObserveOn(RxApp.MainThreadScheduler)
+                Observable.ObserveOn<>(this.WhenAnyObservable(v => v.ViewModel.TodoQueue.JobCountChanges)
+                        .Select(count => count.Value == 0
+                            ? null
+                            : count), RxApp.MainThreadScheduler)
                     .BindTo(this, v => v.ToDoBadge.Badge),
-                this.WhenAnyObservable(v => v.ViewModel.InProgressQueue.JobCountChanges)
-                    .Select(count => count.Value == 0
-                        ? null
-                        : count)
-                    .ObserveOn(RxApp.MainThreadScheduler)
+                Observable.ObserveOn<>(this.WhenAnyObservable(v => v.ViewModel.InProgressQueue.JobCountChanges)
+                        .Select(count => count.Value == 0
+                            ? null
+                            : count), RxApp.MainThreadScheduler)
                     .BindTo(this, v => v.InProgressBadge.Badge),
-                this.WhenAnyObservable(v => v.ViewModel.DoneQueue.JobCountChanges)
-                    .Select(count => count.Value == 0
-                        ? null
-                        : count)
-                    .ObserveOn(RxApp.MainThreadScheduler)
+                Observable.ObserveOn<>(this.WhenAnyObservable(v => v.ViewModel.DoneQueue.JobCountChanges)
+                        .Select(count => count.Value == 0
+                            ? null
+                            : count), RxApp.MainThreadScheduler)
                     .BindTo(this, v => v.DoneBadge.Badge),
 
                 this.Bind(ViewModel,
