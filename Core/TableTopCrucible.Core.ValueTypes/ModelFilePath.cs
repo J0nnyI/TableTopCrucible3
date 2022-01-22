@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Windows.Media.Media3D;
+using HelixToolkit.Wpf;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -22,5 +23,11 @@ namespace TableTopCrucible.Core.ValueTypes
             => path is null ? null : From(path.Value);
         public FilePath ToFilePath()
             => FilePath.From(Value);
+
+        public Model3DGroup Load()
+            => new ModelImporter().Load(Value);
+
+        public ModelVisual3D LoadVisual()
+            => new () { Content =  Load()  };
     }
 }

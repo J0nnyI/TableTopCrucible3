@@ -26,7 +26,7 @@ namespace TableTopCrucible.Core.Helper
 
         /// <summary>
         /// adds the given objects to the cache<br/>
-        /// throws an exception if the key is already taken
+        /// throws an exception if a given key is already taken or added twice
         /// </summary>
         /// <typeparam name="TObject"></typeparam>
         /// <typeparam name="TId"></typeparam>

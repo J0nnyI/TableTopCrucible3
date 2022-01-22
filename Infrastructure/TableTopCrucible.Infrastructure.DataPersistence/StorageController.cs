@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 
 using DynamicData;
-
+using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
@@ -46,12 +49,22 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public SourceCache<ImageData, ImageDataId> Images { get; } = new(image => image.Id);
         public SourceCache<FileData, FileDataId> Files { get; } = new(file => file.Id);
         public SourceCache<DirectorySetup, DirectorySetupId> DirectorySetups { get; } = new(dir => dir.Id);
+        private Subject<Unit> _autoSaveThrottle = new();
 
         private LibraryFilePath _currentFile;
 
         public StorageController(INotificationService notificationService)
         {
             _notificationService = notificationService;
+
+            if (SettingsHelper.AutoSaveEnabled)
+            {
+                this._autoSaveThrottle
+                    .Buffer(SettingsHelper.AutoSaveThrottle)
+                    .Where(buffer=>buffer.Any())
+                    .Subscribe(_=>this.Save());
+            }
+
             OnStartup();
         }
 
@@ -94,10 +107,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         }
 
         public void AutoSave()
-        {
-            if(SettingsHelper.AutoSaveEnabled)
-                this.Save();
-        }
+            =>  this._autoSaveThrottle.OnNext();
 
         /// <summary>
         /// saves to the given file
@@ -125,7 +135,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
                         Images = Images.Items.ToArray(),
                     });
                 file.Delete();
-                if(!file.Exists())
+                if (!file.Exists())
                     file.GetDirectoryPath().Create();
                 tmpFile.Move(file);
 

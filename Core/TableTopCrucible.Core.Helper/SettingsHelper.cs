@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -7,9 +8,12 @@ namespace TableTopCrucible.Core.Helper
     public static class SettingsHelper
     {
         public static bool AutoSaveEnabled = true;
+        public static TimeSpan AutoSaveThrottle = new(0,0,0,30);
         public static TimeSpan NotificationDelay => new(0, 0, 0, 5);
         public static int FileMinLoadingScreenSize => 500000;
         public static double NotificationResolution => NotificationDelay / AnimationResolution;
+
+        public static TimeSpan AutoFileScanThrottle => TimeSpan.FromSeconds(5);
 
         //notifications
         public static bool AutoCloseEnabled => true;
@@ -23,6 +27,7 @@ namespace TableTopCrucible.Core.Helper
 
         // the last n jobs will stay in memory, everything else will be removed
         public static int DoneJobLimit => 5;
+        public static Size ThumbnailSize = new(200, 200);
 
         /// <summary>
         ///     the autoSave (subject) is buffered by this duration to prevent excessive writing

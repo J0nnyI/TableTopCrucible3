@@ -27,6 +27,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         FileData ByFilepath(FilePath path);
         IEnumerable<FileData> ByFilepath(IEnumerable<FilePath> filePaths);
+        FileData SingleByHashKey(FileHashKey fileKey);
+        IObservable<FileData> WatchSingle(FileHashKey hashKey);
 
     }
 
@@ -60,6 +62,13 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         public IObservable<IChangeSet<FileData, FileDataId>> Watch(FileHashKey hashKey)
             => Data.Connect().Filter(x => x.HashKey == hashKey);
+        public IObservable<FileData> WatchSingle(FileHashKey hashKey)
+            => Data.Connect()
+                .Filter(x => x.HashKey == hashKey)
+                .ToCollection()
+                .Select(col=>
+                    col.FirstOrDefault(file => file.Path.Exists()))
+                .DistinctUntilChanged();
 
         public IObservable<IChangeSet<FileData, FileDataId>> Watch(IObservable<FileHashKey> hashKeyChanges)
             => hashKeyChanges
@@ -71,6 +80,9 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
 
         public IEnumerable<FileData> ByFilepath(IEnumerable<FilePath> filePaths)
             => filePaths.Select(ByFilepath).Where(file=>file != null);
+
+        public FileData SingleByHashKey(FileHashKey fileKey)
+            => this[fileKey].FirstOrDefault(file => file.Path.Exists());
 
     }
 }

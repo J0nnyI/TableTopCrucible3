@@ -17,7 +17,8 @@ namespace TableTopCrucible.Core.ValueTypes
                 throw new InvalidHashSizeException(Value.Length);
         }
 
-        public static FileHash Create(FilePath filePath, HashAlgorithm hashAlgorithm)
+        public static FileHash Create<TFilePath>(FilePath<TFilePath> filePath, HashAlgorithm hashAlgorithm)
+            where TFilePath: FilePath<TFilePath>, new()
         {
             using var stream = filePath.OpenRead();
             var data = hashAlgorithm.ComputeHash(stream);

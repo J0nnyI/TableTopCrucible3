@@ -23,26 +23,33 @@ namespace TableTopCrucible.Core.Wpf.Helper
 
 
 
-
         public static BitmapSource CreateBitmap(
+            this FrameworkElement elementToRender,
+            Size? size = null,
+            bool undoTransformation = true)
+            => CreateBitmap(elementToRender as Visual, size ?? new Size(elementToRender.ActualWidth, elementToRender.ActualHeight),
+                undoTransformation);
+
+
+            public static BitmapSource CreateBitmap(
             this Visual visualToRender,
-            double width,
-            double height,
+            Size size,
             bool undoTransformation=true)
         {
             if (visualToRender == null)
             {
                 return null;
             }
-
+            
             // The PixelsPerInch() helper method is used to read the screen DPI setting.
             // If you need to create a bitmap with a specified resolution, you could directly
             // pass the specified dpiX and dpiY values to RenderTargetBitmap constructor.
-            RenderTargetBitmap bmp = new RenderTargetBitmap((Int32)Math.Ceiling(width),
-                                                            (Int32)Math.Ceiling(height),
-                                                            (Double)DeviceHelper.PixelsPerInch(Orientation.Horizontal),
-                                                            (Double)DeviceHelper.PixelsPerInch(Orientation.Vertical),
-                                                            PixelFormats.Pbgra32);
+            RenderTargetBitmap bmp = new(
+                (int)Math.Ceiling(size.Width),
+                (int)Math.Ceiling(size.Height), 
+                DeviceHelper.PixelsPerInch(Orientation.Horizontal),
+                DeviceHelper.PixelsPerInch(Orientation.Vertical), 
+                PixelFormats.Pbgra32);
 
             // If we want to undo the transform, we could use VisualBrush trick.
             if (undoTransformation)
@@ -51,7 +58,7 @@ namespace TableTopCrucible.Core.Wpf.Helper
                 using (DrawingContext dc = dv.RenderOpen())
                 {
                     VisualBrush vb = new VisualBrush(visualToRender);
-                    dc.DrawRectangle(vb, null, new Rect(new Point(), new Size(width, height)));
+                    dc.DrawRectangle(vb, null, new Rect(new Point(), size));
                 }
                 bmp.Render(dv);
             }

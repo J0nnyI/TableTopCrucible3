@@ -34,6 +34,7 @@
     <ProjectReference Include="..\Infrastructure\TableTopCrucible.Infrastructure.Wpf.Commands\TableTopCrucible.Infrastructure.Wpf.Commands.csproj" />
     <ProjectReference Include="..\Shared\TableTopCrucible.Shared.ItemSync\TableTopCrucible.Shared.ItemSync.csproj" />
     <ProjectReference Include="..\Shared\TableTopCrucible.Shared.Wpf\TableTopCrucible.Shared.Wpf.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Domain.Library\TableTopCrucible.Domain.Library.csproj" />
   </ItemGroup>
 
 

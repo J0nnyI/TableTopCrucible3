@@ -23,26 +23,37 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.ValueTypes;
+using TableTopCrucible.Core.Wpf.Helper;
+using TableTopCrucible.Domain.Library.Services;
+using TableTopCrucible.Shared.Services;
+
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
     [Transient]
     public interface IModelViewer
     {
-        public ModelFilePath Model { get; set; }
-        // will be shown instead of the model if set
-        public Message PlaceholderMessage { get; set; }
+        ModelFilePath Model { get; set; }
+        /// <summary>
+        /// will be shown instead of the model if set
+        /// </summary>
+        Message PlaceholderMessage { get; set; }
+
+        ImageFilePath GenerateThumbnail(Name sourceName);
+        public bool IsActivated { get; }
     }
     public class ModelViewerVm : ReactiveObject, IModelViewer, IActivatableViewModel
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
-        public ReactiveCommand<Unit,  ImageData> GenerateThumbnailCommand { get; }
+        private readonly IWpfThumbnailGenerationService _thumbnailService;
         public ViewModelActivator Activator { get; } = new();
 
         [Reactive]
         public ModelFilePath Model { get; set; }
         [Reactive]
         public Message PlaceholderMessage { get; set; }
+
         [Reactive]
         public bool IsLoading { get; set; }
         [Reactive]
@@ -51,33 +62,28 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public Model3DGroup ViewportContent { get; set; }
 
         public Interaction<Unit, Unit> BringIntoView { get; } = new();
-        public Interaction<ModelFilePath, ImageFilePath> GenerateThumbnail = new();
-        public ModelViewerVm(IDirectorySetupRepository directorySetupRepository, IFileRepository fileRepository, IImageDataRepository imageDataRepository)
+        public HelixViewport3D Viewport { get; set; }//dirty but works
+
+        private ObservableAsPropertyHelper<bool> _isActivated;
+        public bool IsActivated => _isActivated.Value;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceName">i.e. ItemName</param>
+        public ImageFilePath GenerateThumbnail(Name sourceName)
+            => _thumbnailService.GenerateThumbnail(Model,sourceName, Viewport);
+        public ModelViewerVm(
+            IDirectorySetupRepository directorySetupRepository,
+            IFileRepository fileRepository,
+            IImageDataRepository imageDataRepository,
+            IWpfThumbnailGenerationService thumbnailService)
         {
             _directorySetupRepository = directorySetupRepository;
-            GenerateThumbnailCommand = ReactiveCommand.Create<Unit, ImageData>( _ =>
-            {
-                var imagePath =  GenerateThumbnail.Handle(Model).Wait();
-                var newFile = new FileData(
-                    imagePath.ToFilePath(), 
-                    FileHashKey.Create(imagePath.ToFilePath()),
-                    imagePath.GetLastWriteTime());
-                fileRepository.Add(newFile);
-
-                var image = imageDataRepository[newFile.HashKey].FirstOrDefault();
-
-                if (image is not null)
-                    return image;
-
-                image = new ImageData(Model.GetFilenameWithoutExtension().ToName(), newFile.HashKey);
-                imageDataRepository.Add(image);
-
-                return image;
-            });
+            _thumbnailService = thumbnailService;
             this.WhenActivated(() => new[]
                 {
                     this.WhenAnyValue(
-                            v => v.Model, 
+                            v => v.Model,
                             v=>v.PlaceholderMessage,
                             (model, message)=>new{model, message})
                         .Do((x) =>
@@ -87,7 +93,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                                 (x.model is null
                                     ? (Message)"No File selected"
                                     : (Message)"Loading");
-                            if(x.model is null || 
+                            if(x.model is null ||
                                x.message is not null ||
                                x.model.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
                                )
@@ -129,6 +135,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             });
                         }),
             });
+
+            _isActivated = this.GetIsActivatedChanges().ToProperty(this, vm => vm.IsActivated);
         }
 
 

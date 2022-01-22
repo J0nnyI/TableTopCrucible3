@@ -8,6 +8,23 @@ using System.Reactive.Subjects;
 
 namespace TableTopCrucible.Core.Helper
 {
+    /// <summary>
+    /// executes the given action when disposed
+    /// </summary>
+    public class ActOnDispose:IDisposable
+    {
+        private readonly Action _onDispose;
+
+        public ActOnDispose(Action onCreate, Action onDispose)
+        {
+            onCreate();
+            _onDispose = onDispose;
+        }
+
+        public void Dispose()
+            => _onDispose();
+    }
+
     public static class CompositeDisposableHelper
     {
         public static void Add(this CompositeDisposable compDisposable, params IDisposable[] disposables)

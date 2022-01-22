@@ -144,10 +144,13 @@ namespace TableTopCrucible.Core.ValueTypes
         public FilePath<TThis> ChangeExtension(FileExtension extension)
             => From(Path.ChangeExtension(Value, extension.Value));
 
-        public FilePath<TThis> From(DirectoryPath directory, FileName fileName)
+        public static TThis From(DirectoryPath directory, FileName fileName)
             => From(Path.Combine(directory.Value, fileName.Value));
-        public FilePath<TThis> From(DirectoryPath directory, BareFileName fileName, FileExtension extension)
+        public static TThis From(DirectoryPath directory, BareFileName fileName, FileExtension extension)
             => From(Path.Combine(directory.Value, fileName.Value + extension));
+
+        public ModelFilePath ToModelPath()
+            => ModelFilePath.From(Value);
     }
 
     /// <summary>

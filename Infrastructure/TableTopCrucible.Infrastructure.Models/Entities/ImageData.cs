@@ -25,6 +25,10 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         [JsonProperty]
         public FileHashKey HashKey { get; set; }
 
+        [Reactive]
+        [JsonProperty]
+        public bool IsThumbnail { get; set; }
+
         [JsonProperty]
         public ItemId ItemId { get; init; }
         public ImageData()

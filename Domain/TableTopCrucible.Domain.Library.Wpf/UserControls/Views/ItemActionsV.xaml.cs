@@ -31,12 +31,16 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
             InitializeComponent();
             this.WhenActivated(() => new[]
             {
-                this.Bind(ViewModel,
+                this.BindCommand(ViewModel,
                     vm => vm.StartSyncCommand,
-                    v => v.StartSync.Command),
-                this.Bind(ViewModel,
+                    v => v.StartSync),
+                this.BindCommand(ViewModel,
                     vm => vm.DeleteAllDataCommand,
-                    v => v.DeleteAllData.Command),
+                    v => v.DeleteAllData),
+                this.BindCommand(ViewModel,
+                    vm => vm.GenerateThumbnailsCommand,
+                    v => v.GenerateThumbnails),
+
                 this.ViewModel.DeletionConfirmation.RegisterHandler(async interaction =>
                 {
                     var dialog = Locator.Current

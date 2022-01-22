@@ -19,7 +19,8 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
     public interface IImageDataRepository : IRepository<ImageDataId, ImageData>
     {
         public IEnumerable<ImageData> this[FileHashKey hashKey] { get; }
-        IObservable<IChangeSet<ImageData, ImageDataId>> ByItemId(ItemId itemId);
+        IObservable<IChangeSet<ImageData, ImageDataId>> WatchMany(ItemId itemId);
+        public IEnumerable<ImageData> GetMany(ItemId itemId);
 
     }
     internal class ImageDataRepository : RepositoryBase<ImageDataId, ImageData>, IImageDataRepository
@@ -34,9 +35,14 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 : this.Data.Items.Where(image => image.HashKey == hashKey);
 
 
-        public IObservable<IChangeSet<ImageData, ImageDataId>> ByItemId(ItemId itemId)
+        public IObservable<IChangeSet<ImageData, ImageDataId>> WatchMany(ItemId itemId)
             => itemId is null
                 ? Observable.Return(ChangeSet<ImageData, ImageDataId>.Empty)
                 : this.Data.Connect().Filter(image => image.ItemId == itemId);
+
+        public IEnumerable<ImageData> GetMany(ItemId itemId)
+            => itemId is null
+                ? Enumerable.Empty<ImageData>()
+                : Data.Items.Where(img => img.ItemId == itemId);
     }
 }

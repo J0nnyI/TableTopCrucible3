@@ -30,5 +30,8 @@ namespace TableTopCrucible.Core.ValueTypes
 
             return disposables;
         }
+
+        public BareFileName ToFileName()
+            => BareFileName.From(Value);
     }
 }

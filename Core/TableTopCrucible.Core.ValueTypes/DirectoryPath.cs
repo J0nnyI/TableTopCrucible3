@@ -180,8 +180,8 @@ namespace TableTopCrucible.Core.ValueTypes
             return EnumerateFiles()
                 .Where(f => types.Contains(f.GetFileType()));
         }
-
-        public bool ContainsFilepath<TFilePath>(TFilePath filePath)
+        
+        public bool ContainsFilepath<TFilePath>(FilePath<TFilePath> filePath)
             where TFilePath : FilePath<TFilePath>, new()
             => filePath.Value.ToLower().StartsWith(this.Value.ToLower());
     }

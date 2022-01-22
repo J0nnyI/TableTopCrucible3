@@ -86,7 +86,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 this.WhenAnyValue(vm=>vm.Item)
                     .Select(item=>
                         item is not null
-                        ? imageDataRepository.ByItemId(item.Id)
+                        ? imageDataRepository.WatchMany(item.Id)
                         : Observable.Return(ChangeSet<ImageData, ImageDataId>.Empty))
                     .Switch()
                     .SortBy(x=>x.Name.Value)

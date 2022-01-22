@@ -20,6 +20,5 @@
                      VerticalContentAlignment="Stretch"
                      HorizontalAlignment="Stretch"
                      HorizontalContentAlignment="Stretch"/>
-        <Label Name="test"/>
     </Grid>
 </rxui:ReactiveUserControl>

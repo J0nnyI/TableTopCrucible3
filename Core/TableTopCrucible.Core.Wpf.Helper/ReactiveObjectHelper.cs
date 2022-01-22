@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using ReactiveUI;
 using TableTopCrucible.Core.Helper;
 
@@ -30,5 +33,8 @@ namespace TableTopCrucible.Core.Wpf.Helper
                 return acc(disposable).Append(disposable);
             });
         }
+
+        public static IObservable<bool> GetIsActivatedChanges(this IActivatableViewModel src)
+            => src.Activator.Activated.Select(_ => true).Merge(src.Activator.Deactivated.Select(_ => false));
     }
 }
