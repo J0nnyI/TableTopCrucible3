@@ -1,17 +1,32 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
-using System.Text.Json;
+using System.Linq;
+
+using Newtonsoft.Json;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using ValueOf;
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class FilePath<TThis> : ValueOf<string, TThis> where TThis : FilePath<TThis>, new()
+    public class FilePath<TThis> : ValueType<string, TThis> where TThis : FilePath<TThis>, new()
     {
+        protected override void Validate(string value)
+        {
+            base.Validate(value);
+            if (!Path.HasExtension(value))
+                throw new InvalidValueException($"the filepath '{value}' does not contain an extension");
+            if (!Path.IsPathRooted(value))
+                throw new InvalidValueException($"the filepath '{value}' is incomplete (i.e. missing a drive letter)");
+        }
+
         public FileExtension GetExtension(bool toLower = false) =>
-            FileExtension.From(FileSystemHelper.Path.GetExtension(toLower ? Value.ToLower() : Value));
+            FileExtension.From(FileSystemHelper.Path.GetExtension(toLower
+                ? Value.ToLower()
+                : Value));
 
         public bool IsModel() => GetExtension().IsModel();
 
@@ -24,6 +39,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public FileType GetFileType() => GetExtension().GetFileType();
 
         public Stream OpenRead() => FileSystemHelper.File.OpenRead(Value);
+        public Stream OpenWrite() => FileSystemHelper.File.OpenWrite(Value);
 
         public void Delete()
         {
@@ -36,8 +52,22 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public string ReadAllText() => FileSystemHelper.File.ReadAllText(Value);
+        public T ReadAllJson<T>() => JsonSerializer.Deserialize<T>(ReadAllText());
+        public void WriteAllJson(object data) => WriteAllText(JsonConvert.SerializeObject(data));
 
         public bool Exists() => FileSystemHelper.File.Exists(Value);
+
+        public void Copy(FilePath<TThis> newPath, bool overwrite = true)
+        {
+            if (this.Exists())
+                FileSystemHelper.File.Copy(Value, newPath.Value, overwrite);
+        }
+
+        public bool IsLocatedIn(DirectoryPath directory)
+            => directory.Value.ToLower() == Value.ToLower();
+
+        public bool IsLocatedInAny(params DirectoryPath[] directories)
+            => directories.Any(IsLocatedIn);
 
         public void WriteAllText(string text)
         {
@@ -50,13 +80,6 @@ namespace TableTopCrucible.Core.ValueTypes
                 throw new FileWriteFailedException(ex);
             }
         }
-
-        protected override void Validate()
-        {
-            if (Value == null)
-                throw new InvalidValueException(nameof(Value));
-        }
-
         public void WriteObject(object data, bool createDirectory = true)
         {
             GetDirectoryPath().Create();
@@ -83,10 +106,13 @@ namespace TableTopCrucible.Core.ValueTypes
             FileSystemHelper.File.SetCreationTime(Value, time);
         }
 
+        public Uri ToUri()
+            => new(Value);
         public IFileInfo GetInfo() => FileSystemHelper.FileInfo.FromFileName(Value);
 
         // uses GetInfo, if you need other properties use that method instead
         public FileSize GetSize() => FileSize.From(GetInfo().Length);
+        public DateTime GetLastWriteTime() => GetInfo().LastWriteTime;
 
         public override int GetHashCode() => Value.ToLower().GetHashCode();
 
@@ -102,6 +128,29 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static explicit operator FilePath<TThis>(string path)
             => From(path);
+
+        /// <summary>
+        /// moves this file to a new location
+        /// </summary>
+        /// <param name="newPath"></param>
+        public void Move(FilePath<TThis> newPath)
+            => File.Move(Value, newPath?.Value ?? throw new NullReferenceException(nameof(newPath)));
+
+        /// <summary>
+        /// returns a new FilePath with the given extension. does not change the value of the object
+        /// </summary>
+        /// <param name="extension"></param>
+        /// <returns></returns>
+        public FilePath<TThis> ChangeExtension(FileExtension extension)
+            => From(Path.ChangeExtension(Value, extension.Value));
+
+        public static TThis From(DirectoryPath directory, FileName fileName)
+            => From(Path.Combine(directory.Value, fileName.Value));
+        public static TThis From(DirectoryPath directory, BareFileName fileName, FileExtension extension)
+            => From(Path.Combine(directory.Value, fileName.Value + extension));
+
+        public ModelFilePath ToModelPath()
+            => ModelFilePath.From(Value);
     }
 
     /// <summary>
@@ -109,5 +158,7 @@ namespace TableTopCrucible.Core.ValueTypes
     /// </summary>
     public class FilePath : FilePath<FilePath>
     {
+        public ImageFilePath ToImagePath()
+        => ImageFilePath.From(Value);
     }
 }

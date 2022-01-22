@@ -1,14 +1,14 @@
-﻿using ValueOf;
+﻿using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.ValueTypes
 {
-    public class JobWeight : ValueOf<double, JobWeight>
+    public class JobWeight : ValueType<double, JobWeight>
     {
         public static JobWeight Default { get; } = From(1);
 
         public static explicit operator JobWeight(double value) => From(value);
 
         public static WeightedTargetProgress operator *(TargetProgress targetProgress, JobWeight weight) =>
-            (WeightedTargetProgress) (targetProgress.Value * weight.Value);
+            (WeightedTargetProgress)(targetProgress.Value * weight.Value);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using System.Numerics;
 using System.Windows.Media.Media3D;
+using HelixToolkit.Wpf;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -71,7 +73,7 @@ namespace TableTopCrucible.Core.Helper
             {
                 X = bounds.X + bounds.SizeX / 2,
                 Y = bounds.Y + bounds.SizeY / 2,
-                Z = bounds.Z
+                Z = bounds.Z + bounds.SizeZ / 2
             };
 
         public static void SetMaterial(this Model3DGroup model, Material material)

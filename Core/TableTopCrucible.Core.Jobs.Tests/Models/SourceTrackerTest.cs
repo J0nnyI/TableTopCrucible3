@@ -1,15 +1,10 @@
-﻿using FluentAssertions;
-
-using NUnit.Framework;
-
-using ReactiveUI;
-
-using Splat;
-
-using System;
+﻿using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
+using FluentAssertions;
+using NUnit.Framework;
+using ReactiveUI;
+using Splat;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
@@ -17,36 +12,19 @@ using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.Models.Tests
+namespace TableTopCrucible.Core.Jobs.Tests.Models
 {
     [TestFixture]
     public class SourceTrackerTest : ReactiveObject
     {
-        private IProgressTrackingService progressService;
-        public ISourceTracker Tracker { get; set; }
-        public ISubscribedTrackingViewer Viewer { get; set; }
-
-
-        private CompositeDisposable _disposables;
-
-
-        Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
-        {
-            return new(ex =>
-            {
-                Assert.Fail((observable ?? typeof(T).Name) + " threw an exception: " + Environment.NewLine + ex);
-                return Observable.Empty<T>();
-            });
-        }
-
         [SetUp]
         public void BeforeEach()
         {
             Prepare.ApplicationEnvironment();
-            this.progressService = Locator.Current.GetService<IProgressTrackingService>();
+            progressService = Locator.Current.GetService<IProgressTrackingService>();
 
-            this.Tracker = progressService!.CreateSourceTracker((Name)"testTracker");
-            this.Viewer = Tracker.Subscribe();
+            Tracker = progressService!.CreateSourceTracker((Name)"testTracker");
+            Viewer = Tracker.Subscribe();
             _disposables = new CompositeDisposable(
                 Tracker,
                 Viewer
@@ -57,6 +35,23 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         public void AfterEach()
         {
             _disposables?.Dispose();
+        }
+
+        private IProgressTrackingService progressService;
+        public ISourceTracker Tracker { get; set; }
+        public ISubscribedTrackingViewer Viewer { get; set; }
+
+
+        private CompositeDisposable _disposables;
+
+
+        private Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
+        {
+            return ex =>
+            {
+                Assert.Fail((observable ?? typeof(T).Name) + " threw an exception: " + Environment.NewLine + ex);
+                return Observable.Empty<T>();
+            };
         }
 
         [Test]
@@ -81,10 +76,10 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Viewer.JobState.Should().Be(JobState.InProgress);
             Viewer.CurrentProgress.Value.Should().Be(3, "1 => 3");
         }
+
         [Test]
         public void UnderFillScenario()
         {
-
             Tracker.SetTarget((TargetProgress)5);
 
             Tracker.Increment();
@@ -93,7 +88,6 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Viewer.JobState.Should().Be(JobState.Done);
             Viewer.CurrentProgress.Value.Should().Be(Viewer.TargetProgress.Value);
         }
-
 
 
         [Test]
@@ -154,7 +148,6 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Tracker.Increment();
             lateProgress.Should().Be(Viewer.CurrentProgress).And.Be((CurrentProgress)5);
             jobState.Should().Be(Viewer.JobState).And.Be(JobState.Done);
-
         }
     }
 }

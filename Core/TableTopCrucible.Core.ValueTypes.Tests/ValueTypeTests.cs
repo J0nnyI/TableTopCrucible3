@@ -10,7 +10,7 @@ namespace TableTopCrucible.Core.ValueTypes.Tests
         private FileHash buildHash(int seed = 1) =>
             FileHash.From(Enumerable.Range(seed, 64).Select(Convert.ToByte).ToArray());
 
-        private FileHashKey buildHashKey(int seed = 1) => FileHashKey.From((buildHash(seed), FileSize.From(seed)));
+        private FileHashKey buildHashKey(int seed = 1) => FileHashKey.From(FileSize.From(seed),buildHash(seed));
 
         private void testEquality<T>(Func<T> factory, Func<T> factoryVariant, string description = null)
         {

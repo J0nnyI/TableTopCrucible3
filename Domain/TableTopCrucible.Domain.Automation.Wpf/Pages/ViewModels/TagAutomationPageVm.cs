@@ -1,8 +1,5 @@
-﻿
-using MaterialDesignThemes.Wpf;
-
+﻿using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
@@ -13,8 +10,8 @@ namespace TableTopCrucible.Domain.Automation.Wpf.Pages.ViewModels
     [Singleton]
     public interface ITagAutomationPage : INavigationPage
     {
-
     }
+
     public class TagAutomationPageVm : ReactiveObject, IActivatableViewModel, ITagAutomationPage
     {
         public ViewModelActivator Activator { get; } = new();

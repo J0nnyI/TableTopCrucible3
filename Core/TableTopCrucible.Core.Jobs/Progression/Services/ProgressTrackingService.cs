@@ -2,10 +2,7 @@
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
 using DynamicData;
-using DynamicData.Aggregation;
-using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
@@ -31,9 +28,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
 
     internal class ProgressTrackingService : IProgressTrackingService, IDisposable
     {
-        private CompositeDisposable _disposables = new();
-        private readonly SourceList<ITrackingViewer> trackerList = new();
         private readonly IObservableList<ITrackingViewer> _completedJobs;
+        private readonly SourceList<ITrackingViewer> trackerList = new();
+        private readonly CompositeDisposable _disposables = new();
 
         public ProgressTrackingService()
         {
@@ -51,7 +48,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                                     / progresses.Count
                                 )
                     )
-                    .Select(progress => progress < (CurrentProgressPercent)100 ? progress : (CurrentProgressPercent)0)
+                    .Select(progress => progress < (CurrentProgressPercent)100
+                        ? progress
+                        : (CurrentProgressPercent)0)
                 )
                 .Switch()
                 .DistinctUntilChanged()
@@ -65,18 +64,9 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
                 .AsObservableList();
         }
 
-        private void _limitDoneTrackers(ITrackingViewer tracker)
-        {
-            tracker.OnDone()
-                .Take(1)
-                .Subscribe(_ =>
-                {
-                    if (_completedJobs.Count >= SettingsHelper.DoneJobLimit)
-                        trackerList.Remove(_completedJobs.Items.First());
+        public void Dispose()
+            => _disposables.Dispose();
 
-                });
-
-        }
         public ICompositeTracker CreateCompositeTracker(Name title = null)
         {
             var tracker = new CompositeTracker(title);
@@ -95,7 +85,16 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
 
         public IObservableList<ITrackingViewer> TrackerList => trackerList.AsObservableList();
         public IObservable<CurrentProgressPercent> TotalProgress { get; }
-        public void Dispose()
-           => _disposables.Dispose();
+
+        private void _limitDoneTrackers(ITrackingViewer tracker)
+        {
+            tracker.OnDone()
+                .Take(1)
+                .Subscribe(_ =>
+                {
+                    if (_completedJobs.Count >= SettingsHelper.DoneJobLimit)
+                        trackerList.Remove(_completedJobs.Items.First());
+                });
+        }
     }
 }

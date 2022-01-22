@@ -1,27 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using FluentValidation.Results;
-
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.ValueTypes;
-using ValueOf;
+using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Core.Wpf.Engine.ValueTypes
 {
-    public class JobFilter : ValueOf<Func<ITrackingViewer, IObservable<bool>>, JobFilter>
+    public class JobFilter : ValueType<Func<ITrackingViewer, IObservable<bool>>, JobFilter>
     {
-        public string Description { get; private set; }
         public static readonly JobFilter All = From(_ => Observable.Return(true), "All Jobs");
+        public string Description { get; private set; }
 
         public static JobFilter FromState(JobState filterState)
             => From(viewer => viewer
-                .JobStateChanges
-                .Select(state => state == filterState),
+                    .JobStateChanges
+                    .Select(state => state == filterState),
                 "filter by state " + filterState);
 
         public static JobFilter From(Func<ITrackingViewer, IObservable<bool>> value, string description)
@@ -29,12 +23,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.ValueTypes
             var res = From(value);
             res.Description = description;
             return res;
-        }
-
-        protected override void Validate()
-        {
-            if (Value == null)
-                throw new ArgumentNullException(nameof(Value));
         }
     }
 }

@@ -13,11 +13,11 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
     {
         private readonly IObservable<CurrentProgress> _accumulatedProgressChanges;
         private readonly BehaviorSubject<bool> _completedChanges = new(false);
+        private readonly CompositeDisposable _disposables = new();
 
         private readonly ReplaySubject<ProgressIncrement> _increments = new();
 
-        private readonly BehaviorSubject<TargetProgress> _targetProgressChanges = new((TargetProgress) 1);
-        private readonly CompositeDisposable _disposables = new ();
+        private readonly BehaviorSubject<TargetProgress> _targetProgressChanges = new((TargetProgress)1);
 
         public SourceTracker(Name title, TargetProgress trackingTarget)
         {
@@ -31,23 +31,23 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
 
             _accumulatedProgressChanges =
                 _increments
-                    .StartWith((ProgressIncrement) 0)
-                    .Scan((CurrentProgress) 0, (acc, inc) => acc + inc);
+                    .StartWith((ProgressIncrement)0)
+                    .Scan((CurrentProgress)0, (acc, inc) => acc + inc);
 
             CurrentProgressChanges =
                 _accumulatedProgressChanges.CombineLatest(TargetProgressChanges,
-                    _completedChanges,
-                    (current, target, completed) => 
-                        completed || current > target 
-                            ? (CurrentProgress) target 
-                            : current
-                )
-                .Replay(1)
-                .ConnectUntil(_disposables);
+                        _completedChanges,
+                        (current, target, completed) =>
+                            completed || current > target
+                                ? (CurrentProgress)target
+                                : current
+                    )
+                    .Replay(1)
+                    .ConnectUntil(_disposables);
         }
 
         public Name Title { get; }
-        
+
         public void Complete()
         {
             if (_completedChanges.Value)
@@ -55,24 +55,22 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
             _completedChanges.OnNext(true);
         }
 
-        public IObservable<JobState> JobStateChanges => 
-            Observable.CombineLatest(
-                _accumulatedProgressChanges.Do(x => { }),
-                _targetProgressChanges.Do(x => { }),
-                _completedChanges.Do(x => { }),
-                (current, target, completed) =>
-                {
-                    if (completed)
-                        return JobState.Done;
-                    if (current == (TargetProgress) 0)
-                        return JobState.ToDo;
-                    if (current >= target)
-                        return JobState.Done;
-                    return JobState.InProgress;
-                })
-            .DistinctUntilChanged()
-            .Replay(1)
-            .ConnectUntil(this._disposables);
+        public IObservable<JobState> JobStateChanges =>
+            _accumulatedProgressChanges.Do(x => { }).CombineLatest(_targetProgressChanges.Do(x => { }),
+                    _completedChanges.Do(x => { }),
+                    (current, target, completed) =>
+                    {
+                        if (completed)
+                            return JobState.Done;
+                        if (current == (TargetProgress)0)
+                            return JobState.ToDo;
+                        if (current >= target)
+                            return JobState.Done;
+                        return JobState.InProgress;
+                    })
+                .DistinctUntilChanged()
+                .Replay(1)
+                .ConnectUntil(_disposables);
 
         public IObservable<CurrentProgress> CurrentProgressChanges { get; }
 
@@ -87,11 +85,10 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
         {
             lock (_increments)
             {
-                _increments.OnNext(increment ?? (ProgressIncrement) 1);
+                _increments.OnNext(increment ?? (ProgressIncrement)1);
             }
         }
 
-        public override string ToString() => $"S {Title}";
         public void Dispose()
         {
             // the completion has to be delayed since the b-subjects seem to push no longer values once they are completed (runtime only?)
@@ -101,13 +98,16 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
             {
                 _increments.OnCompleted();
             }
+
             _disposables.Dispose();
         }
+
+        public override string ToString() => $"S {Title}";
     }
 
     internal class WeightedSourceTracker : SourceTracker, IWeightedTrackingViewer
     {
-        public WeightedSourceTracker(Name title, TargetProgress trackingTarget, JobWeight weight) 
+        public WeightedSourceTracker(Name title, TargetProgress trackingTarget, JobWeight weight)
             : base(title, trackingTarget)
         {
             Weight = weight ?? JobWeight.Default;

@@ -1,20 +1,16 @@
-﻿using Microsoft.Extensions.Hosting;
-
+﻿using System.Linq;
+using Microsoft.Extensions.Hosting;
 using ReactiveUI;
-
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.Logging;
-
-using System.Linq;
-
 using TableTopCrucible.Core.DependencyInjection;
 using TableTopCrucible.Core.Helper;
 
 namespace TableTopCrucible.Core.Wpf.Engine
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    ///     Interaction logic for App.xaml
     /// </summary>
     public static class EngineStarter
     {
@@ -29,29 +25,25 @@ namespace TableTopCrucible.Core.Wpf.Engine
         private static void initializeHost()
         {
             Host
-            .CreateDefaultBuilder()
-            .ConfigureServices(services =>
-            {
-                services.UseMicrosoftDependencyResolver();
-                var resolver = Locator.CurrentMutable;
-                resolver.InitializeSplat();
-                resolver.InitializeReactiveUI();
-
-
-                DependencyBuilder.GetServices(services);
-            })
-            .ConfigureLogging(loggingBuilder =>
-            {
-                loggingBuilder.AddSplat();
-            })
-            .UseEnvironment(
+                .CreateDefaultBuilder()
+                .ConfigureServices(services =>
+                {
+                    services.UseMicrosoftDependencyResolver();
+                    services.AddTtcServices();
+                  
+                    var resolver = Locator.CurrentMutable;
+                    resolver.InitializeSplat();
+                    resolver.InitializeReactiveUI();
+                })
+                .ConfigureLogging(loggingBuilder => { loggingBuilder.AddSplat(); })
+                .UseEnvironment(
 #if DEBUG
-                Environments.Development
+                    Environments.Development
 #else
             Environments.Production
 #endif
-            )
-            .Build();
+                )
+                .Build();
         }
 
         private static void initializeWpf()

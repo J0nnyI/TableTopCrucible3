@@ -14,6 +14,7 @@ namespace ReactiveUI
             IScheduler outputScheduler = null,
             IScheduler canExecuteScheduler = null)
             => Create(execute, null, out result, outputScheduler, canExecuteScheduler);
+
         public static ReactiveCommand<Unit, Unit> Create(
             Action execute,
             [AllowNull] IObservable<bool> canExecute,
@@ -21,6 +22,7 @@ namespace ReactiveUI
             IScheduler outputScheduler = null,
             IScheduler canExecuteScheduler = null)
             => result = ReactiveCommand.Create(execute, canExecute, outputScheduler, canExecuteScheduler);
+
         public static ReactiveCommand<Unit, Unit> Create(
             Action execute,
             IObservable<bool> canExecute = null,
@@ -32,12 +34,14 @@ namespace ReactiveUI
             resultWriter!.Invoke(result);
             return result;
         }
+
         public static ReactiveCommand<Unit, Unit> Create(
             Action execute,
             [NotNull] Action<ReactiveCommand<Unit, Unit>> resultWriter = null,
             IScheduler outputScheduler = null,
             IScheduler canExecuteScheduler = null)
             => Create(execute, null, resultWriter, outputScheduler, canExecuteScheduler);
+
         public static ReactiveCommand<T, Unit> Create<T>(
             Action<T> execute,
             [NotNull] Action<ReactiveCommand<T, Unit>> resultWriter = null,

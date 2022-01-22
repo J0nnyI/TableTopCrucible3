@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ValueOf;
+﻿using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.ValueTypes
 {
-    public class JobCount:ValueOf<int, JobCount>
+    public class JobCount : ValueType<int, JobCount>
     {
     }
 }

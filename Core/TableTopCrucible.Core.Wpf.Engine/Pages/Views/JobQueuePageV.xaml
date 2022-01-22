@@ -2,85 +2,80 @@
                           x:Class="TableTopCrucible.Core.Wpf.Engine.Pages.Views.JobQueuePageV"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                          xmlns:local="clr-namespace:TableTopCrucible.Core.Wpf.Engine.Pages.Views"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-                          mc:Ignorable="d" 
+                          mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <Style TargetType="Expander"
                BasedOn="{StaticResource MaterialDesignExpander}">
             <Setter Property="Background"
-                    Value="Transparent"/>
+                    Value="Transparent" />
             <Setter Property="Padding"
-                    Value="24 0"/>
+                    Value="24 0" />
         </Style>
     </UserControl.Resources>
-    <ScrollViewer VerticalScrollBarVisibility="Visible"
-                  >
+    <ScrollViewer VerticalScrollBarVisibility="Visible">
         <StackPanel Margin="0 0 -16 0">
             <Expander x:Name="ToDoExpander">
                 <Expander.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Not Started"
-                                   Style="{StaticResource SidebarSubTitle}"/>
+                                   Style="{StaticResource SidebarSubTitle}" />
                         <md:Badged x:Name="ToDoBadge"
                                    ToolTip="Number of Jobs in this List"
                                    BadgePlacementMode="Right"
                                    Grid.Column="1"
                                    VerticalAlignment="Center"
-                                   HorizontalAlignment="Right">
-                        </md:Badged>
+                                   HorizontalAlignment="Right" />
                     </Grid>
                 </Expander.Header>
-                <rxui:ViewModelViewHost x:Name="ToDoHost"/>
+                <rxui:ViewModelViewHost x:Name="ToDoHost" />
             </Expander>
             <Expander x:Name="InProgressExpander">
                 <Expander.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="In Progress"
-                                   Style="{StaticResource SidebarSubTitle}"/>
+                                   Style="{StaticResource SidebarSubTitle}" />
                         <md:Badged x:Name="InProgressBadge"
                                    ToolTip="Number of Jobs in this List"
                                    BadgePlacementMode="Right"
                                    Grid.Column="1"
                                    VerticalAlignment="Center"
-                                   HorizontalAlignment="Right">
-                        </md:Badged>
+                                   HorizontalAlignment="Right" />
                     </Grid>
                 </Expander.Header>
-                <rxui:ViewModelViewHost x:Name="InProgressHost"/>
+                <rxui:ViewModelViewHost x:Name="InProgressHost" />
             </Expander>
             <Expander x:Name="DoneExpander">
                 <Expander.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Done"
-                                   Style="{StaticResource SidebarSubTitle}"/>
+                                   Style="{StaticResource SidebarSubTitle}" />
                         <md:Badged x:Name="DoneBadge"
                                    ToolTip="Number of Jobs in this List"
                                    BadgePlacementMode="Right"
                                    Grid.Column="1"
                                    VerticalAlignment="Center"
-                                   HorizontalAlignment="Right">
-                        </md:Badged>
+                                   HorizontalAlignment="Right" />
                     </Grid>
                 </Expander.Header>
-                <rxui:ViewModelViewHost x:Name="DoneHost"/>
+                <rxui:ViewModelViewHost x:Name="DoneHost" />
             </Expander>
         </StackPanel>
     </ScrollViewer>

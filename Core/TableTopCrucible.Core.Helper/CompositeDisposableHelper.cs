@@ -8,6 +8,23 @@ using System.Reactive.Subjects;
 
 namespace TableTopCrucible.Core.Helper
 {
+    /// <summary>
+    /// executes the given action when disposed
+    /// </summary>
+    public class ActOnDispose:IDisposable
+    {
+        private readonly Action _onDispose;
+
+        public ActOnDispose(Action onCreate, Action onDispose)
+        {
+            onCreate();
+            _onDispose = onDispose;
+        }
+
+        public void Dispose()
+            => _onDispose();
+    }
+
     public static class CompositeDisposableHelper
     {
         public static void Add(this CompositeDisposable compDisposable, params IDisposable[] disposables)
@@ -21,8 +38,9 @@ namespace TableTopCrucible.Core.Helper
         }
 
         /// <summary>
-        /// returns a subject which is fired when the composite disposable is being disposed.
-        /// since this subject uses an internal helper, the result of this method should be stored as field and not called each time requiring the subject.
+        ///     returns a subject which is fired when the composite disposable is being disposed.
+        ///     since this subject uses an internal helper, the result of this method should be stored as field and not called each
+        ///     time requiring the subject.
         /// </summary>
         /// <param name="compDisposable"></param>
         /// <returns></returns>
@@ -31,9 +49,15 @@ namespace TableTopCrucible.Core.Helper
 
         private sealed class DisposeEmitter : IDisposable
         {
+            private readonly Subject<Unit> _onDisposed = new();
+            private bool disposed;
+
+            private DisposeEmitter()
+            {
+            }
+
             public IObservable<Unit> OnDisposed => _onDisposed.AsObservable();
-            private readonly Subject<Unit> _onDisposed = new ();
-            private bool disposed = false;
+
             public void Dispose()
             {
                 if (disposed)
@@ -42,7 +66,6 @@ namespace TableTopCrucible.Core.Helper
                 _onDisposed.OnNext(Unit.Default);
                 _onDisposed.Dispose();
             }
-            private DisposeEmitter() { }
 
             public static DisposeEmitter ForComposite(CompositeDisposable compositeDisposable)
                 => new DisposeEmitter().DisposeWith(compositeDisposable);

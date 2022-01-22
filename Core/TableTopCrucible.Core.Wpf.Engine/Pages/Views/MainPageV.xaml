@@ -1,74 +1,85 @@
 ﻿<rx:ReactiveUserControl x:Class="TableTopCrucible.Core.Wpf.Engine.Pages.Views.MainPageV"
-                   x:TypeArguments="pvm:MainPageVm"
-                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                   xmlns:rx="http://reactiveui.net"
-                   xmlns:pvm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels"
-                   xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-                   mc:Ignorable="d"
-                   d:DataContext="{d:DesignInstance pvm:MainPageVm}">
-    <md:DialogHost Identifier="{Binding}">
+                        x:TypeArguments="pvm:MainPageVm"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:rx="http://reactiveui.net"
+                        xmlns:pvm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels"
+                        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                        mc:Ignorable="d"
+                        d:DataContext="{d:DesignInstance pvm:MainPageVm}">
+    <md:DialogHost Identifier="List">
         <DockPanel VerticalAlignment="Stretch"
                    HorizontalAlignment="Stretch">
             <rx:ViewModelViewHost x:Name="AppHeader"
                                   md:ShadowAssist.ShadowEdges="Bottom"
                                   md:ShadowAssist.Darken="True"
                                   md:ShadowAssist.ShadowDepth="Depth3"
-                                  DockPanel.Dock="Top"/>
-            <rx:ViewModelViewHost x:Name="NavigationList"
-                                  DockPanel.Dock="Left"/>
+                                  DockPanel.Dock="Top" />
+            <!--  left  -->
+            <md:ColorZone UseLayoutRounding="True"
+                          VerticalAlignment="Stretch"
+                          md:ShadowAssist.ShadowDepth="Depth2"
+                          Mode="Custom"
+                          Background="{DynamicResource HeaderBackground}"
+                          Foreground="{DynamicResource MaterialDesignDarkForeground}">
+                <rx:ViewModelViewHost x:Name="NavigationList"
+                                  DockPanel.Dock="Left" />
+            </md:ColorZone>
+
             <md:DrawerHost x:Name="DrawerHost"
                            md:ShadowAssist.ShadowDepth="Depth0"
                            OpenMode="Standard">
+                <!--  right  -->
                 <md:DrawerHost.RightDrawerContent>
-                    <md:ColorZone Mode="Dark" 
-                                  Background="{DynamicResource SidebarBackground}"
+                    <md:ColorZone Mode="Dark"
+                                  Background="{DynamicResource HeaderBackground}"
+                                  Foreground="{DynamicResource MaterialDesignDarkForeground}"
                                   VerticalAlignment="Stretch">
                         <Grid x:Name="SidebarGrid">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Name="SidebarTitle"
                                        Style="{StaticResource SidebarTitle}"
                                        Margin="24 0 0 0"
                                        VerticalAlignment="Center"
                                        Grid.Row="0"
-                                       Grid.Column="0"/>
+                                       Grid.Column="0" />
                             <Button x:Name="CloseSidebar"
                                     Content="{md:PackIcon Kind=Close}"
                                     Style="{StaticResource MaterialDesignIconButton}"
                                     Margin="12"
                                     VerticalAlignment="Center"
                                     Grid.Row="0"
-                                    Grid.Column="1"/>
+                                    Grid.Column="1" />
                             <rx:ViewModelViewHost x:Name="SidebarContainer"
                                                   Grid.Row="1"
                                                   Grid.Column="0"
-                                                  Grid.ColumnSpan="2"/>
+                                                  Grid.ColumnSpan="2" />
                         </Grid>
                     </md:ColorZone>
                 </md:DrawerHost.RightDrawerContent>
 
 
+                <!--  center  -->
                 <md:ColorZone VerticalAlignment="Stretch"
-                              Background="{DynamicResource WorkspaceBackground}"
-                >
+                              Background="{DynamicResource WorkspaceBackground}">
                     <Grid>
-                        <rx:ViewModelViewHost x:Name="MainContainer"/>
+                        <rx:ViewModelViewHost x:Name="MainContainer" />
                         <rx:ViewModelViewHost x:Name="NotificationList"
                                               VerticalAlignment="Top"
                                               HorizontalAlignment="Right"
                                               Margin="0 16 0 0"
                                               MinWidth="700"
                                               MaxWidth="500"
-                                              Opacity=".7"/>
+                                              Opacity=".7" />
                     </Grid>
                 </md:ColorZone>
             </md:DrawerHost>

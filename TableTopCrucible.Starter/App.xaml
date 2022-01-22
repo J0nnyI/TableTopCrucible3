@@ -9,9 +9,11 @@
             <ResourceDictionary.MergedDictionaries>
                 <md:CustomColorTheme PrimaryColor="#FFF19E27"
                                      SecondaryColor="#FFF18528"
-                                     BaseTheme="Dark"/>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/TableTopCrucible.Core.Wpf.Engine;component/Themes/Dark.xaml" />
+                                     BaseTheme="Dark" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/TableTopCrucible.Core.Wpf.Engine;component/Themes/Dark.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -3,10 +3,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-
 using DynamicData;
-
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
@@ -16,11 +13,11 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
     // tracks a composite progress and returns the weighted total progress
     internal class CompositeTracker : ICompositeTracker, ITrackingViewer, IDisposable
     {
-        private CompositeDisposable _disposables = new();
-        private readonly IObservable<Unit> _onDestroy;
         public static readonly WeightedTargetProgress Target = (WeightedTargetProgress)100;
+        private readonly IObservable<Unit> _onDestroy;
 
         private readonly SourceList<IWeightedTrackingViewer> _trackerStack = new();
+        private readonly CompositeDisposable _disposables = new();
 
         public CompositeTracker(Name title)
         {
@@ -78,7 +75,7 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
                 .Switch()
                 .StartWith((WeightedCurrentProgress)0)
                 .DistinctUntilChanged()
-                .TakeUntil(this._onDestroy)
+                .TakeUntil(_onDestroy)
                 .Replay()
                 .ConnectUntil(_disposables);
 
@@ -142,9 +139,10 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
             return tracker;
         }
 
-        public override string ToString() => $"C {Title}";
         public void Dispose()
-        => _disposables.Dispose();
+            => _disposables.Dispose();
+
+        public override string ToString() => $"C {Title}";
     }
 
     internal class WeightedCompositeTracker : CompositeTracker, IWeightedTrackingViewer

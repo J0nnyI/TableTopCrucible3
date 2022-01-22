@@ -1,5 +1,4 @@
 ﻿using ReactiveUI;
-
 using TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels;
 
 namespace TableTopCrucible.Domain.Settings.Wpf.Pages.Views
@@ -12,8 +11,8 @@ namespace TableTopCrucible.Domain.Settings.Wpf.Pages.Views
             this.WhenActivated(() => new[]
             {
                 this.Bind(ViewModel,
-                    vm=>vm.DirectorySetupList,
-                    v=>v.DirectorySetupList.ViewModel),
+                    vm => vm.DirectorySetupList,
+                    v => v.DirectorySetupList.ViewModel)
             });
         }
     }

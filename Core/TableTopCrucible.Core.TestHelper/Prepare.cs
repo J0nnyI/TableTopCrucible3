@@ -1,7 +1,6 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
-using System.Reactive.Concurrency;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Reactive.Testing;
 using ReactiveUI;
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
@@ -14,30 +13,35 @@ namespace TableTopCrucible.Core.TestHelper
     public static class Prepare
     {
         // prepares an integration application environment
-        public static void ApplicationEnvironment(bool includeAutoMapper = false)
+        public static IHost ApplicationEnvironment()
         {
-            Host
+            return Host
                 .CreateDefaultBuilder()
-                .ConfigureServices(services =>
-                {
-                    services.UseMicrosoftDependencyResolver();
-                    var resolver = Locator.CurrentMutable;
-                    resolver.InitializeSplat();
-                    resolver.InitializeReactiveUI();
-
-
-                    DependencyBuilder.GetServices(services, includeAutoMapper);
-
-                    services.ReplaceFileSystem<MockFileSystem>();
-                    services.UseMicrosoftDependencyResolver();
-                    Locator.CurrentMutable.InitializeSplat();
-                    Locator.CurrentMutable.InitializeReactiveUI();
-                })
+                .ConfigureServices(Services)
                 .ConfigureLogging(loggingBuilder => { loggingBuilder.AddSplat(); })
                 .UseEnvironment(
                     Environments.Development
                 )
                 .Build();
+        }
+
+        public static IServiceCollection Services()
+        {
+            var services = new ServiceCollection();
+            Services(services);
+            return services;
+        }
+        public static void Services(IServiceCollection services)
+        {
+            services.UseMicrosoftDependencyResolver();
+            var resolver = Locator.CurrentMutable;
+            resolver.InitializeSplat();
+            resolver.InitializeReactiveUI();
+
+
+            DependencyBuilder.AddTtcServices(services);
+
+            services.ReplaceFileSystem<MockFileSystem>();
         }
     }
 }

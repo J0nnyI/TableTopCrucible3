@@ -1,21 +1,21 @@
-﻿using ValueOf;
+﻿using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Jobs.ValueTypes
 {
-    public class CurrentProgress : ValueOf<double, CurrentProgress>
+    public class CurrentProgress : ValueType<double, CurrentProgress>
     {
         public static explicit operator CurrentProgress(double value) => From(value);
 
         public static CurrentProgress operator +(CurrentProgress current, ProgressIncrement increment) =>
-            (CurrentProgress) ((current?.Value ?? 0) + (increment?.Value ?? 0));
+            (CurrentProgress)((current?.Value ?? 0) + (increment?.Value ?? 0));
 
         public static WeightedCurrentProgress operator *(CurrentProgress current, JobWeight weight) =>
-            (WeightedCurrentProgress) ((current?.Value ?? 0) * (weight?.Value ?? 0));
+            (WeightedCurrentProgress)((current?.Value ?? 0) * (weight?.Value ?? 0));
 
         public static explicit operator CurrentProgress(WeightedCurrentProgress current) =>
-            (CurrentProgress) current.Value;
+            (CurrentProgress)current.Value;
 
-        public static explicit operator CurrentProgress(TargetProgress current) => (CurrentProgress) current.Value;
+        public static explicit operator CurrentProgress(TargetProgress current) => (CurrentProgress)current.Value;
 
         public static bool operator ==(CurrentProgress cur, TargetProgress target) =>
             (cur?.Value ?? 0).Equals(target?.Value ?? 0);

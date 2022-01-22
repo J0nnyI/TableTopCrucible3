@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -33,7 +34,7 @@ namespace TableTopCrucible.Core.Helper
         public static IObservable<PreviousAndCurrentValue<T>> Pairwise<T>(this IObservable<T> src,
             bool skipInitial = true)
         {
-            return src.Scan(new PreviousAndCurrentValue<T> {Type = PCValueType.Seed},
+            return src.Scan(new PreviousAndCurrentValue<T> { Type = PCValueType.Seed },
                     (previous, current) =>
                         new PreviousAndCurrentValue<T>(previous.Current, current, previous.Type))
                 .Where(x =>
@@ -68,6 +69,20 @@ namespace TableTopCrucible.Core.Helper
             return AnimateValue(from, v => v + stepSize, duration, scheduler);
         }
 
+        /// <summary>
+        ///     connects to the source until the compositeDisposable is disposed of
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="disposeWith"></param>
+        /// <returns></returns>
+        public static IConnectableObservable<T> ConnectUntil<T>(this IConnectableObservable<T> source,
+            CompositeDisposable disposeWith)
+        {
+            source.Connect().DisposeWith(disposeWith);
+            return source;
+        }
+
         internal enum PCValueType : byte
         {
             Seed = 1,
@@ -75,17 +90,7 @@ namespace TableTopCrucible.Core.Helper
             Full = 3
         }
 
-        /// <summary>
-        /// connects to the source until the compositeDisposable is disposed of
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="disposeWith"></param>
-        /// <returns></returns>
-        public static IConnectableObservable<T> ConnectUntil<T>(this IConnectableObservable<T> source, CompositeDisposable disposeWith)
-        {
-            source.Connect().DisposeWith(disposeWith);
-            return source;
-        }
+        public static void OnNext(this ISubject<Unit> subject)
+            => subject.OnNext(Unit.Default);
     }
 }

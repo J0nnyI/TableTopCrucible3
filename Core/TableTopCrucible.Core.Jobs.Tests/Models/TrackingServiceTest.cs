@@ -1,39 +1,29 @@
-﻿using FluentAssertions;
-
-using NUnit.Framework;
-
-using ReactiveUI;
-
-using Splat;
-
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using FluentAssertions;
+using NUnit.Framework;
+using ReactiveUI;
+using Splat;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 
-namespace TableTopCrucible.Core.Jobs.Models.Tests
+namespace TableTopCrucible.Core.Jobs.Tests.Models
 {
-    [TestFixture()]
+    [TestFixture]
     public class TrackingServiceTests : ReactiveObject
     {
-        private IProgressTrackingService progressService;
-
-        private CompositeDisposable _disposables;
-
-
         [SetUp]
         public void BeforeEach()
         {
             Prepare.ApplicationEnvironment();
-            this.progressService = Locator.Current.GetService<IProgressTrackingService>();
-            _disposables = new();
+            progressService = Locator.Current.GetService<IProgressTrackingService>();
+            _disposables = new CompositeDisposable();
         }
 
         [TearDown]
@@ -41,6 +31,10 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         {
             _disposables?.Dispose();
         }
+
+        private IProgressTrackingService progressService;
+
+        private CompositeDisposable _disposables;
 
         [Test]
         public void TotalProgress_NoLateAdds()
@@ -61,6 +55,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             srcB.Increment();
             progress.Should().Be((CurrentProgressPercent)0);
         }
+
         [Test]
         public void TotalProgress_LateAdds()
         {
@@ -108,6 +103,5 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             emittedValues.Count.Should().Be(1);
             lastProgress.Should().Be((CurrentProgressPercent)0);
         }
-
     }
 }

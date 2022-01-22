@@ -1,12 +1,10 @@
-﻿
-using ReactiveUI;
-
+﻿using ReactiveUI;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 {
     /// <summary>
-    /// Interaction logic for YesNoDialog.xaml
+    ///     Interaction logic for YesNoDialog.xaml
     /// </summary>
     public partial class YesNoDialogV : ReactiveUserControl<YesNoDialogVm>, IActivatableView
     {
@@ -23,8 +21,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     v => v.YesButton.Command),
                 this.Bind(ViewModel,
                     vm => vm.NoClickedCommand,
-                    v =>   v.NoButton.Command),
-
+                    v => v.NoButton.Command)
             });
         }
     }

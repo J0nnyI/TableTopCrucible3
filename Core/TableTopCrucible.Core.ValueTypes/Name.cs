@@ -5,17 +5,16 @@ using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Extensions;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using ValueOf;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class Name : ValueOf<string, Name>, IComparable<Name>
+    public class Name : ValueType<string, Name>, IComparable<Name>
     {
         public int CompareTo(Name other) => Value?.CompareTo(other?.Value) ?? 0;
 
-        protected override void Validate()
+        protected override void Validate(string value)
         {
-            if (string.IsNullOrWhiteSpace(Value))
+            if (string.IsNullOrWhiteSpace(value))
                 throw new InvalidNameException("The name must not be empty");
         }
 
@@ -32,10 +31,7 @@ namespace TableTopCrucible.Core.ValueTypes
             return disposables;
         }
 
-        public static explicit operator Name(string value) => From(value);
-        public Name()
-        {
-            
-        }
+        public BareFileName ToFileName()
+            => BareFileName.From(Value);
     }
 }

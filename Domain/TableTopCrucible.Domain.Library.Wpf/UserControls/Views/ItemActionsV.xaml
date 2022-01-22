@@ -1,0 +1,33 @@
+﻿<rxui:ReactiveUserControl x:TypeArguments="vm:ItemActionsVm"
+                          x:Class="TableTopCrucible.Domain.Library.Wpf.UserControls.Views.ItemActionsV"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                          xmlns:local="clr-namespace:TableTopCrucible.Domain.Library.Wpf.UserControls.Views"
+                          xmlns:rxui="http://reactiveui.net"
+                          xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                          xmlns:vm="clr-namespace:TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels"
+                          mc:Ignorable="d" 
+                          d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="Button"
+               BasedOn="{StaticResource MaterialDesignPaperSecondaryButton}">
+            <Setter Property="Margin"
+                    Value="8"/>
+        </Style>
+    </UserControl.Resources>
+    <md:DialogHost>
+        <StackPanel>
+            <TextBlock Text="Item Actions"
+                       Style="{StaticResource SidebarTitle}"
+                       Margin="24 24 24 12"/>
+            <Button x:Name="GenerateThumbnails"
+                    Content="Create Thumbnails"/>
+            <Button Content="Delete Items Without Files" IsEnabled="False"/>
+            <Button x:Name="StartSync" Content="Start Sync"/>
+            <Button x:Name="DeleteAllData" Content="DeleteAllData"
+                    ToolTip="deletes all data except directory setups"/>
+        </StackPanel>
+    </md:DialogHost>
+</rxui:ReactiveUserControl>

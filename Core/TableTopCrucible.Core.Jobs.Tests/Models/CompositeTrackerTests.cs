@@ -1,14 +1,4 @@
-﻿using FluentAssertions;
-
-using NUnit.Framework;
-using NUnit.Framework.Internal;
-
-using ReactiveUI;
-
-using Splat;
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
@@ -16,7 +6,10 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using DynamicData;
-using Microsoft.AspNetCore.Mvc;
+using FluentAssertions;
+using NUnit.Framework;
+using ReactiveUI;
+using Splat;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
@@ -24,36 +17,19 @@ using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.TestHelper;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.Models.Tests
+namespace TableTopCrucible.Core.Jobs.Tests.Models
 {
     [TestFixture]
     [TestOf(typeof(CompositeTracker))]
     public class CompositeTrackerTests : ReactiveObject
     {
-        private IProgressTrackingService progressService;
-        public ICompositeTracker Tracker { get; set; }
-        public ISubscribedTrackingViewer Viewer { get; set; }
-
-
-        private CompositeDisposable _disposables;
-
-
-        Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
-        {
-            return ex =>
-            {
-                Assert.Fail((observable ?? typeof(T).Name) + " threw an exception: " + Environment.NewLine + ex);
-                return Observable.Empty<T>();
-            };
-        }
-
         [SetUp]
         public void BeforeEach()
         {
             Prepare.ApplicationEnvironment();
-            this.progressService = Locator.Current.GetService<IProgressTrackingService>();
+            progressService = Locator.Current.GetService<IProgressTrackingService>();
 
-            this.Tracker = progressService!.CreateCompositeTracker((Name)"testTracker");
+            Tracker = progressService!.CreateCompositeTracker((Name)"testTracker");
             Viewer = Tracker.Subscribe();
             _disposables = new CompositeDisposable(Viewer);
         }
@@ -63,25 +39,35 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         {
             _disposables?.Dispose();
         }
+
+        private IProgressTrackingService progressService;
+        public ICompositeTracker Tracker { get; set; }
+        public ISubscribedTrackingViewer Viewer { get; set; }
+
+
+        private CompositeDisposable _disposables;
+
+
+        private Func<Exception, IObservable<T>> Catcher<T>(string observable = null)
+        {
+            return ex =>
+            {
+                Assert.Fail((observable ?? typeof(T).Name) + " threw an exception: " + Environment.NewLine + ex);
+                return Observable.Empty<T>();
+            };
+        }
+
         [Test]
         public void InitialValues()
         {
             Tracker.Title.Value.Should().Be("testTracker");
-            (Tracker as CompositeTracker).TargetProgressChanges.Subscribe(x =>
-            {
-
-            });
-            Tracker.TargetProgressChanges.Subscribe(x =>
-            {
-
-            });
-            Viewer.TargetProgressChanges.Subscribe(x =>
-            {
-
-            });
+            (Tracker as CompositeTracker).TargetProgressChanges.Subscribe(x => { });
+            Tracker.TargetProgressChanges.Subscribe(x => { });
+            Viewer.TargetProgressChanges.Subscribe(x => { });
             Viewer.TargetProgress.Value.Should().Be(CompositeTracker.Target.Value);
             Viewer.JobState.Should().Be(JobState.ToDo);
         }
+
         [Test]
         public void SingleChildTest()
         {
@@ -112,7 +98,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
 
             Viewer.CurrentProgress
                 .Should()
-                .Be((CurrentProgress)20);//20% done
+                .Be((CurrentProgress)20); //20% done
 
             Viewer.JobState
                 .Should()
@@ -187,7 +173,6 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             childB.Complete();
             Viewer.CurrentProgress.Value
                 .Should().Be(CompositeTracker.Target.Value * 1.0);
-
         }
 
         [Test]
@@ -208,7 +193,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
 
             // sum of 1 makes for easy testing and includes conversion of factor 100
 
-            childA.Increment((ProgressIncrement)(targetA * .5));// percent of the sub-tracker
+            childA.Increment((ProgressIncrement)(targetA * .5)); // percent of the sub-tracker
             Viewer.CurrentProgress
                 .Should().Be((CurrentProgress)(CompositeTracker.Target.Value * (modA * .5 + modB * 0) / 100));
 
@@ -392,6 +377,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Viewer.JobState
                 .Should().Be(JobState.ToDo);
         }
+
         [Test]
         public void InProgress_InProgress()
         {
@@ -402,6 +388,7 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             Viewer.JobState
                 .Should().Be(JobState.InProgress);
         }
+
         [Test]
         public void Done_Done()
         {
@@ -467,16 +454,13 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
         [Ignore("todo")]
         public void LateDoubleSubscription()
         {
-
         }
 
         [Test]
         [Ignore("todo")]
         public void LateChildAdd()
         {
-
         }
-
     }
 
     [TestFixture]
@@ -488,11 +472,11 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             var list = new SourceList<IObservable<int>>();
             var item1 = new Subject<int>();
             var item2 = new Subject<int>();
-            int filteredCount = 0;
+            var filteredCount = 0;
             list.AddRange(new[] { item1, item2 });
             list
                 .Connect()
-                .FilterOnObservable(o => 
+                .FilterOnObservable(o =>
                     o.Select(x => x % 2 == 0))
                 .OnItemAdded(x => filteredCount++)
                 .OnItemRemoved(x => filteredCount--)
@@ -504,7 +488,6 @@ namespace TableTopCrucible.Core.Jobs.Models.Tests
             filteredCount.Should().Be(0);
             item2.OnNext(2);
             filteredCount.Should().Be(1);
-
         }
     }
 }

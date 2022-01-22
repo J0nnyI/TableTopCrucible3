@@ -1,26 +1,25 @@
 ﻿using System;
-using ValueOf;
+using System.Security.Cryptography;
+
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class FileHashKey : ValueOf<(FileHash, FileSize), FileHashKey>
+    public class FileHashKey : ValueType<string, FileHashKey>
     {
-        public FileHash Hash => Value.Item1;
-        public FileSize FileSize => Value.Item2;
+        public static FileHashKey Create<TFilePath>(FilePath<TFilePath> file, HashAlgorithm hashAlgorithm = null)
+        where TFilePath: FilePath<TFilePath>, new()
+        {
+            var useHash = hashAlgorithm ?? new SHA512Managed();
 
-        public static FileHashKey From(FileHash hash, FileSize fileSize) => From((hash, fileSize));
+            var res = From(file.GetSize(), FileHash.Create(file, useHash));
 
-        public static FileHashKey Create(FilePath file) => From((FileHash.Create(file), file.GetSize()));
+            if (hashAlgorithm == null)
+                useHash.Dispose();
 
-        public override bool Equals(object obj) =>
-            obj is FileHashKey key &&
-            Value.Item1.Equals(key.Value.Item1) &&
-            Value.Item2 == key.Value.Item2;
+            return res;
+        }
 
-        public override int GetHashCode() =>
-            // ReSharper disable once NonReadonlyMemberInGetHashCode
-            HashCode.Combine(base.GetHashCode(), Value.Item1, Value.Item2);
-
-        public override string ToString() => $"S: {FileSize} | H: {Hash}";
+        public static FileHashKey From(FileSize fileSize, FileHash hash)
+            => From(fileSize.Value + "_" + BitConverter.ToString(hash.Value).Replace("-", ""));
     }
 }

@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Jobs\TableTopCrucible.Core.Jobs.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
     <ProjectReference Include="..\..\Infrastructure\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
+    <ProjectReference Include="..\..\TableTopCrucible.Shared\TableTopCrucible.Shared.csproj" />
   </ItemGroup>
 
 </Project>

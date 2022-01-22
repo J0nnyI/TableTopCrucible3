@@ -7,13 +7,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Windows.Forms;
+
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Extensions;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using ValueOf;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -21,7 +21,7 @@ namespace TableTopCrucible.Core.ValueTypes
     ///     the path of a directory
     /// </summary>
     public class DirectoryPath<TThis>
-        : ValueOf<string, TThis>
+        : ValueType<string, TThis>
         where TThis : DirectoryPath<TThis>, new()
     {
         public static FilePath operator +(DirectoryPath<TThis> directory, FileName fileName) =>
@@ -57,9 +57,9 @@ namespace TableTopCrucible.Core.ValueTypes
             return null;
         }
 
-        protected override void Validate()
+        protected override void Validate(string value)
         {
-            var ex = IsValid(Value);
+            var ex = IsValid(value);
             if (ex != null) throw ex;
         }
 
@@ -180,12 +180,16 @@ namespace TableTopCrucible.Core.ValueTypes
             return EnumerateFiles()
                 .Where(f => types.Contains(f.GetFileType()));
         }
+        
+        public bool ContainsFilepath<TFilePath>(FilePath<TFilePath> filePath)
+            where TFilePath : FilePath<TFilePath>, new()
+            => filePath.Value.ToLower().StartsWith(this.Value.ToLower());
     }
 
     public class DirectoryPath : DirectoryPath<DirectoryPath>
     {
-        public static DirectoryPath AppData =>
-            From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) +
+        public static DirectoryPath AppData { get; }
+            = From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) +
             DirectoryName.From("TableTopCrucible");
 
         public static FilePath operator +(DirectoryPath directory, FileName fileName) =>

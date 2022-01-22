@@ -2,22 +2,11 @@
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Transactions;
-using System.Windows.Markup;
-
-using DynamicData;
 using DynamicData.Kernel;
 using FluentAssertions;
-
-using Microsoft.Reactive.Testing;
-
 using NUnit.Framework;
-
 using ReactiveUI;
-
 using Splat;
-using TableTopCrucible.Core.Jobs.JobQueue.Models;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
@@ -28,13 +17,9 @@ using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Tests.UserControls.ViewModels
 {
-    [TestFixture()]
+    [TestFixture]
     public class JobQueueVmTests
     {
-        public CompositeDisposable Disposables;
-        public IProgressTrackingService ProgressService;
-        public JobQueueVm JobQueueVm;
-
         [SetUp]
         public void BeforeEach()
         {
@@ -52,13 +37,17 @@ namespace TableTopCrucible.Core.Wpf.Engine.Tests.UserControls.ViewModels
             JobQueueVm.Activator.Deactivate();
         }
 
+        public CompositeDisposable Disposables;
+        public IProgressTrackingService ProgressService;
+        public JobQueueVm JobQueueVm;
+
         [Test]
         public void SetupWorks()
         {
             JobQueueVm.Should().NotBeNull();
         }
+
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="filterState">the state which the VM filters for</param>
         /// <param name="lateUpdate">whether the jobs have been updated before or after the component was activated</param>
@@ -73,41 +62,38 @@ namespace TableTopCrucible.Core.Wpf.Engine.Tests.UserControls.ViewModels
         {
             JobQueueVm.JobFilter = JobFilter.FromState(filterState);
             if (!lateUpdate)
-            {
                 JobQueueVm.Activator.Activate();
-            }
             var todo = ProgressService.CreateSourceTracker((Name)JobState.ToDo.ToString())
                 .DisposeWith(Disposables);
-            var inProgress = ProgressService.CreateSourceTracker((Name)JobState.InProgress.ToString(), (TargetProgress)2)
+            var inProgress = ProgressService
+                .CreateSourceTracker((Name)JobState.InProgress.ToString(), (TargetProgress)2)
                 .DisposeWith(Disposables);
             var done = ProgressService.CreateSourceTracker((Name)JobState.Done.ToString())
                 .DisposeWith(Disposables);
-            
+
             inProgress.Increment();
             done.Complete();
 
             if (lateUpdate)
-            {
                 JobQueueVm.Activator.Activate();
-            }
 
             JobQueueVm
                 .Cards
                 .Select(card => card.Viewer.Title)
                 .Should()
                 .BeEquivalentTo(
-                new[]
-                {
-                    (Name) filterState.ToString()
-                });
+                    new[]
+                    {
+                        (Name)filterState.ToString()
+                    });
         }
 
         public void TripleFilter()
         {
             var todoJob = ProgressService.CreateSourceTracker((Name)JobState.ToDo.ToString());
-            var inProgressJob = ProgressService.CreateSourceTracker((Name)JobState.InProgress.ToString(), (TargetProgress)2);
+            var inProgressJob =
+                ProgressService.CreateSourceTracker((Name)JobState.InProgress.ToString(), (TargetProgress)2);
             var doneJob = ProgressService.CreateSourceTracker((Name)JobState.Done.ToString());
-
 
 
             inProgressJob.Increment();
@@ -124,15 +110,15 @@ namespace TableTopCrucible.Core.Wpf.Engine.Tests.UserControls.ViewModels
         {
         }
 
-        private void testState<T>(T targetState,T preSubState, IObservable<T> srcObservable)
+        private void testState<T>(T targetState, T preSubState, IObservable<T> srcObservable)
         {
             preSubState.Should().Be(targetState);
             var x = Optional.None<T>();
             srcObservable.Take(1).Subscribe(y => x = Optional.Some(y));
             x.HasValue.Should().BeTrue();
             x.Value.Should().Be(targetState);
-
         }
+
         [Test]
         [TestCase(JobState.ToDo)]
         [TestCase(JobState.InProgress)]
@@ -182,6 +168,4 @@ namespace TableTopCrucible.Core.Wpf.Engine.Tests.UserControls.ViewModels
 
         //}
     }
-
-
 }

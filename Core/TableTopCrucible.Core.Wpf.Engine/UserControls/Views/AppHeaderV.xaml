@@ -2,34 +2,34 @@
                           x:Class="TableTopCrucible.Core.Wpf.Engine.UserControls.Views.AppHeaderV"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           xmlns:vm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels"
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-                          mc:Ignorable="d" 
-                          d:DesignHeight="450" 
+                          mc:Ignorable="d"
+                          d:DesignHeight="450"
                           d:DesignWidth="800"
                           Height="58px">
     <UserControl.Resources>
         <Style TargetType="md:PackIcon">
             <Setter Property="Width"
-                    Value="25"/>
+                    Value="25" />
             <Setter Property="Height"
-                    Value="25"/>
+                    Value="25" />
             <Setter Property="Foreground"
-                    Value="{DynamicResource MaterialDesignDarkForeground}"/>
+                    Value="{DynamicResource MaterialDesignDarkForeground}" />
         </Style>
-        <Style TargetType="Button" 
+        <Style TargetType="Button"
                BasedOn="{StaticResource MaterialDesignFloatingActionMiniButton}">
             <Setter Property="Margin"
-                    Value="16 0"/>
+                    Value="16 0" />
             <Setter Property="Background"
-                    Value="Transparent"/>
+                    Value="Transparent" />
         </Style>
         <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignActionToggleButton}">
             <Setter Property="Foreground"
-                    Value="{DynamicResource MaterialDesignDarkForeground}"/>
+                    Value="{DynamicResource MaterialDesignDarkForeground}" />
         </Style>
     </UserControl.Resources>
     <md:ColorZone Padding="16 0"
@@ -40,7 +40,7 @@
                   Background="{DynamicResource HeaderBackground}"
                   Foreground="{DynamicResource MaterialDesignDarkForeground}">
         <DockPanel UseLayoutRounding="True">
-            <!--   Left   -->
+            <!--   Left  -->
             <StackPanel Orientation="Horizontal"
                         DockPanel.Dock="Left">
                 <ToggleButton x:Name="IsNavigationBarExpanded"
@@ -48,11 +48,12 @@
                               Cursor="Hand"
                               Background="Transparent"
                               BorderBrush="Transparent"
-                              Content="{md:PackIcon Menu, Size=25}"/>
+                              Content="{md:PackIcon Menu, Size=25}" />
 
-                <Button Content="{md:PackIcon ContentSave}"
+                <Button x:Name="Save"
+                        Content="{md:PackIcon ContentSave}"
                         BorderBrush="Transparent"
-                        ToolTip="Save Data - Coming Soon"/>
+                        ToolTip="Save Data - Coming Soon" />
             </StackPanel>
             <!--   Right   -->
             <StackPanel Orientation="Horizontal"
@@ -65,8 +66,7 @@
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 20 0"
                            VerticalAlignment="Center"
-                           Cursor="Hand"
-                >
+                           Cursor="Hand">
                     <Grid ToolTip="Job Queue">
                         <!--using the internal button progress bars creates background color which cant be removed-->
                         <ProgressBar x:Name="JobProgress"
@@ -76,35 +76,34 @@
                                      Width="50"
                                      Height="50"
                                      Maximum="100"
-                                     UseLayoutRounding="True"/>
+                                     UseLayoutRounding="True" />
                         <Button x:Name="ShowJobSidebar"
                                 UseLayoutRounding="True"
                                 VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                        >
+                                HorizontalAlignment="Center">
                             <md:PackIcon Kind="clock" />
                         </Button>
                     </Grid>
                 </md:Badged>
-                    <!--notifications-->
+                <!--notifications-->
                 <md:Badged x:Name="NotificationBadge"
                            ToolTip="Number of Notifications"
                            BadgePlacementMode="BottomRight"
                            VerticalAlignment="Center"
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 0 0">
-                        <Button Content="{md:PackIcon Bell}"
-                                ToolTip="Notifications"
-                                md:RippleAssist.IsDisabled="False"
-                                x:Name="ShowNotificationSidebar"/>
-                    </md:Badged>
+                    <Button Content="{md:PackIcon Bell}"
+                            ToolTip="Notifications"
+                            md:RippleAssist.IsDisabled="False"
+                            x:Name="ShowNotificationSidebar" />
+                </md:Badged>
 
             </StackPanel>
             <!--  Center -->
             <TextBlock x:Name="CurrentPageTitle"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
-                       Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
+                       Style="{StaticResource MaterialDesignHeadline5TextBlock}" />
         </DockPanel>
     </md:ColorZone>
 

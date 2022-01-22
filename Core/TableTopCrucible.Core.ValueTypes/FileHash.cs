@@ -2,23 +2,23 @@
 using System.Linq;
 using System.Security.Cryptography;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-using ValueOf;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
-    public class FileHash : ValueOf<byte[], FileHash>
+    public class FileHash : ValueType<byte[], FileHash>
     {
         public static int SHA512_Size = 64;
 
-        protected override void Validate()
+        protected override void Validate(byte[] value)
         {
-            if (Value == null)
+            if (value == null)
                 throw new NullReferenceException("The hash must not be empty");
-            if (Value.Length != SHA512_Size)
+            if (value.Length != SHA512_Size)
                 throw new InvalidHashSizeException(Value.Length);
         }
 
-        public static FileHash Create(FilePath filePath, HashAlgorithm hashAlgorithm)
+        public static FileHash Create<TFilePath>(FilePath<TFilePath> filePath, HashAlgorithm hashAlgorithm)
+            where TFilePath: FilePath<TFilePath>, new()
         {
             using var stream = filePath.OpenRead();
             var data = hashAlgorithm.ComputeHash(stream);
@@ -34,8 +34,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public override bool Equals(object obj) =>
             obj is FileHash hash &&
             Value.SequenceEqual(hash.Value);
-
-        protected override bool Equals(ValueOf<byte[], FileHash> other) => Equals(other as object);
+        
 
         public override int GetHashCode()
             // ReSharper disable once NonReadonlyMemberInGetHashCode

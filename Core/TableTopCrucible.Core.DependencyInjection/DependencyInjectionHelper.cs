@@ -23,7 +23,7 @@ namespace TableTopCrucible.Core.DependencyInjection
         public static IEnumerable<T> GetServicesByType<T>()
         {
             return GetServiceTokensOfType<T>()
-                .Select(t => (T) Locator.Current.GetService(t));
+                .Select(t => (T)Locator.Current.GetService(t));
         }
     }
 }
