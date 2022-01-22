@@ -32,11 +32,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     ViewModel,
                     vm => vm.Path,
                     v => v.DirectoryPicker.UserText),
-                this.DirectoryPicker
+                DirectoryPicker
                     .DialogConfirmed
-                    .Select(dir=>dir.GetDirectoryName().ToName())
-                    .BindTo(this, 
-                        v=>v.ViewModel.Name),
+                    .Select(dir => dir.GetDirectoryName().ToName())
+                    .BindTo(this,
+                        v => v.ViewModel.Name),
                 this.Bind(
                     ViewModel,
                     vm => vm.RemoveDirectoryCommand,

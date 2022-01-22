@@ -8,7 +8,7 @@ namespace TableTopCrucible.Core.Helper
     {
         private static readonly Lazy<IFileSystem> _fileSystem = new(()
             => Locator.Current.GetService<IFileSystem>() ?? new FileSystem());
-               //?? throw new NullReferenceException("Could not get a FileSystemImplementation"));
+        //?? throw new NullReferenceException("Could not get a FileSystemImplementation"));
 
         public static IFileSystem FileSystem => _fileSystem.Value;
         public static IFile File => FileSystem.File;

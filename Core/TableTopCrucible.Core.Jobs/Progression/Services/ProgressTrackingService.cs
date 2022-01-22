@@ -29,8 +29,8 @@ namespace TableTopCrucible.Core.Jobs.Progression.Services
     internal class ProgressTrackingService : IProgressTrackingService, IDisposable
     {
         private readonly IObservableList<ITrackingViewer> _completedJobs;
-        private readonly SourceList<ITrackingViewer> trackerList = new();
         private readonly CompositeDisposable _disposables = new();
+        private readonly SourceList<ITrackingViewer> trackerList = new();
 
         public ProgressTrackingService()
         {
