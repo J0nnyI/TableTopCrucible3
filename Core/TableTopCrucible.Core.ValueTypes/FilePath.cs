@@ -1,14 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
-
-using Newtonsoft.Json;
-
+using System.Text.Json;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
-
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TableTopCrucible.Core.ValueTypes
 {
@@ -59,7 +54,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public void Copy(FilePath<TThis> newPath, bool overwrite = true)
         {
-            if (this.Exists())
+            if (Exists())
                 FileSystemHelper.File.Copy(Value, newPath.Value, overwrite);
         }
 
@@ -80,6 +75,7 @@ namespace TableTopCrucible.Core.ValueTypes
                 throw new FileWriteFailedException(ex);
             }
         }
+
         public void WriteObject(object data, bool createDirectory = true)
         {
             GetDirectoryPath().Create();
@@ -108,6 +104,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public Uri ToUri()
             => new(Value);
+
         public IFileInfo GetInfo() => FileSystemHelper.FileInfo.FromFileName(Value);
 
         // uses GetInfo, if you need other properties use that method instead
@@ -130,14 +127,14 @@ namespace TableTopCrucible.Core.ValueTypes
             => From(path);
 
         /// <summary>
-        /// moves this file to a new location
+        ///     moves this file to a new location
         /// </summary>
         /// <param name="newPath"></param>
         public void Move(FilePath<TThis> newPath)
             => File.Move(Value, newPath?.Value ?? throw new NullReferenceException(nameof(newPath)));
 
         /// <summary>
-        /// returns a new FilePath with the given extension. does not change the value of the object
+        ///     returns a new FilePath with the given extension. does not change the value of the object
         /// </summary>
         /// <param name="extension"></param>
         /// <returns></returns>
@@ -146,6 +143,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public static TThis From(DirectoryPath directory, FileName fileName)
             => From(Path.Combine(directory.Value, fileName.Value));
+
         public static TThis From(DirectoryPath directory, BareFileName fileName, FileExtension extension)
             => From(Path.Combine(directory.Value, fileName.Value + extension));
 
@@ -159,6 +157,6 @@ namespace TableTopCrucible.Core.ValueTypes
     public class FilePath : FilePath<FilePath>
     {
         public ImageFilePath ToImagePath()
-        => ImageFilePath.From(Value);
+            => ImageFilePath.From(Value);
     }
 }

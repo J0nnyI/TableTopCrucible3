@@ -13,39 +13,39 @@
         <Style TargetType="TextBlock"
                x:Key="VerticalExpanderHeader">
             <Setter Property="RenderTransformOrigin"
-                    Value=".5,.5"/>
-                <Setter Property="LayoutTransform">
-                    <Setter.Value>
-                        <RotateTransform Angle="90"/>
-                    </Setter.Value>
-                </Setter>
+                    Value=".5,.5" />
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <RotateTransform Angle="90" />
+                </Setter.Value>
+            </Setter>
             <Setter Property="FontSize"
-                    Value="{DynamicResource SidebarTitleFontSize}"/>
+                    Value="{DynamicResource SidebarTitleFontSize}" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <rxui:ViewModelViewHost x:Name="ListHeader"
                                 Margin="4 4 12 4"
                                 Grid.Row="0"
                                 Grid.Column="0"
-                                Grid.ColumnSpan="2"/>
+                                Grid.ColumnSpan="2" />
 
         <rxui:ViewModelViewHost Name="ViewerHeader"
                                 Grid.Row="0"
                                 Grid.Column="2"
-                                Grid.ColumnSpan="2"/>
+                                Grid.ColumnSpan="2" />
 
         <Expander ExpandDirection="Right"
                   IsExpanded="True"
@@ -53,16 +53,16 @@
                   Grid.Row="1">
             <Expander.Header>
                 <TextBlock Text="Filter"
-                           Style="{StaticResource VerticalExpanderHeader}"/>
+                           Style="{StaticResource VerticalExpanderHeader}" />
             </Expander.Header>
             <rxui:ViewModelViewHost x:Name="Filter"
-                                    MinWidth="300"/>
+                                    MinWidth="300" />
         </Expander>
 
-        <rxui:ViewModelViewHost x:Name="ItemList" 
+        <rxui:ViewModelViewHost x:Name="ItemList"
                                 Margin="4 4 12 4"
                                 Grid.Column="1"
-                                Grid.Row="1"/>
+                                Grid.Row="1" />
 
         <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
                     TabStripPlacement="Top"
@@ -71,16 +71,16 @@
                     Grid.Column="2"
                     Grid.Row="1">
             <TabItem Header="3d Model">
-                <rxui:ViewModelViewHost x:Name="ModelViewer"/>
+                <rxui:ViewModelViewHost x:Name="ModelViewer" />
             </TabItem>
             <TabItem Header="Data">
-                <rxui:ViewModelViewHost x:Name="DataViewer"/>
+                <rxui:ViewModelViewHost x:Name="DataViewer" />
             </TabItem>
             <TabItem Header="Gallery">
-                <rxui:ViewModelViewHost x:Name="Gallery"/>
+                <rxui:ViewModelViewHost x:Name="Gallery" />
             </TabItem>
             <TabItem Header="Files">
-                <rxui:ViewModelViewHost x:Name="FileList"/>
+                <rxui:ViewModelViewHost x:Name="FileList" />
             </TabItem>
         </TabControl>
 
@@ -88,7 +88,7 @@
                       Margin="{DynamicResource GridSplitterMargin}"
                       Grid.Column="1"
                       Grid.Row="0"
-                      Grid.RowSpan="2"/>
+                      Grid.RowSpan="2" />
 
         <Expander ExpandDirection="Left"
                   IsExpanded="True"
@@ -96,10 +96,10 @@
                   Grid.Row="1">
             <Expander.Header>
                 <TextBlock Text="Tools"
-                           Style="{StaticResource VerticalExpanderHeader}"/>
+                           Style="{StaticResource VerticalExpanderHeader}" />
             </Expander.Header>
             <rxui:ViewModelViewHost x:Name="Actions"
-                                    MinWidth="300"/>
+                                    MinWidth="300" />
         </Expander>
 
 

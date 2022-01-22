@@ -32,11 +32,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     ViewModel,
                     vm => vm.Path,
                     v => v.DirectoryPicker.UserText),
-                this.DirectoryPicker
+                DirectoryPicker
                     .DialogConfirmed
-                    .Select(dir=>dir.GetDirectoryName().ToName())
-                    .BindTo(this, 
-                        v=>v.ViewModel.Name),
+                    .Select(dir => dir.GetDirectoryName().ToName())
+                    .BindTo(this,
+                        v => v.ViewModel.Name),
                 this.Bind(
                     ViewModel,
                     vm => vm.RemoveDirectoryCommand,
@@ -50,19 +50,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     vm => vm.SaveChangesCommand,
                     v => v.SaveChanges.Command),
 
-                this.WhenAnyValue(
-                        v => v.ViewModel)
-                    .Subscribe(vm =>
+                ObservableExtensions.Subscribe(this.WhenAnyValue(
+                    v => v.ViewModel), vm =>
+                {
+                    vm.ConfirmDeletionInteraction.RegisterHandler(async interaction =>
                     {
-                        vm.ConfirmDeletionInteraction.RegisterHandler(async interaction =>
-                        {
-                            var dialog = Locator.Current
-                                .GetService<IDialogService>()
-                                .OpenYesNoDialog("Do you really want to remove this directory?" + Environment.NewLine +
-                                                 "No data will be lost.");
-                            interaction.SetOutput(await dialog.Result);
-                        });
-                    })
+                        var dialog = Locator.Current
+                            .GetService<IDialogService>()
+                            .OpenYesNoDialog("Do you really want to remove this directory?" + Environment.NewLine +
+                                             "No data will be lost.");
+                        interaction.SetOutput(await dialog.Result);
+                    });
+                })
             });
         }
     }

@@ -19,8 +19,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
             var buttonBorder = Brushes.Transparent;
             this.WhenActivated(() => new[]
             {
-                this.WhenAnyValue(v => v.ViewModel)
-                    .ObserveOn(RxApp.MainThreadScheduler)
+                Observable.ObserveOn<>(this.WhenAnyValue(v => v.ViewModel), RxApp.MainThreadScheduler)
                     .BindTo(this, v => v.DataContext),
 
                 ViewModel!.NotificationCountChanges

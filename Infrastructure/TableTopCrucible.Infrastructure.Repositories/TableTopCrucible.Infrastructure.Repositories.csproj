@@ -5,12 +5,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Core\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
+        <ProjectReference
+            Include="..\..\Core\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
         <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
-        <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
         <ProjectReference Include="..\..\Core\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
-        <ProjectReference Include="..\TableTopCrucible.Infrastructure.DataPersistence\TableTopCrucible.Infrastructure.DataPersistence.csproj" />
-        <ProjectReference Include="..\TableTopCrucible.Infrastructure.Models\TableTopCrucible.Infrastructure.Models.csproj" />
+        <ProjectReference
+            Include="..\TableTopCrucible.Infrastructure.DataPersistence\TableTopCrucible.Infrastructure.DataPersistence.csproj" />
+        <ProjectReference
+            Include="..\TableTopCrucible.Infrastructure.Models\TableTopCrucible.Infrastructure.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>

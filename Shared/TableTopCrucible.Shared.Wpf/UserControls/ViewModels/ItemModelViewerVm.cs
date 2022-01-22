@@ -1,27 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-
 using DynamicData;
-
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Domain.Library.Services;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
-using TableTopCrucible.Shared.Services;
-using TableTopCrucible.Shared.ValueTypes;
+using TableTopCrucible.Shared.Wpf.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
@@ -31,17 +23,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public Item Item { get; set; }
         ICommand GenerateThumbnailCommand { get; }
     }
+
     public class ItemModelViewerVm : ReactiveObject, IItemModelViewer, IActivatableViewModel
     {
-        public ViewModelActivator Activator { get; } = new();
-        [Reactive]
-        public Item Item { get; set; }
-        public IModelViewer ModelViewer { get; }
-
-
-
-        public ICommand GenerateThumbnailCommand { get; }
-
         public ItemModelViewerVm(
             IModelViewer modelViewer,
             IFileRepository fileRepository,
@@ -50,7 +34,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             IWpfThumbnailGenerationService thumbnailGenerationService)
         {
             ModelViewer = modelViewer;
-            this.GenerateThumbnailCommand = ReactiveCommand.Create(() =>
+            GenerateThumbnailCommand = ReactiveCommand.Create(() =>
                 {
                     try
                     {
@@ -83,40 +67,49 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Switch()
                     .Select(file => file is not null)
                     .DistinctUntilChanged()
-            , RxApp.MainThreadScheduler, RxApp.MainThreadScheduler);
+                , RxApp.MainThreadScheduler, RxApp.MainThreadScheduler);
 
             this.WhenActivated(() => new[]
             {
-                this.WhenAnyValue(vm=>vm.Item.FileKey3d)
-                    .Select(item=>
+                this.WhenAnyValue(vm => vm.Item.FileKey3d)
+                    .Select(item =>
                         fileRepository
                             .Watch(item)
                             .ToCollection()
                             .Select(files =>
-                            new {
-                                item,
-                                files
-                            }))
+                                new
+                                {
+                                    item,
+                                    files
+                                }))
                     .Switch()
                     .OutputObservable(out var filesChanges)
-                    .Select(x=>x.files.FirstOrDefault()?.Path)
+                    .Select(x => x.files.FirstOrDefault()?.Path)
                     .Select(ModelFilePath.From)
                     .Catch((Exception e) =>
                     {
                         Debugger.Break();
                         return Observable.Never<ModelFilePath>();
                     })
-                    .BindTo(this, vm=>vm.ModelViewer.Model),
+                    .BindTo(this, vm => vm.ModelViewer.Model),
 
                 filesChanges
-                    .Select(x=>x.item is null
+                    .Select(x => x.item is null
                         ? (Message)"No Item selected"
                         : x.files.Any()
                             ? null
                             : (Message)"No Model found for this Item")
-                    .BindTo(this, vm=>vm.ModelViewer.PlaceholderMessage)
+                    .BindTo(this, vm => vm.ModelViewer.PlaceholderMessage)
             });
         }
 
+        public IModelViewer ModelViewer { get; }
+        public ViewModelActivator Activator { get; } = new();
+
+        [Reactive]
+        public Item Item { get; set; }
+
+
+        public ICommand GenerateThumbnailCommand { get; }
     }
 }

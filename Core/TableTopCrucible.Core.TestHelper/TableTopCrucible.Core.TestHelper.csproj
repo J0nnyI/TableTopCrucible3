@@ -6,9 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.DependencyInjection\TableTopCrucible.Core.DependencyInjection.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.Test.Packages\TableTopCrucible.Core.Test.Packages.csproj" />
-    <ProjectReference Include="..\TableTopCrucible.Core.Wpf.Engine\TableTopCrucible.Core.Wpf.Engine.csproj" />
   </ItemGroup>
 
 </Project>

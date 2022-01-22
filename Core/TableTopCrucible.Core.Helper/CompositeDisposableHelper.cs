@@ -9,9 +9,9 @@ using System.Reactive.Subjects;
 namespace TableTopCrucible.Core.Helper
 {
     /// <summary>
-    /// executes the given action when disposed
+    ///     executes the given action when disposed
     /// </summary>
-    public class ActOnDispose:IDisposable
+    public class ActOnDispose : IDisposable
     {
         private readonly Action _onDispose;
 

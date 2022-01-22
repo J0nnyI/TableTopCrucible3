@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO.Abstractions;
-using System.Linq;
 using System.Security.Cryptography;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
@@ -65,6 +63,5 @@ namespace TableTopCrucible.Shared.ItemSync.Models
             KnownFile.LastWrite = foundFileInfo.LastWriteTime;
             return KnownFile;
         }
-        
     }
 }

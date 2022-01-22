@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -18,6 +16,7 @@ namespace TableTopCrucible.Core.ValueTypes
         where TThis : ValueType<TValue, TThis>, new()
     {
         private readonly TValue _value;
+
         public TValue Value
         {
             get => _value;
@@ -29,10 +28,12 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public static TThis From(TValue valueA)
-            => valueA is null ? null : new() { Value = valueA };
+            => valueA is null
+                ? null
+                : new TThis { Value = valueA };
 
         /// <summary>
-        /// base implementation: null value check => exception
+        ///     base implementation: null value check => exception
         /// </summary>
         /// <param name="value"></param>
         /// <exception cref="InvalidValueException"></exception>
@@ -41,26 +42,30 @@ namespace TableTopCrucible.Core.ValueTypes
             if (value is null)
                 throw new InvalidValueException(nameof(value));
         }
+
         public override string ToString() => Value.ToString();
 
         /// <summary>
-        /// base implementation: empty
+        ///     base implementation: empty
         /// </summary>
         /// <param name="value">the input value</param>
         /// <returns>the sanitized value</returns>
         protected virtual TValue Sanitize(TValue value) => value;
 
         public override bool Equals(object other)
-            => other is TThis otherValue && this.Value.Equals(otherValue.Value);
+            => other is TThis otherValue && Value.Equals(otherValue.Value);
+
         public override int GetHashCode()
             => Value.GetHashCode();
+
         public static bool operator ==(ValueType<TValue, TThis> valueA, TThis valueB)
             => valueA is null && valueB is null
                || valueA?.Equals(valueB) == true;
+
         public static bool operator !=(ValueType<TValue, TThis> valueA, TThis valueB)
             => !(valueA == valueB);
 
-        
+
         public static explicit operator ValueType<TValue, TThis>(TValue value)
             => From(value);
     }
@@ -69,6 +74,9 @@ namespace TableTopCrucible.Core.ValueTypes
         where TThis : ValueType<TValueA, TValueB, TThis>, new()
     {
         private readonly TValueA _valueA;
+
+        private readonly TValueB _valueB;
+
         public TValueA ValueA
         {
             get => _valueA;
@@ -78,7 +86,7 @@ namespace TableTopCrucible.Core.ValueTypes
                 _valueA = value;
             }
         }
-        private readonly TValueB _valueB;
+
         public TValueB ValueB
         {
             get => _valueB;
@@ -92,23 +100,36 @@ namespace TableTopCrucible.Core.ValueTypes
         public static TThis From(TValueA valueA, TValueB valueB)
             => new() { ValueA = valueA, ValueB = valueB };
 
-        protected virtual void Validate(TValueA valueA, TValueB valueB) { }
+        protected virtual void Validate(TValueA valueA, TValueB valueB)
+        {
+        }
+
         public override string ToString() => $"A: {ValueA} | B: {ValueB}";
 
         public override bool Equals(object other)
-            => other is TThis otherValue && this.ValueA.Equals(otherValue.ValueA) && this.ValueB.Equals(otherValue.ValueB);
+            => other is TThis otherValue && ValueA.Equals(otherValue.ValueA) &&
+               ValueB.Equals(otherValue.ValueB);
+
         public override int GetHashCode()
             => HashCode.Combine(ValueA, ValueB);
+
         public static bool operator ==(ValueType<TValueA, TValueB, TThis> valueA, TThis valueB)
             => valueA is null && valueB is null
                || valueA?.Equals(valueB) == true;
+
         public static bool operator !=(ValueType<TValueA, TValueB, TThis> valueA, TThis valueB)
             => !(valueA == valueB);
     }
+
     public abstract class ValueType<TValueA, TValueB, TValueC, TThis> : ValueType<TThis>
         where TThis : ValueType<TValueA, TValueB, TValueC, TThis>, new()
     {
         private readonly TValueA _valueA;
+
+        private readonly TValueB _valueB;
+
+        private readonly TValueC _valueC;
+
         public TValueA ValueA
         {
             get => _valueA;
@@ -118,7 +139,7 @@ namespace TableTopCrucible.Core.ValueTypes
                 _valueA = value;
             }
         }
-        private readonly TValueB _valueB;
+
         public TValueB ValueB
         {
             get => _valueB;
@@ -128,7 +149,7 @@ namespace TableTopCrucible.Core.ValueTypes
                 _valueB = value;
             }
         }
-        private readonly TValueC _valueC;
+
         public TValueC ValueC
         {
             get => _valueC;
@@ -142,17 +163,24 @@ namespace TableTopCrucible.Core.ValueTypes
         public static TThis From(TValueA valueA, TValueB valueB, TValueC valueC)
             => new() { ValueA = valueA, ValueB = valueB, ValueC = valueC };
 
-        protected virtual void Validate(TValueA valueA, TValueB valueB, TValueC valueC) { }
+        protected virtual void Validate(TValueA valueA, TValueB valueB, TValueC valueC)
+        {
+        }
+
         public override string ToString() => $"A: {ValueA} | B: {ValueB}";
 
         public override bool Equals(object other)
-            => other is TThis otherValue && this.ValueA.Equals(otherValue.ValueA) && this.ValueB.Equals(otherValue.ValueB);
+            => other is TThis otherValue && ValueA.Equals(otherValue.ValueA) &&
+               ValueB.Equals(otherValue.ValueB);
+
         public override int GetHashCode()
             => HashCode.Combine(ValueA, ValueB);
-        public static bool operator ==(ValueType<TValueA, TValueB,TValueC, TThis> valueA, TThis valueB)
+
+        public static bool operator ==(ValueType<TValueA, TValueB, TValueC, TThis> valueA, TThis valueB)
             => valueA is null && valueB is null
                || valueA?.Equals(valueB) == true;
-        public static bool operator !=(ValueType<TValueA, TValueB,TValueC, TThis> valueA, TThis valueB)
+
+        public static bool operator !=(ValueType<TValueA, TValueB, TValueC, TThis> valueA, TThis valueB)
             => !(valueA == valueB);
     }
 }

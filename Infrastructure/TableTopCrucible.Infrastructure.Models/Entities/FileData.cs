@@ -1,14 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Newtonsoft.Json;
-using ReactiveUI.Fody.Helpers;
-
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
@@ -16,6 +7,12 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
     [JsonObject(MemberSerialization.OptIn)]
     public sealed class FileData : DataEntity<FileDataId>
     {
+        private FileHashKey _hashKey;
+
+        private DateTime _lastWrite;
+
+        private FilePath _path;
+
         public FileData()
         {
         }
@@ -27,7 +24,6 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             LastWrite = lastWrite;
         }
 
-        private FilePath _path;
         [JsonProperty]
         public FilePath Path
         {
@@ -35,7 +31,6 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             set => SetRequiredValue(ref _path, value);
         }
 
-        private FileHashKey _hashKey;
         [JsonProperty]
         public FileHashKey HashKey
         {
@@ -43,7 +38,6 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             set => SetRequiredValue(ref _hashKey, value, nameof(HashKey));
         }
 
-        private DateTime _lastWrite;
         [JsonProperty]
         public DateTime LastWrite
         {

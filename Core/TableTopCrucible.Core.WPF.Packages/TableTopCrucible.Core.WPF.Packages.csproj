@@ -17,8 +17,4 @@
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.6" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
-  </ItemGroup>
-
 </Project>

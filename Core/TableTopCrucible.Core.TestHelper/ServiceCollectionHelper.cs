@@ -1,8 +1,4 @@
-﻿using System.IO.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
-namespace TableTopCrucible.Core.TestHelper
+﻿namespace TableTopCrucible.Core.TestHelper
 {
     public static class ServiceCollectionHelper
     {

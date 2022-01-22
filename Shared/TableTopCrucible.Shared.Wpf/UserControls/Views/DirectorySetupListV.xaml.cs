@@ -1,8 +1,5 @@
-﻿using System.Reactive.Linq;
-using Ookii.Dialogs.Wpf;
-using ReactiveUI;
+﻿using ReactiveUI;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
