@@ -17,7 +17,7 @@ namespace TableTopCrucible.Core.Helper
 
         public ActOnDispose(Action onCreate, Action onDispose)
         {
-            onCreate();
+            onCreate?.Invoke();
             _onDispose = onDispose;
         }
 

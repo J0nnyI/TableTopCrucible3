@@ -18,6 +18,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         : RepositoryBase<ItemId, Item>,
             IItemRepository
     {
+
         public ItemRepository(IStorageController storageController)
             : base(storageController, storageController.Items)
         {

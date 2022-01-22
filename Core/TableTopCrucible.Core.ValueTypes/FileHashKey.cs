@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -18,7 +19,11 @@ namespace TableTopCrucible.Core.ValueTypes
             return res;
         }
 
+        private static readonly string _separator = "_";
         public static FileHashKey From(FileSize fileSize, FileHash hash)
-            => From(fileSize.Value + "_" + BitConverter.ToString(hash.Value).Replace("-", ""));
+            => From(fileSize.Value + _separator + BitConverter.ToString(hash.Value).Replace("-", ""));
+
+        public FileSize GetFileSizeComponent()
+            => (FileSize)int.Parse(Value.Split(_separator).First());
     }
 }

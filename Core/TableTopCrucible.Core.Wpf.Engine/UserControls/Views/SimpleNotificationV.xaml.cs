@@ -30,7 +30,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     v => v.Content.Text),
                 this.WhenAnyValue(
                         v => v.ViewModel.Content,
-                        c => string.IsNullOrWhiteSpace(c.Value)
+                        c => string.IsNullOrWhiteSpace(c?.Value)
                             ? Visibility.Collapsed
                             : Visibility.Visible)
                     .BindTo(this, v => v.Content.Visibility),

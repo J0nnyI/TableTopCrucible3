@@ -21,8 +21,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     vm => vm.SelectedImageViewer,
                     v => v.SelectedImage.ViewModel),
                 this.WhenAnyValue(v => v.Images.SelectedItem)
-                    .Cast<GalleryItem>()
-                    .Select(galleryItem => galleryItem?.Image)
+                    .Cast<IImageDataViewer>()
+                    .Select(viewer => viewer?.Image)
                     .BindTo(this, v => v.ViewModel.SelectedImage)
             });
         }

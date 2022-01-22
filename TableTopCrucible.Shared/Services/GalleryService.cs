@@ -25,26 +25,26 @@ namespace TableTopCrucible.Shared.Services
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IFileRepository _fileRepository;
-        private readonly IImageDataRepository _imageDataRepository;
+        private readonly IImageRepository _imageRepository;
         private readonly IItemRepository _itemRepository;
         private readonly INotificationService _notificationService;
 
         public GalleryService(
             IFileRepository fileRepository,
-            IImageDataRepository imageDataRepository,
+            IImageRepository imageRepository,
             IItemRepository itemRepository,
             IDirectorySetupRepository directorySetupRepository,
             INotificationService notificationService)
         {
             _fileRepository = fileRepository;
-            _imageDataRepository = imageDataRepository;
+            _imageRepository = imageRepository;
             _itemRepository = itemRepository;
             _directorySetupRepository = directorySetupRepository;
             _notificationService = notificationService;
         }
 
         /// <summary>
-        ///     does not generate a thumbnail, use <see cref="IThumbnailGenerationService.GenerateThumbnail" /> instead
+        ///     does not generate a thumbnail, use <see cref="IThumbnailGenerationService.Generate" /> instead
         /// </summary>
         /// <param name="item"></param>
         /// <param name="file"></param>
@@ -93,7 +93,7 @@ namespace TableTopCrucible.Shared.Services
                             var hashKey = FileHashKey.Create(filePath, hash);
                             var foundFileData = _fileRepository[hashKey].Where(file => file.Path.Exists())
                                 .FirstOrDefault();
-                            var foundImageData = _imageDataRepository[hashKey].Where(img => img.ItemId == item.Id);
+                            var foundImageData = _imageRepository[hashKey].Where(img => img.ItemId == item.Id);
                             /*** priority:
                              * 1.- dir setup of the thumbnail (null if it is not in any tracked directory)
                              * 2.- dir setup of the related model file (null if no model is linked to this item)
@@ -153,7 +153,7 @@ namespace TableTopCrucible.Shared.Services
                         .Select(x => new ImageData(x.filePath.GetFilenameWithoutExtension().ToName(), x.hashKey)
                             { ItemId = item.Id })
                         .ToArray();
-                _imageDataRepository.AddRange(newImages);
+                _imageRepository.AddRange(newImages);
                 return hashInfo.SelectMany(info => info.foundImageData)
                     .Where(x => x is not null)
                     .Concat(newImages);
@@ -171,7 +171,7 @@ namespace TableTopCrucible.Shared.Services
 
         public void SetImageToThumbnail(ImageData image)
         {
-            _imageDataRepository
+            _imageRepository
                 .GetMany(image.ItemId)
                 .Where(img => img.IsThumbnail && img != image)
                 .ToList()

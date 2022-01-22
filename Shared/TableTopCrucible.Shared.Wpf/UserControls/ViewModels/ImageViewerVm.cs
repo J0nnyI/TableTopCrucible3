@@ -9,7 +9,7 @@ using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Singleton]
+    [Transient]
     public interface IImageViewer
     {
         ImageFilePath ImageFile { get; set; }

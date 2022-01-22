@@ -12,18 +12,22 @@ using TableTopCrucible.Infrastructure.Models.EntityIds;
 namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
     [Singleton]
-    public interface IImageDataRepository : IRepository<ImageDataId, ImageData>
+    public interface IImageRepository : IRepository<ImageDataId, ImageData>
     {
-        public IEnumerable<ImageData> this[FileHashKey hashKey] { get; }
+        IEnumerable<ImageData> this[FileHashKey hashKey] { get; }
         IObservable<IChangeSet<ImageData, ImageDataId>> WatchMany(ItemId itemId);
-        public IEnumerable<ImageData> GetMany(ItemId itemId);
+        IEnumerable<ImageData> GetMany(ItemId itemId);
+        FileData GetSingleFile(ItemId itemId);
     }
 
-    internal class ImageDataRepository : RepositoryBase<ImageDataId, ImageData>, IImageDataRepository
+    internal class ImageRepository : RepositoryBase<ImageDataId, ImageData>, IImageRepository
     {
-        public ImageDataRepository(IStorageController storageController) : base(storageController,
+        private readonly IFileRepository _fileRepository;
+
+        public ImageRepository(IStorageController storageController, IFileRepository fileRepository) : base(storageController,
             storageController.Images)
         {
+            _fileRepository = fileRepository;
         }
 
         public IEnumerable<ImageData> this[FileHashKey hashKey]
@@ -41,5 +45,10 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
             => itemId is null
                 ? Enumerable.Empty<ImageData>()
                 : Data.Items.Where(img => img.ItemId == itemId);
+
+        public FileData GetSingleFile(ItemId itemId)
+            => GetMany(itemId)
+                .Select(img => _fileRepository.SingleByHashKey(img.HashKey))
+                .FirstOrDefault(file => file is not null);
     }
 }

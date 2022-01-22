@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -9,10 +15,16 @@ using System.Windows.Media.Media3D;
 
 using HelixToolkit.Wpf;
 
+using Microsoft.AspNetCore.Server.IIS.Core;
+
 using Splat;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.Jobs.Helper;
+using TableTopCrucible.Core.Jobs.Progression.Models;
+using TableTopCrucible.Core.Jobs.Progression.Services;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
@@ -33,49 +45,131 @@ namespace TableTopCrucible.Domain.Library.Services
         /// <param name="view"></param>
         /// <param name="viewport">optional</param>
         /// <returns></returns>
-        ImageFilePath GenerateThumbnail(Item item, HelixViewport3D viewport, CameraView view = null);
-        ImageFilePath GenerateAutoPositionThumbnail(Item item, HelixViewport3D viewport);
+        ImageFilePath Generate(Item item, HelixViewport3D viewport, CameraView view = null);
+        ImageFilePath GenerateWithAutoPosition(Item item, HelixViewport3D viewport);
 
-        public ImageFilePath GenerateThumbnail(ModelFilePath modelFile, Name sourceName,HelixViewport3D viewport = null);
+        public ImageFilePath Generate(ModelFilePath modelFile, Name sourceName, HelixViewport3D viewport = null);
     }
     internal class ThumbnailGenerationService : IWpfThumbnailGenerationService
     {
         private readonly IItemRepository _itemRepository;
         private readonly IFileRepository _fileRepository;
+        private readonly IImageRepository _imageRepository;
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IGalleryService _galleryService;
+        private readonly IProgressTrackingService _trackingService;
 
-        public ThumbnailGenerationService(IItemRepository itemRepository, IFileRepository fileRepository, IDirectorySetupRepository directorySetupRepository, IGalleryService galleryService)
+        public ThumbnailGenerationService(
+            IItemRepository itemRepository,
+            IFileRepository fileRepository,
+            IImageRepository imageRepository,
+            IDirectorySetupRepository directorySetupRepository,
+            IGalleryService galleryService,
+            IProgressTrackingService trackingService)
         {
             _itemRepository = itemRepository;
             _fileRepository = fileRepository;
+            _imageRepository = imageRepository;
             _directorySetupRepository = directorySetupRepository;
             _galleryService = galleryService;
+            _trackingService = trackingService;
         }
 
-        public ImageFilePath GenerateThumbnail(Item item, CameraView view)
-            => GenerateThumbnail(item, null, view);
+        public ImageFilePath Generate(Item item, CameraView view)
+            => Generate(item, null, view);
 
-        public ImageFilePath GenerateAutoPositionThumbnail(Item item)
-            => _generateThumbnail(item, true, null, null);
+        public ImageFilePath GenerateWithAutoPosition(Item item)
+            => _generate(item, true, null, null);
 
-        public ImageFilePath GenerateThumbnail(Item item, HelixViewport3D viewport, CameraView view = null)
-            => _generateThumbnail(item, false, view, viewport);
+        public ITrackingViewer GenerateManyAsync(IEnumerable<Item> items, ThreadCount parallelThreads = null)
+        {
+            var tracker = _trackingService.CreateSourceTracker((Name)"Generate Thumbnails");
+            var target = (TargetProgress)items.Select(item => item.FileKey3d.GetFileSizeComponent().Value).Sum();
+            tracker.SetTarget(target);
 
-        public ImageFilePath GenerateAutoPositionThumbnail(Item item, HelixViewport3D viewport)
-            => _generateThumbnail(item, true, null, viewport);
+            var source = items
+                .Select(item => _fileRepository.SingleByHashKey(item.FileKey3d))
+                .Select(Observable.Return)
+                .Concat();
 
-        public ImageFilePath GenerateThumbnail(ModelFilePath modelFile, Name sourceName, HelixViewport3D viewport = null)
-            => _generateThumbnail(modelFile, sourceName, viewport is null, null, viewport);
+            GenerateManyAsync(source, tracker, parallelThreads);
+            return tracker;
+        }
 
-        private ImageFilePath _generateThumbnail(Item item, bool autoPositionCamera, CameraView view, HelixViewport3D viewport)
+        /// <summary>
+        /// takes a stream of <see cref="FileData"/> and creates and links thumbnail images.
+        /// </summary>
+        /// <param name="source">pushes the files which require thumbnails<br/>the file is expected to have only one item.</param>
+        /// <param name="tracker">must have a set target<br/>is incremented by the model fileSize</param>
+        /// <param name="parallelThreads">number of parallel generating windows</param>
+        public void GenerateManyAsync(
+            IObservable<FileData> source,
+            ISourceTracker tracker,
+            ThreadCount parallelThreads = null)
+        {
+            parallelThreads ??= (ThreadCount)SettingsHelper.SimultaneousThumbnailWindows;
+
+            var thumbnailThrottle = new Subject<Unit>();
+            source ??= new ReplaySubject<FileData>();
+
+            var failedThumbnailGenerations = new List<FileData>();
+
+            source.Zip(
+                    thumbnailThrottle.StartWith(Enumerable
+                        .Range(1, parallelThreads.Value)
+                        .Select(_ => Unit.Default)),
+                    (item, _) => item)
+                .Subscribe(modelFile =>
+                {
+                    var modelSize = modelFile.HashKey.GetFileSizeComponent();
+                    var item = _itemRepository.ByModelHash(modelFile.HashKey).First();
+                    var img = _imageRepository.GetSingleFile(item.Id);
+                    if (img is not null) // item has a linked thumbnail
+                    {
+                        tracker.Increment((ProgressIncrement)modelSize.Value);
+                        thumbnailThrottle.OnNext();
+                        return;
+                    }
+                    var thread = new Thread(() =>
+                    {
+                        try
+                        {
+                            GenerateWithAutoPosition(item);
+                        }
+                        catch (Exception e)
+                        {
+                            failedThumbnailGenerations.Add(modelFile);
+                            Debugger.Break();
+                        }
+                        finally
+                        {
+                            tracker.Increment((ProgressIncrement)modelSize.Value);
+                            thumbnailThrottle.OnNext();
+                        }
+                    });
+                    thread.SetApartmentState(ApartmentState.STA);
+                    thread.Start();
+                });
+
+        }
+
+        public ImageFilePath Generate(Item item, HelixViewport3D viewport, CameraView view = null)
+            => _generate(item, false, view, viewport);
+
+        public ImageFilePath GenerateWithAutoPosition(Item item, HelixViewport3D viewport)
+            => _generate(item, true, null, viewport);
+
+        public ImageFilePath Generate(ModelFilePath modelFile, Name sourceName, HelixViewport3D viewport = null)
+            => _generate(modelFile, sourceName, viewport is null, null, viewport);
+
+        private ImageFilePath _generate(Item item, bool autoPositionCamera, CameraView view, HelixViewport3D viewport)
         {
             var fileData = _fileRepository.SingleByHashKey(item.FileKey3d);
-            var imgLocation = _generateThumbnail(fileData.Path.ToModelPath(), item.Name, autoPositionCamera, view, viewport);
+            var imgLocation = _generate(fileData.Path.ToModelPath(), item.Name, autoPositionCamera, view, viewport);
             _galleryService.AddThumbnailToItem(item, imgLocation);
             return imgLocation;
         }
-        private ImageFilePath _generateThumbnail(ModelFilePath modelFile, Name itemName, bool autoPositionCamera, CameraView view, HelixViewport3D viewport)
+        private ImageFilePath _generate(ModelFilePath modelFile, Name itemName, bool autoPositionCamera, CameraView view, HelixViewport3D viewport)
         {
             if (!modelFile.Exists())
                 throw new InvalidOperationException($"no file found for item {itemName}");
@@ -85,17 +179,17 @@ namespace TableTopCrucible.Domain.Library.Services
             var imgLocation = ImageFilePath.From(dirSetup.ThumbnailDirectory,
                 itemName.ToFileName() + BareFileName.TimeSuffix, FileExtension.UncompressedImage);
 
-            var visual = modelFile.LoadVisual();
+            var visual = modelFile.LoadVisual(true);
 
-            _generateThumbnail(viewport, view, viewport is null, visual, imgLocation, autoPositionCamera);
+            _generate(viewport, view, viewport is null, visual, imgLocation, autoPositionCamera);
 
             return imgLocation;
         }
 
-        private void _generateThumbnail(HelixViewport3D viewport, CameraView view, bool addDefaultLights, ModelVisual3D content, ImageFilePath imgPath, bool autoPositionCamera)
+        private void _generate(HelixViewport3D viewport, CameraView view, bool addDefaultLights, ModelVisual3D content, ImageFilePath imgPath, bool autoPositionCamera)
         {
-            var usedViewport =viewport;
-            Window window =null;
+            var usedViewport = viewport;
+            Window window = null;
             try
             {
                 if (viewport is null)
@@ -112,6 +206,11 @@ namespace TableTopCrucible.Domain.Library.Services
                         Height = SettingsHelper.ThumbnailSize.Height * 2,
                         Visibility = Visibility.Hidden,
                         ShowInTaskbar = false,
+                        ShowActivated = false,
+                        WindowStyle = WindowStyle.None,
+                        Top = SettingsHelper.ThumbnailHeight * -3,
+                        Left = SettingsHelper.ThumbnailWidth * -3,
+                        Title = "Table Top Crucible Thumbnail Generator"
                     };
                     window.Show();
                 }
@@ -133,7 +232,7 @@ namespace TableTopCrucible.Domain.Library.Services
                 if (autoPositionCamera)
                     usedViewport.Camera.ZoomExtents(usedViewport.Viewport, content?.FindBounds(content.Transform) ?? usedViewport.Children.FindBounds());
 
-                GenerateThumbnail(usedViewport, imgPath);
+                Generate(usedViewport, imgPath);
 
             }
             finally
@@ -142,7 +241,7 @@ namespace TableTopCrucible.Domain.Library.Services
             }
         }
 
-        public void GenerateThumbnail(HelixViewport3D viewport, ImageFilePath imgPath)
+        public void Generate(HelixViewport3D viewport, ImageFilePath imgPath)
         {
             var source = viewport.CreateBitmap();
 

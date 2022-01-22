@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using DynamicData;
@@ -22,11 +23,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     public interface IItemModelViewer
     {
         public Item Item { get; set; }
-        ICommand GenerateThumbnailCommand { get; }
+        ReactiveCommand<Unit, Unit> GenerateThumbnailCommand { get; }
     }
 
     public class ItemModelViewerVm : ReactiveObject, IItemModelViewer, IActivatableViewModel
     {
+        public ReactiveCommand<Unit, Unit> GenerateThumbnailCommand { get; }
         public ItemModelViewerVm(
             IModelViewer modelViewer,
             IFileRepository fileRepository,
@@ -43,7 +45,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             throw new InvalidOperationException("the item must be selected to create an thumbnail");
                         var imgPath = modelViewer.IsActivated
                             ? modelViewer.GenerateThumbnail(Item.Name)
-                            : thumbnailGenerationService.GenerateAutoPositionThumbnail(Item);
+                            : thumbnailGenerationService.GenerateWithAutoPosition(Item);
 
                         galleryService.AddImagesToItem(Item, imgPath);
 
@@ -92,6 +94,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         Debugger.Break();
                         return Observable.Never<ModelFilePath>();
                     })
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, vm => vm.ModelViewer.Model),
 
                 filesChanges
@@ -111,6 +114,5 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public Item Item { get; set; }
 
 
-        public ICommand GenerateThumbnailCommand { get; }
     }
 }

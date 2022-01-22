@@ -8,10 +8,12 @@
                                 xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                                 xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                                 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                                xmlns:helper="clr-namespace:TableTopCrucible.Core.Helper;assembly=TableTopCrucible.Core.Helper"
                                 mc:Ignorable="d"
                                 d:DesignHeight="450" d:DesignWidth="800">
     <ListView x:Name="Items"
-              Margin="5">
+              Margin="5"
+              Style="{StaticResource MaterialDesignNavigationListBox}">
         <ListView.Resources>
             <Style TargetType="ContentPresenter">
                 <Setter Property="Margin"
@@ -20,22 +22,12 @@
             </Style>
         </ListView.Resources>
         <ListView.ItemContainerStyle>
-            <Style TargetType="ListViewItem">
-                <Setter Property="HorizontalContentAlignment"
-                        Value="Stretch" />
-                <Setter Property="VerticalContentAlignment"
-                        Value="Stretch" />
+            <Style TargetType="ListViewItem"
+                   BasedOn="{StaticResource MaterialDesignNavigationListBoxItem}">
                 <EventSetter Event="PreviewMouseDown"
                              Handler="ListViewItem_PreviewMouseDown" />
                 <Setter Property="IsSelected"
                         Value="{Binding IsSelected, Mode=TwoWay}" />
-                <Style.Triggers>
-                    <Trigger Property="IsSelected"
-                             Value="True">
-                        <Setter Property="Background"
-                                Value="Blue" />
-                    </Trigger>
-                </Style.Triggers>
             </Style>
         </ListView.ItemContainerStyle>
         <ListBox.ItemsPanel>
@@ -43,7 +35,7 @@
                 <wpftk:VirtualizingWrapPanel Orientation="Vertical"
                                              SpacingMode="None"
                                              StretchItems="False"
-                                             ItemSize="216,216" />
+                                             ItemSize="{x:Static helper:SettingsHelper.ThumbnailSize}" />
             </ItemsPanelTemplate>
         </ListBox.ItemsPanel>
         <ListView.ItemTemplate>
