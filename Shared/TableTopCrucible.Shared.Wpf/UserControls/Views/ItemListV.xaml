@@ -8,32 +8,33 @@
                                 xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                                 xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                                 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                                xmlns:entities="clr-namespace:TableTopCrucible.Infrastructure.Models.Entities;assembly=TableTopCrucible.Infrastructure.Models"
                                 mc:Ignorable="d"
                                 d:DesignHeight="450" d:DesignWidth="800">
     <ListView x:Name="Items"
               Margin="5">
         <ListView.Resources>
             <Style TargetType="ContentPresenter">
-                <Setter Property="Margin"
-                        Value="10" />
-                <Setter Property="Opacity" Value=".5" />
+                <Setter Property="Margin" 
+                        Value="10"/>
+                <Setter Property="Opacity" Value=".5"/>
             </Style>
         </ListView.Resources>
         <ListView.ItemContainerStyle>
-            <Style TargetType="ListViewItem">
-                <Setter Property="HorizontalContentAlignment"
+            <Style TargetType="ListViewItem" >
+                <Setter Property="HorizontalContentAlignment" 
                         Value="Stretch" />
-                <Setter Property="VerticalContentAlignment"
+                <Setter Property="VerticalContentAlignment" 
                         Value="Stretch" />
                 <EventSetter Event="PreviewMouseDown"
-                             Handler="ListViewItem_PreviewMouseDown" />
-                <Setter Property="IsSelected"
-                        Value="{Binding IsSelected, Mode=TwoWay}" />
+                             Handler="ListViewItem_PreviewMouseDown"/>
+                <Setter Property="IsSelected" 
+                        Value="{Binding IsSelected, Mode=TwoWay}"/>
                 <Style.Triggers>
                     <Trigger Property="IsSelected"
                              Value="True">
                         <Setter Property="Background"
-                                Value="Blue" />
+                                Value="Blue"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
@@ -43,13 +44,13 @@
                 <wpftk:VirtualizingWrapPanel Orientation="Vertical"
                                              SpacingMode="None"
                                              StretchItems="False"
-                                             ItemSize="216,216" />
+                                             ItemSize="216,216"/>
             </ItemsPanelTemplate>
         </ListBox.ItemsPanel>
         <ListView.ItemTemplate>
             <DataTemplate d:DataContext="{d:DesignInstance vm:ItemSelectionInfo}">
                 <Grid VerticalAlignment="Stretch"
-                      x:Name="grd_item">
+                          x:Name="grd_item">
                     <!--<i:Interaction.Triggers>
                         <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
                             <i:InvokeCommandAction Command="{Binding ItemLeftMouseButtonDownCommand}"
@@ -62,26 +63,27 @@
                             <BitmapImage DecodePixelWidth="200"/>
                         </Image.Source>
                     </Image>-->
-                    <md:PackIcon Visibility="Visible"
-                                 Kind="Image"
-                                 VerticalAlignment="Center"
-                                 HorizontalAlignment="Center"
-                                 Foreground="LightGray"
-                                 Width="150px"
-                                 Height="150px" />
+                    <md:PackIcon Visibility="Visible" 
+                                     Kind="Image"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center"
+                                     Foreground="LightGray"
+                                     Width="150px"
+                                     Height="150px"/>
 
                     <TextBlock Text="{Binding Item.Name}"
-                               VerticalAlignment="Bottom"
-                               HorizontalAlignment="Stretch"
-                               MaxWidth="208"
-                               Margin="-4 0 -4 -4"
-                               FontSize="18"
-                               TextAlignment="Center"
-                               TextTrimming="CharacterEllipsis"
-                               TextWrapping="WrapWithOverflow"
-                               Padding="8px"
-                               Background="#77000000"
-                               Foreground="white" />
+                                   VerticalAlignment="Bottom"
+                                   HorizontalAlignment="Stretch"
+                                   MaxWidth="208"
+                                   Margin="-4 0 -4 -4"
+                                   FontSize="18"
+                                   TextAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="WrapWithOverflow"
+                                   Padding="8px"
+                                   Background="#77000000"
+                                   Foreground="white">
+                    </TextBlock>
                 </Grid>
             </DataTemplate>
         </ListView.ItemTemplate>

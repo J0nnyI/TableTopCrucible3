@@ -1,4 +1,5 @@
-﻿using TableTopCrucible.Core.ValueTypes;
+﻿using MaterialDesignThemes.Wpf;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.Models

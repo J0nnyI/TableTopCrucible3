@@ -83,14 +83,14 @@ namespace TableTopCrucible.Core.Helper
             return source;
         }
 
-        public static void OnNext(this ISubject<Unit> subject)
-            => subject.OnNext(Unit.Default);
-
         internal enum PCValueType : byte
         {
             Seed = 1,
             Initial = 2,
             Full = 3
         }
+
+        public static void OnNext(this ISubject<Unit> subject)
+            => subject.OnNext(Unit.Default);
     }
 }

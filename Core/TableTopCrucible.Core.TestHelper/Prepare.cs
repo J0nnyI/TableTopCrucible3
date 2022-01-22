@@ -1,5 +1,10 @@
-﻿using ReactiveUI;
+﻿using System.IO.Abstractions.TestingHelpers;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using ReactiveUI;
 using Splat;
+using Splat.Microsoft.Extensions.DependencyInjection;
+using Splat.Microsoft.Extensions.Logging;
 using TableTopCrucible.Core.DependencyInjection;
 
 namespace TableTopCrucible.Core.TestHelper
@@ -26,7 +31,6 @@ namespace TableTopCrucible.Core.TestHelper
             Services(services);
             return services;
         }
-
         public static void Services(IServiceCollection services)
         {
             services.UseMicrosoftDependencyResolver();

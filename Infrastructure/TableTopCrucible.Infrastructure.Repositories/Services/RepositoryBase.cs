@@ -1,14 +1,20 @@
-﻿using System;
+﻿using System.ComponentModel;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using DynamicData;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
+using TableTopCrucible.Infrastructure.Repositories.Exceptions;
 using TableTopCrucible.Infrastructure.Repositories.Models;
 
 namespace TableTopCrucible.Infrastructure.Repositories.Services
@@ -40,13 +46,13 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         protected RepositoryBase(IStorageController storageController, SourceCache<TEntity, TId> data)
         {
             _storageController = storageController;
-            Data = data;
+            this.Data = data;
         }
 
         public SourceCache<TEntity, TId> Data { get; }
 
         /// <summary>
-        ///     only updates on init, add and delete, updates have to be consumed via <see cref="INotifyPropertyChanged" />
+        /// only updates on init, add and delete, updates have to be consumed via <see cref="INotifyPropertyChanged"/>
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -61,7 +67,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                 .StartWith(this[id]);
 
         /// <summary>
-        ///     only updates on init, add and delete, updates have to be consumed via <see cref="INotifyPropertyChanged" />
+        /// only updates on init, add and delete, updates have to be consumed via <see cref="INotifyPropertyChanged"/>
         /// </summary>
         /// <param name="idChanges"></param>
         /// <returns></returns>

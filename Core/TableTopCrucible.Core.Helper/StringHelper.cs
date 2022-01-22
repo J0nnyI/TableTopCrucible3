@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace TableTopCrucible.Core.Helper
 {
@@ -8,5 +11,6 @@ namespace TableTopCrucible.Core.Helper
 
         private static string WildcardToRegex(string pattern) =>
             "^" + Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".") + "$";
+        
     }
 }

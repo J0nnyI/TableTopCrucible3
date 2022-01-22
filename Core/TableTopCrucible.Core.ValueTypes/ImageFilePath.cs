@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -13,10 +18,7 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public static ImageFilePath From(FilePath path)
-            => path is null
-                ? null
-                : From(path.Value);
-
+            => path is null ? null : From(path.Value);
         public FilePath ToFilePath()
             => FilePath.From(Value);
     }

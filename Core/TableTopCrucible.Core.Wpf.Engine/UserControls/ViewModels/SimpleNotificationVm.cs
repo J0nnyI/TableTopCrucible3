@@ -11,13 +11,16 @@ using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.Wpf.Engine.Models;
+using TableTopCrucible.Core.Wpf.Engine.Services;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
 {
     public class SimpleNotificationVm : ReactiveObject, INotification, IActivatableViewModel
     {
-        private readonly Subject<Unit> _closedByUser = new();
         private readonly NotificationIdentifier _identifier;
+        private readonly Subject<Unit> _closedByUser = new();
 
 
         private readonly INotificationService _notificationService;
@@ -31,8 +34,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         private ObservableAsPropertyHelper<bool> _deleteCountdownRunning;
 
 
-        internal SimpleNotificationVm(Name title, Description content, NotificationType type,
-            NotificationIdentifier identifier)
+        internal SimpleNotificationVm(Name title, Description content, NotificationType type, NotificationIdentifier identifier)
         {
             _identifier = identifier;
             Title = title;

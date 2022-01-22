@@ -81,15 +81,15 @@
 
     <DockPanel VerticalAlignment="Stretch">
         <ListBox x:Name="UpperList"
-                 DockPanel.Dock="Top"
-                 ItemContainerStyle="{StaticResource ItemStyle}"
-                 ItemTemplate="{StaticResource ItemTemplate}"
-                 PreviewMouseDown="BlockOnControl" />
+                     DockPanel.Dock="Top"
+                     ItemContainerStyle="{StaticResource ItemStyle}"
+                     ItemTemplate="{StaticResource ItemTemplate}"
+                     PreviewMouseDown="BlockOnControl" />
         <ListBox x:Name="LowerList"
-                 DockPanel.Dock="Bottom"
-                 ItemContainerStyle="{StaticResource ItemStyle}"
-                 ItemTemplate="{StaticResource ItemTemplate}"
-                 PreviewMouseDown="BlockOnControl" />
+                     DockPanel.Dock="Bottom"
+                     ItemContainerStyle="{StaticResource ItemStyle}"
+                     ItemTemplate="{StaticResource ItemTemplate}"
+                     PreviewMouseDown="BlockOnControl" />
         <Rectangle />
     </DockPanel>
 </rxui:ReactiveUserControl>

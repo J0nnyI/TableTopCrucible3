@@ -14,10 +14,10 @@ namespace TableTopCrucible.Core.Jobs.Progression.Models
     internal class CompositeTracker : ICompositeTracker, ITrackingViewer, IDisposable
     {
         public static readonly WeightedTargetProgress Target = (WeightedTargetProgress)100;
-        private readonly CompositeDisposable _disposables = new();
         private readonly IObservable<Unit> _onDestroy;
 
         private readonly SourceList<IWeightedTrackingViewer> _trackerStack = new();
+        private readonly CompositeDisposable _disposables = new();
 
         public CompositeTracker(Name title)
         {

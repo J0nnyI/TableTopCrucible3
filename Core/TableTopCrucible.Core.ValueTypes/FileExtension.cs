@@ -9,7 +9,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public static readonly FileExtension JSonLibrary = From(".ttcjl");
         public static readonly FileExtension TemporaryJSonLibrary = From(".ttcjlt");
         public static readonly FileExtension JSON = From(".json");
-        public static readonly IEnumerable<FileExtension> LibraryFile = new[] { JSonLibrary, TemporaryJSonLibrary };
+        public static readonly IEnumerable<FileExtension> LibraryFile = new []{JSonLibrary, TemporaryJSonLibrary};
         public static readonly IEnumerable<FileExtension> SlicerProject = FromList(".3mf");
         public static readonly IEnumerable<FileExtension> SlicedFile = FromList(".photon", ".gcode");
         public static readonly IEnumerable<FileExtension> Archive = FromList(".zip");
@@ -18,9 +18,7 @@ namespace TableTopCrucible.Core.ValueTypes
             ".3ds");
 
         public static readonly FileExtension UncompressedImage = (FileExtension)".bmp";
-
-        public static readonly IEnumerable<FileExtension> Image = FromList(".png", ".jpg", ".jpeg",
-            UncompressedImage.Value, ".gif",
+        public static readonly IEnumerable<FileExtension> Image = FromList(".png", ".jpg", ".jpeg", UncompressedImage.Value, ".gif",
             ".hdp", ".jp2", ".pbm", ".psd", ".tga", ".tiff", ".img");
 
         public static readonly FileExtension Library = From(".ttcl");

@@ -1,23 +1,46 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+using HelixToolkit.Wpf;
+
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+
 using Splat;
+
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.Wpf.Engine.Services;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.Helper;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 {
     /// <summary>
-    ///     Interaction logic for ModelViewerV.xaml
+    /// Interaction logic for ModelViewerV.xaml
     /// </summary>
     public partial class ModelViewerV : ReactiveUserControl<ModelViewerVm>
     {
@@ -30,13 +53,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 ViewModel!.BringIntoView.RegisterHandler(context =>
                 {
                     var bounds = ViewModel.ViewportContent.Bounds;
-                    Viewport.Camera.ZoomExtents(Viewport.Viewport, bounds);
+                    this.Viewport.Camera.ZoomExtents(Viewport.Viewport, bounds);
                     context.SetOutput(Unit.Default);
                 }),
 
                 // bindings
-                Observable.ObserveOn<>(this.WhenAnyValue(v => v.ViewModel.PlaceholderText.Value),
-                        RxApp.MainThreadScheduler)
+                this.WhenAnyValue(v => v.ViewModel.PlaceholderText.Value)
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v => v.PlaceholderText.Text),
 
                 this.WhenAnyValue(vm => vm.ViewModel.IsLoading)
@@ -52,9 +75,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v => v.ContainerVisual.Content),
                 new ActOnDispose(
-                    () => ViewModel.Viewport = Viewport,
+                    ()=>ViewModel.Viewport=Viewport,
                     () => ViewModel.Viewport = null)
+
             });
+
         }
 
         private ImageFilePath createThumbnail()
@@ -72,14 +97,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 
             try
             {
+
                 var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
 
-                var directory =
-                    directorySetupRepository.ByFilepath(ViewModel.Model.ToFilePath()).FirstOrDefault().Path +
-                    (DirectoryName)"Thumbnails";
+                var directory = directorySetupRepository.ByFilepath(ViewModel.Model.ToFilePath()).FirstOrDefault().Path + (DirectoryName)"Thumbnails";
                 var fileName = ViewModel.Model.GetFilenameWithoutExtension() +
-                               BareFileName.TimeSuffix +
-                               FileExtension.UncompressedImage;
+                                BareFileName.TimeSuffix +
+                                FileExtension.UncompressedImage;
                 var path = ImageFilePath.From(directory + fileName);
 
                 var source = Viewport.CreateBitmap();
@@ -106,7 +130,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                         $"The Image for the File {ViewModel.Model} could not be created",
                         "Details:",
                         ex.ToString()
-                    ),
+                        ),
                     NotificationType.Confirmation);
                 throw;
             }
