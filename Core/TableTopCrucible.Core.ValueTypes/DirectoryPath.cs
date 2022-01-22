@@ -7,11 +7,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Extensions;
-
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
@@ -180,17 +178,17 @@ namespace TableTopCrucible.Core.ValueTypes
             return EnumerateFiles()
                 .Where(f => types.Contains(f.GetFileType()));
         }
-        
+
         public bool ContainsFilepath<TFilePath>(FilePath<TFilePath> filePath)
             where TFilePath : FilePath<TFilePath>, new()
-            => filePath.Value.ToLower().StartsWith(this.Value.ToLower());
+            => filePath.Value.ToLower().StartsWith(Value.ToLower());
     }
 
     public class DirectoryPath : DirectoryPath<DirectoryPath>
     {
         public static DirectoryPath AppData { get; }
             = From(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) +
-            DirectoryName.From("TableTopCrucible");
+              DirectoryName.From("TableTopCrucible");
 
         public static FilePath operator +(DirectoryPath directory, FileName fileName) =>
             FilePath.From(FileSystemHelper.Path.Combine(directory.Value, fileName.Value));

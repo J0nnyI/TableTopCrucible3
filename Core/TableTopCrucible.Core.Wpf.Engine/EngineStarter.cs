@@ -30,7 +30,7 @@ namespace TableTopCrucible.Core.Wpf.Engine
                 {
                     services.UseMicrosoftDependencyResolver();
                     services.AddTtcServices();
-                  
+
                     var resolver = Locator.CurrentMutable;
                     resolver.InitializeSplat();
                     resolver.InitializeReactiveUI();

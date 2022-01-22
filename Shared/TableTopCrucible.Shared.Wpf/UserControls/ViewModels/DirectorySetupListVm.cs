@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -13,11 +12,8 @@ using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Core.Wpf.Engine.Services;
-using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Helper;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
@@ -57,7 +53,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 _directorySetupRepository
                     .Data
                     .Connect()
-                    .Transform(dir=>
+                    .Transform(dir =>
                     {
                         var card = Locator.Current.GetService<IDirectorySetupCard>();
                         card.DirectorySetupId = dir.Id;
@@ -67,7 +63,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Bind(Directories)
                     .Subscribe(),
 
-                _initCommands(),
+                _initCommands()
             });
         }
 
@@ -83,39 +79,41 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         {
             var disposables = new CompositeDisposable();
             CreateDirectory =
-            ReactiveCommand.Create(async () =>
-            {
-                try
+                ReactiveCommand.Create(async () =>
                 {
-                    var path = await GetDirectoryDialog.Handle(Unit.Default);
-                    if (path == null)
-                        return;
-                    var takenItem = _directorySetupRepository[path];
-                    if (takenItem == null)
+                    try
                     {
-                        var directorySetup = new DirectorySetup(path);
-                        _directorySetupRepository.Add(directorySetup);
-                        _notificationService.AddNotification(
-                            (Name)"Directory added successfully",
-                            (Description)$"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
-                            NotificationType.Confirmation);
+                        var path = await GetDirectoryDialog.Handle(Unit.Default);
+                        if (path == null)
+                            return;
+                        var takenItem = _directorySetupRepository[path];
+                        if (takenItem == null)
+                        {
+                            var directorySetup = new DirectorySetup(path);
+                            _directorySetupRepository.Add(directorySetup);
+                            _notificationService.AddNotification(
+                                (Name)"Directory added successfully",
+                                (Description)
+                                $"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
+                                NotificationType.Confirmation);
+                        }
+                        else
+                        {
+                            _notificationService.AddNotification(
+                                (Name)"Directory has already been added",
+                                (Description)
+                                $"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
+                                NotificationType.Info);
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
                         _notificationService.AddNotification(
-                            (Name)"Directory has already been added",
-                            (Description)$"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
-                            NotificationType.Info);
+                            (Name)"Directory could not be added",
+                            (Description)("The Directory could not be added:" + Environment.NewLine + e),
+                            NotificationType.Error);
                     }
-                }
-                catch (Exception e)
-                {
-                    _notificationService.AddNotification(
-                        (Name)"Directory could not be added",
-                        (Description)("The Directory could not be added:" + Environment.NewLine + e),
-                        NotificationType.Error);
-                }
-            });
+                });
             return disposables;
         }
     }

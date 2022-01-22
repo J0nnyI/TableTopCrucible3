@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
+﻿using System.Windows.Media.Media3D;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Shared.ValueTypes
 {
-    public class CameraView:ValueType<Point3D, Vector3D, Vector3D, CameraView>
+    public class CameraView : ValueType<Point3D, Vector3D, Vector3D, CameraView>
     {
         public Point3D Position
         {
