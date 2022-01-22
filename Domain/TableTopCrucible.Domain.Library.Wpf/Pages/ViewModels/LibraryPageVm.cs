@@ -85,6 +85,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                 .Buffer(TimeSpan.FromMilliseconds(500))
                 .Where(buffer=>buffer.Any())
                 .Select(buffer=>buffer.Last())
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Publish()
                 .RefCount();
             this.WhenActivated(() => new[]

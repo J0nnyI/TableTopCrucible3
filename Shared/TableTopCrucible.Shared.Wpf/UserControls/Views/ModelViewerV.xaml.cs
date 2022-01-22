@@ -4,9 +4,13 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
+
 using HelixToolkit.Wpf;
+
 using ReactiveUI;
+
 using Splat;
+
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
@@ -60,61 +64,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                         ContainerVisual.Content = null;
                     })
             });
-        }
-
-        private ImageFilePath createThumbnail()
-        {
-            var notificationService = Locator.Current.GetService<INotificationService>();
-
-            if (ViewModel?.Model is null)
-                throw new InvalidOperationException("could not create a screen shot, the model is null");
-            if (!ViewModel.Model.Exists())
-                throw new InvalidOperationException("could not create a screen shot, the model has been deleted");
-
-
-            if (!ViewModel.Model.Exists())
-                throw new InvalidOperationException("could not create a screen shot, the model has been deleted");
-
-            try
-            {
-                var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
-
-                var directory =
-                    directorySetupRepository.ByFilepath(ViewModel.Model.ToFilePath()).FirstOrDefault().Path +
-                    (DirectoryName)"Thumbnails";
-                var fileName = ViewModel.Model.GetFilenameWithoutExtension() +
-                               BareFileName.TimeSuffix +
-                               FileExtension.UncompressedImage;
-                var path = ImageFilePath.From(directory + fileName);
-
-                var source = Viewport.CreateBitmap();
-
-                directory.Create();
-
-                using var fileStream = path.OpenWrite();
-
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(source));
-                encoder.Save(fileStream);
-
-                notificationService.AddNotification(
-                    (Name)"Image creation successful",
-                    (Description)$"The Image for the File {ViewModel.Model} was generated successfully",
-                    NotificationType.Confirmation);
-                return path;
-            }
-            catch (Exception ex)
-            {
-                notificationService.AddNotification(
-                    (Name)"Image creation failed",
-                    (Description)string.Join(Environment.NewLine,
-                        $"The Image for the File {ViewModel.Model} could not be created",
-                        "Details:",
-                        ex.ToString()
-                    ),
-                    NotificationType.Confirmation);
-                throw;
-            }
         }
     }
 }

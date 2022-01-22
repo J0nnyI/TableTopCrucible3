@@ -16,9 +16,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
             InitializeComponent();
             this.WhenActivated(() => new[]
             {
-                this.OneWayBind(ViewModel,
-                    vm => vm.Item.FileKey3d.Value,
-                    v => v.HashKey.Text),
+                this.WhenAnyValue(v=>v.ViewModel.Item.FileKey3d)
+                    .Select(key=>key.Value)
+                    .BindTo(this, v=>v.HashKey.Text),
+                this.WhenAnyValue(v=>v.ViewModel.Item.Id)
+                    .Select(key=>key.Value)
+                    .BindTo(this, v=>v.ItemId.Text),
                 this.WhenAnyValue(v => v.ViewModel.Item)
                     .Select(item => item?.Tags?.Connect() ?? Observable.Return(ChangeSet<Tag>.Empty))
                     .Switch()
