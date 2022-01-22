@@ -199,7 +199,8 @@ namespace TableTopCrucible.Domain.Library.Services
                     usedViewport = new HelixViewport3D()
                     {
                         Width = SettingsHelper.ThumbnailSize.Width,
-                        Height = SettingsHelper.ThumbnailSize.Height
+                        Height = SettingsHelper.ThumbnailSize.Height,
+                        ShowViewCube = false
                     };
                     window = new()
                     {

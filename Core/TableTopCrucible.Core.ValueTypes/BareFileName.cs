@@ -7,7 +7,15 @@ namespace TableTopCrucible.Core.ValueTypes
     /// </summary>
     public class BareFileName : ValueType<string, BareFileName>
     {
-        public static BareFileName TimeSuffix => (BareFileName)$"_{DateTime.Now:yyyyMMdd_HHmmssss}";
+        private static readonly Random random = new(DateTime.Now.GetHashCode());
+        public static BareFileName TimeSuffix
+        {
+            get
+            {
+                lock (random)
+                    return (BareFileName)$"_{DateTime.Now:yyyyMMdd_HHmmssss}_${random.NextDouble()}";
+            }
+        }
 
         public static BareFileName operator +(BareFileName bareFileA, BareFileName bareFileB) =>
             From(bareFileA.Value + bareFileB.Value);
