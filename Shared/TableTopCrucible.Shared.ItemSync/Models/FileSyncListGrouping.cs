@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MoreLinq.Extensions;
 
 namespace TableTopCrucible.Shared.ItemSync.Models
 {

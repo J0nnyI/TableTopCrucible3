@@ -33,7 +33,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Helper
                                 list.Remove(change.UpdateInfo.UpdatedEntities.Keys);
                                 break;
                             case EntityUpdateChangeReason.Init:
-                                list.AddOrUpdate(change.Queryable.AsEnumerable());
+                                ObservableCacheEx.AddOrUpdate<TEntity, TId>(list, Enumerable.AsEnumerable<TEntity>(change.Queryable));
                                 break;
                             default:
                                 throw new NotImplementedException();

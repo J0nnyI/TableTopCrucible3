@@ -1,11 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Text;
+
 using DynamicData;
+using DynamicData.PLinq;
+
 using ReactiveUI;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
@@ -19,10 +26,12 @@ namespace TableTopCrucible.Domain.Library.Services
 {
     internal class FileWatcherHelper : IDisposable
     {
+        public DirectorySetup DirectorySetup { get; }
+        private FileSystemWatcher _fileWatcher;
         private readonly CompositeDisposable _disposables = new();
+        public void Dispose() => _disposables.Dispose();
         private readonly Subject<DirectorySetup> _onChange = new();
-        private readonly FileSystemWatcher _fileWatcher;
-
+        public IObservable<DirectorySetup> OnChange => _onChange.AsObservable();
         public FileWatcherHelper(DirectorySetup directorySetup)
         {
             DirectorySetup = directorySetup;
@@ -35,16 +44,13 @@ namespace TableTopCrucible.Domain.Library.Services
             _fileWatcher.Renamed += (_, _) => _onChange.OnNext(directorySetup);
             _fileWatcher.EndInit();
         }
-
-        public DirectorySetup DirectorySetup { get; }
-        public IObservable<DirectorySetup> OnChange => _onChange.AsObservable();
-        public void Dispose() => _disposables.Dispose();
     }
 
     [Singleton]
     public interface IFileWatcherService
     {
         void StartSynchronization();
+
     }
 
     internal class FileWatcherService : ReactiveObject, IFileWatcherService, IDisposable
@@ -52,8 +58,9 @@ namespace TableTopCrucible.Domain.Library.Services
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IFileSynchronizationService _fileSynchronizationService;
         private readonly INotificationService _notificationService;
+        private CompositeDisposable _syncDisposables { get; set; }
         private readonly ObservableAsPropertyHelper<bool> _syncRunning;
-
+        public bool SyncRunning => _syncRunning.Value;
         public FileWatcherService(
             IDirectorySetupRepository directorySetupRepository,
             IFileSynchronizationService fileSynchronizationService,
@@ -67,21 +74,11 @@ namespace TableTopCrucible.Domain.Library.Services
                 .Select(x => x is not null)
                 .ToProperty(this, x => x.SyncRunning, out _syncRunning);
         }
-
-        private CompositeDisposable _syncDisposables { get; set; }
-        public bool SyncRunning => _syncRunning.Value;
-
-        public void Dispose()
-        {
-            _syncRunning?.Dispose();
-            _syncDisposables?.Dispose();
-        }
-
         public void StartSynchronization()
         {
             if (SyncRunning)
                 throw new InvalidOperationException("Synchronization is already activated");
-            _syncDisposables = new CompositeDisposable();
+            _syncDisposables = new();
 
             _directorySetupRepository
                 .Data
@@ -96,6 +93,7 @@ namespace TableTopCrucible.Domain.Library.Services
                 .Where(buffer => buffer.Any())
                 .Subscribe(changedDirs =>
                 {
+
                     var watcher = _fileSynchronizationService.StartScan();
                     var scanStarted = watcher is not null;
 
@@ -104,27 +102,40 @@ namespace TableTopCrucible.Domain.Library.Services
 
                     var distinctDirs = changedDirs.Distinct().ToArray();
                     if (distinctDirs.Length == 1)
+                    {
                         _notificationService.AddNotification(
                             (Name)"Starting scan for changed Files",
-                            (Description)
-                            $"File changes detected in the last {SettingsHelper.AutoFileScanThrottle} in directory '{distinctDirs.First().Name}' ({distinctDirs.First().Path})",
+                            (Description)$"File changes detected in the last {SettingsHelper.AutoFileScanThrottle} in directory '{distinctDirs.First().Name}' ({distinctDirs.First().Path})",
                             NotificationType.Info);
+                    }
                     else
+                    {
                         _notificationService.AddNotification(
                             (Name)"Starting Scan for changed Files",
                             (Description)(
-                                $"File changes detected in the last {SettingsHelper.AutoFileScanThrottle} in directories '{distinctDirs.First()}'" +
-                                Environment.NewLine +
+                                $"File changes detected in the last {SettingsHelper.AutoFileScanThrottle} in directories '{distinctDirs.First()}'" + Environment.NewLine +
                                 string.Join(Environment.NewLine,
                                     distinctDirs.Select(dir => $"'{dir.Name}' ({dir.Path})").ToArray())),
                             NotificationType.Info);
-                }, e => { }).DisposeWith(_syncDisposables);
+
+                    }
+
+                }, e =>
+                {
+
+                }).DisposeWith(_syncDisposables);
         }
 
         public void StopSynchronization()
         {
             _syncDisposables.Dispose();
             _syncDisposables = null;
+        }
+
+        public void Dispose()
+        {
+            _syncRunning?.Dispose();
+            _syncDisposables?.Dispose();
         }
     }
 }

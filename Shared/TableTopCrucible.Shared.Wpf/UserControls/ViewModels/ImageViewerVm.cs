@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.DirectoryServices;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -14,21 +20,25 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     {
         ImageFilePath ImageFile { get; set; }
     }
-
-    public class ImageViewerVm : ReactiveObject, IActivatableViewModel, IImageViewer
+    public class ImageViewerVm:ReactiveObject, IActivatableViewModel, IImageViewer
     {
+        public ViewModelActivator Activator { get; } = new();
+        
+        [Reactive]
+        public ImageFilePath ImageFile { get; set; }
+
+        [Reactive]
+        public ImageSource ImageSource { get; private set; }
         public ImageViewerVm()
         {
-            this.WhenActivated(() => new[]
+            this.WhenActivated(()=>new []
             {
-                this.WhenAnyValue(vm => vm.ImageFile)
+                this.WhenAnyValue(vm=>vm.ImageFile)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(img =>
-                    {
+                    { 
                         if (img is null || !img.Exists())
-                        {
                             ImageSource = null;
-                        }
                         else
                         {
                             var src = new BitmapImage();
@@ -41,13 +51,5 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     })
             });
         }
-
-        [Reactive]
-        public ImageSource ImageSource { get; private set; }
-
-        public ViewModelActivator Activator { get; } = new();
-
-        [Reactive]
-        public ImageFilePath ImageFile { get; set; }
     }
 }

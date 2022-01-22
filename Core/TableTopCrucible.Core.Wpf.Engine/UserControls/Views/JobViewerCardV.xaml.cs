@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using System.Windows;
 using ReactiveUI;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
@@ -22,9 +23,10 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     vm => vm.Viewer.Title.Value,
                     v => v.Title.Text),
 
-                Observable.ObserveOn<>(this.WhenAnyObservable(
-                            v => v.ViewModel.Viewer.TargetProgressChanges)
-                        .Select(target => target.Value), RxApp.MainThreadScheduler)
+                this.WhenAnyObservable(
+                        v => v.ViewModel.Viewer.TargetProgressChanges)
+                    .Select(target => target.Value)
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this,
                         v => v.Progress.Maximum),
 

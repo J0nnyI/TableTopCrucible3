@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading.Tasks;
@@ -10,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32.SafeHandles;
 using Image = System.Drawing.Image;
+using Matrix = System.Windows.Media.Matrix;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
 
@@ -17,43 +20,46 @@ namespace TableTopCrucible.Core.Wpf.Helper
 {
     public static class VisualUtility
     {
+
+
+
         public static BitmapSource CreateBitmap(
             this FrameworkElement elementToRender,
             Size? size = null,
             bool undoTransformation = true)
-            => CreateBitmap(elementToRender as Visual,
-                size ?? new Size(elementToRender.ActualWidth, elementToRender.ActualHeight),
+            => CreateBitmap(elementToRender as Visual, size ?? new Size(elementToRender.ActualWidth, elementToRender.ActualHeight),
                 undoTransformation);
 
 
-        public static BitmapSource CreateBitmap(
+            public static BitmapSource CreateBitmap(
             this Visual visualToRender,
             Size size,
-            bool undoTransformation = true)
+            bool undoTransformation=true)
         {
             if (visualToRender == null)
+            {
                 return null;
-
+            }
+            
             // The PixelsPerInch() helper method is used to read the screen DPI setting.
             // If you need to create a bitmap with a specified resolution, you could directly
             // pass the specified dpiX and dpiY values to RenderTargetBitmap constructor.
             RenderTargetBitmap bmp = new(
                 (int)Math.Ceiling(size.Width),
-                (int)Math.Ceiling(size.Height),
+                (int)Math.Ceiling(size.Height), 
                 DeviceHelper.PixelsPerInch(Orientation.Horizontal),
-                DeviceHelper.PixelsPerInch(Orientation.Vertical),
+                DeviceHelper.PixelsPerInch(Orientation.Vertical), 
                 PixelFormats.Pbgra32);
 
             // If we want to undo the transform, we could use VisualBrush trick.
             if (undoTransformation)
             {
-                var dv = new DrawingVisual();
-                using (var dc = dv.RenderOpen())
+                DrawingVisual dv = new DrawingVisual();
+                using (DrawingContext dc = dv.RenderOpen())
                 {
-                    var vb = new VisualBrush(visualToRender);
+                    VisualBrush vb = new VisualBrush(visualToRender);
                     dc.DrawRectangle(vb, null, new Rect(new Point(), size));
                 }
-
                 bmp.Render(dv);
             }
             else
@@ -63,68 +69,70 @@ namespace TableTopCrucible.Core.Wpf.Helper
 
             return bmp;
         }
+
+
+
+
+
     }
 
     internal class DeviceHelper
     {
-        public static int PixelsPerInch(Orientation orientation)
+        public static Int32 PixelsPerInch(Orientation orientation)
         {
-            var capIndex = orientation == Orientation.Horizontal
-                ? 0x58
-                : 90;
-            using (var handle = UnsafeNativeMethods.CreateDC("DISPLAY"))
+            Int32 capIndex = (orientation == Orientation.Horizontal) ? 0x58 : 90;
+            using (DCSafeHandle handle = UnsafeNativeMethods.CreateDC("DISPLAY"))
             {
-                return handle.IsInvalid
-                    ? 0x60
-                    : UnsafeNativeMethods.GetDeviceCaps(handle, capIndex);
+                return (handle.IsInvalid ? 0x60 : UnsafeNativeMethods.GetDeviceCaps(handle, capIndex));
             }
         }
     }
 
     internal sealed class DCSafeHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
-        private DCSafeHandle() : base(true)
-        {
-        }
+        private DCSafeHandle() : base(true) { }
 
-        protected override bool ReleaseHandle() => UnsafeNativeMethods.DeleteDC(handle);
+        protected override Boolean ReleaseHandle()
+        {
+            return UnsafeNativeMethods.DeleteDC(base.handle);
+        }
     }
 
     [SuppressUnmanagedCodeSecurity]
     internal static class UnsafeNativeMethods
     {
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern bool DeleteDC(IntPtr hDC);
+        public static extern Boolean DeleteDC(IntPtr hDC);
 
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern int GetDeviceCaps(DCSafeHandle hDC, int nIndex);
+        public static extern Int32 GetDeviceCaps(DCSafeHandle hDC, Int32 nIndex);
 
         [DllImport("gdi32.dll", EntryPoint = "CreateDC", CharSet = CharSet.Auto)]
-        public static extern DCSafeHandle IntCreateDC(string lpszDriver,
-            string lpszDeviceName, string lpszOutput, IntPtr devMode);
+        public static extern DCSafeHandle IntCreateDC(String lpszDriver,
+            String lpszDeviceName, String lpszOutput, IntPtr devMode);
 
-        public static DCSafeHandle CreateDC(string lpszDriver) => IntCreateDC(lpszDriver, null, null, IntPtr.Zero);
+        public static DCSafeHandle CreateDC(String lpszDriver)
+        {
+            return UnsafeNativeMethods.IntCreateDC(lpszDriver, null, null, IntPtr.Zero);
+        }
     }
 
     public static class VisualRender
     {
-        private const uint _SWP_NOSIZE = 0x0001;
-        private const uint _SWP_NOMOVE = 0x0002;
-        private const uint _SWP_NOACTIVATE = 0x0010;
-
-        private static readonly IntPtr _HwndBottom = new(1);
-
         [DllImport("user32.dll")]
-        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy,
-            uint uFlags);
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
+
+        static readonly IntPtr _HwndBottom = new IntPtr(1);
+        const UInt32 _SWP_NOSIZE = 0x0001;
+        const UInt32 _SWP_NOMOVE = 0x0002;
+        const UInt32 _SWP_NOACTIVATE = 0x0010;
 
 
         public static async Task<BitmapSource> RenderAsync(this UIElement uiElement)
         {
             var brush = new VisualBrush(uiElement);
             var topLeft = uiElement.PointToScreen(new Point(0, 0));
-            var bottomRight =
-                uiElement.PointToScreen(new Point(uiElement.RenderSize.Width, uiElement.RenderSize.Height));
+            var bottomRight = uiElement.PointToScreen(new Point(uiElement.RenderSize.Width, uiElement.RenderSize.Height));
 
             var helperWindowLocation = Rect.Empty;
             helperWindowLocation.Union(topLeft);
@@ -140,26 +148,21 @@ namespace TableTopCrucible.Core.Wpf.Helper
             helperWindowLocation.Width /= windowsScaleTransform;
             helperWindowLocation.Height /= windowsScaleTransform;
 
-            var bitmapSourceT = await RenderAsync(brush, helperWindowLocation, new Size(width, height));
+            BitmapSource bitmapSourceT = await RenderAsync(brush, helperWindowLocation, new Size(width, height));
             bitmapSourceT.Freeze();
             return bitmapSourceT;
         }
 
-        private static async Task<BitmapSource> RenderAsync(Brush brush, Rect helperWindowLocation,
-            Size snapshotSize)
+        private static async Task<BitmapSource> RenderAsync(System.Windows.Media.Brush brush, Rect helperWindowLocation, Size snapshotSize)
         {
             // Create a tmp window with its own hwnd to render it later
-            var window = new Window
-            {
-                WindowStyle = WindowStyle.None, ResizeMode = ResizeMode.NoResize, ShowInTaskbar = false,
-                Background = Brushes.White
-            };
+            var window = new Window { WindowStyle = WindowStyle.None, ResizeMode = ResizeMode.NoResize, ShowInTaskbar = false, Background = System.Windows.Media.Brushes.White };
             window.Left = helperWindowLocation.X;
             window.Top = helperWindowLocation.Y;
             window.Width = helperWindowLocation.Width;
             window.Height = helperWindowLocation.Height;
             window.ShowActivated = false;
-            var content = new Grid { Background = brush };
+            var content = new Grid() { Background = brush };
             RenderOptions.SetBitmapScalingMode(content, BitmapScalingMode.HighQuality);
             window.Content = content;
             var handle = new WindowInteropHelper(window).EnsureHandle();
@@ -179,7 +182,7 @@ namespace TableTopCrucible.Core.Wpf.Helper
             var bitmapSourceT = await Task.Run(() =>
             {
                 Bitmap bitmap = VisualToBitmapConverter.GetBitmap(handle,
-                    (int)snapshotSize.Width, (int)snapshotSize.Height);
+                (int)snapshotSize.Width, (int)snapshotSize.Height);
 
                 var bitmapSource = new SharedBitmapSource(bitmap);
                 bitmapSource.Freeze();
@@ -193,32 +196,6 @@ namespace TableTopCrucible.Core.Wpf.Helper
 
         public static class VisualToBitmapConverter
         {
-            [DllImport("gdi32.dll", SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool BitBlt(IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight,
-                IntPtr hdcSrc, int nXSrc, int nYSrc, TernaryRasterOperations dwRop);
-
-            public static Bitmap GetBitmap(IntPtr hwnd, int width, int height)
-            {
-                var bitmap = new Bitmap(width, height);
-                using (Graphics graphicsFromVisual = Graphics.FromHwnd(hwnd))
-                {
-                    using (Graphics graphicsFromImage = Graphics.FromImage(bitmap))
-                    {
-                        IntPtr source = graphicsFromVisual.GetHdc();
-                        IntPtr destination = graphicsFromImage.GetHdc();
-
-                        BitBlt(destination, 0, 0, bitmap.Width, bitmap.Height, source, 0, 0,
-                            TernaryRasterOperations.SRCCOPY);
-
-                        graphicsFromVisual.ReleaseHdc(source);
-                        graphicsFromImage.ReleaseHdc(destination);
-                    }
-                }
-
-                return bitmap;
-            }
-
             private enum TernaryRasterOperations : uint
             {
                 SRCCOPY = 0x00CC0020,
@@ -238,10 +215,34 @@ namespace TableTopCrucible.Core.Wpf.Helper
                 WHITENESS = 0x00FF0062,
                 CAPTUREBLT = 0x40000000
             }
+
+            [DllImport("gdi32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            private static extern bool BitBlt(IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, TernaryRasterOperations dwRop);
+
+            public static Bitmap GetBitmap(IntPtr hwnd, int width, int height)
+            {
+                var bitmap = new Bitmap(width, height);
+                using (Graphics graphicsFromVisual = Graphics.FromHwnd(hwnd))
+                {
+                    using (Graphics graphicsFromImage = Graphics.FromImage(bitmap))
+                    {
+                        IntPtr source = graphicsFromVisual.GetHdc();
+                        IntPtr destination = graphicsFromImage.GetHdc();
+
+                        BitBlt(destination, 0, 0, bitmap.Width, bitmap.Height, source, 0, 0, TernaryRasterOperations.SRCCOPY);
+
+                        graphicsFromVisual.ReleaseHdc(source);
+                        graphicsFromImage.ReleaseHdc(destination);
+                    }
+                }
+
+                return bitmap;
+            }
         }
     }
 
-    internal static class Extensions
+    static class Extensions
     {
         public static Task WaitForLoaded(this FrameworkElement element)
         {
@@ -272,46 +273,45 @@ namespace TableTopCrucible.Core.Wpf.Helper
 
         public static double GetWindowsScaleTransform(this Visual visual)
         {
-            var m = Matrix.Identity;
+            Matrix m = Matrix.Identity;
             var presentationSource = PresentationSource.FromVisual(visual);
             if (presentationSource != null)
-                if (presentationSource.CompositionTarget != null)
-                    m = presentationSource.CompositionTarget.TransformToDevice;
-
-            var totalTransform = m.M11;
+            {
+                if (presentationSource.CompositionTarget != null) m = presentationSource.CompositionTarget.TransformToDevice;
+            }
+            double totalTransform = m.M11;
             return totalTransform;
         }
+
     }
 
-    internal class SharedBitmapSource : BitmapSource, IDisposable
+    class SharedBitmapSource : BitmapSource, IDisposable
     {
         #region Public Properties
 
         /// <summary>
-        ///     I made it public so u can reuse it and get the best our of both namespaces
+        /// I made it public so u can reuse it and get the best our of both namespaces
         /// </summary>
-        public Bitmap Bitmap { get; }
+        public Bitmap Bitmap { get; private set; }
 
-        public override double DpiX => Bitmap.HorizontalResolution;
+        public override double DpiX { get { return Bitmap.HorizontalResolution; } }
 
-        public override double DpiY => Bitmap.VerticalResolution;
+        public override double DpiY { get { return Bitmap.VerticalResolution; } }
 
-        public override int PixelHeight => Bitmap.Height;
+        public override int PixelHeight { get { return Bitmap.Height; } }
 
-        public override int PixelWidth => Bitmap.Width;
+        public override int PixelWidth { get { return Bitmap.Width; } }
 
-        public override PixelFormat Format => ConvertPixelFormat(Bitmap.PixelFormat);
+        public override System.Windows.Media.PixelFormat Format { get { return ConvertPixelFormat(Bitmap.PixelFormat); } }
 
-        public override BitmapPalette Palette => null;
+        public override BitmapPalette Palette { get { return null; } }
 
         #endregion
 
         #region Constructor/Destructor
 
         public SharedBitmapSource(int width, int height, System.Drawing.Imaging.PixelFormat sourceFormat)
-            : this(new Bitmap(width, height, sourceFormat))
-        {
-        }
+            : this(new Bitmap(width, height, sourceFormat)) { }
 
         public SharedBitmapSource(Bitmap bitmap)
         {
@@ -332,9 +332,9 @@ namespace TableTopCrucible.Core.Wpf.Helper
         public override void CopyPixels(Int32Rect sourceRect, Array pixels, int stride, int offset)
         {
             BitmapData sourceData = Bitmap.LockBits(
-                new Rectangle(sourceRect.X, sourceRect.Y, sourceRect.Width, sourceRect.Height),
-                ImageLockMode.ReadOnly,
-                Bitmap.PixelFormat);
+            new Rectangle(sourceRect.X, sourceRect.Y, sourceRect.Width, sourceRect.Height),
+            ImageLockMode.ReadOnly,
+            Bitmap.PixelFormat);
 
             var length = sourceData.Stride * sourceData.Height;
 
@@ -347,7 +347,10 @@ namespace TableTopCrucible.Core.Wpf.Helper
             Bitmap.UnlockBits(sourceData);
         }
 
-        protected override Freezable CreateInstanceCore() => (Freezable)Activator.CreateInstance(GetType());
+        protected override Freezable CreateInstanceCore()
+        {
+            return (Freezable)Activator.CreateInstance(GetType());
+        }
 
         #endregion
 
@@ -361,11 +364,13 @@ namespace TableTopCrucible.Core.Wpf.Helper
                 graphicsHandle.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphicsHandle.DrawImage(Bitmap, 0, 0, newWidth, newHeight);
             }
-
             return new SharedBitmapSource(newImage as Bitmap);
         }
 
-        public new BitmapSource Clone() => new SharedBitmapSource(new Bitmap(Bitmap));
+        public new BitmapSource Clone()
+        {
+            return new SharedBitmapSource(new Bitmap(Bitmap));
+        }
 
         //Implement IDisposable.
         public void Dispose()
@@ -378,8 +383,7 @@ namespace TableTopCrucible.Core.Wpf.Helper
 
         #region Protected/Private Methods
 
-        private static PixelFormat ConvertPixelFormat(
-            System.Drawing.Imaging.PixelFormat sourceFormat)
+        private static System.Windows.Media.PixelFormat ConvertPixelFormat(System.Drawing.Imaging.PixelFormat sourceFormat)
         {
             switch (sourceFormat)
             {
@@ -391,12 +395,12 @@ namespace TableTopCrucible.Core.Wpf.Helper
 
                 case System.Drawing.Imaging.PixelFormat.Format32bppRgb:
                     return PixelFormats.Bgr32;
-            }
 
-            return new PixelFormat();
+            }
+            return new System.Windows.Media.PixelFormat();
         }
 
-        private bool _disposed;
+        private bool _disposed = false;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -406,7 +410,6 @@ namespace TableTopCrucible.Core.Wpf.Helper
                 {
                     // Free other state (managed objects).
                 }
-
                 // Free your own state (unmanaged objects).
                 // Set large fields to null.
                 _disposed = true;
@@ -414,5 +417,10 @@ namespace TableTopCrucible.Core.Wpf.Helper
         }
 
         #endregion
+    
+    
+    
+    
     }
+
 }

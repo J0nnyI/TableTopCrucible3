@@ -9,13 +9,12 @@ namespace TableTopCrucible.Shared.Services
     public interface IThumbnailGenerationService
     {
         /// <summary>
-        ///     generates a thumbnail for the item and adds it to its gallery
+        /// generates a thumbnail for the item and adds it to its gallery
         /// </summary>
         /// <param name="item"></param>
         /// <param name="view"></param>
         /// <returns></returns>
         public ImageFilePath GenerateThumbnail(Item item, CameraView view = null);
-
         public ImageFilePath GenerateAutoPositionThumbnail(Item item);
     }
 }

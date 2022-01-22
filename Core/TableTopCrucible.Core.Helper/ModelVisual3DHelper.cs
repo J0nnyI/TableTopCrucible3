@@ -1,4 +1,7 @@
-﻿namespace TableTopCrucible.Core.Helper
+﻿using System.Windows.Media.Media3D;
+using DynamicData;
+
+namespace TableTopCrucible.Core.Helper
 {
     public static class ModelVisual3DHelper
     {

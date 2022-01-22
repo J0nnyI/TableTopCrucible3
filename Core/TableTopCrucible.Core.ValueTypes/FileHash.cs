@@ -18,7 +18,7 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public static FileHash Create<TFilePath>(FilePath<TFilePath> filePath, HashAlgorithm hashAlgorithm)
-            where TFilePath : FilePath<TFilePath>, new()
+            where TFilePath: FilePath<TFilePath>, new()
         {
             using var stream = filePath.OpenRead();
             var data = hashAlgorithm.ComputeHash(stream);
@@ -34,7 +34,7 @@ namespace TableTopCrucible.Core.ValueTypes
         public override bool Equals(object obj) =>
             obj is FileHash hash &&
             Value.SequenceEqual(hash.Value);
-
+        
 
         public override int GetHashCode()
             // ReSharper disable once NonReadonlyMemberInGetHashCode

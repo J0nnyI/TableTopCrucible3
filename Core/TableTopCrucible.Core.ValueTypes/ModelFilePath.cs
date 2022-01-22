@@ -1,4 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
+using HelixToolkit.Wpf;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -13,10 +20,7 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public static ModelFilePath From(FilePath path)
-            => path is null
-                ? null
-                : From(path.Value);
-
+            => path is null ? null : From(path.Value);
         public FilePath ToFilePath()
             => FilePath.From(Value);
 
@@ -24,6 +28,6 @@ namespace TableTopCrucible.Core.ValueTypes
             => new ModelImporter().Load(Value);
 
         public ModelVisual3D LoadVisual()
-            => new() { Content = Load() };
+            => new () { Content =  Load()  };
     }
 }

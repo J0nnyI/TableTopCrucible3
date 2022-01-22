@@ -18,8 +18,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     vm => vm.Cards,
                     v => v.Jobs.ItemsSource),
 
-                Observable.Select<, bool>(this.WhenAnyValue(
-                        v => v.ViewModel.Cards.Count), count => count > 0)
+                this.WhenAnyValue(
+                        v => v.ViewModel.Cards.Count)
+                    .Select(count => count > 0)
                     .DistinctUntilChanged()
                     .Select(show => show
                         ? 0

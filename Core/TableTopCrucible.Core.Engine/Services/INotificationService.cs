@@ -10,10 +10,7 @@ namespace TableTopCrucible.Core.Engine.Services
     public interface INotificationService
     {
         IObservableList<INotification> Notifications { get; }
-
-        NotificationId AddNotification(Name title, Description content, NotificationType type,
-            NotificationIdentifier identifier = null);
-
+        NotificationId AddNotification(Name title, Description content, NotificationType type, NotificationIdentifier identifier = null);
         void RemoveNotification(NotificationId id);
     }
 }

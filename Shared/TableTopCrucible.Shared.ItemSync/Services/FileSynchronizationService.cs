@@ -6,8 +6,14 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
+using DynamicData;
+using Microsoft.EntityFrameworkCore;
+
+using MoreLinq;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
@@ -37,8 +43,6 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private readonly IFileRepository _fileRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IProgressTrackingService _progressTrackingService;
-
-        private readonly object _itemUpdateLocker = new();
 
         public FileSynchronizationService(
             IDirectorySetupRepository directorySetupRepository,
@@ -173,7 +177,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             var filesOfUnregisteredDirs = _fileRepository
                 .Data
                 .Items
-                .Where(file => !dirs.Any(dir => file.Path.Value.ToLower().StartsWith(dir.Value.ToLower())))
+                .Where(file => !dirs.Any(dir =>  file.Path.Value.ToLower().StartsWith(dir.Value.ToLower())))
                 .Select(file => new RawSyncFileData(file, null))
                 .ToArray();
 
@@ -182,10 +186,10 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             return groupings;
         }
 
+        private object _itemUpdateLocker = new();
         private void _handleChangedFiles(RawSyncFileData[] files)
         {
-            var filesToAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New)
-                .Select(file => file.GetNewEntity()).ToArray();
+            var filesToAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New).Select(file => file.GetNewEntity()).ToArray();
             _fileRepository.AddRange(filesToAdd);
             lock (_itemUpdateLocker)
             {
@@ -194,7 +198,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     .ToArray();
                 var itemsToAdd = modelFiles
                     .DistinctBy(x => x.HashKey)
-                    .Where(file => !_itemRepository.ByModelHash(file.HashKey).Any())
+                    .Where(file =>!_itemRepository.ByModelHash(file.HashKey).Any())
                     .Select(file => new Item(
                             file.Path.GetFilenameWithoutExtension().ToName(),
                             file.HashKey
@@ -206,9 +210,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     var tags = GetTagsByPath(modelFile.Path);
                     var item =
                         itemsToAdd.Where(item => item.FileKey3d == modelFile.HashKey).ToList();
-                    if (!item.Any())
+                    if(!item.Any())
                         item = _itemRepository.ByModelHash(modelFile.HashKey).ToList();
-                    item.ForEach(item => item.Tags.AddRange(tags));
+                    item.ForEach(item=>item.Tags.AddRange(tags));
                 });
 
                 _itemRepository.AddRange(itemsToAdd);
@@ -221,11 +225,9 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 .Data
                 .Items
                 .Where(dir => dir.Path.ContainsFilepath(filePath))
-                .Aggregate(string.Empty, (path, dir) => dir.Path.Value.Length > path.Length
-                    ? dir.Path.Value
-                    : path);
+                .Aggregate(string.Empty, (path, dir) => dir.Path.Value.Length > path.Length ? dir.Path.Value : path);
 
-            var fileSubPath = filePath.Value.Remove(0, dir.Length);
+            var fileSubPath =filePath.Value.Remove(0,dir.Length);
             return fileSubPath
                 .Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)
                 .Select(Tag.From);

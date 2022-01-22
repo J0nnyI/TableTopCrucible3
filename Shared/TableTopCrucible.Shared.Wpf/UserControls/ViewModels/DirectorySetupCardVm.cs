@@ -1,20 +1,29 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Helpers;
+
+using Splat;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+
 using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
@@ -31,16 +40,16 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     {
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
-        private readonly IStorageController _storageController;
         private ObservableAsPropertyHelper<DirectorySetup> _directorySetup;
 
         private ObservableAsPropertyHelper<bool> _isDirty;
+        private readonly IStorageController _storageController;
 
         public DirectorySetupCardVm(
             IDirectorySetupRepository directorySetupRepository,
             INotificationService notificationService,
             IStorageController storageController
-        )
+            )
         {
             _directorySetupRepository = directorySetupRepository;
             _notificationService = notificationService;
@@ -93,11 +102,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             {
                                 _notificationService.AddNotification(
                                     (vtName)"Directory could not be saved",
-                                    (Description)string.Join(Environment.NewLine,
-                                        $"The directory '{Name}' could not be saved.", "Error:", e.ToString()),
+                                    (Description)string.Join(Environment.NewLine, $"The directory '{Name}' could not be saved.","Error:",e.ToString()),
                                     NotificationType.Error);
                                 throw;
                             }
+
                         },
                         this.WhenAnyValue(
                             vm => vm.IsDirty,
@@ -123,9 +132,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             {
                                 _notificationService.AddNotification(
                                     (vtName)"Directory undo failed",
-                                    (Description)string.Join(Environment.NewLine,
-                                        $"The directory changes for '{Name}' could not be undone.", "Error:",
-                                        e.ToString()),
+                                    (Description)string.Join(Environment.NewLine, $"The directory changes for '{Name}' could not be undone.","Error:",e.ToString()),
                                     NotificationType.Error);
                                 throw;
                             }
@@ -160,8 +167,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         if (takenDir is not null)
                         {
                             _notificationService.AddNotification((vtName)"Directory could not be changed",
-                                (Description)
-                                $"The Directory '{takenDir.Path}' has already been added as '{takenDir.Name}'.",
+                                (Description)$"The Directory '{takenDir.Path}' has already been added as '{takenDir.Name}'.",
                                 NotificationType.Error);
                             return;
                         }
@@ -169,7 +175,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         Path = path.Value;
                         Name = path.GetDirectoryName().ToName().Value;
                         _storageController.AutoSave();
-                    }, c => changePathCommand = c)
+
+                    },c=>changePathCommand = c)
                 },
                 vm => vm.DirectorySetup
             );

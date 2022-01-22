@@ -1,6 +1,12 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using DynamicData;
 using ReactiveUI;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
@@ -13,7 +19,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
         public ItemListV()
         {
             InitializeComponent();
-            this.WhenActivated(() => new[]
+            this.WhenActivated(() => new []
             {
                 this.OneWayBind(ViewModel,
                     vm => vm.Items,
@@ -23,9 +29,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 
         private void ListViewItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is ListViewItem lstItem &&
+            if (sender is ListViewItem lstItem && 
                 lstItem.Content is ItemSelectionInfo itemInfo)
-                ViewModel.OnItemClicked(itemInfo, e);
+                ViewModel.OnItemClicked(itemInfo,e);
         }
     }
 }

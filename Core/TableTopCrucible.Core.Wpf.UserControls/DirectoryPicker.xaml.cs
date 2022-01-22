@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows;
+using Ookii.Dialogs.Wpf;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Helpers;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.UserControls
@@ -50,8 +52,6 @@ namespace TableTopCrucible.Core.Wpf.UserControls
                 typeof(string),
                 typeof(DirectoryPicker),
                 new PropertyMetadata(string.Empty));
-
-        private readonly Subject<DirectoryPath> _dialogConfirmed = new();
 
 
         public DirectoryPicker()
@@ -110,6 +110,7 @@ namespace TableTopCrucible.Core.Wpf.UserControls
             set => SetValue(UserTextProperty, value);
         }
 
+        private Subject<DirectoryPath> _dialogConfirmed = new();
         public IObservable<DirectoryPath> DialogConfirmed => _dialogConfirmed;
 
         public IEnumerable GetErrors(string propertyName) => ViewModel.GetErrors(propertyName);

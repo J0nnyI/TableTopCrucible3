@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using DynamicData;
+using Microsoft.EntityFrameworkCore;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence;
@@ -17,25 +21,24 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         public IEnumerable<ImageData> this[FileHashKey hashKey] { get; }
         IObservable<IChangeSet<ImageData, ImageDataId>> WatchMany(ItemId itemId);
         public IEnumerable<ImageData> GetMany(ItemId itemId);
-    }
 
+    }
     internal class ImageDataRepository : RepositoryBase<ImageDataId, ImageData>, IImageDataRepository
     {
-        public ImageDataRepository(IStorageController storageController) : base(storageController,
-            storageController.Images)
+        public ImageDataRepository(IStorageController storageController) : base(storageController, storageController.Images)
         {
         }
 
         public IEnumerable<ImageData> this[FileHashKey hashKey]
             => hashKey is null
                 ? Enumerable.Empty<ImageData>()
-                : Data.Items.Where(image => image.HashKey == hashKey);
+                : this.Data.Items.Where(image => image.HashKey == hashKey);
 
 
         public IObservable<IChangeSet<ImageData, ImageDataId>> WatchMany(ItemId itemId)
             => itemId is null
                 ? Observable.Return(ChangeSet<ImageData, ImageDataId>.Empty)
-                : Data.Connect().Filter(image => image.ItemId == itemId);
+                : this.Data.Connect().Filter(image => image.ItemId == itemId);
 
         public IEnumerable<ImageData> GetMany(ItemId itemId)
             => itemId is null
