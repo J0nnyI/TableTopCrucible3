@@ -171,12 +171,12 @@ namespace TableTopCrucible.Shared.Services
 
         public void SetImageToThumbnail(ImageData image)
         {
+            image.IsThumbnail = true;
             _imageRepository
                 .GetMany(image.ItemId)
                 .Where(img => img.IsThumbnail && img != image)
                 .ToList()
                 .ForEach(img => img.IsThumbnail = false);
-            image.IsThumbnail = true;
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Windows.Media.Media3D;
+
 using HelixToolkit.Wpf;
+
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes
@@ -23,7 +25,7 @@ namespace TableTopCrucible.Core.ValueTypes
             => FilePath.From(Value);
 
         public Model3DGroup Load(bool freeze)
-            => new ModelImporter().Load(Value,null,true);
+            => new ModelImporter() { DefaultMaterial = Materials.LightGray }.Load(Value, null, true);
 
         public ModelVisual3D LoadVisual(bool freeze)
             => new() { Content = Load(freeze) };

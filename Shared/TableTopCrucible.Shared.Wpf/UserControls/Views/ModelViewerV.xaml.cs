@@ -54,7 +54,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     .BindTo(this, v => v.ContainerVisual.Content),
                 new ActOnDispose(
                     () => ViewModel.Viewport = Viewport,
-                    () => ViewModel.Viewport = null)
+                    () =>
+                    {
+                        ViewModel.Viewport = null;
+                        ContainerVisual.Content = null;
+                    })
             });
         }
 

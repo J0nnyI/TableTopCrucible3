@@ -10,6 +10,16 @@
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <rxui:ViewModelViewHost x:Name="ImageViewer"/>
+        <TextBlock Name="Name"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Stretch"
+                   FontSize="18"
+                   TextAlignment="Center"
+                   TextTrimming="CharacterEllipsis"
+                   TextWrapping="WrapWithOverflow"
+                   Padding="8px"
+                   Background="#77000000"
+                   Foreground="white"/>
     </Grid>
 </rxui:ReactiveUserControl>

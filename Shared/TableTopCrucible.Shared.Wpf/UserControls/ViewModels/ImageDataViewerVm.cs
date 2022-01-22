@@ -34,12 +34,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             ImageViewer = imageViewer;
             this.WhenActivated(()=>new []
             {
-                this.WhenAnyValue(vm=>vm.Image)
-                    .OutputObservable(out var imageChanges)
-                    .Select(img=>img.Name.Value)
+                this.WhenAnyValue(vm=>vm.Image.Name)
+                    .Select(img=>img.Value)
                     .BindTo(this, vm=>vm.Name),
                 
-                imageChanges
+                this.WhenAnyValue(vm=>vm.Image)
                     .Select(img=>fileRepository.WatchSingle(img.HashKey))
                     .Switch()
                     .Select(file=>file?.Path?.ToImagePath())

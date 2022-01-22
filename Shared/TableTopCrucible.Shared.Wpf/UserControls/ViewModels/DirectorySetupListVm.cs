@@ -56,7 +56,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Transform(dir =>
                     {
                         var card = Locator.Current.GetService<IDirectorySetupCard>();
-                        card.DirectorySetupId = dir.Id;
+                        card.DirectorySetup = dir;
                         return card;
                     })
                     .ObserveOn(RxApp.MainThreadScheduler)

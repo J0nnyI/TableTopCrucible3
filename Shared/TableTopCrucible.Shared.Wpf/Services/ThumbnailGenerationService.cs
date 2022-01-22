@@ -81,7 +81,8 @@ namespace TableTopCrucible.Domain.Library.Services
         public ImageFilePath GenerateWithAutoPosition(Item item)
             => _generate(item, true, null, null);
 
-        public ITrackingViewer GenerateManyAsync(IEnumerable<Item> items, ThreadCount parallelThreads = null)
+        public ITrackingViewer GenerateManyAsync(IEnumerable<Item> items, ThreadCount parallelThreads = null,
+            bool skipItemsWithThumbnails = false)
         {
             var tracker = _trackingService.CreateSourceTracker((Name)"Generate Thumbnails");
             var target = (TargetProgress)items.Select(item => item.FileKey3d.GetFileSizeComponent().Value).Sum();
@@ -105,7 +106,8 @@ namespace TableTopCrucible.Domain.Library.Services
         public void GenerateManyAsync(
             IObservable<FileData> source,
             ISourceTracker tracker,
-            ThreadCount parallelThreads = null)
+            ThreadCount parallelThreads = null,
+            bool skipItemsWithThumbnails = false)
         {
             parallelThreads ??= (ThreadCount)SettingsHelper.SimultaneousThumbnailWindows;
 
@@ -123,8 +125,8 @@ namespace TableTopCrucible.Domain.Library.Services
                 {
                     var modelSize = modelFile.HashKey.GetFileSizeComponent();
                     var item = _itemRepository.ByModelHash(modelFile.HashKey).First();
-                    var img = _imageRepository.GetSingleFile(item.Id);
-                    if (img is not null) // item has a linked thumbnail
+                    var img = _imageRepository.GetThumbnail(item.Id);
+                    if (img is not null && skipItemsWithThumbnails) // item has a linked thumbnail
                     {
                         tracker.Increment((ProgressIncrement)modelSize.Value);
                         thumbnailThrottle.OnNext();

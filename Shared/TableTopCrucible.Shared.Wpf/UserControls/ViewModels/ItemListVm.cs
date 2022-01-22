@@ -8,6 +8,7 @@ using DynamicData;
 using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Splat;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Helper;
@@ -18,15 +19,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
     public class ItemSelectionInfo : ReactiveObject
     {
+        public IItemThumbnailViewer ThumbnailViewer { get; }
         public ItemSelectionInfo(Item item)
         {
-            Item = item;
+            this.ThumbnailViewer = Locator.Current.GetService<IItemThumbnailViewer>();
+            ThumbnailViewer!.Item = item;
         }
 
         [Reactive]
         public bool IsSelected { get; set; }
-
-        public Item Item { get; }
     }
 
     [Transient]
@@ -58,14 +59,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .FilterOnObservable(itemInfo => itemInfo
                         .WhenAnyValue(x => x.IsSelected)
                         .AsObservable())
-                    .Transform(itemInfo => itemInfo.Item)
+                    .Transform(itemInfo => itemInfo.ThumbnailViewer.Item)
                     .AsObservableList();
             SelectedItems.Connect().Subscribe();
 
             this.WhenActivated(() => new[]
             {
                 itemSelectionSrc
-                    .SortBy(itemInfo => itemInfo.Item.Name.Value)
+                    .SortBy(itemInfo => itemInfo.ThumbnailViewer.Item.Name.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Bind(Items)
                     .Subscribe()

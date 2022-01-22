@@ -25,6 +25,16 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
         public ItemThumbnailViewerV()
         {
             InitializeComponent();
+
+            this.WhenActivated(() => new IDisposable[]
+            {
+                this.OneWayBind(ViewModel,
+                    vm => vm.ImageViewer,
+                    v => v.ImageViewer.ViewModel),
+                this.OneWayBind(ViewModel,
+                    vm=>vm.Name,
+                    v=>v.Name.Text)
+            });
         }
     }
 }

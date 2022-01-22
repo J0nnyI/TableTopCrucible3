@@ -22,7 +22,7 @@ namespace TableTopCrucible.Shared.Services
 
         public ImageFilePath GenerateWithAutoPosition(Item item);
 
-        public ITrackingViewer GenerateManyAsync(IEnumerable<Item> items, ThreadCount parallelThreads = null);
-        public void GenerateManyAsync(IObservable<FileData> source, ISourceTracker tracker, ThreadCount parallelThreads = null);
+        public ITrackingViewer GenerateManyAsync(IEnumerable<Item> items, ThreadCount parallelThreads = null,bool skipItemsWithThumbnails = false);
+        public void GenerateManyAsync(IObservable<FileData> source, ISourceTracker tracker, ThreadCount parallelThreads = null,bool skipItemsWithThumbnails = false);
     }
 }

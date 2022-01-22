@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Media.Media3D;
@@ -34,41 +35,35 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
     public class ModelViewerVm : ReactiveObject, IModelViewer, IActivatableViewModel
     {
-        private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IWpfThumbnailGenerationService _thumbnailService;
 
         private readonly ObservableAsPropertyHelper<bool> _isActivated;
 
         public ModelViewerVm(
-            IDirectorySetupRepository directorySetupRepository,
             IWpfThumbnailGenerationService thumbnailService)
         {
-            _directorySetupRepository = directorySetupRepository;
             _thumbnailService = thumbnailService;
             this.WhenActivated(() => new[]
             {
-                new ActOnDispose(null, ()=>ViewportContent = null),
                 this.WhenAnyValue(
-                        v => v.Model,
-                        v => v.PlaceholderMessage,
-                        (model, message) => new { file = model, message })
+                        vm => vm.Model)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Do(x =>
                     {// set loading info
                         PlaceholderText =
-                            x.message ??
-                            (x.file is null
+                            PlaceholderMessage ??
+                            (x is null
                                 ? (Message)"No File selected"
                                 : (Message)"Loading");
-                        if (x.file is null ||
-                            x.message is not null ||
-                            x.file.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
+                        if (x is null ||
+                            PlaceholderMessage is not null ||
+                            x.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
                            )
                             IsLoading = true;
 
                         ViewportContent = null;
                     })
-                    .Select(x => x.file)
+                    .Select(x => x)
                     .WhereNotNull()
                     .Select(file =>
                     {
@@ -98,7 +93,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     })
             });
 
-            _isActivated = this.GetIsActivatedChanges().ToProperty(this, vm => vm.IsActivated);
+            _isActivated = this.GetIsActivatedChanges()
+                .Buffer(TimeSpan.FromMilliseconds(200))
+                .Select(buffer => buffer.FirstOrDefault())
+                .WhereNotNull()
+                .DistinctUntilChanged()
+                .Do(x => { })
+                .Publish()
+                .RefCount()
+                .ToProperty(this, vm => vm.IsActivated);
         }
 
         [Reactive]

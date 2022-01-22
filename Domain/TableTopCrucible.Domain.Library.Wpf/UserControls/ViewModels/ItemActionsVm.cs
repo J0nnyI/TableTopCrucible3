@@ -114,7 +114,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
                     if (SelectedItems!.Items.Count() == 1)
                         GenerateThumbnailsByViewportCommand!.Execute();
                     else
-                        thumbnailGenerationService.GenerateManyAsync(SelectedItems.Items);
+                        thumbnailGenerationService.GenerateManyAsync(SelectedItems.Items, null, true);
 
                 },GenerateThumbnailsByViewportCommand!.CanExecute,cmd=>GenerateThumbnailsCommand = cmd)
             });

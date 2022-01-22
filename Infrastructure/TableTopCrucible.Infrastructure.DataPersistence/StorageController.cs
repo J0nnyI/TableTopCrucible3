@@ -50,8 +50,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
             if (SettingsHelper.AutoSaveEnabled)
                 _autoSaveThrottle
-                    .Buffer(SettingsHelper.AutoSaveThrottle)
-                    .Where(buffer => buffer.Any())
+                    .Throttle(SettingsHelper.AutoSaveThrottle)
                     .Subscribe(_ => Save());
 
             OnStartup();
