@@ -1,4 +1,5 @@
-﻿using TableTopCrucible.Core.ValueTypes;
+﻿using Newtonsoft.Json;
+using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities

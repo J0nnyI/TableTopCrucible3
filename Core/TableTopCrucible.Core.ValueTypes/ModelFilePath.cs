@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Windows.Media.Media3D;
+using HelixToolkit.Wpf;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes

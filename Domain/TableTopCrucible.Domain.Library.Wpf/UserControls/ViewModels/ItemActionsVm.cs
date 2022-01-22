@@ -12,6 +12,8 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Shared.ItemSync.Services;
+using TableTopCrucible.Shared.ValueTypes;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels

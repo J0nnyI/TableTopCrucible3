@@ -1,4 +1,6 @@
-﻿namespace TableTopCrucible.Core.ValueTypes.Helper
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace TableTopCrucible.Core.ValueTypes.Helper
 {
     public static class EntityFrameworkHelper
     {

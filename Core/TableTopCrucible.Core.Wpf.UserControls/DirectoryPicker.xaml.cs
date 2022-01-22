@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows;
+using Ookii.Dialogs.Wpf;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Helpers;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Core.Wpf.UserControls

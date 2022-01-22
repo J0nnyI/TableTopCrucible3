@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DynamicData;
+using Newtonsoft.Json;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 

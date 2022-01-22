@@ -1,4 +1,5 @@
-﻿using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
+﻿using ReactiveUI;
+using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
 {

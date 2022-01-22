@@ -1,4 +1,6 @@
-﻿namespace TableTopCrucible.Core.ValueTypes
+﻿using Newtonsoft.Json;
+
+namespace TableTopCrucible.Core.ValueTypes
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class Version : ValueType<int, int, int, Version>

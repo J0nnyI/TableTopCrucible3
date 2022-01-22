@@ -1,4 +1,7 @@
-﻿namespace TableTopCrucible.Core.Helper
+﻿using System.Linq;
+using System.Windows.Media.Media3D;
+
+namespace TableTopCrucible.Core.Helper
 {
     public static class Model3DHelper
     {

@@ -11,6 +11,7 @@
     <ProjectReference Include="..\Infrastructure\TableTopCrucible.Infrastructure.Models\TableTopCrucible.Infrastructure.Models.csproj" />
     <ProjectReference Include="..\Infrastructure\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
     <ProjectReference Include="..\Shared\TableTopCrucible.Shared.ItemSync\TableTopCrucible.Shared.ItemSync.csproj" />
+    <ProjectReference Include="..\Core\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
   </ItemGroup>
 
 </Project>

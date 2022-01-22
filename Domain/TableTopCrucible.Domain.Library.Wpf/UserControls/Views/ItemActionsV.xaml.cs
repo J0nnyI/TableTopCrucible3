@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using ReactiveUI;
 using Splat;
 using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;

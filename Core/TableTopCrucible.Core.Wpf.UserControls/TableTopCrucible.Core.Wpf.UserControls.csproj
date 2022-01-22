@@ -8,9 +8,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
+      <ProjectReference Include="..\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <Compile Update="DummyApp.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

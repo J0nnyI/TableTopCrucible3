@@ -1,4 +1,5 @@
-﻿using TableTopCrucible.Shared.ValueTypes;
+﻿using HelixToolkit.Wpf;
+using TableTopCrucible.Shared.ValueTypes;
 
 namespace TableTopCrucible.Shared.Helper
 {

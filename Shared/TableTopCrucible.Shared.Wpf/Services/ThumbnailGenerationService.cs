@@ -2,11 +2,16 @@
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using HelixToolkit.Wpf;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.Helper;
+using TableTopCrucible.Shared.Services;
+using TableTopCrucible.Shared.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.Services
 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 

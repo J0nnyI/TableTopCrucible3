@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
-using System.Text.Json;
+using Newtonsoft.Json;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TableTopCrucible.Core.ValueTypes
 {

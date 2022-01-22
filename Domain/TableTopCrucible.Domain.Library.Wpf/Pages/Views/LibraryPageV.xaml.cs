@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using ReactiveUI;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels;
 

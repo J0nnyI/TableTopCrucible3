@@ -1,4 +1,5 @@
-﻿using TableTopCrucible.Core.ValueTypes;
+﻿using System.Windows.Media.Media3D;
+using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Shared.ValueTypes
 {
