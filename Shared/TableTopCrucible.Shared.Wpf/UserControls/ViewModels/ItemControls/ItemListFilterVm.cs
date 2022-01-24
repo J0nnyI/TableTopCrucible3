@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
+namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 {
     [Transient]
     public interface IItemListFilter

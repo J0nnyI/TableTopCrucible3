@@ -13,8 +13,8 @@ using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
-using TableTopCrucible.Domain.Library.Services;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.Wpf.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {

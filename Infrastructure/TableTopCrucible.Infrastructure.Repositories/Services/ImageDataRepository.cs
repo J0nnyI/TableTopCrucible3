@@ -71,7 +71,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
                                 .Switch())
                             // fileData changes[] => fileData changes
                             .CombineLatest(files => // the first file which exists
-                                files.FirstOrDefault(img=>img.Path.Exists())
+                                files.FirstOrDefault(img=>img?.Path.Exists()==true)
                             )
                         )
                     .Switch();

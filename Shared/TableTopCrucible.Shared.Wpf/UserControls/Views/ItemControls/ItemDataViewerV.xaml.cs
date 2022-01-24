@@ -2,9 +2,9 @@
 using DynamicData;
 using ReactiveUI;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.Views
+namespace TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls
 {
     /// <summary>
     ///     Interaction logic for ItemDataViewerV.xaml
@@ -22,13 +22,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 this.WhenAnyValue(v=>v.ViewModel.Item.Id)
                     .Select(key=>key.Value)
                     .BindTo(this, v=>v.ItemId.Text),
-                this.WhenAnyValue(v => v.ViewModel.Item)
-                    .Select(item => item?.Tags?.Connect() ?? Observable.Return(ChangeSet<Tag>.Empty))
-                    .Switch()
-                    .ToCollection()
-                    .BindTo(this, v => v.TagList.ItemsSource),
-                this.OneWayBind(ViewModel,
-                    vm=>ViewModel.TagEditor,
+                this.Bind(ViewModel,
+                    vm=>vm.TagEditor,
                     v=>v.TagEditor.ViewModel)
             });
         }

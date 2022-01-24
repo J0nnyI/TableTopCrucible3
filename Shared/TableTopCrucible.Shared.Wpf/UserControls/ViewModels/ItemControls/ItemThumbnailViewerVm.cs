@@ -1,28 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reactive.Linq;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
+namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 {
     [Transient]
     public interface IItemThumbnailViewer
     {
-        Item Item { get; set; }
+        Infrastructure.Models.Entities.Item Item { get; set; }
     }
     public class ItemThumbnailViewerVm:ReactiveObject,IActivatableViewModel, IItemThumbnailViewer
     {
         public IImageViewer ImageViewer { get; }
         [Reactive]
-        public Item Item { get; set; }
+        public Infrastructure.Models.Entities.Item Item { get; set; }
         [Reactive]
         public string Name { get; set; }
 

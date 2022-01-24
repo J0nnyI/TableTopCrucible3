@@ -4,14 +4,113 @@
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                          xmlns:local="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.Views"
+                          xmlns:v="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.Views"
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
+                          xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                          xmlns:c="clr-namespace:TableTopCrucible.Core.Wpf.Helper.Converter;assembly=TableTopCrucible.Core.Wpf.Helper"
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="Button"
+               x:Key="ChipButton"
+               BasedOn="{StaticResource MaterialDesignIconForegroundButton}">
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent"/>
+
+                </Trigger>
+            </Style.Triggers>
+            <Style.Resources>
+                <Style TargetType="md:PackIcon">
+                    <Setter Property="Margin"
+                            Value="2"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        <TextBlock Text="tags"/>
-        <ListBox x:Name="TagList" Style="{StaticResource MaterialDesignFilterChipListBox}">
-        </ListBox>
+        <ItemsControl x:Name="TagList">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <!--###############################################################################################################-->
+                    <!--#####################[]                                                                 []#####################-->
+                    <!--#####################[] be careful when changing the template, it is referenced in code []#####################-->
+                    <!--#####################[]                                                                 []#####################-->
+                    <!--###############################################################################################################-->
+                    <md:Chip MouseDoubleClick="Chip_OnMouseDoubleClick"
+                             Margin="0 0 4 0">
+                        <StackPanel Orientation="Horizontal"
+                                    d:DataContext="{d:DesignInstance vm:TagController}">
+                            <Button Visibility="{Binding 
+                                                        Path=IsNew,
+                                                        Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    Content="{md:PackIcon Plus}"
+                                    Margin="-9 0"
+                                    Style="{StaticResource ChipButton}"
+                                    Click="NewTag_OnClick"/>
+                            <StackPanel Orientation="Horizontal" 
+                                        Visibility="{Binding 
+                                                        Path=IsNew,
+                                                        Converter={x:Static c:BoolVisibilityConverter.Instance},
+                                                        ConverterParameter='i'}">
+                                <TextBox x:Name="TextBox"
+                                         Text="{Binding Path=EditTag, UpdateSourceTrigger=PropertyChanged}"
+                                         KeyDown="TextBox_OnKeyDown"
+                                         IsHitTestVisible="{Binding EditModeEnabled}"
+                                         Padding="4"
+                                         VerticalAlignment="Center"
+                                         VerticalContentAlignment="Center"
+                                         MinWidth="30"
+                                         Margin="0">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsHitTestVisible"
+                                                         Value="False">
+                                                    <Setter Property="BorderThickness"
+                                                            Value="0"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <Button Style="{StaticResource ChipButton}"
+                                        Visibility="{Binding Path=EditModeEnabled,
+                                                          Converter={StaticResource BooleanToVisibilityConverter}}"
+                                        Click="SaveChanges_OnClick"
+                                        Content="{md:PackIcon Check}"
+                                        Margin="2 0"/>
+                                <Button Style="{StaticResource ChipButton}"
+                                        Visibility="{Binding Path=ViewModel.TagDeletionEnabled,
+                                                          Converter={StaticResource BooleanToVisibilityConverter}, 
+                                                          Mode=OneWay,
+                                                          RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:TagEditorV}}"
+                                        Command="{Binding Path=ViewModel.RemoveTagCommand,
+                                                          Mode=OneWay,
+                                                          RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:TagEditorV}}"
+                                        CommandParameter="{Binding Mode=OneWay}"
+                                        Margin="0 0 -10 0">
+                                    <md:PackIcon Kind="{Binding 
+                                        Path=EditModeEnabled,
+                                        Converter={x:Static v:EditModeToCloseIconConverter.Instance}}"/>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </md:Chip>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </rxui:ReactiveUserControl>

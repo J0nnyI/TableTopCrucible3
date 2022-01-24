@@ -3,26 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-
 using HelixToolkit.Wpf;
-
-using Microsoft.AspNetCore.Server.IIS.Core;
-
-using Splat;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
@@ -34,7 +24,7 @@ using TableTopCrucible.Shared.Helper;
 using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.ValueTypes;
 
-namespace TableTopCrucible.Domain.Library.Services
+namespace TableTopCrucible.Shared.Wpf.Services
 {
     [Singleton]
     public interface IWpfThumbnailGenerationService : IThumbnailGenerationService
@@ -211,7 +201,7 @@ namespace TableTopCrucible.Domain.Library.Services
             {
                 if (viewport is null)
                 {
-                    usedViewport = new HelixViewport3D()
+                    usedViewport = new ()
                     {
                         Width = SettingsHelper.ThumbnailSize.Width,
                         Height = SettingsHelper.ThumbnailSize.Height,

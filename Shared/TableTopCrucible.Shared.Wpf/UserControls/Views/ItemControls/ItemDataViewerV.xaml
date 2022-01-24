@@ -1,16 +1,16 @@
-﻿<rxui:ReactiveUserControl x:TypeArguments="vm:ItemDataViewerVm"
-                          x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.ItemDataViewerV"
+﻿<rxui:ReactiveUserControl x:TypeArguments="item:ItemDataViewerVm"
+                          x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls.ItemDataViewerV"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
+                          xmlns:item="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -23,15 +23,7 @@
                  IsReadOnly="True"
                  VerticalAlignment="Top"
                  Grid.Row="1" />
-        <ListView x:Name="TagList"
-                  Grid.Row="2">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Tags" />
-                </GridView>
-            </ListView.View>
-        </ListView>
         <rxui:ViewModelViewHost x:Name="TagEditor"
-                                Grid.Row="3"/>
+                                Grid.Row="2"/>
     </Grid>
 </rxui:ReactiveUserControl>

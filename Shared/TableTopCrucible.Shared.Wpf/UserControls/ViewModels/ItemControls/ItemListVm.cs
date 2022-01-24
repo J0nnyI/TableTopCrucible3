@@ -12,15 +12,14 @@ using Splat;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Helper;
-using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
+namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 {
     public class ItemSelectionInfo : ReactiveObject
     {
         public IItemThumbnailViewer ThumbnailViewer { get; }
-        public ItemSelectionInfo(Item item)
+        public ItemSelectionInfo(Infrastructure.Models.Entities.Item item)
         {
             this.ThumbnailViewer = Locator.Current.GetService<IItemThumbnailViewer>();
             ThumbnailViewer!.Item = item;
@@ -33,7 +32,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     [Transient]
     public interface IItemList : IDisposable
     {
-        IObservableList<Item> SelectedItems { get; }
+        IObservableList<Infrastructure.Models.Entities.Item> SelectedItems { get; }
     }
 
     public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel, IDisposable
@@ -74,7 +73,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         }
 
         public ViewModelActivator Activator { get; } = new();
-        public IObservableList<Item> SelectedItems { get; }
+        public IObservableList<Infrastructure.Models.Entities.Item> SelectedItems { get; }
 
         public void Dispose()
             => _disposables.Dispose();

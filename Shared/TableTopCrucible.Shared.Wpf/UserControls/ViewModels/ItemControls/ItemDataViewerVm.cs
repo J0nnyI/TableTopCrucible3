@@ -2,15 +2,13 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Infrastructure.Models.Entities;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
+namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 {
     [Transient]
     public interface IItemDataViewer
     {
-        Item Item { get; set; }
+        Infrastructure.Models.Entities.Item Item { get; set; }
     }
 
     public class ItemDataViewerVm : ReactiveObject, IItemDataViewer, IActivatableViewModel
@@ -19,7 +17,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ViewModelActivator Activator { get; } = new();
 
         [Reactive]
-        public Item Item { get; set; }
+        public Infrastructure.Models.Entities.Item Item { get; set; }
 
         public ItemDataViewerVm(ITagEditor tagEditor)
         {
@@ -28,7 +26,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             {
                 this.WhenAnyValue(vm=>vm.Item)
                     .Select(item=>item?.Tags)
-                    .BindTo(this, vm=>vm.TagEditor.Tags)
+                    .BindTo(this, vm=>vm.TagEditor.TagSource)
             });
         }
     }

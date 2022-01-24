@@ -26,6 +26,7 @@ using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
 
 namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 {

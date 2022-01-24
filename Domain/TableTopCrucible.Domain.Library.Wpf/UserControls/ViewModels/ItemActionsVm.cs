@@ -28,6 +28,7 @@ using TableTopCrucible.Shared.ItemSync.Services;
 using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.ValueTypes;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
 
 namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
 {
