@@ -6,6 +6,8 @@ using System.Reactive.Linq;
 using DynamicData;
 using DynamicData.Binding;
 
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
@@ -14,16 +16,19 @@ using ReactiveUI.Validation.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.DataPersistence;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
     public class TagController : ReactiveValidationObject
     {
         private readonly Action<Tag, string> _editTag;
+        private readonly Action _save;
 
-        public TagController(Tag sourceTag, Action<Tag, string> editTag, IObservableList<Tag> takenTags, bool isNew = false)
+        public TagController(Tag sourceTag, Action<Tag, string> editTag, Action save, IObservableList<Tag> takenTags, bool isNew = false)
         {
             _editTag = editTag;
+            _save = save;
             SourceTag = sourceTag;
             IsNew = isNew;
             EditTag = sourceTag?.Value ?? string.Empty;
@@ -69,6 +74,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             EditTag = SourceTag?.Value ?? string.Empty;
             EditModeEnabled = false;
             IsNew = WasNew;
+            _save();
         }
     }
 
@@ -79,6 +85,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     }
     public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
     {
+        private readonly IStorageController _storageController;
         public ViewModelActivator Activator { get; } = new();
         [Reactive]
         public ISourceList<Tag> TagSource { get; set; }
@@ -90,21 +97,22 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
         public ObservableCollectionExtended<TagController> TagList { get; } = new();
 
-        public TagEditorVm()
+        public TagEditorVm(IStorageController storageController)
         {
+            _storageController = storageController;
             this.RemoveTagCommand = ReactiveCommand.Create<TagController>(RemoveTag);
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(vm=>vm.TagSource)
                     .Select(tags=>tags?.Connect() ?? Observable.Never(ChangeSet<Tag>.Empty))
                     .Switch()
-                    .Transform(tag=>new TagController(tag, EditTag,TagSource))
+                    .Transform(tag=>new TagController(tag, EditTag,storageController.AutoSave,TagSource))
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Bind(TagList)
                     .Subscribe(_ =>
                     {
                         TagList.RemoveWhere(tag=>tag.WasNew);
-                        TagList.Add(new TagController(null, EditTag,TagSource, true));
+                        TagList.Add(new TagController(null, EditTag,storageController.AutoSave,TagSource, true));
                     }),
                 new ActOnLifecycle(null,()=>TagList.Clear())
             });
@@ -115,8 +123,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             if (tagController.WasNew || tagController.EditModeEnabled)
                 tagController.Revert();
             else
+            {
                 TagSource!.Remove(tagController.SourceTag);
-
+                _storageController.AutoSave();
+            }
         }
         public void EditTag(Tag oldTag, string newTag)
         {
@@ -126,6 +136,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             }
             else
                 TagSource!.Replace(oldTag, (Tag)newTag);
+            _storageController.AutoSave();
         }
     }
 }
