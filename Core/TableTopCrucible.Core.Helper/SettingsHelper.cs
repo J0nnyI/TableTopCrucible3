@@ -22,7 +22,7 @@ namespace TableTopCrucible.Core.Helper
         public static TimeSpan AnimationDuration => TimeSpan.FromMilliseconds(200);
 
         public static int ThreadCount => 2;
-        public static ushort SimultaneousThumbnailWindows => 5;
+        public static ushort SimultaneousThumbnailWindows => 3;
 
         public static TimeSpan PipelineBufferTime => TimeSpan.FromSeconds(5);
 

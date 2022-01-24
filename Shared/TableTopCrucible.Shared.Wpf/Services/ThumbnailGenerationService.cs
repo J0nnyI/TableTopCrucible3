@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -103,6 +104,7 @@ namespace TableTopCrucible.Domain.Library.Services
         /// <param name="source">pushes the files which require thumbnails<br/>the file is expected to have only one item.</param>
         /// <param name="tracker">must have a set target<br/>is incremented by the model fileSize</param>
         /// <param name="parallelThreads">number of parallel generating windows</param>
+        /// <param name="skipItemsWithThumbnails"></param>
         public void GenerateManyAsync(
             IObservable<FileData> source,
             ISourceTracker tracker,
@@ -137,6 +139,19 @@ namespace TableTopCrucible.Domain.Library.Services
                         try
                         {
                             GenerateWithAutoPosition(item);
+                        }
+                        catch (COMException e) when (e.ErrorCode == -2003304445) // "MILERR_WIN32ERROR (0x88980003)"
+                        {
+                            try
+                            {
+                                GC.Collect();
+                                GenerateWithAutoPosition(item);
+                            }
+                            catch (Exception exception)
+                            {
+                                failedThumbnailGenerations.Add(modelFile);
+                                throw;
+                            }
                         }
                         catch (Exception e)
                         {
@@ -254,6 +269,7 @@ namespace TableTopCrucible.Domain.Library.Services
             BitmapEncoder encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(source));
             encoder.Save(fileStream);
+            
         }
 
     }

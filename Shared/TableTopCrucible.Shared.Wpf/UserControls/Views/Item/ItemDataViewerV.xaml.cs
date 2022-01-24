@@ -26,7 +26,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     .Select(item => item?.Tags?.Connect() ?? Observable.Return(ChangeSet<Tag>.Empty))
                     .Switch()
                     .ToCollection()
-                    .BindTo(this, v => v.Tags.ItemsSource)
+                    .BindTo(this, v => v.TagList.ItemsSource),
+                this.OneWayBind(ViewModel,
+                    vm=>ViewModel.TagEditor,
+                    v=>v.TagEditor.ViewModel)
             });
         }
     }

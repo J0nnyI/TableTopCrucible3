@@ -56,7 +56,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 this.WhenAnyValue(v => v.ViewModel.ViewportContent)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this, v => v.ContainerVisual.Content),
-                new ActOnDispose(
+                new ActOnLifecycle(
                     () => ViewModel.Viewport = Viewport,
                     () =>
                     {

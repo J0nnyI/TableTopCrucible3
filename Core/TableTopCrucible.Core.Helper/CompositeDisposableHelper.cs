@@ -11,11 +11,11 @@ namespace TableTopCrucible.Core.Helper
     /// <summary>
     ///     executes the given action when disposed
     /// </summary>
-    public class ActOnDispose : IDisposable
+    public class ActOnLifecycle : IDisposable
     {
         private readonly Action _onDispose;
 
-        public ActOnDispose(Action onCreate, Action onDispose)
+        public ActOnLifecycle(Action onCreate, Action onDispose)
         {
             onCreate?.Invoke();
             _onDispose = onDispose;
