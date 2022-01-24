@@ -30,9 +30,23 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
         public static EditModeToCloseIconConverter Instance = new();
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is true // true = editmode
+            return value is true // true = editMode
                 ? PackIconKind.Undo
                 : PackIconKind.Close;
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+    public class EditModeToTextBoxWidthConverter : IValueConverter
+    {
+        public static EditModeToTextBoxWidthConverter Instance = new();
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value is true // true = editMode
+                ? 100
+                : 0;
 
         }
 

@@ -20,6 +20,7 @@
             <Setter Property="Padding" Value="0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
 
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -72,7 +73,8 @@
                                          Padding="4"
                                          VerticalAlignment="Center"
                                          VerticalContentAlignment="Center"
-                                         MinWidth="30"
+                                         MinWidth="{Binding Path=EditModeEnabled,
+                                    Converter={x:Static v:EditModeToTextBoxWidthConverter.Instance}}"
                                          Margin="0">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
