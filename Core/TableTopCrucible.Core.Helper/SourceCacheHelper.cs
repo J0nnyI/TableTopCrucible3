@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+
 using DynamicData;
+
 using TableTopCrucible.Core.Helper.Exceptions;
 
 namespace TableTopCrucible.Core.Helper
@@ -97,5 +100,14 @@ namespace TableTopCrucible.Core.Helper
         public static IObservable<TObject> WatchFirstOrDefault<TObject, TKey>(
             this IObservable<IChangeSet<TObject, TKey>> cache)
             => cache.ToCollection().Select(col => col.FirstOrDefault());
+
+        public static void RemoveWhere<TObject>(this ISourceList<TObject> list, Func<TObject, bool> selector)
+            => list.Edit(updater => updater.RemoveMany(updater.Where(selector)));
+        public static IEnumerable<TObject> RemoveWhere<TObject>(this IList<TObject> list, Func<TObject, bool> selector)
+        {
+            var items = list.Where(selector).ToArray();
+            list.Remove(items);
+            return items;
+        }
     }
 }

@@ -1,17 +1,14 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+
 using DynamicData;
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
-using ReactiveUI.Fody.Helpers;
+using Newtonsoft.Json.Linq;
 
-using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Core.ValueTypes.Helper;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
@@ -47,7 +44,9 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
             get => _fileKey3d;
             set => SetRequiredValue(ref _fileKey3d, value);
         }
+
+        [JsonProperty]
         public SourceList<Tag> Tags { get; } = new();
-        
+
     }
 }

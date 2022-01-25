@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Media.Media3D;
+
 using HelixToolkit.Wpf;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
-using TableTopCrucible.Domain.Library.Services;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.Wpf.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
@@ -31,41 +35,35 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
     public class ModelViewerVm : ReactiveObject, IModelViewer, IActivatableViewModel
     {
-        private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IWpfThumbnailGenerationService _thumbnailService;
 
         private readonly ObservableAsPropertyHelper<bool> _isActivated;
 
         public ModelViewerVm(
-            IDirectorySetupRepository directorySetupRepository,
-            IFileRepository fileRepository,
-            IImageDataRepository imageDataRepository,
             IWpfThumbnailGenerationService thumbnailService)
         {
-            _directorySetupRepository = directorySetupRepository;
             _thumbnailService = thumbnailService;
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(
-                        v => v.Model,
-                        v => v.PlaceholderMessage,
-                        (model, message) => new { model, message })
+                        vm => vm.Model)
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .Do(x =>
-                    {
+                    {// set loading info
                         PlaceholderText =
-                            x.message ??
-                            (x.model is null
+                            PlaceholderMessage ??
+                            (x is null
                                 ? (Message)"No File selected"
                                 : (Message)"Loading");
-                        if (x.model is null ||
-                            x.message is not null ||
-                            x.model.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
+                        if (x is null ||
+                            PlaceholderMessage is not null ||
+                            x.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
                            )
                             IsLoading = true;
 
                         ViewportContent = null;
                     })
-                    .Select(x => x.model)
+                    .Select(x => x)
                     .WhereNotNull()
                     .Select(file =>
                     {
@@ -73,12 +71,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             ? Observable.Return(null as Model3DGroup)
                             : Observable.Start(() =>
                             {
-                                var material = Materials.LightGray;
-                                var model = new ModelImporter
-                                {
-                                    DefaultMaterial = material
-                                }.Load(file.Value);
-                                model.Freeze();
+                                var model = file.Load(true);
                                 return model;
                             }, RxApp.TaskpoolScheduler);
                     })
@@ -100,7 +93,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     })
             });
 
-            _isActivated = this.GetIsActivatedChanges().ToProperty(this, vm => vm.IsActivated);
+            _isActivated = this.GetIsActivatedChanges()
+                .Buffer(TimeSpan.FromMilliseconds(200))
+                .Select(buffer => buffer.FirstOrDefault())
+                .WhereNotNull()
+                .DistinctUntilChanged()
+                .Do(x => { })
+                .Publish()
+                .RefCount()
+                .ToProperty(this, vm => vm.IsActivated);
         }
 
         [Reactive]
@@ -128,6 +129,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         /// </summary>
         /// <param name="sourceName">i.e. ItemName</param>
         public ImageFilePath GenerateThumbnail(Name sourceName)
-            => _thumbnailService.GenerateThumbnail(Model, sourceName, Viewport);
+            => _thumbnailService.Generate(Model, sourceName, Viewport);
     }
 }

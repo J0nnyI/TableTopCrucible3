@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Windows.Input;
+
 using DynamicData;
+
 using MoreLinq;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
@@ -20,6 +27,7 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.ItemSync.Models;
+using TableTopCrucible.Shared.Services;
 
 namespace TableTopCrucible.Shared.ItemSync.Services
 {
@@ -39,6 +47,8 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         private readonly IFileRepository _fileRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IProgressTrackingService _progressTrackingService;
+        private readonly IThumbnailGenerationService _thumbnailGenerationService;
+        private readonly IImageRepository _imageRepository;
 
         private readonly object _itemUpdateLocker = new();
 
@@ -46,12 +56,16 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             IDirectorySetupRepository directorySetupRepository,
             IFileRepository fileRepository,
             IItemRepository itemRepository,
-            IProgressTrackingService progressTrackingService)
+            IProgressTrackingService progressTrackingService,
+            IThumbnailGenerationService thumbnailGenerationService,
+            IImageRepository imageRepository)
         {
             _directorySetupRepository = directorySetupRepository;
             _fileRepository = fileRepository;
             _itemRepository = itemRepository;
             _progressTrackingService = progressTrackingService;
+            _thumbnailGenerationService = thumbnailGenerationService;
+            _imageRepository = imageRepository;
 
             StartScanCommand = ReactiveCommand.Create(
                 StartScan,
@@ -77,11 +91,20 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             var stepTracker = totalProgress.AddSingle((Name)"Total", (TargetProgress)1, (JobWeight)1);
             var hashingTracker = totalProgress.AddSingle((Name)"hashing", null, (JobWeight)10);
             var updateTracker = totalProgress.AddSingle((Name)"update", null, (JobWeight)3);
+            var thumbnailGenerationTracker =
+                SettingsHelper.GenerateThumbnailOnSync
+                    ? totalProgress.AddSingle((Name)"Thumbnail Generation", null, (JobWeight)30)
+                    : null;
 
+            var syncDisposables = new CompositeDisposable();
             totalProgress
                 .OnDone()
                 .Take(1)
-                .Subscribe(_ => { ScanRunning = false; });
+                .Subscribe(_ =>
+                {
+                    ScanRunning = false;
+                    syncDisposables.Dispose();
+                });
 
             Observable.Start(() =>
             {
@@ -104,18 +127,27 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                         var totalSize = filesToHash.Sum(file => file.FoundFile.Value.Length);
                         hashingTracker.SetTarget((TargetProgress)totalSize);
                         updateTracker.SetTarget((TargetProgress)filesToHash.Length);
+                        thumbnailGenerationTracker?.SetTarget(
+                            (TargetProgress)filesToHash
+                                .Where(file => file.UpdateSource == FileUpdateSource.New && file.FoundFile.IsModel())
+                                .Sum(file => file.FoundFile.GetSize().Value));
 
-                        var updatePipeline = new Subject<RawSyncFileData>();
+                        var fileUpdatePipeline = new Subject<RawSyncFileData>().DisposeWith(syncDisposables);
+                        var thumbnailPipeline = new ReplaySubject<FileData>().DisposeWith(syncDisposables);
 
-                        updatePipeline
+                        fileUpdatePipeline
                             .ObserveOn(RxApp.TaskpoolScheduler)
                             .Buffer(SettingsHelper.PipelineBufferTime)
+                            .Where(buffer => buffer.Any())
                             .TakeUntil(updateTracker.OnDone())
-                            .Subscribe(items =>
+                            .Subscribe(fileData =>
                             {
-                                _handleChangedFiles(items.ToArray());
-                                updateTracker.Increment((ProgressIncrement)items.Count);
+                                _handleChangedFiles(fileData.ToArray(), thumbnailPipeline);
+                                updateTracker.Increment((ProgressIncrement)fileData.Count);
                             });
+
+                        if (SettingsHelper.GenerateThumbnailOnSync)
+                            _thumbnailGenerationService.GenerateManyAsync(thumbnailPipeline, thumbnailGenerationTracker);
 
                         // hash items and do the rest in parallel
                         filesToHash
@@ -125,16 +157,18 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                             {
                                 fileData.CreateNewHashKey();
                                 hashingTracker.Increment((ProgressIncrement)fileData.FoundFile.Value.Length);
-                                lock (updatePipeline)
+                                lock (fileUpdatePipeline)
                                 {
-                                    updatePipeline.OnNext(fileData);
+                                    fileUpdatePipeline.OnNext(fileData);
                                 }
                             });
                     }
                     else
                     {
+                        thumbnailGenerationTracker?.Complete();
                         hashingTracker.Complete();
                         updateTracker.Complete();
+                        stepTracker.Complete();
                     }
                 }
                 catch (Exception e)
@@ -144,6 +178,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     stepTracker.Complete();
                     hashingTracker.Complete();
                     updateTracker.Complete();
+                    thumbnailGenerationTracker?.Complete();
                     throw;
                 }
             }, RxApp.TaskpoolScheduler);
@@ -184,9 +219,10 @@ namespace TableTopCrucible.Shared.ItemSync.Services
             return groupings;
         }
 
-        private void _handleChangedFiles(RawSyncFileData[] files)
+        private void _handleChangedFiles(RawSyncFileData[] files, ISubject<FileData> thumbnailPipeline)
         {
-            var filesToAdd = files.Where(x => x.UpdateSource == FileUpdateSource.New)
+            var filesToAdd = files
+                .Where(x => x.UpdateSource == FileUpdateSource.New)
                 .Select(file => file.GetNewEntity()).ToArray();
             _fileRepository.AddRange(filesToAdd);
             lock (_itemUpdateLocker)
@@ -196,24 +232,26 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     .ToArray();
                 var itemsToAdd = modelFiles
                     .DistinctBy(x => x.HashKey)
-                    .Where(file => !_itemRepository.ByModelHash(file.HashKey).Any())
+                    .Where(file => _itemRepository.ByModelHash(file.HashKey).None())
                     .Select(file => new Item(
                             file.Path.GetFilenameWithoutExtension().ToName(),
                             file.HashKey
                         )
                     ).ToArray();
 
+
                 modelFiles.ForEach(modelFile =>
                 {
                     var tags = GetTagsByPath(modelFile.Path);
-                    var item =
+                    var items =
                         itemsToAdd.Where(item => item.FileKey3d == modelFile.HashKey).ToList();
-                    if (!item.Any())
-                        item = _itemRepository.ByModelHash(modelFile.HashKey).ToList();
-                    item.ForEach(item => item.Tags.AddRange(tags));
+                    if (!items.Any())
+                        items = _itemRepository.ByModelHash(modelFile.HashKey).ToList();
+                    items.ForEach(item => item.Tags.AddRange(tags));
                 });
 
                 _itemRepository.AddRange(itemsToAdd);
+                modelFiles.ForEach(thumbnailPipeline.OnNext);
             }
         }
 

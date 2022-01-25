@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using ReactiveUI;
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,7 @@ namespace TableTopCrucible.Core.Wpf.Engine
     {
         public static void InitializeEngine()
         {
+            initializeJson();
             initializeHost();
             initializeWpf();
             //Application.Current.Startup += 
@@ -52,6 +55,18 @@ namespace TableTopCrucible.Core.Wpf.Engine
                 .SolutionAssemblies.Value
                 .ToList()
                 .ForEach(Locator.CurrentMutable.RegisterViewsForViewModels);
+        }
+
+        private static void initializeJson()
+        {
+            var converters =AssemblyHelper
+                .GetSolutionClassesOfType<JsonConverter>()
+                .Select(t => Activator.CreateInstance(t) as JsonConverter)
+                .ToList();
+            JsonConvert.DefaultSettings = () => new()
+            {
+                Converters = converters
+            };
         }
     }
 }

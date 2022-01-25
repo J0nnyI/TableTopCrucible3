@@ -1,11 +1,12 @@
-﻿<rxui:ReactiveUserControl x:TypeArguments="vm:ItemModelViewerVm"
-                          x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.ItemModelViewerV"
+﻿<rxui:ReactiveUserControl x:TypeArguments="item:ItemModelViewerVm"
+                          x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls.ItemModelViewerV"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
+                          xmlns:item="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
     <rxui:ViewModelViewHost x:Name="ModelViewer" />

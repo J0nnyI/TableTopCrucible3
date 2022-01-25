@@ -23,7 +23,8 @@
                        Margin="24 24 24 12" />
             <Button x:Name="GenerateThumbnails"
                     Content="Create Thumbnails" />
-            <Button Content="Delete Items Without Files" IsEnabled="False" />
+            <Button x:Name="AddImages"
+                    Content="Add Images"/>
             <Button x:Name="StartSync" Content="Start Sync" />
             <Button x:Name="DeleteAllData" Content="DeleteAllData"
                     ToolTip="deletes all data except directory setups" />

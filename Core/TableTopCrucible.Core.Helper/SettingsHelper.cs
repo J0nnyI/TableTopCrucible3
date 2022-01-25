@@ -22,12 +22,17 @@ namespace TableTopCrucible.Core.Helper
         public static TimeSpan AnimationDuration => TimeSpan.FromMilliseconds(200);
 
         public static int ThreadCount => 2;
+        public static ushort SimultaneousThumbnailWindows => 3;
 
         public static TimeSpan PipelineBufferTime => TimeSpan.FromSeconds(5);
 
         // the last n jobs will stay in memory, everything else will be removed
         public static int DoneJobLimit => 5;
         public static Size ThumbnailSize = new(200, 200);
+        public static double ThumbnailHeight => ThumbnailSize.Height;
+        public static double ThumbnailWidth=> ThumbnailSize.Width;
+        public static bool GenerateThumbnailOnSync => false;
+        public static int MaxTagCountInDropDown = 30;
 
         /// <summary>
         ///     the autoSave (subject) is buffered by this duration to prevent excessive writing

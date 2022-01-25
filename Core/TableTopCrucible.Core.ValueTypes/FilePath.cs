@@ -8,8 +8,6 @@ using Newtonsoft.Json;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
-using JsonSerializer = System.Text.Json.JsonSerializer;
-
 namespace TableTopCrucible.Core.ValueTypes
 {
     public class FilePath<TThis> : ValueType<string, TThis> where TThis : FilePath<TThis>, new()
@@ -17,8 +15,8 @@ namespace TableTopCrucible.Core.ValueTypes
         protected override void Validate(string value)
         {
             base.Validate(value);
-            if (!Path.HasExtension(value))
-                throw new InvalidValueException($"the filepath '{value}' does not contain an extension");
+            //if (!Path.HasExtension(value))
+            //    throw new InvalidValueException($"the filepath '{value}' does not contain an extension");
             if (!Path.IsPathRooted(value))
                 throw new InvalidValueException($"the filepath '{value}' is incomplete (i.e. missing a drive letter)");
         }
@@ -52,8 +50,24 @@ namespace TableTopCrucible.Core.ValueTypes
         }
 
         public string ReadAllText() => FileSystemHelper.File.ReadAllText(Value);
-        public T ReadAllJson<T>() => JsonSerializer.Deserialize<T>(ReadAllText());
-        public void WriteAllJson(object data) => WriteAllText(JsonConvert.SerializeObject(data));
+
+        public T ReadAllJson<T>()
+        {
+            using var s = OpenRead();
+            using var sr = new StreamReader(s);
+            using JsonReader reader = new JsonTextReader(sr);
+            var serializer = JsonSerializer.CreateDefault();
+            return serializer.Deserialize<T>(reader);
+        }
+
+        public void WriteAllJson(object data) 
+        {
+            using var s = OpenWrite();
+            using var sr = new StreamWriter(s);
+            using JsonWriter writer= new JsonTextWriter(sr);
+            var serializer = JsonSerializer.CreateDefault();
+            serializer.Serialize(writer,data);
+        }
 
         public bool Exists() => FileSystemHelper.File.Exists(Value);
 
@@ -79,21 +93,6 @@ namespace TableTopCrucible.Core.ValueTypes
             {
                 throw new FileWriteFailedException(ex);
             }
-        }
-        public void WriteObject(object data, bool createDirectory = true)
-        {
-            GetDirectoryPath().Create();
-            string text;
-            try
-            {
-                text = JsonSerializer.Serialize(data);
-            }
-            catch (Exception ex)
-            {
-                throw new SerializationFailedException(ex);
-            }
-
-            WriteAllText(text);
         }
 
         public BareFileName GetFilenameWithoutExtension() =>

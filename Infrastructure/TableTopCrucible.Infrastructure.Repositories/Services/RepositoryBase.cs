@@ -9,8 +9,6 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
-using TableTopCrucible.Infrastructure.Repositories.Models;
-
 namespace TableTopCrucible.Infrastructure.Repositories.Services
 {
     public interface IRepository<TId, TEntity>
@@ -19,8 +17,6 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
     {
         SourceCache<TEntity, TId> Data { get; }
         TEntity this[TId id] { get; }
-        IObservable<TEntity> Watch(TId id);
-        IObservable<TEntity> Watch(IObservable<TId> idChanges);
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
         void Remove(TEntity entity);
@@ -34,7 +30,6 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         where TId : IDataId
         where TEntity : class, IDataEntity<TId>, new()
     {
-        private readonly Subject<EntityUpdate<TId, TEntity>> _changes = new();
         private readonly IStorageController _storageController;
 
         protected RepositoryBase(IStorageController storageController, SourceCache<TEntity, TId> data)
@@ -44,33 +39,7 @@ namespace TableTopCrucible.Infrastructure.Repositories.Services
         }
 
         public SourceCache<TEntity, TId> Data { get; }
-
-        /// <summary>
-        ///     only updates on init, add and delete, updates have to be consumed via <see cref="INotifyPropertyChanged" />
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public IObservable<TEntity> Watch(TId id)
-            => _changes
-                .Where(change =>
-                    change.UpdatedEntities.ContainsKey(id))
-                .Select(change =>
-                    change.ChangeReason == EntityUpdateChangeReason.Remove
-                        ? null
-                        : change.UpdatedEntities[id])
-                .StartWith(this[id]);
-
-        /// <summary>
-        ///     only updates on init, add and delete, updates have to be consumed via <see cref="INotifyPropertyChanged" />
-        /// </summary>
-        /// <param name="idChanges"></param>
-        /// <returns></returns>
-        public IObservable<TEntity> Watch(IObservable<TId> idChanges)
-            => idChanges.Select(Watch)
-                .Switch()
-                .Replay(1)
-                .RefCount();
-
+        
         public TEntity this[TId id]
             => Data.Lookup(id).ToNullable();
 

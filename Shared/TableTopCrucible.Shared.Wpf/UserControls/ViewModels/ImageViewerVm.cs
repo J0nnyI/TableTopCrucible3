@@ -1,15 +1,23 @@
 ﻿using System;
+using System.IO;
 using System.Reactive.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
+using MaterialDesignThemes.Wpf;
+
+using Microsoft.AspNetCore.Components;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    [Singleton]
+    [Transient]
     public interface IImageViewer
     {
         ImageFilePath ImageFile { get; set; }
@@ -22,22 +30,52 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(vm => vm.ImageFile)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(img =>
+                    .ObserveOn(RxApp.TaskpoolScheduler)
+                    .Select(file =>
                     {
-                        if (img is null || !img.Exists())
+                        if (file is null || !file.Exists())
                         {
-                            ImageSource = null;
+                            return new
+                            {
+                                imageSource = null as BitmapImage,
+                                errorText = (Message)"No file selected",
+                                placeholderIcon = PackIconKind.ImageOutline
+                            };
                         }
-                        else
+
+                        try
                         {
+                            using var stream = file.OpenRead();
                             var src = new BitmapImage();
                             src.BeginInit();
-                            src.UriSource = img.ToUri();
                             src.CacheOption = BitmapCacheOption.OnLoad;
+                            src.StreamSource = stream;
                             src.EndInit();
-                            ImageSource = src;
+                            src.DecodePixelWidth =Convert.ToInt32(SettingsHelper.ThumbnailWidth);
+                            src.Freeze();
+                            return new
+                            {
+                                imageSource = src,
+                                errorText = null as Message,
+                                placeholderIcon = PackIconKind.ImageOffOutline,
+                            };
                         }
+                        catch (Exception e)
+                        {
+                            return new
+                            {
+                                imageSource = null as BitmapImage,
+                                errorText = (Message)"File could not be loaded",
+                                placeholderIcon = PackIconKind.ImageOffOutline,
+                            };
+                        }
+                    })
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Subscribe(x =>
+                    {
+                        ImageSource = x.imageSource;
+                        ErrorText = x.errorText;
+                        PlaceholderIcon = x.placeholderIcon;
                     })
             });
         }
@@ -49,5 +87,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
         [Reactive]
         public ImageFilePath ImageFile { get; set; }
+
+        [Reactive]
+        public Message ErrorText { get; set; }
+
+        [Reactive]
+        public PackIconKind PlaceholderIcon { get; set; }
     }
 }

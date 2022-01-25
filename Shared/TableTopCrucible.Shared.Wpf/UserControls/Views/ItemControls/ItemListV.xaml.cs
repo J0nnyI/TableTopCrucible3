@@ -1,9 +1,9 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using ReactiveUI;
-using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.Views
+namespace TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls
 {
     /// <summary>
     ///     Interaction logic for ItemListV.xaml

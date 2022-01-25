@@ -37,7 +37,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                         ? Visibility.Visible
                         : Visibility.Collapsed)
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, vm => vm.Image.Visibility)
+                    .BindTo(this, vm => vm.Image.Visibility),
+
+                this.Bind(ViewModel,
+                    vm=>vm.PlaceholderIcon,
+                    v=>v.Placeholder.Kind),
+                this.Bind(ViewModel,
+                    vm=>vm.ErrorText,
+                    v=>v.Placeholder.ToolTip),
             });
         }
     }

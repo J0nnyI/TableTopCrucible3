@@ -26,6 +26,7 @@ using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
 
 namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 {
@@ -37,7 +38,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
     public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage, IDisposable
     {
         private readonly IFileRepository _fileRepository;
-        private readonly IImageDataRepository _imageDataRepository;
+        private readonly IImageRepository _imageRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IGalleryService _galleryService;
@@ -54,14 +55,14 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             IItemFileList fileList,
             IGallery gallery,
             IFileRepository fileRepository,
-            IImageDataRepository imageDataRepository,
+            IImageRepository imageRepository,
             IItemRepository itemRepository,
             IDirectorySetupRepository directorySetupRepository,
             IGalleryService galleryService,
             INotificationService notificationService)
         {
             _fileRepository = fileRepository;
-            _imageDataRepository = imageDataRepository;
+            _imageRepository = imageRepository;
             _itemRepository = itemRepository;
             _directorySetupRepository = directorySetupRepository;
             _galleryService = galleryService;
@@ -71,7 +72,8 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             Filter = filter;
             ModelViewer = modelViewer;
             Actions = actions;
-            Actions.GenerateThumbnailsCommand = ModelViewer.GenerateThumbnailCommand;
+            Actions.GenerateThumbnailsByViewportCommand = ModelViewer.GenerateThumbnailCommand;
+            Actions.SelectedItems = ItemList.SelectedItems;
             DataViewer = dataViewer;
             ViewerHeader = viewerHeader;
             Gallery = gallery;
@@ -84,6 +86,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                 .Buffer(TimeSpan.FromMilliseconds(500))
                 .Where(buffer=>buffer.Any())
                 .Select(buffer=>buffer.Last())
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Publish()
                 .RefCount();
             this.WhenActivated(() => new[]
@@ -98,6 +101,9 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                     .BindTo(this, vm => vm.FileList.Item),
                 itemChanges
                     .BindTo(this, vm => vm.Gallery.Item),
+                itemChanges
+                    .BindTo(this, vm => vm.Actions.Item),
+                filter.FilterChanges.BindTo(this, vm=>vm.ItemList.Filter)
             });
         }
 

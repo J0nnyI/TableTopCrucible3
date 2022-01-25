@@ -2,9 +2,11 @@
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
@@ -16,6 +18,7 @@ using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+
 using vtName = TableTopCrucible.Core.ValueTypes.Name;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
@@ -23,8 +26,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     [Transient]
     public interface IDirectorySetupCard : IComparable<IDirectorySetupCard>, IComparable
     {
-        public DirectorySetupId DirectorySetupId { get; set; }
-        public DirectorySetup DirectorySetup { get; }
+        public DirectorySetup DirectorySetup { get; set; }
         public bool ResetOnSave { get; set; }
     }
 
@@ -33,7 +35,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly INotificationService _notificationService;
         private readonly IStorageController _storageController;
-        private ObservableAsPropertyHelper<DirectorySetup> _directorySetup;
 
         private ObservableAsPropertyHelper<bool> _isDirty;
 
@@ -50,17 +51,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             this.WhenActivated(() => new[]
                 {
                     // Properties
-                    this.WhenAnyValue(
-                            vm => vm.DirectorySetupId,
-                            id => _directorySetupRepository.Watch(id))
-                        .Switch()
-                        .Select(change => change)
-                        .Do(m =>
-                        {
-                            Name = m?.Name?.Value;
-                            Path = m?.Path?.Value;
-                        })
-                        .ToProperty(this, vm => vm.DirectorySetup, out _directorySetup),
+                    this.WhenAnyValue(vm => vm.DirectorySetup.Path.Value)
+                        .BindTo(this, vm=>vm.Path),
+                    this.WhenAnyValue(vm => vm.DirectorySetup.Name.Value)
+                        .BindTo(this, vm=>vm.Name),
 
                     this.WhenAnyValue(
                             vm => vm.DirectorySetup.Name,
@@ -192,10 +186,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ReactiveCommandBase<DirectoryPath, Unit> changePathCommand { get; private set; }
 
         public ViewModelActivator Activator { get; } = new();
-        public DirectorySetup DirectorySetup => _directorySetup?.Value;
-
         [Reactive]
-        public DirectorySetupId DirectorySetupId { get; set; }
+        public DirectorySetup DirectorySetup { get; set; }
 
         [Reactive]
         public bool ResetOnSave { get; set; } = false;
