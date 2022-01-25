@@ -1,22 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
 using MaterialDesignThemes.Wpf;
+using System.Windows.Threading;
 
 using ReactiveUI;
 
@@ -66,32 +56,20 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
             {
                 this.OneWayBind(ViewModel,
                     vm=>vm.TagList,
-                    v=>v.TagList.ItemsSource)
+                    v=>v.TagList.ItemsSource),
             });
-        }
-
-        private void Chip_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is not Chip { DataContext: TagController tagController, Content: Panel child } chip)
-                return;
-
-            tagController.EditModeEnabled = true;
-            var tb = child.Children.GetByType<Panel>()
-                .Children.GetByType<TextBox>();
-
-            focusTextBox(tb);
         }
 
         private void TextBox_OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (sender is not TextBox { DataContext: TagController tagController } tb)
+            if (sender is not ComboBox { DataContext: TagController tagController } tb)
                 return;
 
-
+            var actionSuccess = true;
             switch (e.Key)
             {
                 case Key.Enter:
-                    tagController.Confirm();
+                    actionSuccess = tagController.Confirm();
                     break;
                 case Key.Escape:
                     tagController.Revert();
@@ -100,8 +78,21 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                     return;
             }
 
-            tb.SelectionLength = 0;
+            if (!actionSuccess)
+                return;
+
             Keyboard.ClearFocus();
+            tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Up));
+        }
+
+        private void Chip_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not Chip { DataContext: TagController tagController, Content: Panel panel })
+                return;
+
+            tagController.EditModeEnabled = true;
+
+            focusTextBox(panel.Children.GetByType<StackPanel>());
         }
 
         private void NewTag_OnClick(object sender, RoutedEventArgs e)
@@ -109,26 +100,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
             if (sender is not Button { DataContext: TagController tagController, Parent: Panel panel })
                 return;
 
-            tagController.IsNew = false;
+            tagController.AddMode = false;
             tagController.EditModeEnabled = true;
 
-            var tb = panel.Children.GetByType<StackPanel>()
-                .Children.GetByType<TextBox>();
-
-            focusTextBox(tb);
-        }
-
-        private static void focusTextBox(TextBox tb)
-        {
-            tb?.Events()
-                .MouseEnter
-                .Take(1)
-                .Subscribe(_ =>
-                {
-                    tb.Focus();
-                    tb.CaretIndex = 0;
-                });
-
+            focusTextBox(panel.Children.GetByType<StackPanel>());
         }
 
         private void SaveChanges_OnClick(object sender, RoutedEventArgs e)
@@ -136,11 +111,32 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
             if (sender is not Button { DataContext: TagController tagController, Parent: Panel panel })
                 return;
 
-            var tb = panel.Children.GetByType<TextBox>();
+            var tb = panel.Children.GetByType<ComboBox>();
 
             tagController.Confirm();
-            tb.SelectionLength = 0;
-            Keyboard.ClearFocus();
+            tb.MoveFocus(new TraversalRequest(FocusNavigationDirection.Up));
+        }
+
+        private void focusTextBox(Panel comboBoxContainer)
+        {
+            var cb = comboBoxContainer
+                .Children.GetByType<ComboBox>();
+
+
+            Dispatcher.BeginInvoke(() =>
+            {
+                cb.Focus();
+                cb.IsDropDownOpen = true;
+            }, (DispatcherPriority)5);
+
+        }
+
+        private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Panel { DataContext: TagController { EditModeEnabled: true } } panel)
+                return;
+
+            focusTextBox(panel);
         }
     }
 }

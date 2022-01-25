@@ -15,8 +15,8 @@ namespace TableTopCrucible.Core.ValueTypes
         protected override void Validate(string value)
         {
             base.Validate(value);
-            if (!Path.HasExtension(value))
-                throw new InvalidValueException($"the filepath '{value}' does not contain an extension");
+            //if (!Path.HasExtension(value))
+            //    throw new InvalidValueException($"the filepath '{value}' does not contain an extension");
             if (!Path.IsPathRooted(value))
                 throw new InvalidValueException($"the filepath '{value}' is incomplete (i.e. missing a drive letter)");
         }

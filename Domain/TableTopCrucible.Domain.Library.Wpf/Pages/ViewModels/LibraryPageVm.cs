@@ -103,6 +103,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                     .BindTo(this, vm => vm.Gallery.Item),
                 itemChanges
                     .BindTo(this, vm => vm.Actions.Item),
+                filter.FilterChanges.BindTo(this, vm=>vm.ItemList.Filter)
             });
         }
 

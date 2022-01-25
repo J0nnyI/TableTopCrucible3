@@ -24,6 +24,7 @@
                  VerticalAlignment="Top"
                  Grid.Row="1" />
         <rxui:ViewModelViewHost x:Name="TagEditor"
+                                Margin="8 0"
                                 Grid.Row="2"/>
     </Grid>
 </rxui:ReactiveUserControl>

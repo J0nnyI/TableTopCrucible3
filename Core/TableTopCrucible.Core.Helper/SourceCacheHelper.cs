@@ -103,10 +103,11 @@ namespace TableTopCrucible.Core.Helper
 
         public static void RemoveWhere<TObject>(this ISourceList<TObject> list, Func<TObject, bool> selector)
             => list.Edit(updater => updater.RemoveMany(updater.Where(selector)));
-        public static void RemoveWhere<TObject>(this IList<TObject> list, Func<TObject, bool> selector)
+        public static IEnumerable<TObject> RemoveWhere<TObject>(this IList<TObject> list, Func<TObject, bool> selector)
         {
             var items = list.Where(selector).ToArray();
             list.Remove(items);
+            return items;
         }
     }
 }
