@@ -52,7 +52,7 @@
                 <md:Chip MouseDoubleClick="Chip_OnMouseDoubleClick"
                          Margin="0 0 8 8">
                     <StackPanel Orientation="Horizontal"
-                                d:DataContext="{d:DesignInstance vm:TagController}">
+                                d:DataContext="{d:DesignInstance vm:TagEditorTagController}">
                         <!--add content-->
                         <Button Visibility="{Binding 
                                                     Path=AddMode,

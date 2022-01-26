@@ -37,12 +37,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 
     public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage, IDisposable
     {
-        private readonly IFileRepository _fileRepository;
-        private readonly IImageRepository _imageRepository;
-        private readonly IItemRepository _itemRepository;
-        private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IGalleryService _galleryService;
-        private readonly INotificationService _notificationService;
 
         public LibraryPageVm(
             IItemList itemList,
@@ -54,19 +49,9 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             IItemViewerHeader viewerHeader,
             IItemFileList fileList,
             IGallery gallery,
-            IFileRepository fileRepository,
-            IImageRepository imageRepository,
-            IItemRepository itemRepository,
-            IDirectorySetupRepository directorySetupRepository,
-            IGalleryService galleryService,
-            INotificationService notificationService)
+            IGalleryService galleryService)
         {
-            _fileRepository = fileRepository;
-            _imageRepository = imageRepository;
-            _itemRepository = itemRepository;
-            _directorySetupRepository = directorySetupRepository;
             _galleryService = galleryService;
-            _notificationService = notificationService;
             ItemList = itemList.DisposeWith(_disposables);
             ListHeader = listHeader;
             Filter = filter;

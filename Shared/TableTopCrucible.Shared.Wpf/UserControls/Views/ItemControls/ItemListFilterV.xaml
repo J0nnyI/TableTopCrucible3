@@ -12,11 +12,11 @@
                                 d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
 
-        <TextBlock Text="Include" />
-        <rxui:ViewModelViewHost x:Name="IncludeTags"/>
-
-        <TextBlock Text="Exclude" />
-        <rxui:ViewModelViewHost x:Name="ExcludeTags"/>
+        <TextBlock Text="List Filter"
+                   Style="{StaticResource SidebarTitle}"
+                   Margin="8 24 0 0 "/>
+        <rxui:ViewModelViewHost Name="IncludeFilter"/>
+        <rxui:ViewModelViewHost Name="ExcludeFilter"/>
 
     </StackPanel>
 </rxui:ReactiveUserControl>

@@ -62,7 +62,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 
         private void TextBox_OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (sender is not ComboBox { DataContext: TagController tagController } tb)
+            if (sender is not ComboBox { DataContext: TagEditorTagController tagController } tb)
                 return;
 
             var actionSuccess = true;
@@ -87,7 +87,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 
         private void Chip_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender is not Chip { DataContext: TagController tagController, Content: Panel panel })
+            if (sender is not Chip { DataContext: TagEditorTagController tagController, Content: Panel panel })
                 return;
 
             tagController.EditModeEnabled = true;
@@ -97,7 +97,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 
         private void NewTag_OnClick(object sender, RoutedEventArgs e)
         {
-            if (sender is not Button { DataContext: TagController tagController, Parent: Panel panel })
+            if (sender is not Button { DataContext: TagEditorTagController tagController, Parent: Panel panel })
                 return;
 
             tagController.AddMode = false;
@@ -108,7 +108,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 
         private void SaveChanges_OnClick(object sender, RoutedEventArgs e)
         {
-            if (sender is not Button { DataContext: TagController tagController, Parent: Panel panel })
+            if (sender is not Button { DataContext: TagEditorTagController tagController, Parent: Panel panel })
                 return;
 
             var tb = panel.Children.GetByType<ComboBox>();
@@ -133,7 +133,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 
         private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (sender is not Panel { DataContext: TagController { EditModeEnabled: true } } panel)
+            if (sender is not Panel { DataContext: TagEditorTagController { EditModeEnabled: true } } panel)
                 return;
 
             focusTextBox(panel);

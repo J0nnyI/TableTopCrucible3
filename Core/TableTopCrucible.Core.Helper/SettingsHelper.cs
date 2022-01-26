@@ -33,6 +33,7 @@ namespace TableTopCrucible.Core.Helper
         public static double ThumbnailWidth=> ThumbnailSize.Width;
         public static bool GenerateThumbnailOnSync => false;
         public static int MaxTagCountInDropDown = 30;
+        public static TimeSpan FilterThrottleSpan = TimeSpan.FromMilliseconds(500);
 
         /// <summary>
         ///     the autoSave (subject) is buffered by this duration to prevent excessive writing

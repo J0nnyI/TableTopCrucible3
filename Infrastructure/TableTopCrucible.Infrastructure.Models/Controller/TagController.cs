@@ -14,11 +14,14 @@ using TableTopCrucible.Core.ValueTypes;
 
 namespace TableTopCrucible.Infrastructure.Models.Controller
 {
-    public interface ITagController : ISourceList<Tag>
+    public interface ITagCollection : ISourceList<Tag>
     {
         public void Clear();
     }
-    internal class TagController : ITagController
+    /// <summary>
+    /// ensures that each tag is only included once
+    /// </summary>
+    public class TagCollection : ITagCollection
     {
         private readonly SourceList<Tag> _tags = new();
         public void Edit(Action<IExtendedList<Tag>> updateAction)
@@ -60,12 +63,12 @@ namespace TableTopCrucible.Infrastructure.Models.Controller
         public void Clear()
             => _tags.Clear();
     }
-    public class TagSourceListJsonConverter : JsonConverter<ITagController>
+    public class TagSourceListJsonConverter : JsonConverter<ITagCollection>
     {
         public override bool CanRead => true;
         public override bool CanWrite => true;
 
-        public override void WriteJson(JsonWriter writer, ITagController? value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, ITagCollection? value, JsonSerializer serializer)
         {
             if (value is null)
                 return;
@@ -82,12 +85,12 @@ namespace TableTopCrucible.Infrastructure.Models.Controller
             }
         }
 
-        public override ITagController? ReadJson(JsonReader reader, Type objectType, ITagController? existingValue,
+        public override ITagCollection? ReadJson(JsonReader reader, Type objectType, ITagCollection? existingValue,
             bool hasExistingValue,
             JsonSerializer serializer)
         {
-            if (objectType != typeof(TagController) && objectType != typeof(ITagController))
-                return new TagController();
+            if (objectType != typeof(TagCollection) && objectType != typeof(ITagCollection))
+                return new TagCollection();
 
 
             var obj = JArray.Load(reader);
@@ -97,7 +100,7 @@ namespace TableTopCrucible.Infrastructure.Models.Controller
 
             if (existingValue is null)
             {
-                var res = new TagController();
+                var res = new TagCollection();
                 res.AddRange(tags);
                 return res;
             }

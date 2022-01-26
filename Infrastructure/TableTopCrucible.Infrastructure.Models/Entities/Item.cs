@@ -47,7 +47,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         }
 
         [JsonProperty]
-        public ITagController Tags { get; } = new TagController();
+        public ITagCollection Tags { get; } = new TagCollection();
 
     }
 }
