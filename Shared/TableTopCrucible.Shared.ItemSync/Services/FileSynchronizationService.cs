@@ -247,7 +247,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                         itemsToAdd.Where(item => item.FileKey3d == modelFile.HashKey).ToList();
                     if (!items.Any())
                         items = _itemRepository.ByModelHash(modelFile.HashKey).ToList();
-                    items.ForEach(item => item.Tags.AddRange(tags));
+                    items.ForEach(item => item.Tags.AddRange(tags.ToArray()));
                 });
 
                 _itemRepository.AddRange(itemsToAdd);

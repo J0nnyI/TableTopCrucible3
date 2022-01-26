@@ -81,11 +81,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
             {
                 _selectedItemInfo
                     .Connect()
+                    .ObserveOn(RxApp.TaskpoolScheduler)
                     .Filter(this.WhenAnyValue(vm=>vm.Filter)
                         .Select<Func<Item,bool>,Func<ItemSelectionInfo, bool>>(
                             filter=>
                                 info=>
-                                    filter(info.Item)))
+                                    filter(info.Item))
+                        .Throttle(SettingsHelper.FilterThrottleSpan)
+                        .ObserveOn(RxApp.TaskpoolScheduler))
                     .Sort(itemInfo => itemInfo.ThumbnailViewer.Item.Name.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .OnItemAdded(item=>item.PropertyChanged +=ItemOnPropertyChanged)
@@ -106,7 +109,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         }
         public ViewModelActivator Activator { get; } = new();
         private IObservableList<ItemSelectionInfo> _selectedItemInfo { get; }
-        public IObservableList<Item> SelectedItems { get; private set; }
+        public IObservableList<Item> SelectedItems { get; }
 
         [Reactive]
         public Func<Item, bool> Filter { get; set; } = _ => true;
