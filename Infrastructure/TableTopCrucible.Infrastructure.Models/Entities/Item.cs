@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Controller;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 
 namespace TableTopCrucible.Infrastructure.Models.Entities
@@ -21,12 +22,12 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         {
         }
 
-        public Item(Name name, FileHashKey fileHashKey, IEnumerable<Tag> tags = null)
+        public Item(Name name, FileHashKey fileHashKey, IEnumerable<Tag>? tags = null)
         {
             Name = name ?? throw new NullReferenceException(nameof(name));
             FileKey3d = fileHashKey ?? throw new NullReferenceException(nameof(fileHashKey));
             if (tags is not null)
-                Tags.AddRange(tags);
+                Tags.AddRange(tags.ToArray());
         }
 
         private Name _name;
@@ -46,7 +47,7 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
         }
 
         [JsonProperty]
-        public SourceList<Tag> Tags { get; } = new();
+        public ITagController Tags { get; } = new TagController();
 
     }
 }
