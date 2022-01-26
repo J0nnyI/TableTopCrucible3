@@ -7,10 +7,22 @@
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                           xmlns:item="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls"
+                          xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <TextBlock Name="Name"
-                   Style="{StaticResource SidebarTitle}" />
+                   Style="{StaticResource SidebarTitle}" 
+                   VerticalAlignment="Center"
+                   Grid.Column="0"/>
+        <Button Content="{md:PackIcon LightningBoltOutline}"
+                Command="{x:Static md:DrawerHost.OpenDrawerCommand}"
+                CommandParameter="{x:Static Dock.Right}"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Grid.Column="1"/>
     </Grid>
 </rxui:ReactiveUserControl>

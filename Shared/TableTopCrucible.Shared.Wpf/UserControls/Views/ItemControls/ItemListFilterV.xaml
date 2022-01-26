@@ -11,10 +11,16 @@
                                 mc:Ignorable="d"
                                 d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
-
+        <StackPanel Margin="8"
+                    Orientation="Horizontal">
+        <Button Content="{md:PackIcon Filter}"
+                Command="{x:Static md:DrawerHost.CloseDrawerCommand}"
+                CommandParameter="{x:Static Dock.Left}"
+                Style="{StaticResource MaterialDesignIconButton}"/>
         <TextBlock Text="List Filter"
-                   Style="{StaticResource SidebarTitle}"
-                   Margin="8 24 0 0 "/>
+                   VerticalAlignment="Center"
+                   Style="{StaticResource SidebarTitle}"/>
+        </StackPanel>
         <rxui:ViewModelViewHost Name="IncludeFilter"/>
         <rxui:ViewModelViewHost Name="ExcludeFilter"/>
 

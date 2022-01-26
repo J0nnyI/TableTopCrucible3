@@ -8,7 +8,7 @@ namespace TableTopCrucible.Core.Helper
     public static class SettingsHelper
     {
         public static bool AutoSaveEnabled = true;
-        public static TimeSpan AutoSaveThrottle = new(0,0,0,30);
+        public static TimeSpan AutoSaveThrottle = new(0, 0, 0, 30);
         public static TimeSpan NotificationDelay => new(0, 0, 0, 5);
         public static int FileMinLoadingScreenSize => 500000;
         public static double NotificationResolution => NotificationDelay / AnimationResolution;
@@ -30,7 +30,7 @@ namespace TableTopCrucible.Core.Helper
         public static int DoneJobLimit => 5;
         public static Size ThumbnailSize = new(200, 200);
         public static double ThumbnailHeight => ThumbnailSize.Height;
-        public static double ThumbnailWidth=> ThumbnailSize.Width;
+        public static double ThumbnailWidth => ThumbnailSize.Width;
         public static bool GenerateThumbnailOnSync => false;
         public static int MaxTagCountInDropDown = 30;
         public static TimeSpan FilterThrottleSpan = TimeSpan.FromMilliseconds(500);
@@ -39,10 +39,5 @@ namespace TableTopCrucible.Core.Helper
         ///     the autoSave (subject) is buffered by this duration to prevent excessive writing
         /// </summary>
         public static TimeSpan AutoSaveBuffer => TimeSpan.FromMinutes(1);
-
-        public static string DefaultFilePath =>
-            //"library.ttcl";
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TableTopCrucible",
-                "Library.ttcl");
     }
 }

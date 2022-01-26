@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Security.Cryptography;
-
 using DynamicData;
 
 using MaterialDesignThemes.Wpf;
@@ -13,17 +9,10 @@ using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Core.Engine.Services;
-using TableTopCrucible.Core.Engine.ValueTypes;
-using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
-using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
-using TableTopCrucible.Domain.Library.Services;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
-using TableTopCrucible.Infrastructure.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
