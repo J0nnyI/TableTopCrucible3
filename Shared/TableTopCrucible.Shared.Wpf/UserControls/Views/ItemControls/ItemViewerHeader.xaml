@@ -14,6 +14,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <TextBlock Name="Name"
                    Style="{StaticResource SidebarTitle}" 
@@ -24,5 +25,19 @@
                 CommandParameter="{x:Static Dock.Right}"
                 Style="{StaticResource MaterialDesignIconButton}"
                 Grid.Column="1"/>
+        <StackPanel Grid.Column="2" Margin="60 0 0 0" Orientation="Horizontal">
+            <ToggleButton Content="{md:PackIcon Rotate3dVariant}"
+                          md:ToggleButtonAssist.OnContent="{md:PackIcon Rotate3d}"
+                          Style="{StaticResource MaterialDesignActionToggleButton}"/>
+            <ToggleButton Content="{md:PackIcon DatabaseOutline}"
+                          md:ToggleButtonAssist.OnContent="{md:PackIcon Database}"
+                          Style="{StaticResource MaterialDesignActionToggleButton}"/>
+            <ToggleButton Content="{md:PackIcon ViewGallery}"
+                          md:ToggleButtonAssist.OnContent="{md:PackIcon ViewGalleryOutline}"
+                          Style="{StaticResource MaterialDesignActionToggleButton}"/>
+            <ToggleButton Content="{md:PackIcon File}"
+                          md:ToggleButtonAssist.OnContent="{md:PackIcon FileOutline}"
+                          Style="{StaticResource MaterialDesignActionToggleButton}"/>
+        </StackPanel>
     </Grid>
 </rxui:ReactiveUserControl>

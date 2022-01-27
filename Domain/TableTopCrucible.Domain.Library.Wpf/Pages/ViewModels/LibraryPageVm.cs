@@ -33,26 +33,18 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             IItemList itemList,
             IFilteredListHeader listHeader,
             IItemListFilter filter,
-            IItemModelViewer modelViewer,
-            IItemActions actions,
-            IItemDataViewer dataViewer,
-            IItemViewerHeader viewerHeader,
-            IItemFileList fileList,
-            IGallery gallery,
-            IGalleryService galleryService)
+            IGalleryService galleryService,
+            ISingleItemViewer singleItemViewer,
+            IItemActions itemActions)
         {
             _galleryService = galleryService;
             ItemList = itemList.DisposeWith(_disposables);
             ListHeader = listHeader;
             Filter = filter;
-            ModelViewer = modelViewer;
-            Actions = actions;
-            Actions.GenerateThumbnailsByViewportCommand = ModelViewer.GenerateThumbnailCommand;
-            Actions.SelectedItems = ItemList.SelectedItems;
-            DataViewer = dataViewer;
-            ViewerHeader = viewerHeader;
-            Gallery = gallery;
-            FileList = fileList.DisposeWith(_disposables);
+            SingleItemViewer = singleItemViewer;
+            ItemActions = itemActions;
+
+            ItemActions.GenerateThumbnailsByViewportCommand = singleItemViewer.GenerateThumbnailCommand;
 
             var selection = ItemList.SelectedItems
                 .Connect()
@@ -69,19 +61,8 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                 .RefCount();
             this.WhenActivated(() => new[]
             {
-                itemChanges
-                    .BindTo(this, vm => vm.ModelViewer.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.DataViewer.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.ViewerHeader.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.FileList.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.Gallery.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.Actions.Item),
                 filter.FilterChanges.BindTo(this, vm=>vm.ItemList.Filter),
+                itemChanges.BindTo(this, vm=>vm.SingleItemViewer.Item),
                 this._selectionErrorText = selection
                     .Select(items=> 
                         items.Count switch
@@ -98,12 +79,8 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         public IItemList ItemList { get; }
         public IFilteredListHeader ListHeader { get; }
         public IItemListFilter Filter { get; }
-        public IItemModelViewer ModelViewer { get; }
-        public IItemActions Actions { get; }
-        public IItemDataViewer DataViewer { get; }
-        public IItemViewerHeader ViewerHeader { get; }
-        public IGallery Gallery { get; }
-        public IItemFileList FileList { get; }
+        public ISingleItemViewer SingleItemViewer { get; }
+        public IItemActions ItemActions { get; }
         public ViewModelActivator Activator { get; } = new();
         public PackIconKind? Icon => PackIconKind.Bookshelf;
         public Name Title => Name.From("Item Library");
@@ -113,16 +90,5 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         public Message SelectionErrorText => _selectionErrorText.Value;
         public void Dispose()
             => _disposables.Dispose();
-
-        public void HandleFileDrop(FilePath[] filePaths)
-        {
-            var images = 
-                filePaths
-                    .Where(file => file.IsImage())
-                    .Select(img => img.ToImagePath())
-                    .ToArray();
-            var item = ItemList.SelectedItems.Items.FirstOrDefault();
-            _galleryService.AddImagesToItem(item,images);
-        }
     }
 }

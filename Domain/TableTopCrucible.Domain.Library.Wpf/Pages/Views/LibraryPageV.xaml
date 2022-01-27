@@ -51,44 +51,27 @@
                                         Grid.Row="0"
                                         Grid.Column="0"
                                         Grid.ColumnSpan="2" />
-
-                <rxui:ViewModelViewHost Name="ViewerHeader"
-                                        Grid.Row="0"
-                                        Grid.Column="1"/>
-
                 <rxui:ViewModelViewHost x:Name="ItemList"
                                         Margin="4 4 12 4"
                                         Grid.Column="0"
                                         Grid.Row="1" />
-                <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
-                            TabStripPlacement="Top"
-                            AllowDrop="True"
-                            Drop="UIElement_OnDrop"
-                            Grid.Column="1"
-                            Grid.Row="1">
-                    <TabItem Header="3d Model">
-                        <rxui:ViewModelViewHost x:Name="ModelViewer" />
-                    </TabItem>
-                    <TabItem Header="Data">
-                        <rxui:ViewModelViewHost x:Name="DataViewer" />
-                    </TabItem>
-                    <TabItem Header="Gallery">
-                        <rxui:ViewModelViewHost x:Name="Gallery" />
-                    </TabItem>
-                    <TabItem Header="Files">
-                        <rxui:ViewModelViewHost x:Name="FileList" />
-                    </TabItem>
-                </TabControl>
-                <uc:LoadingScreen x:Name="SelectionErrorDisplay"
-                                  Grid.Row="0"
-                                  Grid.RowSpan="2"
-                                  Grid.Column="1"/>
 
                 <GridSplitter Width="{DynamicResource GridSplitterWidth}"
                               Margin="{DynamicResource GridSplitterMargin}"
                               Grid.Column="0"
                               Grid.Row="0"
                               Grid.RowSpan="2" />
+
+
+                <rxui:ViewModelViewHost x:Name="SingleItemViewer"
+                                        Margin="4 4 12 4"
+                                        Grid.Column="1"
+                                        Grid.Row="0"
+                                        Grid.RowSpan="2"/>
+                <uc:LoadingScreen x:Name="SelectionErrorDisplay"
+                                  Grid.Row="0"
+                                  Grid.RowSpan="2"
+                                  Grid.Column="1"/>
 
             </Grid>
 
