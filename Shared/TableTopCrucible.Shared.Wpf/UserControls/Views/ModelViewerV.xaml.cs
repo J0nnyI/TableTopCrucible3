@@ -40,9 +40,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                 }),
 
                 // bindings
-                this.WhenAnyValue(v => v.ViewModel.PlaceholderText.Value)
+                this.WhenAnyValue(v => v.ViewModel.PlaceholderText)
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, v => v.PlaceholderText.Text),
+                    .BindTo(this, v => v.LoadingScreen.Text),
 
                 this.WhenAnyValue(vm => vm.ViewModel.IsLoading)
                     .Select(loading =>
@@ -51,7 +51,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
                             : Visibility.Collapsed)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .BindTo(this,
-                        v => v.PlaceholderContainer.Visibility),
+                        v => v.LoadingScreen.Visibility),
 
                 this.WhenAnyValue(v => v.ViewModel.ViewportContent)
                     .ObserveOn(RxApp.MainThreadScheduler)

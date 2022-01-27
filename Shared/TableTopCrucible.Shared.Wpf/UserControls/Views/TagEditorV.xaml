@@ -66,12 +66,12 @@
                                     Loaded="FrameworkElement_OnLoaded"
                                     Visibility="{Binding 
                                                     Path=AddMode,
-                                                    Converter={x:Static c:BoolVisibilityConverter.Instance},
+                                                    Converter={x:Static c:VisibilityConverter.Instance},
                                                     ConverterParameter='i'}">
                             <!--read only text-->
                             <TextBlock Text="{Binding Path=EditTag, UpdateSourceTrigger=PropertyChanged}"
                                        Visibility="{Binding Path=EditModeEnabled,
-                                                      Converter={x:Static c:BoolVisibilityConverter.Instance},
+                                                      Converter={x:Static c:VisibilityConverter.Instance},
                                                       ConverterParameter=i}"
                                        VerticalAlignment="Center"/>
                             <!--write only text-->

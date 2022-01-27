@@ -9,6 +9,7 @@ using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
@@ -53,13 +54,16 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             Gallery = gallery;
             FileList = fileList.DisposeWith(_disposables);
 
-            var itemChanges = ItemList.SelectedItems
+            var selection = ItemList.SelectedItems
                 .Connect()
+                .StartWithEmpty()
                 .ToCollection()
-                .Select(x => x.FirstOrDefault())
-                .Buffer(TimeSpan.FromMilliseconds(500))
-                .Where(buffer=>buffer.Any())
-                .Select(buffer=>buffer.Last())
+                .Throttle(TimeSpan.FromMilliseconds(200))
+                .Publish()
+                .RefCount();
+
+            var itemChanges = 
+                selection.Select(x => x.OnlyOrDefault())
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Publish()
                 .RefCount();
@@ -77,7 +81,16 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
                     .BindTo(this, vm => vm.Gallery.Item),
                 itemChanges
                     .BindTo(this, vm => vm.Actions.Item),
-                filter.FilterChanges.BindTo(this, vm=>vm.ItemList.Filter)
+                filter.FilterChanges.BindTo(this, vm=>vm.ItemList.Filter),
+                this._selectionErrorText = selection
+                    .Select(items=> 
+                        items.Count switch
+                        {
+                            0 => (Message)"No Item Selected",
+                            1 => null,
+                            _ => (Message)"Multi selection is not supported yet"
+                        })
+                    .ToProperty(this,vm=>vm.SelectionErrorText,false,RxApp.MainThreadScheduler)
             });
         }
 
@@ -96,6 +109,8 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         public Name Title => Name.From("Item Library");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
         public SortingOrder Position => SortingOrder.From(1);
+        private ObservableAsPropertyHelper<Message> _selectionErrorText;
+        public Message SelectionErrorText => _selectionErrorText.Value;
         public void Dispose()
             => _disposables.Dispose();
 

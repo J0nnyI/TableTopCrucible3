@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+
 using DynamicData;
 
 namespace TableTopCrucible.Core.Helper
@@ -34,7 +35,16 @@ namespace TableTopCrucible.Core.Helper
 
         public static bool None<T>(this IEnumerable<T> list)
             => !list.Any();
-        public static bool None<T>(this IEnumerable<T> list, Func<T,bool> selector)
+        public static bool None<T>(this IEnumerable<T> list, Func<T, bool> selector)
             => !list.Any(selector);
+
+        //returns null if the collection is empty or has more than one element
+        public static T OnlyOrDefault<T>(this IEnumerable<T> list)
+        {
+            var arr = list.ToArray();
+            return arr.Count() == 1
+                ? arr.First()
+                : default;
+        }
     }
 }

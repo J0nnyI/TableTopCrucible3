@@ -7,6 +7,7 @@
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                           xmlns:hx="http://helix-toolkit.org/wpf"
+                          xmlns:uc="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -15,26 +16,6 @@
             <hx:DefaultLights />
             <ModelVisual3D x:Name="ContainerVisual" />
         </hx:HelixViewport3D>
-        <Label x:Name="PlaceholderContainer" Background="#AAAAAAAA"
-               VerticalContentAlignment="Center"
-               HorizontalContentAlignment="Center">
-            <Grid>
-                <Rectangle
-                    Width="{Binding ElementName=PlaceholderText, Path=ActualWidth, Mode=OneWay}"
-                    Height="{Binding ElementName=PlaceholderText, Path=ActualHeight, Mode=OneWay}"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Fill="#FFFFFF">
-                    <Rectangle.Effect>
-                        <BlurEffect Radius="10" />
-                    </Rectangle.Effect>
-                </Rectangle>
-                <TextBlock x:Name="PlaceholderText"
-                           Foreground="{StaticResource MaterialDesignLightForeground}"
-                           HorizontalAlignment="Center"
-                           Padding="40"
-                           FontSize="30" />
-            </Grid>
-        </Label>
+        <uc:LoadingScreen x:Name="LoadingScreen"/>
     </Grid>
 </rxui:ReactiveUserControl>

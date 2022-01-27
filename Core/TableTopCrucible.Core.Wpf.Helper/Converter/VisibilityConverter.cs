@@ -12,9 +12,9 @@ namespace TableTopCrucible.Core.Wpf.Helper.Converter
     /// <summary>
     /// valid parameters: h(false => hidden)  + i(invert result)
     /// </summary>
-    public class BoolVisibilityConverter:IValueConverter
+    public class VisibilityConverter:IValueConverter
     {
-        public static IValueConverter Instance = new BoolVisibilityConverter();
+        public static IValueConverter Instance = new VisibilityConverter();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -28,7 +28,7 @@ namespace TableTopCrucible.Core.Wpf.Helper.Converter
                     notVisible = Visibility.Hidden;
             }
 
-            return value is bool boolVal && (boolVal ^ invert)
+            return (value is true ^ invert) || ((value is not null && value is not false) ^ invert)
                 ? Visibility.Visible
                 : notVisible;
         }

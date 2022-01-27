@@ -10,6 +10,8 @@
     <SolidColorBrush x:Key="HeaderBackground" Color="#242320" />
     <SolidColorBrush x:Key="SidebarBackground" Color="#302f2d" />
     <SolidColorBrush x:Key="WorkspaceBackground" Color="#3d3b39" />
+    <SolidColorBrush x:Key="PlaceholderBackgroundBack" Color="red" />
+    <SolidColorBrush x:Key="PlaceholderBackgroundFront" Color="blue" />
 
     <sys:Double x:Key="SidebarTitleFontSize">20</sys:Double>
     <sys:Double x:Key="SidebarSubTitleFontSize">16</sys:Double>

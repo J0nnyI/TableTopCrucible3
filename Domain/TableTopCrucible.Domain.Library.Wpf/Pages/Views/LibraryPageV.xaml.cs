@@ -43,7 +43,10 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.Views
                     v => v.FileList.ViewModel),
                 this.Bind(ViewModel,
                     vm => vm.Gallery,
-                    v => v.Gallery.ViewModel)
+                    v => v.Gallery.ViewModel),
+                this.OneWayBind(ViewModel,
+                    vm=>vm.SelectionErrorText,
+                    v=>v.SelectionErrorDisplay.Text),
             });
         }
 

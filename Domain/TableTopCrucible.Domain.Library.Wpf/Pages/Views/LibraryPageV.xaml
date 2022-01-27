@@ -7,6 +7,7 @@
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                          xmlns:uc="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls;assembly=TableTopCrucible.Shared.Wpf"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800"
                           d:DataContext="{d:DesignInstance vm:LibraryPageVm}">
@@ -59,7 +60,6 @@
                                         Margin="4 4 12 4"
                                         Grid.Column="0"
                                         Grid.Row="1" />
-
                 <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
                             TabStripPlacement="Top"
                             AllowDrop="True"
@@ -79,6 +79,10 @@
                         <rxui:ViewModelViewHost x:Name="FileList" />
                     </TabItem>
                 </TabControl>
+                <uc:LoadingScreen x:Name="SelectionErrorDisplay"
+                                  Grid.Row="0"
+                                  Grid.RowSpan="2"
+                                  Grid.Column="1"/>
 
                 <GridSplitter Width="{DynamicResource GridSplitterWidth}"
                               Margin="{DynamicResource GridSplitterMargin}"
