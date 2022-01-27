@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media;
+using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 
@@ -29,7 +30,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                             ? string.Empty
                             : count.ToString())
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, v => v.NotificationBadge.Badge),
+                    .BindTo(this, v => v.NotificationToggleBadge.Badge),
 
                 ViewModel!.JobCountChanges
                     .Select(c =>
@@ -58,14 +59,14 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 
                 ViewModel!.IsNotificationSidebarSelectedChanged
                     .Select(selected => selected
-                        ? buttonBorderSelected
-                        : buttonBorder)
-                    .BindTo(this, v => v.ShowNotificationSidebar.BorderBrush),
+                        ? PackIconKind.Bell
+                        : PackIconKind.BellOutline)
+                    .BindTo(this, v => v.NotificationToggleIcon.Kind),
                 ViewModel!.IsJobQueueSelectedChanged
                     .Select(selected => selected
-                        ? buttonBorderSelected
-                        : buttonBorder)
-                    .BindTo(this, v => v.ShowJobSidebar.BorderBrush),
+                        ? PackIconKind.Clock
+                        : PackIconKind.ClockOutline)
+                    .BindTo(this, v => v.JobToggleIcon.Kind),
 
                 this.Bind(ViewModel,
                     vm => vm.IsNavigationBarExpanded,
@@ -89,7 +90,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
 
                 this.OneWayBind(ViewModel,
                     vm => vm.ShowNotificationSidebar,
-                    v => v.ShowNotificationSidebar.Command)
+                    v => v.NotificationToggle.Command)
             });
         }
     }

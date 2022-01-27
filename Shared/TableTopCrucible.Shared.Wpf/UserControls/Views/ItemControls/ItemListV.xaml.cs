@@ -9,7 +9,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls
     /// <summary>
     ///     Interaction logic for ItemListV.xaml
     /// </summary>
-    public partial class ItemListV : ReactiveUserControl<ItemListVm>, IActivatableView
+    public partial class ItemListV : ReactiveUserControl<ItemListVm>
     {
         public ItemListV()
         {
