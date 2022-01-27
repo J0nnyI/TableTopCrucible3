@@ -13,6 +13,7 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.Wpf.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
@@ -43,6 +44,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Transform(image =>
                     {
                         var viewer = Locator.Current.GetService<IImageDataViewer>();
+                        viewer.RenderSize = (RenderSize)(SettingsHelper.ThumbnailSize.Width / 3);
                         viewer!.Image = image;
                         return viewer;
                     })

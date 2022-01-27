@@ -2,6 +2,7 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
@@ -9,13 +10,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
     [Transient]
     public interface IItemThumbnailViewer
     {
-        Infrastructure.Models.Entities.Item Item { get; set; }
+        Item Item { get; set; }
     }
     public class ItemThumbnailViewerVm:ReactiveObject,IActivatableViewModel, IItemThumbnailViewer
     {
         public IImageViewer ImageViewer { get; }
         [Reactive]
-        public Infrastructure.Models.Entities.Item Item { get; set; }
+        public Item Item { get; set; }
         [Reactive]
         public string Name { get; set; }
 

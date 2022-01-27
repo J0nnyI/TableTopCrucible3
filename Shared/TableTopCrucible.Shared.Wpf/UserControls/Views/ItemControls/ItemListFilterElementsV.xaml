@@ -1,11 +1,11 @@
-﻿<reactiveUi:ReactiveUserControl x:TypeArguments="itemControls:ItemListFilterElementsV"
-                                x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls.ItemListFilterElementsVm"
+﻿<rxui:ReactiveUserControl x:TypeArguments="itemControls:ItemListFilterElementsVm"
+                                x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls.ItemListFilterElementsV"
                                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                                 xmlns:local="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls"
-                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:rxui="http://reactiveui.net"
                                 xmlns:itemControls="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls"
                                 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                                 mc:Ignorable="d" 
@@ -17,7 +17,7 @@
         <TextBox Name="Name"
                  materialDesign:HintAssist.Hint="Name"
                  Margin="8"/>
-        <reactiveUi:ViewModelViewHost x:Name="TagEditor"
+        <rxui:ViewModelViewHost x:Name="TagEditor"
                                 Margin="8 0"/>
     </StackPanel>
-</reactiveUi:ReactiveUserControl>
+</rxui:ReactiveUserControl>

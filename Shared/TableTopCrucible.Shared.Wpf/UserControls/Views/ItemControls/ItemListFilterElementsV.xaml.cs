@@ -20,9 +20,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls
     /// <summary>
     /// Interaction logic for ItemListFilterElementsVm.xaml
     /// </summary>
-    public partial class ItemListFilterElementsVm : ReactiveUserControl<ItemListFilterElementsV>
+    public partial class ItemListFilterElementsV : ReactiveUserControl<ViewModels.ItemControls.ItemListFilterElementsVm>
     {
-        public ItemListFilterElementsVm()
+        public ItemListFilterElementsV()
         {
             InitializeComponent();
             this.WhenActivated(() => new IDisposable[]

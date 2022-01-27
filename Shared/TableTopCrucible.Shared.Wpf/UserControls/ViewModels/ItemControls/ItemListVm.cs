@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 using DynamicData;
@@ -47,13 +48,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 
     public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel, IDisposable
     {
+        private readonly IFileRepository _fileRepository;
         private readonly CompositeDisposable _disposables = new();
         public ObservableCollectionExtended<ItemSelectionInfo> Items = new();
 
         private ItemSelectionInfo previouslyClickedItem;
 
-        public ItemListVm(IItemRepository itemRepository)
+        public ItemListVm(IItemRepository itemRepository, IFileRepository fileRepository)
         {
+            _fileRepository = fileRepository;
             _selectedItemInfo = itemRepository
                 .Data
                 .Connect()
@@ -165,6 +168,20 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         private void _deselectItems(params ItemSelectionInfo[] items)
         {
             items.ToList().ForEach(item => item.IsSelected = false);
+        }
+
+        public void InitiateDrag(DependencyObject source)
+        {
+            var files = this.SelectedItems.Items
+                .Select(item=>item.FileKey3d)
+                .Select(_fileRepository.SingleByHashKey)
+                .Select(file=>file?.Path?.Value)
+                .Where(x => x != null)
+                .ToStringCollection();
+
+            DataObject dragData = new DataObject();
+            dragData.SetFileDropList(files);
+            DragDrop.DoDragDrop(source, dragData, DragDropEffects.Move);
         }
     }
 }

@@ -179,7 +179,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             if (oldTag is null)
             {
                 FluentMode = FluentModeEnabled;
-                TagSource?.Add((Tag)newTag);
+                TagSource.Add((Tag)newTag);
             }
             else
                 TagSource!.Replace(oldTag, (Tag)newTag);

@@ -14,6 +14,7 @@ using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Shared.Wpf.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
@@ -21,6 +22,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     public interface IImageViewer
     {
         ImageFilePath ImageFile { get; set; }
+        RenderSize RenderSize { get; set; }
     }
 
     public class ImageViewerVm : ReactiveObject, IActivatableViewModel, IImageViewer
@@ -51,7 +53,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             src.CacheOption = BitmapCacheOption.OnLoad;
                             src.StreamSource = stream;
                             src.EndInit();
-                            src.DecodePixelWidth =Convert.ToInt32(SettingsHelper.ThumbnailWidth);
+                            src.DecodePixelWidth =Convert.ToInt32(RenderSize?.Value??0);
                             src.Freeze();
                             return new
                             {
@@ -87,6 +89,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
         [Reactive]
         public ImageFilePath ImageFile { get; set; }
+
+        public RenderSize RenderSize { get; set; }
 
         [Reactive]
         public Message ErrorText { get; set; }

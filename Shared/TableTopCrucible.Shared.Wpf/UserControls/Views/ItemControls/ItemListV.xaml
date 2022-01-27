@@ -27,8 +27,10 @@
         <ListView.ItemContainerStyle>
             <Style TargetType="ListViewItem"
                    BasedOn="{StaticResource MaterialDesignNavigationListBoxItem}">
-                <EventSetter Event="PreviewMouseDown"
-                             Handler="ListViewItem_PreviewMouseDown" />
+                <EventSetter Event="PreviewMouseLeftButtonDown"
+                             Handler="DisableDelegation"/>
+                <EventSetter Event="PreviewMouseLeftButtonUp"
+                             Handler="ListViewItem_PreviewMouseUp" />
                 <Setter Property="IsSelected"
                         Value="{Binding IsSelected, Mode=TwoWay}" />
             </Style>
@@ -48,7 +50,9 @@
                 <rxui:ViewModelViewHost ViewModel="{Binding ThumbnailViewer}"
                                         Width="{x:Static helper:SettingsHelper.ThumbnailWidth}"
                                         Height="{x:Static helper:SettingsHelper.ThumbnailHeight}"
-                                        Margin="-8 -10"/>
+                                        Margin="-8 -10"
+                                        MouseLeave="UIElement_OnMouseLeave"
+                                        Cursor="Hand"/>
             </DataTemplate>
         </ListView.ItemTemplate>
 

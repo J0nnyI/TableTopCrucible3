@@ -45,12 +45,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         public IObservable<Func<Item, bool>> FilterChanges { get; }
         public FilterMode FilterMode { get; set; }
     }
-    public class ItemListFilterElementsV : ReactiveObject, IActivatableViewModel, IItemListFilterElements
+    public class ItemListFilterElementsVm : ReactiveObject, IActivatableViewModel, IItemListFilterElements
     {
         public ITagEditor TagEditor { get; }
         public ViewModelActivator Activator { get; } = new();
 
-        public ItemListFilterElementsV(ITagEditor tagEditor)
+        public ItemListFilterElementsVm(ITagEditor tagEditor)
         {
             // starts with  FormatLetterSTartsWith      ContainStart
             // ends with    FormatLetterEndsWith        ContainEnd
@@ -59,6 +59,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
             // Ignore Case
             // Consider Case                            FormatLetterCase
             TagEditor = tagEditor;
+            tagEditor.TagSource = TagCollection;
             FilterChanges = this.WhenAnyValue(
                     vm => vm.NameTextMatchType,
                     vm => vm.NameCaseMatchType,
@@ -76,25 +77,25 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 
                         var invertNameResult = propertyFilter.filterMode == FilterMode.Exclude;
 
-                        Func<string, string, bool> nameFilter =
+                        Func<string, bool> nameFilter =
                             string.IsNullOrEmpty(nameFilterText)
-                            ? (_, _) => true
+                            ? ( _) => true
                             : propertyFilter.textMatchType switch
                             {
-                                TextMatchType.StartsWith => (filter, name) => name.StartsWith(filter) ^ invertNameResult,
-                                TextMatchType.EndsWith => (filter, name) => name.EndsWith(filter) ^ invertNameResult,
-                                TextMatchType.Contains => (filter, name) => name.Contains(filter) ^ invertNameResult,
-                                TextMatchType.Equals => (filter, name) => name== filter ^ invertNameResult,
+                                TextMatchType.StartsWith =>  name => name.StartsWith(nameFilterText) ^ invertNameResult,
+                                TextMatchType.EndsWith =>  name => name.EndsWith(nameFilterText) ^ invertNameResult,
+                                TextMatchType.Contains =>  name => name.Contains(nameFilterText) ^ invertNameResult,
+                                TextMatchType.Equals =>  name => name== nameFilterText ^ invertNameResult,
                                 _ => throw new ArgumentOutOfRangeException()
                             };
 
-                        Func<IEnumerable<Tag>, IEnumerable<Tag>, bool> tagFilter
+                        Func<IEnumerable<Tag>, bool> tagFilter
                             = tags.None()
-                            ? (_, _) => true
+                            ? _ => true
                             : propertyFilter.filterMode switch
                             {
-                                FilterMode.Include => (a, b) => a.All(b.Contains),
-                                FilterMode.Exclude => (a, b) => a.None(b.Contains),
+                                FilterMode.Include => b => tags.All(b.Contains),
+                                FilterMode.Exclude => b => tags.None(b.Contains),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
                         // move as much logic as possible to the upper part since it is executed for each filter change, the func is executed for each item
@@ -104,7 +105,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
                                 ? item.Name.Value.ToLower()
                                 : item.Name.Value;
 
-                            return nameFilter(nameFilterText, itemName) && tagFilter(tags, item.Tags.Items);
+                            return nameFilter(itemName) && tagFilter(item.Tags.Items);
                         });
                     });
         }
