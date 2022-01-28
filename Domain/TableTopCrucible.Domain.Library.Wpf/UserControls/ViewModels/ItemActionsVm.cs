@@ -48,7 +48,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
         [Reactive]
         public ReactiveCommand<Unit, Unit> GenerateThumbnailsByViewportCommand { get; set; }
         [Reactive]
-        public ICommand GenerateThumbnailsCommand { get; private set; }
+        public ReactiveCommand<Unit,Unit> GenerateThumbnailsCommand { get; private set; }
         public ICommand PickThumbnailsCommand { get; }
         public Interaction<Unit, YesNoDialogResult> DeletionConfirmation { get; } = new();
         public Interaction<Unit, IEnumerable<ImageFilePath>> SelectImages { get; } = new();
@@ -108,16 +108,16 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
                         }
                     );
             });
-            this.WhenActivated(() => new[]
+            this.WhenActivated(() => new []
             {
-                ReactiveCommandHelper.Create(() =>
+                GenerateThumbnailsCommand = ReactiveCommand.Create(() =>
                 {
                     if (SelectedItems!.Items.Count() == 1)
                         GenerateThumbnailsByViewportCommand!.Execute();
                     else
                         thumbnailGenerationService.GenerateManyAsync(SelectedItems.Items, null, true);
 
-                },GenerateThumbnailsByViewportCommand!.CanExecute,cmd=>GenerateThumbnailsCommand = cmd)
+                },GenerateThumbnailsByViewportCommand!.CanExecute.Select(_=>false))
             });
 
         }

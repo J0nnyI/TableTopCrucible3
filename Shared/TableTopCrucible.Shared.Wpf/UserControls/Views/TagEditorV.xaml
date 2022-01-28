@@ -9,8 +9,6 @@
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           xmlns:c="clr-namespace:TableTopCrucible.Core.Wpf.Helper.Converter;assembly=TableTopCrucible.Core.Wpf.Helper"
-                          xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                          xmlns:themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                           mc:Ignorable="d" 
                           d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -54,7 +52,7 @@
                 <md:Chip MouseDoubleClick="Chip_OnMouseDoubleClick"
                          Margin="0 0 8 8">
                     <StackPanel Orientation="Horizontal"
-                                d:DataContext="{d:DesignInstance vm:TagController}">
+                                d:DataContext="{d:DesignInstance vm:TagEditorTagController}">
                         <!--add content-->
                         <Button Visibility="{Binding 
                                                     Path=AddMode,
@@ -68,12 +66,12 @@
                                     Loaded="FrameworkElement_OnLoaded"
                                     Visibility="{Binding 
                                                     Path=AddMode,
-                                                    Converter={x:Static c:BoolVisibilityConverter.Instance},
+                                                    Converter={x:Static c:VisibilityConverter.Instance},
                                                     ConverterParameter='i'}">
                             <!--read only text-->
                             <TextBlock Text="{Binding Path=EditTag, UpdateSourceTrigger=PropertyChanged}"
                                        Visibility="{Binding Path=EditModeEnabled,
-                                                      Converter={x:Static c:BoolVisibilityConverter.Instance},
+                                                      Converter={x:Static c:VisibilityConverter.Instance},
                                                       ConverterParameter=i}"
                                        VerticalAlignment="Center"/>
                             <!--write only text-->
@@ -84,13 +82,13 @@
                                                       Converter={StaticResource BooleanToVisibilityConverter}}"
                                       Text="{Binding Path=EditTag, UpdateSourceTrigger=PropertyChanged}"
                                       KeyDown="TextBox_OnKeyDown"
+                                      StaysOpenOnEdit="True"
                                       Padding="4"
                                       VerticalAlignment="Center"
                                       VerticalContentAlignment="Center"
                                       MinWidth="{Binding Path=EditModeEnabled,
                                                         Converter={x:Static v:EditModeToTextBoxWidthConverter.Instance}}"
-                                      Margin="0">
-                            </ComboBox>
+                                      Margin="0"/>
                             <!--confirm-->
                             <Button Style="{StaticResource ChipButton}"
                                     Visibility="{Binding Path=EditModeEnabled,

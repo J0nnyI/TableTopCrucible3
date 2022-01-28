@@ -10,6 +10,7 @@ using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.Wpf.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
@@ -17,6 +18,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
     public interface IImageDataViewer
     {
         ImageData Image { get; set; }
+        RenderSize RenderSize { get; set; }
     }
     public class ImageDataViewerVm:ReactiveObject, IActivatableViewModel, IImageDataViewer
     {
@@ -24,6 +26,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ViewModelActivator Activator { get; } = new();
         [Reactive]
         public ImageData Image { get; set; }
+
+        public RenderSize RenderSize { get; set; }
+
         [Reactive]
         public string Name { get; set; }
 
@@ -37,6 +42,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 this.WhenAnyValue(vm=>vm.Image.Name)
                     .Select(img=>img.Value)
                     .BindTo(this, vm=>vm.Name),
+
+                this.WhenAnyValue(vm=>vm.RenderSize)
+                    .BindTo(this, vm=>vm.ImageViewer.RenderSize),
                 
                 this.WhenAnyValue(vm=>vm.Image)
                     .Select(img=>fileRepository.WatchSingle(img.HashKey))

@@ -7,10 +7,37 @@
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
                           xmlns:item="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls"
+                          xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <TextBlock Name="Name"
-                   Style="{StaticResource SidebarTitle}" />
+                   Style="{StaticResource SidebarTitle}" 
+                   VerticalAlignment="Center"
+                   Grid.Column="0"/>
+        <Button Content="{md:PackIcon LightningBoltOutline}"
+                Command="{x:Static md:DrawerHost.OpenDrawerCommand}"
+                CommandParameter="{x:Static Dock.Right}"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Grid.Column="1"/>
+        <StackPanel Grid.Column="2" Margin="60 0 0 0" Orientation="Horizontal">
+            <ToggleButton Content="{md:PackIcon Rotate3dVariant}"
+                          md:ToggleButtonAssist.OnContent="{md:PackIcon Rotate3d}"
+                          Style="{StaticResource MaterialDesignActionToggleButton}"/>
+            <ToggleButton Content="{md:PackIcon DatabaseOutline}"
+                          md:ToggleButtonAssist.OnContent="{md:PackIcon Database}"
+                          Style="{StaticResource MaterialDesignActionToggleButton}"/>
+            <ToggleButton Content="{md:PackIcon ViewGallery}"
+                          md:ToggleButtonAssist.OnContent="{md:PackIcon ViewGalleryOutline}"
+                          Style="{StaticResource MaterialDesignActionToggleButton}"/>
+            <ToggleButton Content="{md:PackIcon File}"
+                          md:ToggleButtonAssist.OnContent="{md:PackIcon FileOutline}"
+                          Style="{StaticResource MaterialDesignActionToggleButton}"/>
+        </StackPanel>
     </Grid>
 </rxui:ReactiveUserControl>

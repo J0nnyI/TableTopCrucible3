@@ -57,7 +57,11 @@ namespace TableTopCrucible.Core.ValueTypes
             using var sr = new StreamReader(s);
             using JsonReader reader = new JsonTextReader(sr);
             var serializer = JsonSerializer.CreateDefault();
-            return serializer.Deserialize<T>(reader);
+            var res = serializer.Deserialize<T>(reader);
+            reader.Close();
+            sr.Close();
+            s.Close();
+            return res;
         }
 
         public void WriteAllJson(object data) 
@@ -67,6 +71,9 @@ namespace TableTopCrucible.Core.ValueTypes
             using JsonWriter writer= new JsonTextWriter(sr);
             var serializer = JsonSerializer.CreateDefault();
             serializer.Serialize(writer,data);
+            writer.Close();
+            sr.Close();
+            s.Close();
         }
 
         public bool Exists() => FileSystemHelper.File.Exists(Value);

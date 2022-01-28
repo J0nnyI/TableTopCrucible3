@@ -25,14 +25,14 @@ using TableTopCrucible.Infrastructure.Views.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    public class TagController : ReactiveValidationObject, IDisposable
+    public class TagEditorTagController : ReactiveValidationObject, IDisposable
     {
         private readonly Action<Tag, string> _editTag;
         private readonly CompositeDisposable _disposables = new();
         public void Dispose() => _disposables.Dispose();
         public ObservableCollectionExtended<Tag> AvailableTags { get; } = new();
 
-        public TagController(
+        public TagEditorTagController(
             Tag sourceTag,
             Action<Tag, string> editTag,
             IObservableList<Tag> takenTags,
@@ -134,21 +134,21 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         [Reactive]//if true, the next tag will be opened in edit mode
         public bool FluentMode { get; set; } = false;
 
-        public ReactiveCommand<TagController, Unit> RemoveTagCommand { get; }
+        public ReactiveCommand<TagEditorTagController, Unit> RemoveTagCommand { get; }
 
-        public ObservableCollectionExtended<TagController> TagList { get; } = new();
+        public ObservableCollectionExtended<TagEditorTagController> TagList { get; } = new();
 
         public TagEditorVm(IStorageController storageController, ITagView tagView)
         {
             _storageController = storageController;
-            this.RemoveTagCommand = ReactiveCommand.Create<TagController>(RemoveTag);
+            this.RemoveTagCommand = ReactiveCommand.Create<TagEditorTagController>(RemoveTag);
 
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(vm=>vm.TagSource)
                     .Select(tags=>tags?.Connect()?? Observable.Never(ChangeSet<Tag>.Empty))
                     .Switch()
-                    .Transform(tag=>new TagController(tag, EditTag,TagSource,tagView.Data))
+                    .Transform(tag=>new TagEditorTagController(tag, EditTag,TagSource,tagView.Data))
                     .DisposeMany()
                     .StartWithEmpty()
                     .ObserveOn(RxApp.MainThreadScheduler)
@@ -156,7 +156,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Subscribe(_ =>
                     {
                         TagList.RemoveWhere(tag=>tag.WasNew).ForEach(tag=>tag.Dispose());
-                        TagList.Add(new TagController(null, EditTag,TagSource,tagView.Data, !FluentMode,FluentMode));
+                        TagList.Add(new TagEditorTagController(null, EditTag,TagSource,tagView.Data, !FluentMode,FluentMode));
                         FluentMode = false;
                     }),
 
@@ -164,13 +164,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             });
         }
 
-        public void RemoveTag(TagController tagController)
+        public void RemoveTag(TagEditorTagController tagEditorTagController)
         {
-            if (tagController.WasNew || tagController.EditModeEnabled)
-                tagController.Revert();
+            if (tagEditorTagController.WasNew || tagEditorTagController.EditModeEnabled)
+                tagEditorTagController.Revert();
             else
             {
-                TagSource!.Remove(tagController.SourceTag);
+                TagSource!.Remove(tagEditorTagController.SourceTag);
                 _storageController.AutoSave();
             }
         }
@@ -179,7 +179,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             if (oldTag is null)
             {
                 FluentMode = FluentModeEnabled;
-                TagSource?.Add((Tag)newTag);
+                TagSource.Add((Tag)newTag);
             }
             else
                 TagSource!.Replace(oldTag, (Tag)newTag);

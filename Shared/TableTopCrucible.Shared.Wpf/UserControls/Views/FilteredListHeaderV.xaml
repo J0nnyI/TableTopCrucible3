@@ -9,22 +9,18 @@
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="8">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <ToggleButton Content="{md:PackIcon FilterOutline}"
-                      md:ToggleButtonAssist.OnContent="{md:PackIcon Filter}"
-                      Style="{StaticResource MaterialDesignActionAccentToggleButton}"
-                      Background="Transparent"
-                      md:ToggleButtonAssist.SwitchTrackOnBackground="transparent"
-                      md:ToggleButtonAssist.SwitchTrackOffBackground="transparent"
-                      Grid.Column="0" />
-        <!--<Button Content="{md:PackIcon Filter}"
+        <Button Content="{md:PackIcon FilterOutline}"
+                Command="{x:Static md:DrawerHost.OpenDrawerCommand}"
+                CommandParameter="{x:Static Dock.Left}"
                 Style="{StaticResource MaterialDesignIconButton}"
-                Grid.Column="0"/>-->
+                Grid.Column="0"/>
         <TextBlock Text="List Header"
+                   VerticalAlignment="Center"
                    Style="{StaticResource SidebarTitle}"
                    Grid.Column="1" />
     </Grid>

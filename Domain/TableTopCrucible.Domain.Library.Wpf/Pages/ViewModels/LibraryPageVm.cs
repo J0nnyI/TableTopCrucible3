@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Security.Cryptography;
-
 using DynamicData;
 
 using MaterialDesignThemes.Wpf;
@@ -13,17 +9,11 @@ using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 
 using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Core.Engine.Services;
-using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
-using TableTopCrucible.Core.Wpf.Engine.Services;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
-using TableTopCrucible.Domain.Library.Services;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
-using TableTopCrucible.Infrastructure.Models.Entities;
-using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
@@ -37,73 +27,51 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 
     public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage, IDisposable
     {
-        private readonly IFileRepository _fileRepository;
-        private readonly IImageRepository _imageRepository;
-        private readonly IItemRepository _itemRepository;
-        private readonly IDirectorySetupRepository _directorySetupRepository;
         private readonly IGalleryService _galleryService;
-        private readonly INotificationService _notificationService;
 
         public LibraryPageVm(
             IItemList itemList,
             IFilteredListHeader listHeader,
             IItemListFilter filter,
-            IItemModelViewer modelViewer,
-            IItemActions actions,
-            IItemDataViewer dataViewer,
-            IItemViewerHeader viewerHeader,
-            IItemFileList fileList,
-            IGallery gallery,
-            IFileRepository fileRepository,
-            IImageRepository imageRepository,
-            IItemRepository itemRepository,
-            IDirectorySetupRepository directorySetupRepository,
             IGalleryService galleryService,
-            INotificationService notificationService)
+            ISingleItemViewer singleItemViewer,
+            IItemActions itemActions)
         {
-            _fileRepository = fileRepository;
-            _imageRepository = imageRepository;
-            _itemRepository = itemRepository;
-            _directorySetupRepository = directorySetupRepository;
             _galleryService = galleryService;
-            _notificationService = notificationService;
             ItemList = itemList.DisposeWith(_disposables);
             ListHeader = listHeader;
             Filter = filter;
-            ModelViewer = modelViewer;
-            Actions = actions;
-            Actions.GenerateThumbnailsByViewportCommand = ModelViewer.GenerateThumbnailCommand;
-            Actions.SelectedItems = ItemList.SelectedItems;
-            DataViewer = dataViewer;
-            ViewerHeader = viewerHeader;
-            Gallery = gallery;
-            FileList = fileList.DisposeWith(_disposables);
+            SingleItemViewer = singleItemViewer;
+            ItemActions = itemActions;
 
-            var itemChanges = ItemList.SelectedItems
+            ItemActions.GenerateThumbnailsByViewportCommand = singleItemViewer.GenerateThumbnailCommand;
+
+            var selection = ItemList.SelectedItems
                 .Connect()
+                .StartWithEmpty()
                 .ToCollection()
-                .Select(x => x.FirstOrDefault())
-                .Buffer(TimeSpan.FromMilliseconds(500))
-                .Where(buffer=>buffer.Any())
-                .Select(buffer=>buffer.Last())
+                .Throttle(TimeSpan.FromMilliseconds(200))
+                .Publish()
+                .RefCount();
+
+            var itemChanges = 
+                selection.Select(x => x.OnlyOrDefault())
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Publish()
                 .RefCount();
             this.WhenActivated(() => new[]
             {
-                itemChanges
-                    .BindTo(this, vm => vm.ModelViewer.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.DataViewer.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.ViewerHeader.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.FileList.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.Gallery.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.Actions.Item),
-                filter.FilterChanges.BindTo(this, vm=>vm.ItemList.Filter)
+                filter.FilterChanges.BindTo(this, vm=>vm.ItemList.Filter),
+                itemChanges.BindTo(this, vm=>vm.SingleItemViewer.Item),
+                this._selectionErrorText = selection
+                    .Select(items=> 
+                        items.Count switch
+                        {
+                            0 => (Message)"No Item Selected",
+                            1 => null,
+                            _ => (Message)"Multi selection is not supported yet"
+                        })
+                    .ToProperty(this,vm=>vm.SelectionErrorText,false,RxApp.MainThreadScheduler)
             });
         }
 
@@ -111,29 +79,16 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         public IItemList ItemList { get; }
         public IFilteredListHeader ListHeader { get; }
         public IItemListFilter Filter { get; }
-        public IItemModelViewer ModelViewer { get; }
-        public IItemActions Actions { get; }
-        public IItemDataViewer DataViewer { get; }
-        public IItemViewerHeader ViewerHeader { get; }
-        public IGallery Gallery { get; }
-        public IItemFileList FileList { get; }
+        public ISingleItemViewer SingleItemViewer { get; }
+        public IItemActions ItemActions { get; }
         public ViewModelActivator Activator { get; } = new();
         public PackIconKind? Icon => PackIconKind.Bookshelf;
         public Name Title => Name.From("Item Library");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
         public SortingOrder Position => SortingOrder.From(1);
+        private ObservableAsPropertyHelper<Message> _selectionErrorText;
+        public Message SelectionErrorText => _selectionErrorText.Value;
         public void Dispose()
             => _disposables.Dispose();
-
-        public void HandleFileDrop(FilePath[] filePaths)
-        {
-            var images = 
-                filePaths
-                    .Where(file => file.IsImage())
-                    .Select(img => img.ToImagePath())
-                    .ToArray();
-            var item = ItemList.SelectedItems.Items.FirstOrDefault();
-            _galleryService.AddImagesToItem(item,images);
-        }
     }
 }

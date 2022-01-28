@@ -9,8 +9,7 @@
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                           mc:Ignorable="d"
                           d:DesignHeight="450"
-                          d:DesignWidth="800"
-                          Height="58px">
+                          d:DesignWidth="800">
     <UserControl.Resources>
         <Style TargetType="md:PackIcon">
             <Setter Property="Width"
@@ -26,13 +25,15 @@
                     Value="16 0" />
             <Setter Property="Background"
                     Value="Transparent" />
+            <Setter Property="BorderBrush"
+                    Value="Transparent" />
         </Style>
         <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignActionToggleButton}">
             <Setter Property="Foreground"
                     Value="{DynamicResource MaterialDesignDarkForeground}" />
         </Style>
     </UserControl.Resources>
-    <md:ColorZone Padding="16 0"
+    <md:ColorZone Padding="16 8"
                   UseLayoutRounding="True"
                   VerticalAlignment="Stretch"
                   md:ShadowAssist.ShadowDepth="Depth2"
@@ -53,7 +54,7 @@
                 <Button x:Name="Save"
                         Content="{md:PackIcon ContentSave}"
                         BorderBrush="Transparent"
-                        ToolTip="Save Data - Coming Soon" />
+                        ToolTip="Save" />
             </StackPanel>
             <!--   Right   -->
             <StackPanel Orientation="Horizontal"
@@ -81,23 +82,23 @@
                                 UseLayoutRounding="True"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center">
-                            <md:PackIcon Kind="clock" />
+                            <md:PackIcon Name="JobToggleIcon"/>
                         </Button>
                     </Grid>
                 </md:Badged>
                 <!--notifications-->
-                <md:Badged x:Name="NotificationBadge"
+                <md:Badged x:Name="NotificationToggleBadge"
                            ToolTip="Number of Notifications"
                            BadgePlacementMode="BottomRight"
                            VerticalAlignment="Center"
                            Padding="0 -10 -20 -10"
                            Margin="-20 0 0 0">
-                    <Button Content="{md:PackIcon Bell}"
-                            ToolTip="Notifications"
+                    <Button ToolTip="Notifications"
                             md:RippleAssist.IsDisabled="False"
-                            x:Name="ShowNotificationSidebar" />
+                            x:Name="NotificationToggle">
+                        <md:PackIcon Name="NotificationToggleIcon"/>
+                    </Button>
                 </md:Badged>
-
             </StackPanel>
             <!--  Center -->
             <TextBlock x:Name="CurrentPageTitle"

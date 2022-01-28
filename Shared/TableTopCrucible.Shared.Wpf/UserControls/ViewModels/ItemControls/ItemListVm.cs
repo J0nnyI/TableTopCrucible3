@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 using DynamicData;
@@ -47,13 +48,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 
     public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel, IDisposable
     {
+        private readonly IFileRepository _fileRepository;
         private readonly CompositeDisposable _disposables = new();
         public ObservableCollectionExtended<ItemSelectionInfo> Items = new();
 
         private ItemSelectionInfo previouslyClickedItem;
 
-        public ItemListVm(IItemRepository itemRepository)
+        public ItemListVm(IItemRepository itemRepository, IFileRepository fileRepository)
         {
+            _fileRepository = fileRepository;
             _selectedItemInfo = itemRepository
                 .Data
                 .Connect()
@@ -81,11 +84,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
             {
                 _selectedItemInfo
                     .Connect()
+                    .ObserveOn(RxApp.TaskpoolScheduler)
                     .Filter(this.WhenAnyValue(vm=>vm.Filter)
                         .Select<Func<Item,bool>,Func<ItemSelectionInfo, bool>>(
                             filter=>
                                 info=>
-                                    filter(info.Item)))
+                                    filter(info.Item))
+                        .Throttle(SettingsHelper.FilterThrottleSpan)
+                        .ObserveOn(RxApp.TaskpoolScheduler))
                     .Sort(itemInfo => itemInfo.ThumbnailViewer.Item.Name.Value)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .OnItemAdded(item=>item.PropertyChanged +=ItemOnPropertyChanged)
@@ -106,7 +112,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         }
         public ViewModelActivator Activator { get; } = new();
         private IObservableList<ItemSelectionInfo> _selectedItemInfo { get; }
-        public IObservableList<Item> SelectedItems { get; private set; }
+        public IObservableList<Item> SelectedItems { get; }
 
         [Reactive]
         public Func<Item, bool> Filter { get; set; } = _ => true;
@@ -162,6 +168,20 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         private void _deselectItems(params ItemSelectionInfo[] items)
         {
             items.ToList().ForEach(item => item.IsSelected = false);
+        }
+
+        public void InitiateDrag(DependencyObject source)
+        {
+            var files = this.SelectedItems.Items
+                .Select(item=>item.FileKey3d)
+                .Select(_fileRepository.SingleByHashKey)
+                .Select(file=>file?.Path?.Value)
+                .Where(x => x != null)
+                .ToStringCollection();
+
+            DataObject dragData = new DataObject();
+            dragData.SetFileDropList(files);
+            DragDrop.DoDragDrop(source, dragData, DragDropEffects.Move);
         }
     }
 }

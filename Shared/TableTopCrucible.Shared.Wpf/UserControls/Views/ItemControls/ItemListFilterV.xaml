@@ -11,12 +11,18 @@
                                 mc:Ignorable="d"
                                 d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
-
-        <TextBlock Text="Include" />
-        <rxui:ViewModelViewHost x:Name="IncludeTags"/>
-
-        <TextBlock Text="Exclude" />
-        <rxui:ViewModelViewHost x:Name="ExcludeTags"/>
+        <StackPanel Margin="8"
+                    Orientation="Horizontal">
+        <Button Content="{md:PackIcon Filter}"
+                Command="{x:Static md:DrawerHost.CloseDrawerCommand}"
+                CommandParameter="{x:Static Dock.Left}"
+                Style="{StaticResource MaterialDesignIconButton}"/>
+        <TextBlock Text="List Filter"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource SidebarTitle}"/>
+        </StackPanel>
+        <rxui:ViewModelViewHost Name="IncludeFilter"/>
+        <rxui:ViewModelViewHost Name="ExcludeFilter"/>
 
     </StackPanel>
 </rxui:ReactiveUserControl>
