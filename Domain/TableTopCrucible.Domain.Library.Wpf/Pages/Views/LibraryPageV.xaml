@@ -63,15 +63,11 @@
                               Grid.RowSpan="2" />
 
 
-                <rxui:ViewModelViewHost x:Name="SingleItemViewer"
+                <rxui:ViewModelViewHost x:Name="DetailPage"
                                         Margin="4 4 12 4"
                                         Grid.Column="1"
                                         Grid.Row="0"
                                         Grid.RowSpan="2"/>
-                <uc:LoadingScreen x:Name="SelectionErrorDisplay"
-                                  Grid.Row="0"
-                                  Grid.RowSpan="2"
-                                  Grid.Column="1"/>
 
             </Grid>
 

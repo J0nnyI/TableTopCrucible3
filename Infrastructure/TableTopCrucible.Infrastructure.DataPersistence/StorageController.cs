@@ -112,6 +112,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
             try
             {
+                tmpFile.GetDirectoryPath().Create();
                 tmpFile.WriteAllJson(
                     new StorageMasterObject
                     {

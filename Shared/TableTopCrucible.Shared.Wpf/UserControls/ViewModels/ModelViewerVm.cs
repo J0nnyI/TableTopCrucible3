@@ -45,6 +45,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             _thumbnailService = thumbnailService;
             this.WhenActivated(() => new[]
             {
+                new ActOnLifecycle(()=>{},()=>{}),
                 this.WhenAnyValue(
                         vm => vm.Model)
                     .ObserveOn(RxApp.MainThreadScheduler)
@@ -101,7 +102,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 .Do(x => { })
                 .Publish()
                 .RefCount()
-                .ToProperty(this, vm => vm.IsActivated);
+                .ToProperty(this, vm => vm. IsActivated);
         }
 
         [Reactive]

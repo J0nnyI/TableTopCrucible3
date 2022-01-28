@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -14,6 +15,7 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
@@ -27,7 +29,6 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
 
     public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage, IDisposable
     {
-        private readonly IGalleryService _galleryService;
 
         public LibraryPageVm(
             IItemList itemList,
@@ -35,45 +36,42 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
             IItemListFilter filter,
             IGalleryService galleryService,
             ISingleItemViewer singleItemViewer,
-            IItemActions itemActions)
+            IItemActions itemActions,
+            ILoadingScreen noSelectionPlaceholder,
+            IMultiItemViewer multiItemViewer)
         {
-            _galleryService = galleryService;
             ItemList = itemList.DisposeWith(_disposables);
             ListHeader = listHeader;
             Filter = filter;
             SingleItemViewer = singleItemViewer;
             ItemActions = itemActions;
+            NoSelectionPlaceholder = noSelectionPlaceholder;
+            NoSelectionPlaceholder.Text = (Message)"No Item Selected";
+            MultiItemViewer = multiItemViewer;
 
             ItemActions.GenerateThumbnailsByViewportCommand = singleItemViewer.GenerateThumbnailCommand;
 
-            var selection = ItemList.SelectedItems
+            Selection = ItemList.SelectedItems
                 .Connect()
                 .StartWithEmpty()
                 .ToCollection()
                 .Throttle(TimeSpan.FromMilliseconds(200))
-                .Publish()
+                .Replay(1)
                 .RefCount();
 
-            var itemChanges = 
-                selection.Select(x => x.OnlyOrDefault())
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Publish()
-                .RefCount();
             this.WhenActivated(() => new[]
             {
                 filter.FilterChanges.BindTo(this, vm=>vm.ItemList.Filter),
-                itemChanges.BindTo(this, vm=>vm.SingleItemViewer.Item),
-                this._selectionErrorText = selection
-                    .Select(items=> 
-                        items.Count switch
-                        {
-                            0 => (Message)"No Item Selected",
-                            1 => null,
-                            _ => (Message)"Multi selection is not supported yet"
-                        })
-                    .ToProperty(this,vm=>vm.SelectionErrorText,false,RxApp.MainThreadScheduler)
+
+                Selection.Select(x => x.OnlyOrDefault())
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Publish()
+                    .RefCount()
+                    .BindTo(this, vm=>vm.SingleItemViewer.Item),
             });
         }
+
+        public IObservable<IReadOnlyCollection<Item>> Selection { get; }
 
         private readonly CompositeDisposable _disposables = new();
         public IItemList ItemList { get; }
@@ -81,13 +79,14 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
         public IItemListFilter Filter { get; }
         public ISingleItemViewer SingleItemViewer { get; }
         public IItemActions ItemActions { get; }
+        public ILoadingScreen NoSelectionPlaceholder { get; }
+        public IMultiItemViewer MultiItemViewer { get; }
         public ViewModelActivator Activator { get; } = new();
+
         public PackIconKind? Icon => PackIconKind.Bookshelf;
         public Name Title => Name.From("Item Library");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
         public SortingOrder Position => SortingOrder.From(1);
-        private ObservableAsPropertyHelper<Message> _selectionErrorText;
-        public Message SelectionErrorText => _selectionErrorText.Value;
         public void Dispose()
             => _disposables.Dispose();
     }

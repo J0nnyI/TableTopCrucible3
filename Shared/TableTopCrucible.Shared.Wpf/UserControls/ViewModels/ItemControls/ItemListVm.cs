@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -50,7 +51,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
     {
         private readonly IFileRepository _fileRepository;
         private readonly CompositeDisposable _disposables = new();
-        public ObservableCollectionExtended<ItemSelectionInfo> Items = new();
+        public ReadOnlyObservableCollection<ItemSelectionInfo> _items;
+        public ReadOnlyObservableCollection<ItemSelectionInfo> Items =>_items;
 
         private ItemSelectionInfo previouslyClickedItem;
 
@@ -96,7 +98,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .OnItemAdded(item=>item.PropertyChanged +=ItemOnPropertyChanged)
                     .OnItemRemoved(item=>item.PropertyChanged -=ItemOnPropertyChanged)
-                    .Bind(Items)
+                    .Bind(out _items)
                     .Subscribe(),
 
                 this.WhenAnyValue(vm=>vm.Filter)

@@ -15,18 +15,24 @@ using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views
 {
-    public class EditModeToCloseIconConverter : IValueConverter
+    public class EditModeToCloseIconConverter : IMultiValueConverter
     {
         public static EditModeToCloseIconConverter Instance = new();
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is true // true = editMode
+            if (values.Length != 2 || 
+                values[0] is not bool editMode ||
+                values[1] is not bool addMode)
+                return PackIconKind.Error;
+
+            return editMode && !addMode
                 ? PackIconKind.Undo
                 : PackIconKind.Close;
-
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
     public class EditModeToTextBoxWidthConverter : IValueConverter

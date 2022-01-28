@@ -54,7 +54,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
             Actions.GenerateThumbnailsByViewportCommand = ModelViewer.GenerateThumbnailCommand;
 
             var itemChanges = this.WhenAnyValue(vm => vm.Item)
-                .Publish()
+                .Replay(1)// must not be publish since the update happens before the view is activated -> no value pushed in whenActivated
                 .RefCount();
             this.WhenActivated(()=>new []
             {

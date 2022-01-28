@@ -11,6 +11,7 @@ using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.Wpf.Services;
@@ -20,7 +21,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
     [Transient]
     public interface IItemModelViewer
     {
-        public Infrastructure.Models.Entities.Item Item { get; set; }
+        public Item Item { get; set; }
         ReactiveCommand<Unit, Unit> GenerateThumbnailCommand { get; }
     }
 
@@ -109,7 +110,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         public ViewModelActivator Activator { get; } = new();
 
         [Reactive]
-        public Infrastructure.Models.Entities.Item Item { get; set; }
+        public Item Item { get; set; }
 
 
     }
