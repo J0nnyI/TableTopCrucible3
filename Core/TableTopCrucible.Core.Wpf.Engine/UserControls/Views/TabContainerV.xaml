@@ -1,0 +1,28 @@
+﻿<rxui:ReactiveUserControl x:TypeArguments="vm:TabContainerVm"
+                                x:Class="TableTopCrucible.Core.Wpf.Engine.UserControls.Views.TabContainerV"
+                                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                                xmlns:local="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.Views"
+                                xmlns:rxui="http://reactiveui.net"
+                                xmlns:vm="clr-namespace:TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels"
+                                mc:Ignorable="d" 
+                                d:DesignHeight="450" d:DesignWidth="800">
+    <TabControl x:Name="TabControl"
+                Style="{StaticResource MaterialDesignNavigatilRailTabControl}">
+        <TabControl.ItemContainerStyle>
+            <Style TargetType="TabItem">
+                <Setter Property="Visibility" 
+                        Value="Collapsed"/>
+                <Setter Property="IsSelected"
+                        Value="{Binding IsSelected}"/>
+            </Style>
+        </TabControl.ItemContainerStyle>
+        <TabControl.ContentTemplate>
+            <DataTemplate>
+                <rxui:ViewModelViewHost ViewModel="{Binding Content}"/>
+            </DataTemplate>
+        </TabControl.ContentTemplate>
+    </TabControl>
+</rxui:ReactiveUserControl>

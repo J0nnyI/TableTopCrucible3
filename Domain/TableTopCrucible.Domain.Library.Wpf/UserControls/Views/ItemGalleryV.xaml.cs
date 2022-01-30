@@ -7,9 +7,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views
     /// <summary>
     ///     Interaction logic for GalleryV.xaml
     /// </summary>
-    public partial class GalleryV : ReactiveUserControl<GalleryVm>
+    public partial class ItemGalleryV : ReactiveUserControl<ItemItemGalleryVm>
     {
-        public GalleryV()
+        public ItemGalleryV()
         {
             InitializeComponent();
             this.WhenActivated(() => new[]

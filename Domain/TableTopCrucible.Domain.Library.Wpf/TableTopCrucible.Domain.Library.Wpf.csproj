@@ -17,6 +17,15 @@
         <Compile Update="DummyApp.xaml.cs">
             <SubType>Code</SubType>
         </Compile>
+        <Compile Update="UserControls\Views\ItemDataViewerV.xaml.cs">
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="UserControls\Views\ItemGalleryV.xaml.cs">
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="UserControls\Views\ItemViewerHeader.xaml.cs">
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +36,20 @@
         <Page Update="DummyApp.xaml">
             <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
             <SubType>Designer</SubType>
+        </Page>
+        <Page Update="UserControls\Views\ItemDataViewerV.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+          <SubType>Designer</SubType>
+        </Page>
+        <Page Update="UserControls\Views\ItemGalleryV.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+          <SubType>Designer</SubType>
+        </Page>
+        <Page Update="UserControls\Views\ItemModelViewerV.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+        </Page>
+        <Page Update="UserControls\Views\ItemViewerHeader.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
         </Page>
     </ItemGroup>
 

@@ -5,11 +5,16 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
 using DynamicData;
+using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Splat;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.Wpf.Engine.Models;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
+using TableTopCrucible.Domain.Library.Wpf.Services;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Services;
@@ -18,22 +23,27 @@ using TableTopCrucible.Shared.Wpf.ValueTypes;
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
     [Singleton]
-    public interface IGallery
+    public interface IItemGallery:ITabPage
     {
-        Item Item { get; set; }
     }
 
-    public class GalleryVm : ReactiveObject, IGallery, IActivatableViewModel
+    public class ItemItemGalleryVm : ReactiveObject, IItemGallery, IActivatableViewModel
     {
 
-        public GalleryVm(IImageViewer selectedImageViewer, IFileRepository fileRepository,
-            IImageRepository imageRepository)
+        public ItemItemGalleryVm(IImageViewer selectedImageViewer, IFileRepository fileRepository,
+            IImageRepository imageRepository,
+            ILibraryService libraryService)
         {
             SelectedImageViewer = selectedImageViewer;
 
+            _isSelectable = libraryService
+                .SingleSelectedItemChanges
+                .Select(item => item is not null)
+                .ToProperty(this, vm => vm.IsSelectable);
+
             this.WhenActivated(() => new[]
             {
-                this.WhenAnyValue(vm => vm.Item)
+                libraryService.SingleSelectedItemChanges
                     .Select(item =>
                         item is not null
                             ? imageRepository.WatchMany(item.Id)
@@ -79,8 +89,20 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public ReadOnlyObservableCollection<IImageDataViewer> Images => _images;
 
         public ViewModelActivator Activator { get; } = new();
+        
 
-        [Reactive]
-        public Item Item { get; set; }
+        #region ITabPage
+
+        public Name Title => (Name)"Images";
+        public PackIconKind SelectedIcon => PackIconKind.ViewGallery;
+        public PackIconKind UnselectedIcon => PackIconKind.ViewGalleryOutline;
+
+
+        private readonly ObservableAsPropertyHelper<bool> _isSelectable;
+        public bool IsSelectable => _isSelectable.Value;
+
+        public SortingOrder Position => (SortingOrder)3;
+
+        #endregion
     }
 }

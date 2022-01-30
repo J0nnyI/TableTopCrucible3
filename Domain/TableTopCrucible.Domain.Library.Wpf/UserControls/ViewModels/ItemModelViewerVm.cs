@@ -1,0 +1,141 @@
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+
+using DynamicData;
+
+using MaterialDesignThemes.Wpf;
+
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+
+using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Engine.Services;
+using TableTopCrucible.Core.Engine.ValueTypes;
+using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Core.Wpf.Engine.Models;
+using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
+using TableTopCrucible.Domain.Library.Wpf.Services;
+using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.Services;
+using TableTopCrucible.Shared.Wpf.Services;
+
+namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
+{
+    [Transient]
+    public interface IItemModelViewer : ITabPage
+    {
+    }
+
+    public class ItemModelViewerVm : ReactiveObject, IItemModelViewer, IActivatableViewModel
+    {
+        public ReactiveCommand<Unit, Unit> GenerateThumbnailCommand { get; }
+        public ItemModelViewerVm(
+            IModelViewer modelViewer,
+            IFileRepository fileRepository,
+            IGalleryService galleryService,
+            INotificationService notificationService,
+            IWpfThumbnailGenerationService thumbnailGenerationService,
+            ILibraryService libraryService)
+        {
+            ModelViewer = modelViewer;
+            //GenerateThumbnailCommand = ReactiveCommand.Create(() =>
+            //    {
+            //        try
+            //        {
+            //            if (Item is null)
+            //                throw new InvalidOperationException("the item must be selected to create an thumbnail");
+            //            var imgPath = modelViewer.IsActivated
+            //                ? modelViewer.GenerateThumbnail(Item.Name)
+            //                : thumbnailGenerationService.GenerateWithAutoPosition(Item);
+
+            //            galleryService.AddImagesToItem(Item, imgPath);
+
+            //            notificationService.AddNotification(
+            //                (Name)"Thumbnail Generated",
+            //                (Description)
+            //                $"The Thumbnail for item {Item.Name} has been generated and was saved at {imgPath}",
+            //                NotificationType.Confirmation);
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            notificationService.AddNotification(
+            //                (Name)"Thumbnail generation failed",
+            //                (Description)$"The thumbnail could not be generated: {Environment.NewLine}{e}",
+            //                NotificationType.Error);
+            //            Debugger.Break();
+            //            throw;
+            //        }
+            //    },
+            //    this.WhenAnyValue(vm => vm.Item)
+            //        .Select(item => fileRepository.WatchSingle(item?.FileKey3d))
+            //        .Switch()
+            //        .Select(file => file is not null)
+            //        .DistinctUntilChanged()
+            //    , RxApp.MainThreadScheduler, RxApp.MainThreadScheduler);
+
+            _isSelectable = libraryService
+                .SingleSelectedItemChanges
+                .Select(item => item is not null)
+                .ToProperty(this, vm => vm.IsSelectable);
+
+            this.WhenActivated(() => new[]
+            {
+                libraryService.SingleSelectedItemChanges
+                    .Select(item=>item.WhenAnyValue(i=>i.FileKey3d))
+                    .Switch()
+                    .Select(item =>
+                        fileRepository
+                            .Watch(item)
+                            .ToCollection()
+                            .Select(files =>
+                                new
+                                {
+                                    item,
+                                    files
+                                }))
+                    .Switch()
+                    .OutputObservable(out var filesChanges)
+                    .Select(x => x.files.FirstOrDefault()?.Path)
+                    .Select(ModelFilePath.From)
+                    .Catch((Exception e) =>
+                    {
+                        Debugger.Break();
+                        return Observable.Never<ModelFilePath>();
+                    })
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .BindTo(this, vm => vm.ModelViewer.Model),
+
+                filesChanges
+                    .Select(x => x.item is null
+                        ? (Message)"No Item selected"
+                        : x.files.Any()
+                            ? null
+                            : (Message)"No Model found for this Item")
+                    .BindTo(this, vm => vm.ModelViewer.PlaceholderMessage)
+            });
+        }
+
+        public IModelViewer ModelViewer { get; }
+        public ViewModelActivator Activator { get; } = new();
+        
+
+        #region ITabPage
+
+        public Name Title => (Name)"Model Viewer";
+        public PackIconKind SelectedIcon => PackIconKind.Rotate3d;
+        public PackIconKind UnselectedIcon => PackIconKind.Rotate3dVariant;
+
+
+        private readonly ObservableAsPropertyHelper<bool> _isSelectable;
+        public bool IsSelectable => _isSelectable.Value;
+
+        public SortingOrder Position => (SortingOrder)1;
+
+        #endregion
+    }
+}

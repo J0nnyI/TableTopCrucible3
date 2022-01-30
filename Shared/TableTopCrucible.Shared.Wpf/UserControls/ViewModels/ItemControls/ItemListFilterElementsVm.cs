@@ -59,6 +59,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
             // Ignore Case
             // Consider Case                            FormatLetterCase
             TagEditor = tagEditor;
+            tagEditor.FluentModeEnabled = false;
             tagEditor.TagSource = TagCollection;
             FilterChanges = this.WhenAnyValue(
                     vm => vm.NameTextMatchType,

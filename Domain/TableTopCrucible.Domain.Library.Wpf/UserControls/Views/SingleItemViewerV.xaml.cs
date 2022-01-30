@@ -40,7 +40,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
                     vm => vm.FileList,
                     v => v.FileList.ViewModel),
                 this.Bind(ViewModel,
-                    vm => vm.Gallery,
+                    vm => vm.ItemGallery,
                     v => v.Gallery.ViewModel),
             });
         }

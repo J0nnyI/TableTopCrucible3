@@ -14,6 +14,7 @@ using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
+using TableTopCrucible.Domain.Library.Wpf.Services;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Shared.Services;
@@ -31,63 +32,49 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels
     {
 
         public LibraryPageVm(
+            //left
             IItemList itemList,
             IFilteredListHeader listHeader,
             IItemListFilter filter,
-            IGalleryService galleryService,
-            ISingleItemViewer singleItemViewer,
+            //right
             IItemActions itemActions,
-            ILoadingScreen noSelectionPlaceholder,
-            IMultiItemViewer multiItemViewer)
+            IItemViewer itemViewer,
+            //services
+            ILibraryService libraryService)
         {
             ItemList = itemList.DisposeWith(_disposables);
             ListHeader = listHeader;
             Filter = filter;
-            SingleItemViewer = singleItemViewer;
             ItemActions = itemActions;
-            NoSelectionPlaceholder = noSelectionPlaceholder;
-            NoSelectionPlaceholder.Text = (Message)"No Item Selected";
-            MultiItemViewer = multiItemViewer;
+            ItemViewer = itemViewer;
 
-            ItemActions.GenerateThumbnailsByViewportCommand = singleItemViewer.GenerateThumbnailCommand;
-
-            Selection = ItemList.SelectedItems
-                .Connect()
-                .StartWithEmpty()
-                .ToCollection()
-                .Throttle(TimeSpan.FromMilliseconds(200))
-                .Replay(1)
-                .RefCount();
+            itemList.SelectedItems.SynchronizeWith(libraryService.SelectedItems, itemList.Select, itemList.Deselect);
 
             this.WhenActivated(() => new[]
             {
                 filter.FilterChanges.BindTo(this, vm=>vm.ItemList.Filter),
-
-                Selection.Select(x => x.OnlyOrDefault())
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Publish()
-                    .RefCount()
-                    .BindTo(this, vm=>vm.SingleItemViewer.Item),
             });
         }
 
-        public IObservable<IReadOnlyCollection<Item>> Selection { get; }
-
         private readonly CompositeDisposable _disposables = new();
+        public ViewModelActivator Activator { get; } = new();
+
+        // list (left)
         public IItemList ItemList { get; }
         public IFilteredListHeader ListHeader { get; }
         public IItemListFilter Filter { get; }
-        public ISingleItemViewer SingleItemViewer { get; }
-        public IItemActions ItemActions { get; }
-        public ILoadingScreen NoSelectionPlaceholder { get; }
-        public IMultiItemViewer MultiItemViewer { get; }
-        public ViewModelActivator Activator { get; } = new();
 
+        // viewer (right)
+        public IItemViewer ItemViewer { get; }
+        public IItemActions ItemActions { get; }
+
+        #region navigation tab
         public PackIconKind? Icon => PackIconKind.Bookshelf;
         public Name Title => Name.From("Item Library");
         public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
         public SortingOrder Position => SortingOrder.From(1);
         public void Dispose()
             => _disposables.Dispose();
+        #endregion
     }
 }

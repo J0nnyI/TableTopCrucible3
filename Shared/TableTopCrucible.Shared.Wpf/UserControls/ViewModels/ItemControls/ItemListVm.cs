@@ -45,6 +45,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
     {
         IObservableList<Item> SelectedItems { get; }
         Func<Item, bool> Filter { get; set; }
+        void Deselect(Item item);
+        void Select(Item item);
     }
 
     public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel, IDisposable
@@ -95,9 +97,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
                         .Throttle(SettingsHelper.FilterThrottleSpan)
                         .ObserveOn(RxApp.TaskpoolScheduler))
                     .Sort(itemInfo => itemInfo.ThumbnailViewer.Item.Name.Value)
-                    .ObserveOn(RxApp.MainThreadScheduler)
                     .OnItemAdded(item=>item.PropertyChanged +=ItemOnPropertyChanged)
                     .OnItemRemoved(item=>item.PropertyChanged -=ItemOnPropertyChanged)
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .Bind(out _items)
                     .Subscribe(),
 
@@ -118,6 +120,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 
         [Reactive]
         public Func<Item, bool> Filter { get; set; } = _ => true;
+
+        private ItemSelectionInfo _itemInfoByItem (Item item)
+            => Items.FirstOrDefault(itemInfo => itemInfo.Item == item);
+        public void Deselect(Item item)
+            => _itemInfoByItem(item).IsSelected = false;
+
+        public void Select(Item item)
+            => _itemInfoByItem(item).IsSelected = true;
 
         public void Dispose()
             => _disposables.Dispose();

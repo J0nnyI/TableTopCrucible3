@@ -32,26 +32,29 @@ namespace TableTopCrucible.Domain.Library.Wpf.Pages.Views
                 this.Bind(ViewModel,
                     vm => vm.Filter,
                     v => v.Filter.ViewModel),
-                this.WhenAnyValue(
-                    vm=>vm.ViewModel.NoSelectionPlaceholder,
-                    vm=>vm.ViewModel.SingleItemViewer,
-                    vm=>vm.ViewModel.MultiItemViewer,
-                    vm=>vm.ViewModel.Selection,
-                    (noSelection, singleSelection, multiSelection,itemSelection)
-                        => itemSelection.Select(
-                            items=>
-                                items.Count switch
-                                {
-                                    0 => noSelection as object,
-                                    1 => singleSelection as object,
-                                    _ => multiSelection as object
-                                }
-                            )
-                        )
-                    .Switch()
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this,
-                        v=>v.DetailPage.ViewModel)
+                //this.WhenAnyValue(
+                //    vm=>vm.ViewModel.NoSelectionPlaceholder,
+                //    vm=>vm.ViewModel.SingleItemViewer,
+                //    vm=>vm.ViewModel.MultiItemViewer,
+                //    vm=>vm.ViewModel.Selection,
+                //    (noSelection, singleSelection, multiSelection,itemSelection)
+                //        => itemSelection.Select(
+                //            items=>
+                //                items.Count switch
+                //                {
+                //                    0 => noSelection as object,
+                //                    1 => singleSelection as object,
+                //                    _ => multiSelection as object
+                //                }
+                //            )
+                //        )
+                //    .Switch()
+                //    .ObserveOn(RxApp.MainThreadScheduler)
+                //    .BindTo(this,
+                //        v=>v.DetailPage.ViewModel)
+                this.Bind(ViewModel,
+                    vm=>vm.ItemViewer,
+                    v=>v.DetailPage.ViewModel)
 
             });
         }

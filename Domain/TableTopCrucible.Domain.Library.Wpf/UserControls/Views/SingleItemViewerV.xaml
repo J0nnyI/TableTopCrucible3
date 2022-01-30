@@ -22,6 +22,12 @@
                     AllowDrop="True"
                     Drop="UIElement_OnDrop"
                     Grid.Row="1">
+            <!--<TabControl.ItemContainerStyle>
+                <Style TargetType="TabItem">
+                    <Setter Property="Visibility"
+                            Value="Collapsed"/>
+                </Style>
+            </TabControl.ItemContainerStyle>-->
             <TabItem Header="3d Model">
                 <rxui:ViewModelViewHost x:Name="ModelViewer" />
             </TabItem>

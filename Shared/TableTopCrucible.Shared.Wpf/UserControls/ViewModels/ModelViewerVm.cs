@@ -45,7 +45,6 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             _thumbnailService = thumbnailService;
             this.WhenActivated(() => new[]
             {
-                new ActOnLifecycle(()=>{},()=>{}),
                 this.WhenAnyValue(
                         vm => vm.Model)
                     .ObserveOn(RxApp.MainThreadScheduler)
