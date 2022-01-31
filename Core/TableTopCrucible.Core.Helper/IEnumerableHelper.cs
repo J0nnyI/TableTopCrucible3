@@ -46,5 +46,10 @@ namespace TableTopCrucible.Core.Helper
                 ? arr.First()
                 : default;
         }
+
+        public static bool ContainsAll<T>(this IEnumerable<T> list, IEnumerable<T> compare)
+            => compare.All(list.Contains);
+        public static bool ContainsAny<T>(this IEnumerable<T> list, IEnumerable<T> compare)
+            => compare.Any(list.Contains);
     }
 }

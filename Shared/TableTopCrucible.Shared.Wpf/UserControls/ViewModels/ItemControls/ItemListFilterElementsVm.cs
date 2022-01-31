@@ -15,25 +15,12 @@ using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Automation.Filters;
 using TableTopCrucible.Infrastructure.Models.Controller;
 using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 {
-    public enum TextMatchType
-    {
-        StartsWith,
-        EndsWith,
-        Contains,
-        Equals
-    }
-
-    public enum CaseMatchType
-    {
-        RespectCase,
-        IgnoreCase
-    }
-
     public enum FilterMode
     {
         Include,
