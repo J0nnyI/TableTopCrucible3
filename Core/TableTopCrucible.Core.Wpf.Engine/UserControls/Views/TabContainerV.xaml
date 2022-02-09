@@ -16,7 +16,7 @@
                 <Setter Property="Visibility" 
                         Value="Collapsed"/>
                 <Setter Property="IsSelected"
-                        Value="{Binding IsSelected}"/>
+                        Value="{Binding Mode=OneWay, Path=IsSelected}"/>
             </Style>
         </TabControl.ItemContainerStyle>
         <TabControl.ContentTemplate>

@@ -44,7 +44,7 @@
                                                Margin=" 0 0 0 2"/>
                             </Grid>
                         </Button>
-                        <Rectangle Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        <Rectangle Visibility="{Binding Mode=OneWay, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    Stroke="{DynamicResource ForegroundPrimary}"
                                    Fill="{DynamicResource ForegroundPrimary}"
                                    Height="2"
