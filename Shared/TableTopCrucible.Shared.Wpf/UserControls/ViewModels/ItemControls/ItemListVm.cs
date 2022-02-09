@@ -53,10 +53,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
     {
         private readonly IFileRepository _fileRepository;
         private readonly CompositeDisposable _disposables = new();
-        public ReadOnlyObservableCollection<ItemSelectionInfo> _items;
+        private ReadOnlyObservableCollection<ItemSelectionInfo> _items;
         public ReadOnlyObservableCollection<ItemSelectionInfo> Items =>_items;
 
-        private ItemSelectionInfo previouslyClickedItem;
+        private ItemSelectionInfo _previouslyClickedItem;
 
         public ItemListVm(IItemRepository itemRepository, IFileRepository fileRepository)
         {
@@ -135,7 +135,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         public void OnItemClicked(ItemSelectionInfo itemInfo, MouseButtonEventArgs e)
         {
             var curItem = itemInfo;
-            var prevItem = previouslyClickedItem;
+            var prevItem = _previouslyClickedItem;
             var isCtrlPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Control);
             var isShiftPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Shift);
             var isAltPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Alt);
@@ -164,7 +164,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
             }
 
             e.Handled = true;
-            previouslyClickedItem = curItem;
+            _previouslyClickedItem = curItem;
         }
 
         private void _toggleSelection(ItemSelectionInfo item)

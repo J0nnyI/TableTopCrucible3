@@ -9,7 +9,7 @@
                           xmlns:vm="clr-namespace:TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="8">
+    <Grid Margin="8 0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />

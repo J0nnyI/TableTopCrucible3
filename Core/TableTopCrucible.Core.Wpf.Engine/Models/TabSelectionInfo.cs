@@ -4,32 +4,21 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
-using TableTopCrucible.Core.Wpf.Engine.Models;
+using ReactiveUI.Fody.Helpers;
 
-namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
+namespace TableTopCrucible.Core.Wpf.Engine.Models
 {
     public class TabSelectionInfo : ReactiveObject, IDisposable
     {
-        private readonly ObservableAsPropertyHelper<PackIconKind> _icon;
-        public PackIconKind Icon => _icon.Value;
+        [ObservableAsProperty]
+        // ReSharper disable once UnassignedGetOnlyAutoProperty
+        public PackIconKind Icon { get; }
         public ITabPage Content { get; }
         private readonly CompositeDisposable _disposables = new();
-        private readonly ObservableAsPropertyHelper<bool> _isSelected;
 
-        public bool IsSelected
-        {
-            get=>_isSelected. Value;
-            set
-            {
-                if (IsSelected == value)
-                    return;
-
-                OnClickCommand.Execute(
-                    value
-                    ? Content
-                    : null);
-            }
-        }
+        [ObservableAsProperty]
+        // ReSharper disable once UnassignedGetOnlyAutoProperty
+        public bool IsSelected { get; }
         public void Dispose() => _disposables.Dispose();
         public ReactiveCommand<ITabPage, Unit> OnClickCommand { get; }
 
@@ -37,17 +26,22 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         {
             Content = content;
             OnClickCommand = onClickCommand;
-            _isSelected = selectedTabChanges
+            var isSelectedChanges = selectedTabChanges
                 .Select(selTab => selTab == content)
-                .DistinctUntilChanged()
-                .Do(x=>{})
-                .ToProperty(this, vm => vm.IsSelected, false, RxApp.MainThreadScheduler);
-            _icon = selectedTabChanges
-                .Select(selTab => selTab == content
+                .DistinctUntilChanged();
+            isSelectedChanges
+                .ToPropertyEx(this, x => x.IsSelected)
+                .DisposeWith(_disposables);
+            isSelectedChanges.Subscribe(selected =>
+
+                OnClickCommand.Execute(selected ? Content : null));
+
+            selectedTabChanges
+                            .Select(selTab => selTab == content
                     ? content.SelectedIcon
                     : content.UnselectedIcon)
                 .DistinctUntilChanged()
-                .ToProperty(this, vm => vm.Icon,false, RxApp.MainThreadScheduler)
+                .ToPropertyEx(this, vm => vm.Icon, false, RxApp.MainThreadScheduler)
                 .DisposeWith(_disposables);
         }
 

@@ -79,7 +79,7 @@
                                               Margin="0 16 0 0"
                                               MinWidth="700"
                                               MaxWidth="500"
-                                              Opacity=".7" />
+                                              />
                     </Grid>
                 </md:ColorZone>
             </md:DrawerHost>

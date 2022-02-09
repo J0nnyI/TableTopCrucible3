@@ -51,5 +51,14 @@ namespace TableTopCrucible.Core.Helper
             => compare.All(list.Contains);
         public static bool ContainsAny<T>(this IEnumerable<T> list, IEnumerable<T> compare)
             => compare.Any(list.Contains);
+
+
+        /// returns the removed items
+        public static IEnumerable<TObject> RemoveWhere<TObject>(this IList<TObject> list, Func<TObject, bool> selector)
+        {
+            var items = list.Where(selector).ToArray();
+            list.Remove(items);
+            return items;
+        }
     }
 }

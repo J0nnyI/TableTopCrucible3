@@ -60,6 +60,7 @@
                                 Content="{md:PackIcon Plus}"
                                 Margin="-8 0"
                                 Style="{StaticResource ChipButton}"
+                                ToolTip="Add Tag"
                                 Click="NewTag_OnClick"/>
                         <!--read/edit content-->
                         <StackPanel Orientation="Horizontal" 

@@ -25,8 +25,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         {
             TagEditor = tagEditor;
             _isSelectable = libraryService
-                .SingleSelectedItemChanges
-                .Select(item => item is not null)
+                .SelectedItems
+                .CountChanged
+                .Select(count => count > 0)
                 .ToProperty(this, vm => vm.IsSelectable);
             this.WhenActivated(()=>new []
             {

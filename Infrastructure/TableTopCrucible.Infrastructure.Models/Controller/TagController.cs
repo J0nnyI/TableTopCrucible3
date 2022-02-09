@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using DynamicData;
 
 using Newtonsoft.Json;
@@ -89,25 +86,28 @@ namespace TableTopCrucible.Infrastructure.Models.Controller
             bool hasExistingValue,
             JsonSerializer serializer)
         {
-            if (objectType != typeof(TagCollection) && objectType != typeof(ITagCollection))
-                return new TagCollection();
-
-
-            var obj = JArray.Load(reader);
-            var tags = obj
-                .Values<string>()
-                .Select(tag => (Tag)tag);
-
-            if (existingValue is null)
+            try
             {
-                var res = new TagCollection();
-                res.AddRange(tags);
-                return res;
-            }
+                if (objectType != typeof(TagCollection) && objectType != typeof(ITagCollection))
+                    return new TagCollection();
 
-            existingValue.Clear();
-            existingValue.AddRange(tags);
-            return existingValue;
+
+                var obj = JArray.Load(reader);
+                var tags = obj
+                    .Values<string>()
+                    .Select(tag => (Tag)tag!);
+                
+                existingValue?.Clear();
+                existingValue ??= new TagCollection();
+                existingValue.AddRange(tags);
+                
+                return existingValue;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

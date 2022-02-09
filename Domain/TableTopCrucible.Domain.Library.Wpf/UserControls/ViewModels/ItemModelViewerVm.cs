@@ -79,8 +79,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
             //    , RxApp.MainThreadScheduler, RxApp.MainThreadScheduler);
 
             _isSelectable = libraryService
-                .SingleSelectedItemChanges
-                .Select(item => item is not null)
+                .SelectedItems
+                .CountChanged
+                .Select(count => count > 0)
                 .ToProperty(this, vm => vm.IsSelectable);
 
             this.WhenActivated(() => new[]
@@ -122,7 +123,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 
         public IModelViewer ModelViewer { get; }
         public ViewModelActivator Activator { get; } = new();
-        
+
 
         #region ITabPage
 

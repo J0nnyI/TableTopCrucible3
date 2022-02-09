@@ -20,12 +20,38 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Style="{StaticResource MaterialDesignIconButton}"
-                            ToolTip="{Binding Content.Title}"
-                            Command="{Binding OnClickCommand}"
-                            CommandParameter="{Binding Content}">
-                        <md:PackIcon Kind="{Binding Icon}"/>
-                    </Button>
+                    <StackPanel Orientation="Vertical">
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                Height="60"
+                                ToolTip="{Binding Content.Title}"
+                                Command="{Binding OnClickCommand}"
+                                CommandParameter="{Binding Content}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                    <md:PackIcon Kind="{Binding Icon}"
+                                                 Width= "25"
+                                                 Height="25"
+                                                 HorizontalAlignment="Center"
+                                                 Margin="0 0 0 4"
+                                                 Grid.Row="0"/>
+                                    
+                                    <TextBlock Text="{Binding Content.Title}"
+                                               Grid.Row="1"
+                                               HorizontalAlignment="Center"
+                                               Margin=" 0 0 0 2"/>
+                            </Grid>
+                        </Button>
+                        <Rectangle Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Stroke="{DynamicResource ForegroundPrimary}"
+                                   Fill="{DynamicResource ForegroundPrimary}"
+                                   Height="2"
+                                   Margin="0 -4 0 0">
+                            <Rectangle.RadiusX>1</Rectangle.RadiusX>
+                        </Rectangle>
+                    </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

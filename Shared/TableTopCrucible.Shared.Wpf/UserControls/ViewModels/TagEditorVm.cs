@@ -155,7 +155,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Bind(TagList)
                     .Subscribe(_ =>
                     {
-                        TagList.RemoveWhere(tag=>tag.WasNew).ForEach(tag=>tag.Dispose());
+                        TagList.RemoveWhere(tag=>tag.WasNew)
+                            .ForEach(tag=>tag.Dispose());
                         TagList.Add(new TagEditorTagController(null, EditTag,TagSource,tagView.Data, !FluentMode,FluentMode));
                         FluentMode = false;
                     }),

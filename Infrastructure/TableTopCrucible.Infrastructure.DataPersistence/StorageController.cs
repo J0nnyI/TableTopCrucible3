@@ -128,15 +128,15 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
                 tmpFile.Move(file);
 
 
-                _notificationService.AddNotification((Name)"Save Successful",
-                    (Description)$"The changes have been saved to {file}", NotificationType.Confirmation,
+                _notificationService.AddNotification("Save Successful",
+                    $"The changes have been saved to {file}", NotificationType.Confirmation,
                     (NotificationIdentifier)"StorageController.Save");
             }
             catch (Exception e)
             {
                 Debugger.Break();
                 _notificationService.AddNotification(
-                    (Name)"Save successful",
+                    "Save successful",
                     (Description)($"The changes could not be saved to {file}:" + Environment.NewLine + e),
                     NotificationType.Error);
                 throw new LibraryLoadException(file, e);
