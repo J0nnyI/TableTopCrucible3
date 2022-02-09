@@ -1,7 +1,10 @@
 ﻿using System.Reactive.Linq;
+
 using MaterialDesignThemes.Wpf;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
@@ -12,7 +15,7 @@ using TableTopCrucible.Infrastructure.Models.Entities;
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 {
     [Transient]
-    public interface IItemDataViewer:ITabPage
+    public interface IItemDataViewer : ITabPage
     {
     }
 
@@ -20,7 +23,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
     {
         public ITagEditor TagEditor { get; }
         public ViewModelActivator Activator { get; } = new();
-        
+
         public ItemDataViewerVm(ITagEditor tagEditor, ILibraryService libraryService)
         {
             TagEditor = tagEditor;
@@ -29,7 +32,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
                 .CountChanged
                 .Select(count => count > 0)
                 .ToProperty(this, vm => vm.IsSelectable);
-            this.WhenActivated(()=>new []
+            this.WhenActivated(() => new[]
             {
                 libraryService.SingleSelectedItemChanges
                     .Select(item=>item?.Tags)
@@ -47,6 +50,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         private readonly ObservableAsPropertyHelper<bool> _isSelectable;
         public bool IsSelectable => _isSelectable.Value;
         public SortingOrder Position => (SortingOrder)2;
+        public void InitiatingClose() { }
 
         #endregion
     }

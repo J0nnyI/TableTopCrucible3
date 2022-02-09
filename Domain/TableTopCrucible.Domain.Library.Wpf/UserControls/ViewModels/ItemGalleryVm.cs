@@ -103,6 +103,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
         public SortingOrder Position => (SortingOrder)3;
 
+        public void InitiatingClose() { }
         #endregion
     }
 }

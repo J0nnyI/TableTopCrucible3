@@ -37,46 +37,9 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         public ItemModelViewerVm(
             IModelViewer modelViewer,
             IFileRepository fileRepository,
-            IGalleryService galleryService,
-            INotificationService notificationService,
-            IWpfThumbnailGenerationService thumbnailGenerationService,
             ILibraryService libraryService)
         {
             ModelViewer = modelViewer;
-            //GenerateThumbnailCommand = ReactiveCommand.Create(() =>
-            //    {
-            //        try
-            //        {
-            //            if (Item is null)
-            //                throw new InvalidOperationException("the item must be selected to create an thumbnail");
-            //            var imgPath = modelViewer.IsActivated
-            //                ? modelViewer.GenerateThumbnail(Item.Name)
-            //                : thumbnailGenerationService.GenerateWithAutoPosition(Item);
-
-            //            galleryService.AddImagesToItem(Item, imgPath);
-
-            //            notificationService.AddNotification(
-            //                (Name)"Thumbnail Generated",
-            //                (Description)
-            //                $"The Thumbnail for item {Item.Name} has been generated and was saved at {imgPath}",
-            //                NotificationType.Confirmation);
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            notificationService.AddNotification(
-            //                (Name)"Thumbnail generation failed",
-            //                (Description)$"The thumbnail could not be generated: {Environment.NewLine}{e}",
-            //                NotificationType.Error);
-            //            Debugger.Break();
-            //            throw;
-            //        }
-            //    },
-            //    this.WhenAnyValue(vm => vm.Item)
-            //        .Select(item => fileRepository.WatchSingle(item?.FileKey3d))
-            //        .Switch()
-            //        .Select(file => file is not null)
-            //        .DistinctUntilChanged()
-            //    , RxApp.MainThreadScheduler, RxApp.MainThreadScheduler);
 
             _isSelectable = libraryService
                 .SelectedItems
@@ -136,6 +99,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         public bool IsSelectable => _isSelectable.Value;
 
         public SortingOrder Position => (SortingOrder)1;
+
+        public void InitiatingClose()
+        {
+            this.ModelViewer.DisposeCurrentModel = true;
+        }
 
         #endregion
     }

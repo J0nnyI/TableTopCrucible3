@@ -69,6 +69,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
         public bool IsSelectable => _isSelectable.Value;
 
         public SortingOrder Position => (SortingOrder)4;
+        public void InitiatingClose() { }
 
         #endregion
     }
