@@ -9,7 +9,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls
     /// <summary>
     ///     Interaction logic for ItemListV.xaml
     /// </summary>
-    public partial class ItemListV : ReactiveUserControl<ItemListVm>
+    // ReSharper disable once UnusedMember.Global
+    public partial class ItemListV
     {
         public ItemListV()
         {

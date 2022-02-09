@@ -15,8 +15,10 @@
                    Style="{StaticResource SidebarSubTitle}"
                    Margin="8 40 0 0"/>
         <TextBox Name="Name"
-                 materialDesign:HintAssist.Hint="Name"
+                 materialDesign:HintAssist.Hint="Item name"
                  Margin="8"/>
+        <TextBlock Text="Tags"
+                   Margin="8 8 8 4"/>
         <rxui:ViewModelViewHost x:Name="TagEditor"
                                 Margin="8 0"/>
     </StackPanel>

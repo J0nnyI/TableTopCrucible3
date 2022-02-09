@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using DynamicData;
@@ -88,13 +89,18 @@ namespace TableTopCrucible.Core.Helper
             });
         }
 
-        public static void RemoveWhere<TObject, TId>(
+        public static IEnumerable<TObject> RemoveItemsWhere<TObject, TId>(
             this ISourceCache<TObject, TId> cache,
             Func<TObject, bool> selector)
         {
+            IEnumerable<TObject> items = null;
             cache.Edit(updater =>
-                updater.Remove(updater.Items.Where(selector))
+                {
+                    items = updater.Items.Where(selector);
+                    updater.Remove(items);
+                }
             );
+            return items;
         }
 
         public static IObservable<TObject> WatchFirstOrDefault<TObject, TKey>(
@@ -103,11 +109,46 @@ namespace TableTopCrucible.Core.Helper
 
         public static void RemoveWhere<TObject>(this ISourceList<TObject> list, Func<TObject, bool> selector)
             => list.Edit(updater => updater.RemoveMany(updater.Where(selector)));
-        public static IEnumerable<TObject> RemoveWhere<TObject>(this IList<TObject> list, Func<TObject, bool> selector)
+   
+        public static IEnumerable<TObject> RemoveWhere<TObject, TKey>(this ICacheUpdater<TObject, TKey> updater, Func<TObject, bool> selector)
         {
-            var items = list.Where(selector).ToArray();
-            list.Remove(items);
-            return items;
+            var items = updater
+                .KeyValues
+                .Where(kv=> selector(kv.Value))
+                .ToArray();
+                
+            updater.Remove(items.Select(kv => kv.Key));
+            return items.Select(kv => kv.Value);
+        }
+
+        public static IDisposable SynchronizeWith<T>(this IObservableList<T> src, ISourceList<T> target, Action<T> srcAddAction, Action<T> srcRemoveAction)
+        {
+            CompositeDisposable _disposables = new();
+            src.Connect()
+                .OnItemAdded(item =>
+                {
+                    if(!target.Items.Contains(item))
+                        target.Add(item);
+                })
+                .OnItemRemoved(item =>
+                {
+                    if (target.Items.Contains(item))
+                        target.Remove(item);
+                }).Subscribe()
+                .DisposeWith(_disposables);
+            target.Connect()
+                .OnItemAdded(item =>
+                {
+                    if (!src.Items.Contains(item))
+                        srcAddAction(item);
+                })
+                .OnItemRemoved(item =>
+                {
+                    if (src.Items.Contains(item))
+                        srcRemoveAction(item);
+                }).Subscribe()
+                .DisposeWith(_disposables);
+            return _disposables;
         }
     }
 }

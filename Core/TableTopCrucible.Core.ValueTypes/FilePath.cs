@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -105,6 +106,9 @@ namespace TableTopCrucible.Core.ValueTypes
         public BareFileName GetFilenameWithoutExtension() =>
             BareFileName.From(FileSystemHelper.Path.GetFileNameWithoutExtension(Value));
 
+        public FileName GetFilename() =>
+            FileName.From(FileSystemHelper.Path.GetFileName(Value));
+
         public DirectoryPath GetDirectoryPath() => DirectoryPath.From(FileSystemHelper.Path.GetDirectoryName(Value));
 
         public void SetCreationTime(DateTime time)
@@ -157,6 +161,7 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public ModelFilePath ToModelPath()
             => ModelFilePath.From(Value);
+        
     }
 
     /// <summary>
@@ -166,5 +171,6 @@ namespace TableTopCrucible.Core.ValueTypes
     {
         public ImageFilePath ToImagePath()
         => ImageFilePath.From(Value);
+
     }
 }

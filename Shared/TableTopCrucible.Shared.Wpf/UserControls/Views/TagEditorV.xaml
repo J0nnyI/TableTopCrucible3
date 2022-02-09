@@ -60,6 +60,7 @@
                                 Content="{md:PackIcon Plus}"
                                 Margin="-8 0"
                                 Style="{StaticResource ChipButton}"
+                                ToolTip="Add Tag"
                                 Click="NewTag_OnClick"/>
                         <!--read/edit content-->
                         <StackPanel Orientation="Horizontal" 
@@ -109,8 +110,14 @@
                                                       RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:TagEditorV}}"
                                     CommandParameter="{Binding Mode=OneWay}"
                                     Margin="0 0 -8 0">
-                                <md:PackIcon Kind="{Binding Path=EditModeEnabled,
-                                                            Converter={x:Static v:EditModeToCloseIconConverter.Instance}}"/>
+                                <md:PackIcon>
+                                    <md:PackIcon.Kind>
+                                        <MultiBinding Converter="{x:Static v:EditModeToCloseIconConverter.Instance}">
+                                            <Binding Path="EditModeEnabled"/>
+                                            <Binding Path="WasNew"/>
+                                        </MultiBinding>
+                                    </md:PackIcon.Kind>
+                                </md:PackIcon>
                             </Button>
                         </StackPanel>
                     </StackPanel>

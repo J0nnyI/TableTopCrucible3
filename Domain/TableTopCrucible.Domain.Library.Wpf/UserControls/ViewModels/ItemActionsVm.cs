@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
+
 using DynamicData;
 
 using ReactiveUI;
@@ -21,6 +22,7 @@ using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Domain.Library.Services;
+using TableTopCrucible.Domain.Library.Wpf.Services;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
@@ -35,27 +37,19 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
     [Transient]
     public interface IItemActions
     {
-        public Item Item { get; set; }
-        ReactiveCommand<Unit, Unit> GenerateThumbnailsByViewportCommand { get; set; }
-        public IObservableList<Item> SelectedItems { get; set; }
 
     }
     public class ItemActionsVm : ReactiveObject, IItemActions, IActivatableViewModel
     {
+        private readonly ILibraryService _libraryService;
         public ViewModelActivator Activator { get; } = new();
         public ICommand StartSyncCommand { get; }
         public ICommand DeleteAllDataCommand { get; }
         [Reactive]
-        public ReactiveCommand<Unit, Unit> GenerateThumbnailsByViewportCommand { get; set; }
-        [Reactive]
-        public ReactiveCommand<Unit,Unit> GenerateThumbnailsCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> GenerateThumbnailsCommand { get; private set; }
         public ICommand PickThumbnailsCommand { get; }
         public Interaction<Unit, YesNoDialogResult> DeletionConfirmation { get; } = new();
         public Interaction<Unit, IEnumerable<ImageFilePath>> SelectImages { get; } = new();
-        [Reactive]
-        public Item Item { get; set; }
-        [Reactive]
-        public IObservableList<Item> SelectedItems { get; set; }
 
         [Reactive]
         public IItemModelViewer ItemModelViewer { get; set; }
@@ -71,18 +65,22 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
             IStorageController storageController,
             INotificationService notificationService,
             IGalleryService galleryService,
-            IThumbnailGenerationService thumbnailGenerationService)
+            IThumbnailGenerationService thumbnailGenerationService,
+            ILibraryService libraryService)
         {
+            _libraryService = libraryService;
             var notificationService1 = notificationService;
             PickThumbnailsCommand = ReactiveCommand.Create(async () =>
             {
                 var images = await SelectImages.Handle();
-                galleryService.AddImagesToItem(Item, images.ToArray());
+                var item = await libraryService.SingleSelectedItemChanges;
+                galleryService.AddImagesToItem(item, images.ToArray());
                 notificationService.AddNotification(
                     (Name)"Images have been added successfully",
                     null,
                     NotificationType.Confirmation);
-            }, this.WhenAnyValue(vm => vm.Item).Select(item => item is not null), RxApp.MainThreadScheduler, RxApp.MainThreadScheduler);
+            }, libraryService.SingleSelectedItemChanges.Select(item => item is not null),
+                RxApp.MainThreadScheduler, RxApp.MainThreadScheduler);
             StartSyncCommand = fileSynchronizationService.StartScanCommand;
             DeleteAllDataCommand = ReactiveCommand.Create(() =>
             {
@@ -108,16 +106,14 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
                         }
                     );
             });
-            this.WhenActivated(() => new []
+            this.WhenActivated(() => new[]
             {
                 GenerateThumbnailsCommand = ReactiveCommand.Create(() =>
                 {
-                    if (SelectedItems!.Items.Count() == 1)
-                        GenerateThumbnailsByViewportCommand!.Execute();
-                    else
-                        thumbnailGenerationService.GenerateManyAsync(SelectedItems.Items, null, true);
 
-                },GenerateThumbnailsByViewportCommand!.CanExecute.Select(_=>false))
+                    thumbnailGenerationService.GenerateManyAsync(libraryService.SelectedItems.Items, null, true);
+
+                },libraryService.SelectedItems.CountChanged.Select(count=>count>0))
             });
 
         }

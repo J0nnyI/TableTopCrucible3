@@ -28,11 +28,11 @@
     <md:DrawerHost>
         <md:DrawerHost.LeftDrawerContent>
             <rxui:ViewModelViewHost x:Name="Filter"
-                                        MinWidth="300" />
+                                        Width="500" />
         </md:DrawerHost.LeftDrawerContent>
         <md:DrawerHost.RightDrawerContent>
             <rxui:ViewModelViewHost x:Name="Actions"
-                                    MinWidth="300" />
+                                    Width="500" />
         </md:DrawerHost.RightDrawerContent>
         <md:DrawerHost.Content>
             <Grid>
@@ -49,8 +49,7 @@
                 <rxui:ViewModelViewHost x:Name="ListHeader"
                                         Margin="4 4 12 4"
                                         Grid.Row="0"
-                                        Grid.Column="0"
-                                        Grid.ColumnSpan="2" />
+                                        Grid.Column="0"/>
                 <rxui:ViewModelViewHost x:Name="ItemList"
                                         Margin="4 4 12 4"
                                         Grid.Column="0"
@@ -63,15 +62,11 @@
                               Grid.RowSpan="2" />
 
 
-                <rxui:ViewModelViewHost x:Name="SingleItemViewer"
+                <rxui:ViewModelViewHost x:Name="DetailPage"
                                         Margin="4 4 12 4"
                                         Grid.Column="1"
                                         Grid.Row="0"
                                         Grid.RowSpan="2"/>
-                <uc:LoadingScreen x:Name="SelectionErrorDisplay"
-                                  Grid.Row="0"
-                                  Grid.RowSpan="2"
-                                  Grid.Column="1"/>
 
             </Grid>
 

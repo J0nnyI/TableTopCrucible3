@@ -4,7 +4,9 @@ namespace TableTopCrucible.Core.Engine.ValueTypes
 {
     public class Description : ValueType<string, Description>
     {
-        public static explicit operator Description(string value)
+        public static implicit operator Description(string value)
             => From(value);
+
+        public bool HasContent => string.IsNullOrWhiteSpace(Value);
     }
 }

@@ -23,7 +23,7 @@
                           md:ShadowAssist.ShadowDepth="Depth2"
                           Mode="Custom"
                           Background="{DynamicResource HeaderBackground}"
-                          Foreground="{DynamicResource MaterialDesignDarkForeground}">
+                          Foreground="{DynamicResource PrimaryHueMidBrush}">
                 <rx:ViewModelViewHost x:Name="NavigationList"
                                       DockPanel.Dock="Left" />
             </md:ColorZone>
@@ -79,7 +79,7 @@
                                               Margin="0 16 0 0"
                                               MinWidth="700"
                                               MaxWidth="500"
-                                              Opacity=".7" />
+                                              />
                     </Grid>
                 </md:ColorZone>
             </md:DrawerHost>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -44,15 +45,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
     {
         IObservableList<Item> SelectedItems { get; }
         Func<Item, bool> Filter { get; set; }
+        void Deselect(Item item);
+        void Select(Item item);
     }
 
     public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel, IDisposable
     {
         private readonly IFileRepository _fileRepository;
         private readonly CompositeDisposable _disposables = new();
-        public ObservableCollectionExtended<ItemSelectionInfo> Items = new();
+        private ReadOnlyObservableCollection<ItemSelectionInfo> _items;
+        public ReadOnlyObservableCollection<ItemSelectionInfo> Items =>_items;
 
-        private ItemSelectionInfo previouslyClickedItem;
+        private ItemSelectionInfo _previouslyClickedItem;
 
         public ItemListVm(IItemRepository itemRepository, IFileRepository fileRepository)
         {
@@ -93,10 +97,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
                         .Throttle(SettingsHelper.FilterThrottleSpan)
                         .ObserveOn(RxApp.TaskpoolScheduler))
                     .Sort(itemInfo => itemInfo.ThumbnailViewer.Item.Name.Value)
-                    .ObserveOn(RxApp.MainThreadScheduler)
                     .OnItemAdded(item=>item.PropertyChanged +=ItemOnPropertyChanged)
                     .OnItemRemoved(item=>item.PropertyChanged -=ItemOnPropertyChanged)
-                    .Bind(Items)
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Bind(out _items)
                     .Subscribe(),
 
                 this.WhenAnyValue(vm=>vm.Filter)
@@ -117,13 +121,21 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         [Reactive]
         public Func<Item, bool> Filter { get; set; } = _ => true;
 
+        private ItemSelectionInfo _itemInfoByItem (Item item)
+            => Items.FirstOrDefault(itemInfo => itemInfo.Item == item);
+        public void Deselect(Item item)
+            => _itemInfoByItem(item).IsSelected = false;
+
+        public void Select(Item item)
+            => _itemInfoByItem(item).IsSelected = true;
+
         public void Dispose()
             => _disposables.Dispose();
 
         public void OnItemClicked(ItemSelectionInfo itemInfo, MouseButtonEventArgs e)
         {
             var curItem = itemInfo;
-            var prevItem = previouslyClickedItem;
+            var prevItem = _previouslyClickedItem;
             var isCtrlPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Control);
             var isShiftPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Shift);
             var isAltPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Alt);
@@ -152,7 +164,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
             }
 
             e.Handled = true;
-            previouslyClickedItem = curItem;
+            _previouslyClickedItem = curItem;
         }
 
         private void _toggleSelection(ItemSelectionInfo item)

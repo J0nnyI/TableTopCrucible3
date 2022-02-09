@@ -15,14 +15,14 @@ namespace TableTopCrucible.Core.Helper
     {
         private readonly Action _onDispose;
 
-        public ActOnLifecycle(Action onCreate, Action onDispose)
+        public ActOnLifecycle(Action onCreate, Action onDispose = null)
         {
             onCreate?.Invoke();
             _onDispose = onDispose;
         }
 
         public void Dispose()
-            => _onDispose();
+            => _onDispose?.Invoke();
     }
 
     public static class CompositeDisposableHelper

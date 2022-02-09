@@ -25,5 +25,8 @@ namespace TableTopCrucible.Core.DependencyInjection
             return GetServiceTokensOfType<T>()
                 .Select(t => (T)Locator.Current.GetService(t));
         }
+
+        public static T GetRequiredService<T>(this IReadonlyDependencyResolver resolver)
+            => resolver.GetService<T>() ?? throw new NullReferenceException($"Could not resolve service of type {typeof(T).Name}");
     }
 }

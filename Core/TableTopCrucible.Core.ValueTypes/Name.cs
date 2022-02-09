@@ -33,5 +33,8 @@ namespace TableTopCrucible.Core.ValueTypes
 
         public BareFileName ToFileName()
             => BareFileName.From(Value);
+
+        public static implicit operator Name(string value)
+            => From(value);
     }
 }

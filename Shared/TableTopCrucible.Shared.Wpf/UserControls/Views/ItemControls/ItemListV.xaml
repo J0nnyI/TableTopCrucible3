@@ -32,7 +32,7 @@
                 <EventSetter Event="PreviewMouseLeftButtonUp"
                              Handler="ListViewItem_PreviewMouseUp" />
                 <Setter Property="IsSelected"
-                        Value="{Binding IsSelected, Mode=TwoWay}" />
+                        Value="{Binding IsSelected, Mode=OneWay}" />
             </Style>
         </ListView.ItemContainerStyle>
 

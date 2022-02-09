@@ -15,25 +15,12 @@ using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Automation.Filters;
 using TableTopCrucible.Infrastructure.Models.Controller;
 using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 {
-    public enum TextMatchType
-    {
-        StartsWith,
-        EndsWith,
-        Contains,
-        Equals
-    }
-
-    public enum CaseMatchType
-    {
-        RespectCase,
-        IgnoreCase
-    }
-
     public enum FilterMode
     {
         Include,
@@ -59,6 +46,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
             // Ignore Case
             // Consider Case                            FormatLetterCase
             TagEditor = tagEditor;
+            tagEditor.FluentModeEnabled = false;
             tagEditor.TagSource = TagCollection;
             FilterChanges = this.WhenAnyValue(
                     vm => vm.NameTextMatchType,

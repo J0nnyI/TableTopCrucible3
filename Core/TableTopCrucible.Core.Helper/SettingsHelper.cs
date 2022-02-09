@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 
@@ -17,10 +18,10 @@ namespace TableTopCrucible.Core.Helper
 
         //notifications
         public static bool AutoCloseEnabled => true;
-        public static double AnimationFrames => AnimationDuration / AnimationResolution;
+        public static double AnimationFrames => AnimationTimeSpan / AnimationResolution;
         public static TimeSpan AnimationResolution => new TimeSpan(0, 0, 0, 1) / 10;
-        public static TimeSpan AnimationDuration => TimeSpan.FromMilliseconds(200);
-
+        public static TimeSpan AnimationTimeSpan => TimeSpan.FromMilliseconds(200);
+        public static Duration AnimationDuration => new (AnimationTimeSpan);
         public static int ThreadCount => 2;
         public static ushort SimultaneousThumbnailWindows => 3;
 
@@ -28,12 +29,15 @@ namespace TableTopCrucible.Core.Helper
 
         // the last n jobs will stay in memory, everything else will be removed
         public static int DoneJobLimit => 5;
-        public static Size ThumbnailSize = new(200, 200);
+        public static Size ThumbnailSize => new(200, 200);
         public static double ThumbnailHeight => ThumbnailSize.Height;
         public static double ThumbnailWidth => ThumbnailSize.Width;
         public static bool GenerateThumbnailOnSync => false;
-        public static int MaxTagCountInDropDown = 30;
-        public static TimeSpan FilterThrottleSpan = TimeSpan.FromMilliseconds(500);
+        public static int MaxTagCountInDropDown => 30;
+        public static TimeSpan FilterThrottleSpan => TimeSpan.FromMilliseconds(500);
+
+        public static string AutoClosingNotifications => "['Confirmation', 'Info']";
+        public static TimeSpan NotificationAutoDeleteTime => TimeSpan.FromSeconds(5);
 
         /// <summary>
         ///     the autoSave (subject) is buffered by this duration to prevent excessive writing

@@ -182,6 +182,12 @@ namespace TableTopCrucible.Core.ValueTypes
         public bool ContainsFilepath<TFilePath>(FilePath<TFilePath> filePath)
             where TFilePath : FilePath<TFilePath>, new()
             => filePath.Value.ToLower().StartsWith(Value.ToLower());
+
+        public IEnumerable<DirectoryName> GetDirectoryNames()
+            => Value.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries).Select(DirectoryName.From);
+
+        public RelativeDirectoryPath MakeRelative(DirectoryPath root)
+            => (RelativeDirectoryPath)Path.GetRelativePath(root.Value, Value);
     }
 
     public class DirectoryPath : DirectoryPath<DirectoryPath>

@@ -28,7 +28,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         /// </summary>
         Message PlaceholderMessage { get; set; }
 
-        public bool IsActivated { get; }
+        bool DisposeCurrentModel { get; set; }
 
         ImageFilePath GenerateThumbnail(Name sourceName);
     }
@@ -45,25 +45,34 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             _thumbnailService = thumbnailService;
             this.WhenActivated(() => new[]
             {
+                new ActOnLifecycle(()=>DisposeCurrentModel=false,null),
                 this.WhenAnyValue(
-                        vm => vm.Model)
+                        vm => vm.Model,
+                        vm=>vm.DisposeCurrentModel,
+                        (model, dispose)=>new{model, dispose})
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Do(x =>
                     {// set loading info
+                        if (x.dispose)
+                        {
+                            ViewportContent = null;
+                            return;
+                        }
+
                         PlaceholderText =
                             PlaceholderMessage ??
-                            (x is null
+                            (x.model is null
                                 ? (Message)"No File selected"
                                 : (Message)"Loading");
-                        if (x is null ||
+                        if (x.model is null ||
                             PlaceholderMessage is not null ||
-                            x.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
+                            x.model.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
                            )
                             IsLoading = true;
 
                         ViewportContent = null;
                     })
-                    .Select(x => x)
+                    .Select(x =>x.dispose?null: x.model)
                     .WhereNotNull()
                     .Select(file =>
                     {
@@ -122,7 +131,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
         [Reactive]
         public Message PlaceholderMessage { get; set; }
-
+        [Reactive]
+        public bool DisposeCurrentModel { get; set; }
         public bool IsActivated => _isActivated.Value;
 
         /// <summary>

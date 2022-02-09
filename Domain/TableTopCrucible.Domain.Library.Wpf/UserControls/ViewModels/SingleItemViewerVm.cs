@@ -10,6 +10,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Domain.Library.Wpf.Services;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Shared.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
@@ -20,16 +21,15 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
     [Transient]
     public interface ISingleItemViewer:IDisposable
     {
-        public Item Item { get; set; }
-        ReactiveCommand<Unit, Unit> GenerateThumbnailCommand { get; }
     }
     public class SingleItemViewerVm:ReactiveObject, IActivatableViewModel, ISingleItemViewer
     {
         private readonly IGalleryService _galleryService;
+        private readonly ILibraryService _libraryService;
         private readonly CompositeDisposable _disposables = new();
         public IItemActions Actions { get; }
         public IItemFileList FileList { get; }
-        public IGallery Gallery { get; }
+        public IItemGallery ItemGallery { get; }
         public IItemDataViewer DataViewer { get; }
         public IItemModelViewer ModelViewer { get; }
         public IItemViewerHeader ViewerHeader { get; }
@@ -38,44 +38,23 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
         public SingleItemViewerVm(
             IItemActions actions,
             IItemFileList fileList,
-            IGallery gallery,
+            IItemGallery itemGallery,
             IItemDataViewer dataViewer,
             IItemModelViewer modelViewer,
             IItemViewerHeader viewerHeader,
-            IGalleryService galleryService)
+            IGalleryService galleryService,
+            ILibraryService libraryService)
         {
             _galleryService = galleryService;
+            _libraryService = libraryService;
             Actions = actions;
             FileList = fileList.DisposeWith(_disposables);
-            Gallery = gallery;
+            ItemGallery = itemGallery;
             DataViewer = dataViewer;
             ModelViewer = modelViewer;
             ViewerHeader = viewerHeader;
-            Actions.GenerateThumbnailsByViewportCommand = ModelViewer.GenerateThumbnailCommand;
-
-            var itemChanges = this.WhenAnyValue(vm => vm.Item)
-                .Publish()
-                .RefCount();
-            this.WhenActivated(()=>new []
-            {
-                itemChanges
-                    .BindTo(this, vm => vm.ModelViewer.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.DataViewer.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.ViewerHeader.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.FileList.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.Gallery.Item),
-                itemChanges
-                    .BindTo(this, vm => vm.Actions.Item)
-            });
+            
         }
-        [Reactive]
-        public Item Item { get; set; }
-
-        public ReactiveCommand<Unit, Unit> GenerateThumbnailCommand => ModelViewer.GenerateThumbnailCommand;
 
         public void Dispose()
             => _disposables.Dispose();
@@ -86,7 +65,7 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
                     .Where(file => file.IsImage())
                     .Select(img => img.ToImagePath())
                     .ToArray();
-            _galleryService.AddImagesToItem(Item, images);
+            _galleryService.AddImagesToItem(_libraryService.SingleSelectedItem, images);
         }
     }
 
