@@ -25,6 +25,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     public interface INotificationList : ISidebarPage
     {
         bool ShowCompleted { get; set; }
+        public bool ProvideClose { get; set; }
     }
 
     public class NotificationListVm : ReactiveObject, INotificationList, IActivatableViewModel
@@ -49,8 +50,9 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Transform(notification =>
                     {
                         var vm = Locator.Current.GetRequiredService<INotificationInfoVm>();
-                        vm.Init(notification, InitiallyExpanded);
+                        vm.Init(notification);
                         vm.TimerAlwaysVisible = ShowCompleted is false;// might cause issues when the property is set after activation-but that should never happen
+                        vm.ProvideClose = ProvideClose;
                         return vm;
                     })
                     .FilterOnObservable(vm=>
@@ -73,8 +75,8 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public Name Title => "Notifications";
         public SidebarWidth Width => null;
         [Reactive]
-        public bool InitiallyExpanded { get; set; } = false;
-        [Reactive]
         public bool ShowCompleted { get; set; } = true;
+        [Reactive]
+        public bool ProvideClose { get; set; } = true;
     }
 }

@@ -24,14 +24,17 @@ namespace TableTopCrucible.Core.Engine.Models
         public INotification Notification { get; }
         private readonly CompositeDisposable _disposables = new();
         void IDisposable.Dispose() => _disposables.Dispose();
+        private readonly BehaviorSubject<Unit> _resetTimer = new(Unit.Default);
 
         public NotificationInfo(INotification notification)
         {
             Notification = notification;
 
             TimeRemainingChanges =
-                SettingsHelper.NotificationAutoDeleteTime
-                    .StartTimer(_onCountdownRunning, _onCancelCountdown, null, RxApp.TaskpoolScheduler)
+                _resetTimer.Select(_=>
+                    SettingsHelper.NotificationAutoDeleteTime
+                        .StartTimer(this.WhenAnyValue(x=>x.CountdownRunning), _onCancelCountdown, null, RxApp.TaskpoolScheduler)
+                    ).Switch()
                     .Select(DeletionTime.From)
                     .Replay()
                     .RefCount();
@@ -39,20 +42,33 @@ namespace TableTopCrucible.Core.Engine.Models
                 .Select(time => time.Value <= TimeSpan.Zero)
                 .DistinctUntilChanged();
 
+
+            this.WhenAnyValue(vm => vm.IsExpanded)
+                .Subscribe((expanded) =>
+                {
+                    if (expanded)
+                        PauseCountdown();
+                    else if (IsCompleted is false)
+                        StartCountdown();
+                });
+
             _disposables.Add(
                 TimeRemainingChanges.Subscribe(),// prevents timer reset when TimeRemaining has no subscribers
                 IsCompletedChanges.ToPropertyEx(this, vm => vm.IsCompleted, false, RxApp.MainThreadScheduler),
-                _onCountdownRunning,
-                _onCancelCountdown);
+                _onCancelCountdown,
+                _resetTimer);
+
+
         }
 
         public void StartCountdown()
         {
             if (IsCompleted)
                 throw new InvalidOperationException("the timer has already been completed");
-            if (_onCountdownRunning.Value)
+            if (CountdownRunning)
                 return;
-            _onCountdownRunning.OnNext(true);
+            CountdownRunning =true;
+            _resetTimer.OnNext();
         }
 
         /// <summary>
@@ -60,9 +76,9 @@ namespace TableTopCrucible.Core.Engine.Models
         /// </summary>
         public void PauseCountdown()
         {
-            if (_onCountdownRunning.Value is false && IsCompleted)
+            if (CountdownRunning is false && IsCompleted)
                 return;
-            _onCountdownRunning.OnNext(false);
+            CountdownRunning =false;
         }
         /// <summary>
         /// stops the countdown and all timer are considered completed - the countdown can no longer be continued 
@@ -71,7 +87,8 @@ namespace TableTopCrucible.Core.Engine.Models
             => _onCancelCountdown.OnNext();
 
         #region time cycles
-        private readonly BehaviorSubject<bool> _onCountdownRunning = new(true);
+        [Reactive]
+        public bool CountdownRunning { get; private set; }
         private readonly Subject<Unit> _onCancelCountdown = new();//bs is used to access
 
         [ObservableAsProperty]
@@ -84,6 +101,8 @@ namespace TableTopCrucible.Core.Engine.Models
         /// the time until the notification is removed
         /// </summary>
         public IObservable<DeletionTime> TimeRemainingChanges { get; }
+        [Reactive]
+        public bool IsExpanded { get; set; }
         #endregion
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -17,16 +18,17 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
     [Transient]
     public interface INotificationInfoVm
     {
-        public void Init(NotificationInfo notification, bool initiallyExpanded);
+        public void Init(NotificationInfo notification);
         public NotificationInfo Notification { get; }
         bool TimerAlwaysVisible { get; set; }
+        bool ProvideClose { get; set; }
     }
     public class NotificationInfoVm : ReactiveObject, INotificationInfoVm, IActivatableViewModel
     {
 
         public NotificationInfoVm(INotificationService notificationService)
         {
-            this.WhenActivated(() => new[]
+            this.WhenActivated(() => new IDisposable[]
             {
                 ReactiveCommandHelper.Create(
                     () => notificationService.RemoveNotification(Notification),
@@ -36,20 +38,13 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
                     .Select(time=>(double)time.Value.Ticks)
                     .ToPropertyEx(this, vm=>vm.TicksRemaining,false,RxApp.MainThreadScheduler),
 
-                this.WhenAnyValue(vm=>vm.Notification, vm=>vm.TimerAlwaysVisible,
-                        (notification, timerAlwaysVisible)=>new{notification, timerAlwaysVisible})
-                    .Select(x=>x.timerAlwaysVisible || x.notification.RemoveOnTimerComplete())
+                this.WhenAnyValue(vm=>vm.Notification, vm=>vm.Notification.CountdownRunning, vm=>vm.TimerAlwaysVisible,
+                        (notification,running, timerAlwaysVisible)=>
+                            running 
+                            && (timerAlwaysVisible 
+                                || notification.RemoveOnTimerComplete()))
                     .ToPropertyEx(this, vm=>vm.ShowTimer, false, RxApp.MainThreadScheduler),
 
-                this.WhenAnyValue(vm=>vm.IsExpanded, vm=>vm.Notification,
-                        (expanded, notification)=>new{expanded,notification})
-                    .Subscribe((x) =>
-                    {
-                        if(x.expanded)
-                            x.notification.PauseCountdown();
-                        else if(x.notification.IsCompleted is false)
-                            x.notification.StartCountdown();
-                    })
             });
         }
         [ObservableAsProperty]
@@ -66,16 +61,15 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
         public ViewModelActivator Activator { get; } = new();
         public NotificationId Id { get; } = NotificationId.New();
 
-        public void Init(NotificationInfo notification, bool initiallyExpanded)
+        public void Init(NotificationInfo notification)
         {
             this.Notification = notification ?? throw new NullReferenceException(nameof(notification));
-            IsExpanded = initiallyExpanded;
         }
-        [Reactive]
-        public bool IsExpanded { get; set; }
         [Reactive]
         public NotificationInfo Notification { get; set; }
         [Reactive]
         public bool TimerAlwaysVisible { get; set; }
+        [Reactive]
+        public bool ProvideClose { get; set; }
     }
 }

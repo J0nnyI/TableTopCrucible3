@@ -26,6 +26,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Pages.ViewModels
             _navigationService = navigationService;
             NotificationOverlay = notificationOverlay;
             NotificationOverlay.ShowCompleted = false;
+            NotificationOverlay.ProvideClose = false;
             NavigationList = navigationList;
             AppHeader = appHeader;
 

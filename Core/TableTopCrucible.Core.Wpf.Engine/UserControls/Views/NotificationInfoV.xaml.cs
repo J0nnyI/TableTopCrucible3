@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
+
 using MaterialDesignThemes.Wpf;
+
 using ReactiveUI;
+
 using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Core.Wpf.Helper;
@@ -17,7 +20,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
         public NotificationInfoV()
         {
             InitializeComponent();
-            CloseNotification.SetValue(ButtonProgressAssist.IsIndicatorVisibleProperty,true);
+            CloseNotification.SetValue(ButtonProgressAssist.IsIndicatorVisibleProperty, true);
             this.WhenActivated(() => new[]
             {
                 this.WhenAnyValue(v => v.ViewModel)
@@ -31,7 +34,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                     vm => vm.Notification.Content.Value,
                     v => v.Content.Text),
                 this.Bind(ViewModel,
-                    vm=>vm.IsExpanded,
+                    vm=>vm.Notification.IsExpanded,
                     v=>v.Expander.IsExpanded),
                 //this.OneWayBind(ViewModel,
                 //    vm=>vm.IsExpanded,
@@ -52,17 +55,14 @@ namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
                         NotificationType.Warning => PackIconKind.WarningCircle,
                         _ => throw new NotImplementedException(nameof(type) + " has no icon")
                     }),
-                
+
                 this.BindCommand(ViewModel,
                     vm => vm.CloseNotificationCommand,
                     v => v.CloseNotification),
-
-
-
-                this.WhenAnyValue(v=>v.ViewModel.ShowTimer)
-                    .BindTo(
-                        CloseNotification,
-                        ButtonProgressAssist.IsIndicatorVisibleProperty),
+                this.OneWayBind(ViewModel,
+                    vm=>vm.ProvideClose,
+                    v=>v.CloseNotification.Visibility,
+                    show=>show?Visibility.Visible:Visibility.Collapsed),
 
                 this.OneWayBind(ViewModel,
                     vm=>vm.TicksTotal,
