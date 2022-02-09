@@ -23,7 +23,7 @@
                           md:ShadowAssist.ShadowDepth="Depth2"
                           Mode="Custom"
                           Background="{DynamicResource HeaderBackground}"
-                          Foreground="{DynamicResource MaterialDesignDarkForeground}">
+                          Foreground="{DynamicResource PrimaryHueMidBrush}">
                 <rx:ViewModelViewHost x:Name="NavigationList"
                                       DockPanel.Dock="Left" />
             </md:ColorZone>

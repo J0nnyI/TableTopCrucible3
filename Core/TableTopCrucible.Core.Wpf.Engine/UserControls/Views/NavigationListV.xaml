@@ -27,6 +27,7 @@
             <Setter Property="Padding" Value="0" />
             <Setter Property="Height" Value="{StaticResource ButtonSize}" />
             <Setter Property="Width" Value="{StaticResource ExpandedWidth}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
             <Style.Resources>
                 <Style TargetType="md:PackIcon">
                     <Setter Property="Width" Value="{StaticResource IconSize}" />

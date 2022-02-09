@@ -20,17 +20,13 @@
                     Value="{DynamicResource MaterialDesignDarkForeground}" />
         </Style>
         <Style TargetType="Button"
-               BasedOn="{StaticResource MaterialDesignFloatingActionMiniButton}">
+               BasedOn="{StaticResource MaterialDesignIconButton}">
             <Setter Property="Margin"
                     Value="16 0" />
-            <Setter Property="Background"
-                    Value="Transparent" />
-            <Setter Property="BorderBrush"
-                    Value="Transparent" />
         </Style>
         <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignActionToggleButton}">
             <Setter Property="Foreground"
-                    Value="{DynamicResource MaterialDesignDarkForeground}" />
+                    Value="{DynamicResource PrimaryHueMidBrush}" />
         </Style>
     </UserControl.Resources>
     <md:ColorZone Padding="16 8"
