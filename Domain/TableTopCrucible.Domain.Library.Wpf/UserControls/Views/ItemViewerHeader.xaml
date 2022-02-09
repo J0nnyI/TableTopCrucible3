@@ -14,21 +14,37 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Name="Name"
+        <Border x:Name="ItemCountBorder"
+                ToolTip="Number of Selected Items"
+                Background="{StaticResource MaterialDesignDarkBackground}"
+                MinWidth="42"
+                Height="42"
+                CornerRadius="21"
+                Margin="0 0 8 0"
+                Padding="8"
+                Grid.Column="0">
+            <TextBlock x:Name="ItemCount"
+                       Style="{StaticResource SidebarTitle}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+        </Border>
+        <TextBlock Name="Title"
                    Style="{StaticResource SidebarTitle}" 
+                   TextTrimming="CharacterEllipsis"
                    VerticalAlignment="Center"
-                   Grid.Column="0"/>
+                   Grid.Column="1"/>
         <rxui:ViewModelViewHost Name="TabStrip"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Right"
                                 Margin="0 0 24 0"
-                                Grid.Column="1"/>
+                                Grid.Column="2"/>
         <Button Content="{md:PackIcon LightningBoltOutline}"
                 Command="{x:Static md:DrawerHost.OpenDrawerCommand}"
                 CommandParameter="{x:Static Dock.Right}"
                 ToolTip="Actions Sidebar"
                 Style="{StaticResource MaterialDesignIconButton}"
-                Grid.Column="2"/>
+                Grid.Column="3"/>
     </Grid>
 </rxui:ReactiveUserControl>

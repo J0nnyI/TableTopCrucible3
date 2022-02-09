@@ -1,5 +1,12 @@
-﻿using ReactiveUI;
+﻿using System;
+using System.Linq;
+using System.Reactive.Linq;
+
+using DynamicData;
+
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Domain.Library.Wpf.Services;
@@ -17,14 +24,26 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
         public IIconTabStrip TabStrip { get; }
         public ViewModelActivator Activator { get; } = new();
 
-        private ObservableAsPropertyHelper<Item> _item;
-        public Item Item => _item.Value;
+        public IObservable<string> TitleChanges { get; }
+        public IObservable<int> SelectionCountChanges { get; }
+        public IObservable<bool> ShowItemCount { get; }
 
         public ItemViewerHeaderVm(ILibraryService libraryService, IIconTabStrip tabStrip)
         {
             TabStrip = tabStrip;
             TabStrip.Init(libraryService);
-            _item = libraryService.SingleSelectedItemChanges.ToProperty(this, vm => vm.Item);
+            TitleChanges = libraryService
+                .SelectedItems
+                .Connect()
+                .ToCollection()
+                .Select(items => string.Join(", ", items.Select(item => item.Name.Value)));
+            SelectionCountChanges = libraryService
+                .SelectedItems
+                .CountChanged;
+            ShowItemCount = libraryService
+                .SelectedItems
+                .CountChanged
+                .Select(count => count > 1);
         }
     }
 }
