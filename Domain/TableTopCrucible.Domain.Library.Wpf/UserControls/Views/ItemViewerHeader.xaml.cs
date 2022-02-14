@@ -13,6 +13,9 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
     /// </summary>
     public partial class ItemViewerHeaderV : ReactiveUserControl<ItemViewerHeaderVm>
     {
+        private static readonly GridLength GridLengthStar = new(1, GridUnitType.Star);
+        private static readonly GridLength GridLengthAuto = GridLength.Auto;
+        private static readonly GridLength GridLengthZero = new(0);
         public ItemViewerHeaderV()
         {
             InitializeComponent();
@@ -29,6 +32,20 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
                     v=>v.TabStrip.ViewModel),
 
                 /* name edit bindings */
+                ViewModel.SelectionCountChanges
+                    .Select(count=>
+                        count > 1
+                            ? GridLengthStar 
+                            : GridLengthAuto)
+                    .BindTo(this, v=>v.NameColumnDefinition.Width),
+
+                ViewModel.SelectionCountChanges
+                    .Select(count=>
+                        count > 1
+                            ? GridLengthZero
+                            : GridLengthStar)
+                    .BindTo(this, v=>v.SpacerColumnDefinition.Width),
+
                 //editMode = true
                 this.Bind(ViewModel,
                     vm=>vm.EditedName,

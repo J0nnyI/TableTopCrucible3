@@ -54,7 +54,8 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
 
             EditableChanges = libraryService
                 .SingleSelectedItemChanges
-                .Select(item => item is not null);
+                .Select(item => item is not null)
+                .StartWith(false);
 
             this.WhenActivated(() => new[]
             {
@@ -62,7 +63,11 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
                     .SelectedItems
                     .Connect()
                     .ToCollection()
-                    .Select(items => string.Join(", ", items.Select(item => item.Name.Value)))
+                    .Select(items => string.Join(", ", 
+                                    items.Take(10).Select(item => item.Name.Value))
+                                     +(items.Count > 10
+                                         ? "..."
+                                         : string.Empty))
                     .BindTo(this, vm=>vm.EditedName),
                 this.EditNameCommand = ReactiveCommand.Create(
                     () =>_editMode.OnNext(true)),

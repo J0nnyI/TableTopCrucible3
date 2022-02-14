@@ -12,9 +12,9 @@
     <Grid Margin="8 0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/> <!--count-->
-            <ColumnDefinition Width="Auto"/> <!--name-->
+            <ColumnDefinition x:Name="NameColumnDefinition"/> <!--name, multiSelect ? * : auto -->
             <ColumnDefinition Width="Auto"/> <!--name edit actions-->
-            <ColumnDefinition /> <!--spacer-->
+            <ColumnDefinition x:Name="SpacerColumnDefinition"/> <!--spacer, multiSelect ? 0 : * -->
             <ColumnDefinition Width="Auto"/> <!--tab strip-->
             <ColumnDefinition Width="Auto"/> <!--actions-->
         </Grid.ColumnDefinitions>
