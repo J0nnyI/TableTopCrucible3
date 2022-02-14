@@ -11,11 +11,14 @@
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="8 0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/> <!--count-->
+            <ColumnDefinition Width="Auto"/> <!--name-->
+            <ColumnDefinition Width="Auto"/> <!--name edit actions-->
+            <ColumnDefinition /> <!--spacer-->
+            <ColumnDefinition Width="Auto"/> <!--tab strip-->
+            <ColumnDefinition Width="Auto"/> <!--actions-->
         </Grid.ColumnDefinitions>
+        <!--count-->
         <Border x:Name="ItemCountBorder"
                 ToolTip="Number of Selected Items"
                 Background="{StaticResource MaterialDesignDarkBackground}"
@@ -30,21 +33,41 @@
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"/>
         </Border>
-        <TextBlock Name="Title"
+        <!--name-->
+        <TextBox Name="NameEditor"
+                   VerticalAlignment="Center"
+                   Grid.Column="1"/>
+        <TextBlock Name="NameDisplay"
                    Style="{StaticResource SidebarTitle}" 
                    TextTrimming="CharacterEllipsis"
                    VerticalAlignment="Center"
                    Grid.Column="1"/>
+        <!--edit actions-->
+        <StackPanel Grid.Column="2" 
+                    Orientation="Horizontal"
+                    Name="EditorButtonContainer">
+            <Button x:Name="EditName"
+                    Content="{md:PackIcon Edit}"
+                    Style="{StaticResource MaterialDesignIconButton}"/>
+            <Button x:Name="SaveName"
+                    Content="{md:PackIcon ContentSave}"
+                    Style="{StaticResource MaterialDesignIconButton}"/>
+            <Button x:Name="RevertName"
+                    Content="{md:PackIcon Undo}"
+                    Style="{StaticResource MaterialDesignIconButton}"/>
+        </StackPanel>
+        <!--tab strip-->
         <rxui:ViewModelViewHost Name="TabStrip"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Right"
                                 Margin="0 0 24 0"
-                                Grid.Column="2"/>
+                                Grid.Column="4"/>
+        <!--actions-->
         <Button Content="{md:PackIcon LightningBoltOutline}"
                 Command="{x:Static md:DrawerHost.OpenDrawerCommand}"
                 CommandParameter="{x:Static Dock.Right}"
                 ToolTip="Actions Sidebar"
                 Style="{StaticResource MaterialDesignIconButton}"
-                Grid.Column="3"/>
+                Grid.Column="5"/>
     </Grid>
 </rxui:ReactiveUserControl>

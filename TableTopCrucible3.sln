@@ -115,7 +115,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Infrastruc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Shared.Wpf.Tests", "Shared\TableTopCrucible.Shared.Wpf.Tests\TableTopCrucible.Shared.Wpf.Tests.csproj", "{9A0ADB68-9712-493D-ABAE-10C6587697D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableTopCrucible.Infrastructure.Models.Automation", "Infrastructure\TableTopCrucible.Infrastructure.Models.Automation\TableTopCrucible.Infrastructure.Models.Automation.csproj", "{67F0CE06-CFC1-40C7-839A-669A02F1F9C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTopCrucible.Infrastructure.Models.Automation", "Infrastructure\TableTopCrucible.Infrastructure.Models.Automation\TableTopCrucible.Infrastructure.Models.Automation.csproj", "{67F0CE06-CFC1-40C7-839A-669A02F1F9C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -242,7 +242,6 @@ Global
 		{1BE2F657-E677-405E-B4F2-DABDC8D02424}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{1BE2F657-E677-405E-B4F2-DABDC8D02424}.Debug|x86.Build.0 = Debug|Any CPU
 		{1BE2F657-E677-405E-B4F2-DABDC8D02424}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1BE2F657-E677-405E-B4F2-DABDC8D02424}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1BE2F657-E677-405E-B4F2-DABDC8D02424}.Release|ARM.ActiveCfg = Release|Any CPU
 		{1BE2F657-E677-405E-B4F2-DABDC8D02424}.Release|ARM.Build.0 = Release|Any CPU
 		{1BE2F657-E677-405E-B4F2-DABDC8D02424}.Release|ARM64.ActiveCfg = Release|Any CPU
@@ -502,7 +501,6 @@ Global
 		{09CC3DB2-7465-49B2-AF66-4FB304CAA0D6}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{09CC3DB2-7465-49B2-AF66-4FB304CAA0D6}.Debug|x86.Build.0 = Debug|Any CPU
 		{09CC3DB2-7465-49B2-AF66-4FB304CAA0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09CC3DB2-7465-49B2-AF66-4FB304CAA0D6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{09CC3DB2-7465-49B2-AF66-4FB304CAA0D6}.Release|ARM.ActiveCfg = Release|Any CPU
 		{09CC3DB2-7465-49B2-AF66-4FB304CAA0D6}.Release|ARM.Build.0 = Release|Any CPU
 		{09CC3DB2-7465-49B2-AF66-4FB304CAA0D6}.Release|ARM64.ActiveCfg = Release|Any CPU
@@ -542,7 +540,6 @@ Global
 		{DA2EF1EB-A7AF-4A11-ABE8-07167122976B}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{DA2EF1EB-A7AF-4A11-ABE8-07167122976B}.Debug|x86.Build.0 = Debug|Any CPU
 		{DA2EF1EB-A7AF-4A11-ABE8-07167122976B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DA2EF1EB-A7AF-4A11-ABE8-07167122976B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DA2EF1EB-A7AF-4A11-ABE8-07167122976B}.Release|ARM.ActiveCfg = Release|Any CPU
 		{DA2EF1EB-A7AF-4A11-ABE8-07167122976B}.Release|ARM.Build.0 = Release|Any CPU
 		{DA2EF1EB-A7AF-4A11-ABE8-07167122976B}.Release|ARM64.ActiveCfg = Release|Any CPU
@@ -602,7 +599,6 @@ Global
 		{6C770675-1D44-4E1B-A8E3-89EDC3290C2A}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{6C770675-1D44-4E1B-A8E3-89EDC3290C2A}.Debug|x86.Build.0 = Debug|Any CPU
 		{6C770675-1D44-4E1B-A8E3-89EDC3290C2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C770675-1D44-4E1B-A8E3-89EDC3290C2A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6C770675-1D44-4E1B-A8E3-89EDC3290C2A}.Release|ARM.ActiveCfg = Release|Any CPU
 		{6C770675-1D44-4E1B-A8E3-89EDC3290C2A}.Release|ARM.Build.0 = Release|Any CPU
 		{6C770675-1D44-4E1B-A8E3-89EDC3290C2A}.Release|ARM64.ActiveCfg = Release|Any CPU

@@ -1,6 +1,9 @@
 ﻿using System.Reactive.Linq;
 using System.Windows;
+
 using ReactiveUI;
+
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
@@ -15,18 +18,57 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
             InitializeComponent();
             this.WhenActivated(() => new[]
             {
-                ViewModel!.TitleChanges
-                    .BindTo(this, vm=>vm.Title.Text),
                 ViewModel!.SelectionCountChanges
                     .Select(count=>count.ToString())
                     .BindTo(this, vm=>vm.ItemCount.Text),
-                ViewModel!.ShowItemCount
+                ViewModel!.ShowItemCountChanges
                     .Select(visible=>visible?Visibility.Visible:Visibility.Collapsed)
                     .BindTo(this, vm=>vm.ItemCountBorder.Visibility),
-                
                 this.Bind(ViewModel,
                     vm=>vm.TabStrip,
-                    v=>v.TabStrip.ViewModel)
+                    v=>v.TabStrip.ViewModel),
+
+                /* name edit bindings */
+                //editMode = true
+                this.Bind(ViewModel,
+                    vm=>vm.EditedName,
+                    v=>v.NameEditor.Text),
+                this.ViewModel
+                    .EditModeChanges
+                    .Select(editMode=>editMode?Visibility.Visible:Visibility.Collapsed)
+                    .OutputObservable(out var editorVisible)
+                    .BindTo(this,
+                        vm=>vm.NameEditor.Visibility),
+                editorVisible.BindTo(this,
+                    vm=>vm.RevertName.Visibility),
+                this.BindCommand(ViewModel,
+                    vm=>vm.RevertNameCommand,
+                    v=>v.RevertName),
+                editorVisible.BindTo(this,
+                    vm=>vm.SaveName.Visibility),
+                this.BindCommand(ViewModel,
+                    vm=>vm.SaveNameCommand,
+                    v=>v.SaveName),
+
+                //editMode = false
+                this.Bind(ViewModel,
+                    vm=>vm.EditedName,
+                    v=>v.NameDisplay.Text),
+                this.ViewModel
+                    .EditModeChanges
+                    .Select(editMode=>editMode?Visibility.Collapsed:Visibility.Visible)
+                    .OutputObservable(out var viewerVisible)
+                    .BindTo(this,
+                        vm=>vm.NameDisplay.Visibility),
+                viewerVisible.BindTo(this,
+                    vm=>vm.EditName.Visibility),
+                this.BindCommand(ViewModel,
+                    vm=>vm.EditNameCommand,
+                    v=>v.EditName),
+                //editable
+                ViewModel.EditableChanges
+                    .Select(editable=>editable?Visibility.Visible:Visibility.Collapsed)
+                    .BindTo(this, vm=>vm.EditorButtonContainer.Visibility)
             });
         }
     }
