@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +19,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         void Init(ITagMultiSourceProvider provider);
     }
 
-    public class MultiSourceTagEditorVm:ReactiveObject, IActivatableViewModel
+    public class MultiSourceTagEditorVm:ReactiveObject, IActivatableViewModel, IMultiSourceTagEditor
     {
         public ViewModelActivator Activator { get; } = new();
+        public void Init(ITagMultiSourceProvider provider)
+        {
+           Debugger.Break();
+        }
     }
 }

@@ -11,9 +11,7 @@ using System.Threading;
 using System.Windows.Input;
 
 using DynamicData;
-
-using MoreLinq;
-
+using MoreLinq.Extensions;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -190,8 +188,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
         {
             var foundFiles = directory.Path.GetFiles(FileType.Image, FileType.Model).ToArray();
             var knownFiles = _fileRepository[directory.Path];
-            return foundFiles.FullJoin(
-                knownFiles,
+            return foundFiles.FullJoin(knownFiles,
                 foundFile => foundFile.Value.ToLower(),
                 knownFile => knownFile.Path.Value.ToLower(),
                 found => new RawSyncFileData(null, found),
@@ -230,8 +227,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 var modelFiles = filesToAdd
                     .Where(file => file.Path.GetExtension().IsModel())
                     .ToArray();
-                var itemsToAdd = modelFiles
-                    .DistinctBy(x => x.HashKey)
+                var itemsToAdd = Enumerable.DistinctBy(modelFiles, x => x.HashKey)
                     .Where(file => _itemRepository.ByModelHash(file.HashKey).None())
                     .Select(file => new Item(
                             file.Path.GetFilenameWithoutExtension().ToName(),
@@ -240,7 +236,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                     ).ToArray();
 
 
-                modelFiles.ForEach(modelFile =>
+                modelFiles.ToList().ForEach(modelFile =>
                 {
                     var tags = GetTagsByPath(modelFile.Path);
                     var items =
@@ -251,7 +247,7 @@ namespace TableTopCrucible.Shared.ItemSync.Services
                 });
 
                 _itemRepository.AddRange(itemsToAdd);
-                modelFiles.ForEach(thumbnailPipeline.OnNext);
+                modelFiles.ToList().ForEach(thumbnailPipeline.OnNext);
             }
         }
 
