@@ -31,6 +31,8 @@ namespace TableTopCrucible.Infrastructure.Models.Entities
 
         [JsonProperty]
         public ItemId ItemId { get; init; }
+        [JsonProperty]
+        public ItemGroupId ItemGroupId { get; init; }
         public ImageData()
         {
 

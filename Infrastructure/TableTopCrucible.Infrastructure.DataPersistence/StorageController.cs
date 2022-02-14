@@ -5,7 +5,9 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+
 using DynamicData;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
@@ -14,6 +16,7 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence.Exceptions;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
+
 using Version = TableTopCrucible.Core.ValueTypes.Version;
 
 namespace TableTopCrucible.Infrastructure.DataPersistence
@@ -32,6 +35,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         SourceCache<ImageData, ImageDataId> Images { get; }
         SourceCache<FileData, FileDataId> Files { get; }
         SourceCache<DirectorySetup, DirectorySetupId> DirectorySetups { get; }
+        SourceCache<ItemGroup, ItemGroupId> ItemGroups { get; }
         void Load(LibraryFilePath file);
         void Save(LibraryFilePath file = null);
         void AutoSave();
@@ -60,6 +64,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public SourceCache<ImageData, ImageDataId> Images { get; } = new(image => image.Id);
         public SourceCache<FileData, FileDataId> Files { get; } = new(file => file.Id);
         public SourceCache<DirectorySetup, DirectorySetupId> DirectorySetups { get; } = new(dir => dir.Id);
+        public SourceCache<ItemGroup, ItemGroupId> ItemGroups { get; } = new(group => group.Id);
 
         public void Load(LibraryFilePath file)
         {
@@ -71,10 +76,16 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
 
                 try
                 {
-                    Items.AddOrUpdate(newData.Items);
-                    Images.AddOrUpdate(newData.Images);
-                    Files.AddOrUpdate(newData.Files);
-                    DirectorySetups.AddOrUpdate(newData.DirectorySetups);
+                    if (newData.Items is not null)
+                        Items.AddOrUpdate(newData.Items);
+                    if (newData.Images is not null)
+                        Images.AddOrUpdate(newData.Images);
+                    if (newData.Files is not null)
+                        Files.AddOrUpdate(newData.Files);
+                    if (newData.DirectorySetups is not null)
+                        DirectorySetups.AddOrUpdate(newData.DirectorySetups);
+                    if (newData.ItemGroups is not null)
+                        ItemGroups.AddOrUpdate(newData.ItemGroups);
                 }
                 catch
                 {
@@ -87,6 +98,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
             catch (Exception e)
             {
                 Debugger.Break();
+                _notificationService.AddError(e, "Load failed");
                 throw new LibraryLoadException(file, e);
             }
         }
@@ -120,7 +132,8 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
                         Items = Items.Items.ToArray(),
                         Files = Files.Items.ToArray(),
                         DirectorySetups = DirectorySetups.Items.ToArray(),
-                        Images = Images.Items.ToArray()
+                        Images = Images.Items.ToArray(),
+                        ItemGroups = ItemGroups.Items.ToArray(),
                     });
                 file.Delete();
                 if (!file.Exists())
@@ -157,6 +170,7 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
             Images.Clear();
             Files.Clear();
             DirectorySetups.Clear();
+            ItemGroups.Clear();
         }
     }
 
@@ -169,5 +183,6 @@ namespace TableTopCrucible.Infrastructure.DataPersistence
         public IEnumerable<ImageData> Images { get; set; }
         public IEnumerable<FileData> Files { get; set; }
         public IEnumerable<DirectorySetup> DirectorySetups { get; set; }
+        public IEnumerable<ItemGroup> ItemGroups { get; set; }
     }
 }
