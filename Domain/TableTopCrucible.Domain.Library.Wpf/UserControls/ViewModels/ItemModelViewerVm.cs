@@ -100,7 +100,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 
         public SortingOrder Position => (SortingOrder)1;
 
-        public void InitiatingClose()
+        public void BeforeClose()
         {
             this.ModelViewer.DisposeCurrentModel = true;
         }

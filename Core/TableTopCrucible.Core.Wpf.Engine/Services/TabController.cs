@@ -71,7 +71,7 @@ namespace TableTopCrucible.Core.Wpf.Engine.Services
                 throw new NullReferenceException(nameof(tab));
             if (!Tabs.Items.Contains(tab))
                 throw new ArgumentException("the tab must be added before it can be selected");
-            _selectedTabChanges.Value?.InitiatingClose();
+            _selectedTabChanges.Value?.BeforeClose();
             _selectedTabChanges.OnNext(tab);
 
         }

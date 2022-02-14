@@ -11,6 +11,7 @@ using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Domain.Library.Wpf.Services;
 using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Shared.Wpf.Models;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
 {
@@ -24,7 +25,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         public ITagEditor TagEditor { get; }
         public ViewModelActivator Activator { get; } = new();
 
-        public ItemDataViewerVm(ITagEditor tagEditor, ILibraryService libraryService)
+        public ItemDataViewerVm(ITagEditor tagEditor, ILibraryService libraryService, IMultiSourceTagEditor multiSourceTagEditor)
         {
             TagEditor = tagEditor;
             _isSelectable = libraryService
@@ -32,11 +33,19 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
                 .CountChanged
                 .Select(count => count > 0)
                 .ToProperty(this, vm => vm.IsSelectable);
-            this.WhenActivated(() => new[]
+
+            this.WhenActivated(() =>
             {
-                libraryService.SingleSelectedItemChanges
-                    .Select(item=>item?.Tags)
-                    .BindTo(this, vm=>vm.TagEditor.TagSource)
+                var provider = new MultiItemTagSource(libraryService.SelectedItems);
+
+                multiSourceTagEditor.Init(provider);
+                return new[]
+                {
+                    libraryService.SingleSelectedItemChanges
+                        .Select(item => item?.Tags)
+                        .BindTo(this, vm => vm.TagEditor.TagSource),
+                    provider
+                };
             });
         }
 
@@ -50,7 +59,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
         private readonly ObservableAsPropertyHelper<bool> _isSelectable;
         public bool IsSelectable => _isSelectable.Value;
         public SortingOrder Position => (SortingOrder)2;
-        public void InitiatingClose() { }
+        public void BeforeClose() { }
 
         #endregion
     }

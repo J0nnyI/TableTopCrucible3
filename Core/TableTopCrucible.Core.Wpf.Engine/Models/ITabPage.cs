@@ -16,6 +16,6 @@ namespace TableTopCrucible.Core.Wpf.Engine.Models
         public bool IsSelectable { get; }
         SortingOrder Position { get; }
         //executed when the user switches from this tab to another
-        public void InitiatingClose();
+        public void BeforeClose();
     }
 }
