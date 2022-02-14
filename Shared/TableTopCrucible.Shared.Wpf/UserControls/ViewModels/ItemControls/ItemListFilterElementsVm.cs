@@ -15,6 +15,7 @@ using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Automation.Enums;
 using TableTopCrucible.Infrastructure.Models.Automation.Filters;
 using TableTopCrucible.Infrastructure.Models.Controller;
 using TableTopCrucible.Infrastructure.Models.Entities;

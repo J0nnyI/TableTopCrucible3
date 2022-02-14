@@ -1,4 +1,5 @@
 ﻿using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Automation.Enums;
 
 namespace TableTopCrucible.Infrastructure.Models.Automation.Filters
 {

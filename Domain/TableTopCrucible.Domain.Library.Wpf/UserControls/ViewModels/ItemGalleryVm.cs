@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Windows;
 using DynamicData;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
@@ -18,9 +16,10 @@ using TableTopCrucible.Domain.Library.Wpf.Services;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Infrastructure.Repositories.Services;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 using TableTopCrucible.Shared.Wpf.ValueTypes;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
+namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
 {
     [Singleton]
     public interface IItemGallery:ITabPage

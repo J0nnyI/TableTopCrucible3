@@ -1,8 +1,9 @@
 ﻿using System.Reactive.Linq;
 using ReactiveUI;
+using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.Views
+namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
 {
     /// <summary>
     ///     Interaction logic for GalleryV.xaml

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TableTopCrucible.Infrastructure.Models.Automation.Enums;
 using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Infrastructure.Models.Automation.Filters

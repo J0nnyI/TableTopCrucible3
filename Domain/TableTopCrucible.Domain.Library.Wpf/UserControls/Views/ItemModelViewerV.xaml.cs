@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
-using TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
+using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.Views.ItemControls
+namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
 {
     /// <summary>
     ///     Interaction logic for ItemModelViewerV.xaml

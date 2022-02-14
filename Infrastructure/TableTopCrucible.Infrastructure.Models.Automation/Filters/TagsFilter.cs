@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Automation.Enums;
 using TableTopCrucible.Infrastructure.Models.Entities;
 
 namespace TableTopCrucible.Infrastructure.Models.Automation.Filters

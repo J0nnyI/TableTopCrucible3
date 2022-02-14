@@ -1,16 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DynamicData;
+﻿using System.Diagnostics;
 using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
-using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Infrastructure.Models.Controller;
-using TableTopCrucible.Shared.Wpf.Models;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
+namespace TableTopCrucible.Shared.Wpf.Models
 {
 
     [Transient]

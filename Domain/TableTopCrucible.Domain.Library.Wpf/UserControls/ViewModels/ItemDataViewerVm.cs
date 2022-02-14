@@ -1,19 +1,15 @@
 ﻿using System.Reactive.Linq;
-
 using MaterialDesignThemes.Wpf;
-
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Domain.Library.Wpf.Services;
-using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Shared.Wpf.Models;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
+namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels
 {
     [Transient]
     public interface IItemDataViewer : ITabPage

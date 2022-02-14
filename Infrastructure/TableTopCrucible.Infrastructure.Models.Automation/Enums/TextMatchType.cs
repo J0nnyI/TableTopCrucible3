@@ -1,4 +1,4 @@
-﻿namespace TableTopCrucible.Infrastructure.Models.Automation.Filters
+﻿namespace TableTopCrucible.Infrastructure.Models.Automation.Enums
 {
     public enum TextMatchType
     {
