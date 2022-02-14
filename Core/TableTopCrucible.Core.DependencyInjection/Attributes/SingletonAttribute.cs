@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace TableTopCrucible.Core.DependencyInjection.Attributes
+namespace TableTopCrucible.Core.DependencyInjection.Attributes;
+
+[AttributeUsage(AttributeTargets.Interface, AllowMultiple = true)]
+public class SingletonAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = true)]
-    public class SingletonAttribute : Attribute
-    {
-    }
 }

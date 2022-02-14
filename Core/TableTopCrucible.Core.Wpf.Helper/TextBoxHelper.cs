@@ -1,14 +1,13 @@
 ﻿using System.Windows.Controls;
 
-namespace TableTopCrucible.Core.Wpf.Helper
+namespace TableTopCrucible.Core.Wpf.Helper;
+
+public static class TextBoxHelper
 {
-    public static class TextBoxHelper
+    public static void ScrollToRight(this TextBox textBox)
     {
-        public static void ScrollToRight(this TextBox textBox)
-        {
-            textBox.CaretIndex = textBox.Text.Length;
-            var rect = textBox.GetRectFromCharacterIndex(textBox.CaretIndex);
-            textBox.ScrollToHorizontalOffset(rect.Right);
-        }
+        textBox.CaretIndex = textBox.Text.Length;
+        var rect = textBox.GetRectFromCharacterIndex(textBox.CaretIndex);
+        textBox.ScrollToHorizontalOffset(rect.Right);
     }
 }

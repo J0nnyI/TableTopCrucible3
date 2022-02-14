@@ -47,7 +47,7 @@
                x:Key="RotatingIcon">
             <Setter Property="LayoutTransform">
                 <Setter.Value>
-                    <RotateTransform Angle="0"/>
+                    <RotateTransform Angle="0" />
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
@@ -56,9 +56,9 @@
                         <BeginStoryboard>
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetProperty="(LayoutTransform).(RotateTransform.Angle)"
-                                                                     From="0.0"
-                                                                     To="180.0"
-                                                                     Duration="{x:Static helper:SettingsHelper.AnimationDuration}"/>
+                                                 From="0.0"
+                                                 To="180.0"
+                                                 Duration="{x:Static helper:SettingsHelper.AnimationDuration}" />
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
@@ -66,9 +66,9 @@
                         <BeginStoryboard>
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetProperty="(LayoutTransform).(RotateTransform.Angle)"
-                                                                     From="180.0"
-                                                                     To="0.0"
-                                                                     Duration="{x:Static helper:SettingsHelper.AnimationDuration}"/>
+                                                 From="180.0"
+                                                 To="0.0"
+                                                 Duration="{x:Static helper:SettingsHelper.AnimationDuration}" />
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
@@ -86,17 +86,17 @@
             <Expander.Header>
                 <Grid Height="30">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="30" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <md:PackIcon x:Name="Icon"
                                  Height="{StaticResource IconSize}"
                                  Width="{StaticResource IconSize}"
                                  Margin="3"
-                                 Grid.Column="0" 
-                                 VerticalAlignment="Center"/>
+                                 Grid.Column="0"
+                                 VerticalAlignment="Center" />
                     <ProgressBar Name="CountDownTimer"
                                  Style="{StaticResource MaterialDesignCircularProgressBar}"
                                  Width="{StaticResource TimerSize}"
@@ -106,12 +106,12 @@
                                  Margin="0"
                                  Grid.Column="0"
                                  Value="1"
-                                 Maximum="2"/>
+                                 Maximum="2" />
                     <TextBlock Name="Title"
                                Style="{StaticResource MaterialDesignBody2TextBlock}"
                                Margin="4 0 0 0"
                                VerticalAlignment="Center"
-                               Grid.Column="1"/>
+                               Grid.Column="1" />
                     <md:PackIcon x:Name="ExpanderIcon"
                                  Style="{StaticResource RotatingIcon}"
                                  Kind="ExpandMore"
@@ -133,11 +133,11 @@
                             Style="{StaticResource MaterialDesignIconButton}" />
                 </Grid>
             </Expander.Header>
-                <TextBlock Name="Content" 
-                           FontFamily="Roboto"
-                           Style="{StaticResource MaterialDesignBody1TextBlock}"
-                           TextWrapping="Wrap"
-                           Margin="24 0 24 12"/>
+            <TextBlock Name="Content"
+                       FontFamily="Roboto"
+                       Style="{StaticResource MaterialDesignBody1TextBlock}"
+                       TextWrapping="Wrap"
+                       Margin="24 0 24 12" />
         </Expander>
     </md:Card>
 </rxui:ReactiveUserControl>

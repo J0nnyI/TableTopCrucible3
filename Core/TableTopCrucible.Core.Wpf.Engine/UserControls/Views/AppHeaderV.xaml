@@ -78,7 +78,7 @@
                                 UseLayoutRounding="True"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center">
-                            <md:PackIcon Name="JobToggleIcon"/>
+                            <md:PackIcon Name="JobToggleIcon" />
                         </Button>
                     </Grid>
                 </md:Badged>
@@ -92,7 +92,7 @@
                     <Button ToolTip="Notifications"
                             md:RippleAssist.IsDisabled="False"
                             x:Name="NotificationToggle">
-                        <md:PackIcon Name="NotificationToggleIcon"/>
+                        <md:PackIcon Name="NotificationToggleIcon" />
                     </Button>
                 </md:Badged>
             </StackPanel>

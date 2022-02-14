@@ -3,142 +3,142 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Media.Media3D;
-
 using HelixToolkit.Wpf;
-
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Helper;
-using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.Wpf.Services;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
+namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
+
+[Transient]
+public interface IModelViewer
 {
-    [Transient]
-    public interface IModelViewer
+    ModelFilePath Model { get; set; }
+
+    /// <summary>
+    ///     will be shown instead of the model if set
+    /// </summary>
+    Message PlaceholderMessage { get; set; }
+
+    bool DisposeCurrentModel { get; set; }
+
+    ImageFilePath GenerateThumbnail(Name sourceName);
+}
+
+public class ModelViewerVm : ReactiveObject, IModelViewer, IActivatableViewModel
+{
+    private readonly IWpfThumbnailGenerationService _thumbnailService;
+
+    private readonly ObservableAsPropertyHelper<bool> _isActivated;
+
+    public ModelViewerVm(
+        IWpfThumbnailGenerationService thumbnailService)
     {
-        ModelFilePath Model { get; set; }
-
-        /// <summary>
-        ///     will be shown instead of the model if set
-        /// </summary>
-        Message PlaceholderMessage { get; set; }
-
-        bool DisposeCurrentModel { get; set; }
-
-        ImageFilePath GenerateThumbnail(Name sourceName);
-    }
-
-    public class ModelViewerVm : ReactiveObject, IModelViewer, IActivatableViewModel
-    {
-        private readonly IWpfThumbnailGenerationService _thumbnailService;
-
-        private readonly ObservableAsPropertyHelper<bool> _isActivated;
-
-        public ModelViewerVm(
-            IWpfThumbnailGenerationService thumbnailService)
+        _thumbnailService = thumbnailService;
+        this.WhenActivated(() => new[]
         {
-            _thumbnailService = thumbnailService;
-            this.WhenActivated(() => new[]
-            {
-                new ActOnLifecycle(()=>DisposeCurrentModel=false,null),
-                this.WhenAnyValue(
-                        vm => vm.Model,
-                        vm=>vm.DisposeCurrentModel,
-                        (model, dispose)=>new{model, dispose})
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Do(x =>
-                    {// set loading info
-                        if (x.dispose)
-                        {
-                            ViewportContent = null;
-                            return;
-                        }
-
-                        PlaceholderText =
-                            PlaceholderMessage ??
-                            (x.model is null
-                                ? (Message)"No File selected"
-                                : (Message)"Loading");
-                        if (x.model is null ||
-                            PlaceholderMessage is not null ||
-                            x.model.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
-                           )
-                            IsLoading = true;
-
+            new ActOnLifecycle(() => DisposeCurrentModel = false, null),
+            this.WhenAnyValue(
+                    vm => vm.Model,
+                    vm => vm.DisposeCurrentModel,
+                    (model, dispose) => new { model, dispose })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(x =>
+                {
+                    // set loading info
+                    if (x.dispose)
+                    {
                         ViewportContent = null;
-                    })
-                    .Select(x =>x.dispose?null: x.model)
-                    .WhereNotNull()
-                    .Select(file =>
-                    {
-                        return file is null
-                            ? Observable.Return(null as Model3DGroup)
-                            : Observable.Start(() =>
-                            {
-                                var model = file.Load(true);
-                                return model;
-                            }, RxApp.TaskpoolScheduler);
-                    })
-                    .Switch()
-                    .Subscribe(model =>
-                    {
-                        if (model is null)
-                            return;
+                        return;
+                    }
 
-                        RxApp.MainThreadScheduler.Schedule(model, (_, model) =>
-                        {
-                            if (model is null) // happens when a new item has been loaded while the scheduler was queued
-                                return null;
-                            ViewportContent = model;
-                            BringIntoView.Handle(Unit.Default).Subscribe();
-                            IsLoading = false;
-                            return null;
-                        });
-                    })
-            });
+                    PlaceholderText =
+                        PlaceholderMessage ??
+                        (x.model is null
+                            ? (Message)"No File selected"
+                            : (Message)"Loading");
+                    if (x.model is null ||
+                        PlaceholderMessage is not null ||
+                        x.model.GetSize().Value > SettingsHelper.FileMinLoadingScreenSize
+                       )
+                        IsLoading = true;
 
-            _isActivated = this.GetIsActivatedChanges()
-                .Buffer(TimeSpan.FromMilliseconds(200))
-                .Select(buffer => buffer.FirstOrDefault())
+                    ViewportContent = null;
+                })
+                .Select(x => x.dispose
+                    ? null
+                    : x.model)
                 .WhereNotNull()
-                .DistinctUntilChanged()
-                .Do(x => { })
-                .Publish()
-                .RefCount()
-                .ToProperty(this, vm => vm.IsActivated);
-        }
+                .Select(file =>
+                {
+                    return file is null
+                        ? Observable.Return(null as Model3DGroup)
+                        : Observable.Start(() =>
+                        {
+                            var model = file.Load(true);
+                            return model;
+                        }, RxApp.TaskpoolScheduler);
+                })
+                .Switch()
+                .Subscribe(model =>
+                {
+                    if (model is null)
+                        return;
 
-        [Reactive]
-        public bool IsLoading { get; set; }
+                    RxApp.MainThreadScheduler.Schedule(model, (_, model) =>
+                    {
+                        if (model is null) // happens when a new item has been loaded while the scheduler was queued
+                            return null;
+                        ViewportContent = model;
+                        BringIntoView.Handle(Unit.Default).Subscribe();
+                        IsLoading = false;
+                        return null;
+                    });
+                })
+        });
 
-        [Reactive]
-        public Message PlaceholderText { get; set; }
-
-        [Reactive]
-        public Model3DGroup ViewportContent { get; set; }
-
-        public Interaction<Unit, Unit> BringIntoView { get; } = new();
-        public HelixViewport3D Viewport { get; set; } //dirty but works
-        public ViewModelActivator Activator { get; } = new();
-
-        [Reactive]
-        public ModelFilePath Model { get; set; }
-
-        [Reactive]
-        public Message PlaceholderMessage { get; set; }
-        [Reactive]
-        public bool DisposeCurrentModel { get; set; }
-        public bool IsActivated => _isActivated.Value;
-
-        /// <summary>
-        /// </summary>
-        /// <param name="sourceName">i.e. ItemName</param>
-        public ImageFilePath GenerateThumbnail(Name sourceName)
-            => _thumbnailService.Generate(Model, sourceName, Viewport);
+        _isActivated = this.GetIsActivatedChanges()
+            .Buffer(TimeSpan.FromMilliseconds(200))
+            .Select(buffer => buffer.FirstOrDefault())
+            .WhereNotNull()
+            .DistinctUntilChanged()
+            .Do(x => { })
+            .Publish()
+            .RefCount()
+            .ToProperty(this, vm => vm.IsActivated);
     }
+
+    [Reactive]
+    public bool IsLoading { get; set; }
+
+    [Reactive]
+    public Message PlaceholderText { get; set; }
+
+    [Reactive]
+    public Model3DGroup ViewportContent { get; set; }
+
+    public Interaction<Unit, Unit> BringIntoView { get; } = new();
+    public HelixViewport3D Viewport { get; set; } //dirty but works
+    public ViewModelActivator Activator { get; } = new();
+
+    [Reactive]
+    public ModelFilePath Model { get; set; }
+
+    [Reactive]
+    public Message PlaceholderMessage { get; set; }
+
+    [Reactive]
+    public bool DisposeCurrentModel { get; set; }
+
+    public bool IsActivated => _isActivated.Value;
+
+    /// <summary>
+    /// </summary>
+    /// <param name="sourceName">i.e. ItemName</param>
+    public ImageFilePath GenerateThumbnail(Name sourceName)
+        => _thumbnailService.Generate(Model, sourceName, Viewport);
 }

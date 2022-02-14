@@ -10,91 +10,90 @@ using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
-namespace TableTopCrucible.Core.Jobs.Progression.Services
+namespace TableTopCrucible.Core.Jobs.Progression.Services;
+
+[Singleton]
+public interface IProgressTrackingService
 {
-    [Singleton]
-    public interface IProgressTrackingService
+    IObservableList<ITrackingViewer> TrackerList { get; }
+
+    IObservable<CurrentProgressPercent> TotalProgress { get; }
+
+    // creates a new tracker and adds it to the collection
+    ICompositeTracker CreateCompositeTracker(Name title);
+
+    // creates a new tracker and adds it to the collection
+    ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null);
+}
+
+internal class ProgressTrackingService : IProgressTrackingService, IDisposable
+{
+    private readonly IObservableList<ITrackingViewer> _completedJobs;
+    private readonly CompositeDisposable _disposables = new();
+    private readonly SourceList<ITrackingViewer> trackerList = new();
+
+    public ProgressTrackingService()
     {
-        IObservableList<ITrackingViewer> TrackerList { get; }
+        TotalProgress = trackerList.Connect()
+            .FilterOnObservable(tracker => tracker.JobStateChanges.Select(state => state == JobState.InProgress))
+            .ToCollection()
+            .Select(trackers => trackers
+                .Select(tracker => tracker.GetCurrentProgressInPercent())
+                .CombineLatest(
+                    progresses =>
+                        !progresses.Any()
+                            ? CurrentProgressPercent.Min
+                            : (CurrentProgressPercent)(
+                                progresses.Sum(progressPercent => progressPercent.Value)
+                                / progresses.Count
+                            )
+                )
+                .Select(progress => progress < (CurrentProgressPercent)100
+                    ? progress
+                    : (CurrentProgressPercent)0)
+            )
+            .Switch()
+            .DistinctUntilChanged()
+            .StartWith(CurrentProgressPercent.Min)
+            .Replay(1)
+            .ConnectUntil(_disposables);
 
-        IObservable<CurrentProgressPercent> TotalProgress { get; }
-
-        // creates a new tracker and adds it to the collection
-        ICompositeTracker CreateCompositeTracker(Name title);
-
-        // creates a new tracker and adds it to the collection
-        ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null);
+        _completedJobs = trackerList
+            .Connect()
+            .FilterOnObservable(tracker => tracker.JobStateChanges.Select(state => state == JobState.Done))
+            .AsObservableList();
     }
 
-    internal class ProgressTrackingService : IProgressTrackingService, IDisposable
+    public void Dispose()
+        => _disposables.Dispose();
+
+    public ICompositeTracker CreateCompositeTracker(Name title = null)
     {
-        private readonly IObservableList<ITrackingViewer> _completedJobs;
-        private readonly CompositeDisposable _disposables = new();
-        private readonly SourceList<ITrackingViewer> trackerList = new();
+        var tracker = new CompositeTracker(title);
+        _limitDoneTrackers(tracker);
+        trackerList.Add(tracker);
+        return tracker;
+    }
 
-        public ProgressTrackingService()
-        {
-            TotalProgress = trackerList.Connect()
-                .FilterOnObservable(tracker => tracker.JobStateChanges.Select(state => state == JobState.InProgress))
-                .ToCollection()
-                .Select(trackers => trackers
-                    .Select(tracker => tracker.GetCurrentProgressInPercent())
-                    .CombineLatest(
-                        progresses =>
-                            !progresses.Any()
-                                ? CurrentProgressPercent.Min
-                                : (CurrentProgressPercent)(
-                                    progresses.Sum(progressPercent => progressPercent.Value)
-                                    / progresses.Count
-                                )
-                    )
-                    .Select(progress => progress < (CurrentProgressPercent)100
-                        ? progress
-                        : (CurrentProgressPercent)0)
-                )
-                .Switch()
-                .DistinctUntilChanged()
-                .StartWith(CurrentProgressPercent.Min)
-                .Replay(1)
-                .ConnectUntil(_disposables);
+    public ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null)
+    {
+        var tracker = new SourceTracker(title, target);
+        _limitDoneTrackers(tracker);
+        trackerList.Add(tracker);
+        return tracker;
+    }
 
-            _completedJobs = trackerList
-                .Connect()
-                .FilterOnObservable(tracker => tracker.JobStateChanges.Select(state => state == JobState.Done))
-                .AsObservableList();
-        }
+    public IObservableList<ITrackingViewer> TrackerList => trackerList.AsObservableList();
+    public IObservable<CurrentProgressPercent> TotalProgress { get; }
 
-        public void Dispose()
-            => _disposables.Dispose();
-
-        public ICompositeTracker CreateCompositeTracker(Name title = null)
-        {
-            var tracker = new CompositeTracker(title);
-            _limitDoneTrackers(tracker);
-            trackerList.Add(tracker);
-            return tracker;
-        }
-
-        public ISourceTracker CreateSourceTracker(Name title = null, TargetProgress target = null)
-        {
-            var tracker = new SourceTracker(title, target);
-            _limitDoneTrackers(tracker);
-            trackerList.Add(tracker);
-            return tracker;
-        }
-
-        public IObservableList<ITrackingViewer> TrackerList => trackerList.AsObservableList();
-        public IObservable<CurrentProgressPercent> TotalProgress { get; }
-
-        private void _limitDoneTrackers(ITrackingViewer tracker)
-        {
-            tracker.OnDone()
-                .Take(1)
-                .Subscribe(_ =>
-                {
-                    if (_completedJobs.Count >= SettingsHelper.DoneJobLimit)
-                        trackerList.Remove(_completedJobs.Items.First());
-                });
-        }
+    private void _limitDoneTrackers(ITrackingViewer tracker)
+    {
+        tracker.OnDone()
+            .Take(1)
+            .Subscribe(_ =>
+            {
+                if (_completedJobs.Count >= SettingsHelper.DoneJobLimit)
+                    trackerList.Remove(_completedJobs.Items.First());
+            });
     }
 }

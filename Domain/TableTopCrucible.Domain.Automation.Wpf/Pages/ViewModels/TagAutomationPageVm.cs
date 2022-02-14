@@ -5,19 +5,18 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
-namespace TableTopCrucible.Domain.Automation.Wpf.Pages.ViewModels
-{
-    [Singleton]
-    public interface ITagAutomationPage : INavigationPage
-    {
-    }
+namespace TableTopCrucible.Domain.Automation.Wpf.Pages.ViewModels;
 
-    public class TagAutomationPageVm : ReactiveObject, IActivatableViewModel, ITagAutomationPage
-    {
-        public ViewModelActivator Activator { get; } = new();
-        public PackIconKind? Icon => PackIconKind.Tags;
-        public Name Title => Name.From("Tagging Automation");
-        public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
-        public SortingOrder Position => SortingOrder.From(2);
-    }
+[Singleton]
+public interface ITagAutomationPage : INavigationPage
+{
+}
+
+public class TagAutomationPageVm : ReactiveObject, IActivatableViewModel, ITagAutomationPage
+{
+    public ViewModelActivator Activator { get; } = new();
+    public PackIconKind? Icon => PackIconKind.Tags;
+    public Name Title => Name.From("Tagging Automation");
+    public NavigationPageLocation PageLocation => NavigationPageLocation.Upper;
+    public SortingOrder Position => SortingOrder.From(2);
 }

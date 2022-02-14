@@ -1,8 +1,7 @@
-﻿namespace TableTopCrucible.Infrastructure.Models.Automation.Enums
+﻿namespace TableTopCrucible.Infrastructure.Models.Automation.Enums;
+
+public enum ListMatchType
 {
-    public enum ListMatchType
-    {
-        ContainsAll,
-        ContainsAny
-    }
+    ContainsAll,
+    ContainsAny
 }

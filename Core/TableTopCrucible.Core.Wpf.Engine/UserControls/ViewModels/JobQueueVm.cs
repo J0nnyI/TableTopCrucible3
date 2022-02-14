@@ -12,96 +12,95 @@ using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 
-namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels
+namespace TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
+
+[Transient]
+public interface IJobQueue
 {
-    [Transient]
-    public interface IJobQueue
+    JobFilter JobFilter { get; set; }
+    public IObservable<JobCount> JobCountChanges { get; }
+}
+
+public class JobQueueVm : ReactiveObject, IActivatableViewModel, IJobQueue
+{
+    private readonly IObservable<JobFilter> _filterChanges;
+    private readonly IProgressTrackingService _progressTrackingService;
+
+    public ObservableCollectionExtended<IJobViewerCard> Cards = new();
+
+    public JobQueueVm(IProgressTrackingService progressTrackingService)
     {
-        JobFilter JobFilter { get; set; }
-        public IObservable<JobCount> JobCountChanges { get; }
-    }
+        _progressTrackingService = progressTrackingService;
 
-    public class JobQueueVm : ReactiveObject, IActivatableViewModel, IJobQueue
-    {
-        private readonly IObservable<JobFilter> _filterChanges;
-        private readonly IProgressTrackingService _progressTrackingService;
+        _filterChanges =
+            this.WhenAnyValue(vm => vm.JobFilter)
+                .DistinctUntilChanged()
+                .Select(filter => filter ?? JobFilter.All)
+                .Replay(1)
+                .RefCount();
 
-        public ObservableCollectionExtended<IJobViewerCard> Cards = new();
+        JobCountChanges =
+            _progressTrackingService
+                .TrackerList
+                .Connect()
+                .FilterOnObservable(JobToFilter, null, RxApp.TaskpoolScheduler)
+                .Count()
+                .Select(JobCount.From)
+                .Replay(1)
+                .RefCount();
 
-        public JobQueueVm(IProgressTrackingService progressTrackingService)
+        this.WhenActivated(() =>
         {
-            _progressTrackingService = progressTrackingService;
-
-            _filterChanges =
-                this.WhenAnyValue(vm => vm.JobFilter)
-                    .DistinctUntilChanged()
-                    .Select(filter => filter ?? JobFilter.All)
-                    .Replay(1)
-                    .RefCount();
-
-            JobCountChanges =
+            Cards.Clear();
+            return new[]
+            {
                 _progressTrackingService
                     .TrackerList
                     .Connect()
+                    .ObserveOn(RxApp.TaskpoolScheduler)
+                    .Transform(getCardForJob)
                     .FilterOnObservable(JobToFilter, null, RxApp.TaskpoolScheduler)
-                    .Count()
-                    .Select(JobCount.From)
-                    .Replay(1)
-                    .RefCount();
+                    .DisposeMany()
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .SubscribeOn(RxApp.MainThreadScheduler)
+                    .Bind(Cards)
+                    .Subscribe()
+            };
+        });
+    }
 
-            this.WhenActivated(() =>
-            {
-                Cards.Clear();
-                return new[]
-                {
-                    _progressTrackingService
-                        .TrackerList
-                        .Connect()
-                        .ObserveOn(RxApp.TaskpoolScheduler)
-                        .Transform(getCardForJob)
-                        .FilterOnObservable(JobToFilter, null, RxApp.TaskpoolScheduler)
-                        .DisposeMany()
-                        .ObserveOn(RxApp.MainThreadScheduler)
-                        .SubscribeOn(RxApp.MainThreadScheduler)
-                        .Bind(Cards)
-                        .Subscribe()
-                };
-            });
-        }
+    public ViewModelActivator Activator { get; } = new();
+    public IObservable<JobCount> JobCountChanges { get; }
 
-        public ViewModelActivator Activator { get; } = new();
-        public IObservable<JobCount> JobCountChanges { get; }
-
-        /**
+    /**
          * default behavior: show all (Observable.Return(true))
          * this will also be used if the value is null
          */
-        [Reactive]
-        public JobFilter JobFilter { get; set; } = JobFilter.All;
+    [Reactive]
+    public JobFilter JobFilter { get; set; } = JobFilter.All;
 
-        internal IObservable<bool> JobToFilter(IJobViewerCard card)
-        {
-            return card.WhenAnyValue(card => card.Viewer)
-                .Select(JobToFilter)
-                .Switch();
-        }
+    internal IObservable<bool> JobToFilter(IJobViewerCard card)
+    {
+        return card.WhenAnyValue(card => card.Viewer)
+            .Select(JobToFilter)
+            .Switch();
+    }
 
-        internal IObservable<bool> JobToFilter(ITrackingViewer job)
-        {
-            return _filterChanges
-                .Select(filter =>
-                    filter.Value(job)
-                        .Select(res => new { res, job, filter.Description })
-                )
-                .Switch()
-                .Select(x => x.res);
-        }
+    internal IObservable<bool> JobToFilter(ITrackingViewer job)
+    {
+        return _filterChanges
+            .Select(filter =>
+                filter.Value(job)
+                    .Select(res => new { res, job, filter.Description })
+            )
+            .Switch()
+            .Select(x => x.res);
+    }
 
-        public IJobViewerCard getCardForJob(ITrackingViewer viewer)
-        {
-            var card = Locator.Current.GetService<IJobViewerCard>();
-            card.Viewer = viewer;
-            return card;
-        }
+    public IJobViewerCard getCardForJob(ITrackingViewer viewer)
+    {
+        var card = Locator.Current.GetService<IJobViewerCard>();
+        card.Viewer = viewer;
+        return card;
     }
 }

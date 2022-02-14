@@ -1,6 +1,5 @@
-﻿namespace TableTopCrucible.Infrastructure.Models.EntityIds
+﻿namespace TableTopCrucible.Infrastructure.Models.EntityIds;
+
+public class DirectorySetupId : DataIdBase<DirectorySetupId>
 {
-    public class DirectorySetupId : DataIdBase<DirectorySetupId>
-    {
-    }
 }

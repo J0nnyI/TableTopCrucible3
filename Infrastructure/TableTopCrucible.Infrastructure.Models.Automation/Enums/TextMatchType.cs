@@ -1,10 +1,9 @@
-﻿namespace TableTopCrucible.Infrastructure.Models.Automation.Enums
+﻿namespace TableTopCrucible.Infrastructure.Models.Automation.Enums;
+
+public enum TextMatchType
 {
-    public enum TextMatchType
-    {
-        StartsWith,
-        EndsWith,
-        Contains,
-        Equals
-    }
+    StartsWith,
+    EndsWith,
+    Contains,
+    Equals
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -7,193 +6,188 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
-
 using DynamicData;
-using DynamicData.Binding;
-
 using MoreLinq;
-
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-
 using Splat;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls
+namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels.ItemControls;
+
+public class ItemSelectionInfo : ReactiveObject
 {
-    public class ItemSelectionInfo : ReactiveObject
-    {
-        public Item Item => ThumbnailViewer.Item;
-        public IItemThumbnailViewer ThumbnailViewer { get; }
-        public ItemSelectionInfo(Item item)
-        {
-            this.ThumbnailViewer = Locator.Current.GetService<IItemThumbnailViewer>();
-            ThumbnailViewer!.Item = item;
-        }
+    public Item Item => ThumbnailViewer.Item;
+    public IItemThumbnailViewer ThumbnailViewer { get; }
 
-        [Reactive]
-        public bool IsSelected { get; set; }
+    public ItemSelectionInfo(Item item)
+    {
+        this.ThumbnailViewer = Locator.Current.GetService<IItemThumbnailViewer>();
+        ThumbnailViewer!.Item = item;
     }
 
-    [Transient]
-    public interface IItemList : IDisposable
+    [Reactive]
+    public bool IsSelected { get; set; }
+}
+
+[Transient]
+public interface IItemList : IDisposable
+{
+    IObservableList<Item> SelectedItems { get; }
+    Func<Item, bool> Filter { get; set; }
+    void Deselect(Item item);
+    void Select(Item item);
+}
+
+public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel, IDisposable
+{
+    private readonly IFileRepository _fileRepository;
+    private readonly CompositeDisposable _disposables = new();
+    private ReadOnlyObservableCollection<ItemSelectionInfo> _items;
+    public ReadOnlyObservableCollection<ItemSelectionInfo> Items => _items;
+
+    private ItemSelectionInfo _previouslyClickedItem;
+
+    public ItemListVm(IItemRepository itemRepository, IFileRepository fileRepository)
     {
-        IObservableList<Item> SelectedItems { get; }
-        Func<Item, bool> Filter { get; set; }
-        void Deselect(Item item);
-        void Select(Item item);
-    }
+        _fileRepository = fileRepository;
+        _selectedItemInfo = itemRepository
+            .Data
+            .Connect()
+            .Transform(item => new ItemSelectionInfo(item))
+            .RemoveKey()
+            .AsObservableList(); // required to make sure that all subscriber share the same item instance
 
-    public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel, IDisposable
-    {
-        private readonly IFileRepository _fileRepository;
-        private readonly CompositeDisposable _disposables = new();
-        private ReadOnlyObservableCollection<ItemSelectionInfo> _items;
-        public ReadOnlyObservableCollection<ItemSelectionInfo> Items =>_items;
+        SourceList<ItemSelectionInfo> selectedItems = new();
 
-        private ItemSelectionInfo _previouslyClickedItem;
-
-        public ItemListVm(IItemRepository itemRepository, IFileRepository fileRepository)
+        void ItemOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            _fileRepository = fileRepository;
-            _selectedItemInfo = itemRepository
-                .Data
-                .Connect()
-                .Transform(item => new ItemSelectionInfo(item))
-                .RemoveKey()
-                .AsObservableList(); // required to make sure that all subscriber share the same item instance
-
-            SourceList<ItemSelectionInfo> selectedItems = new();
-
-            void ItemOnPropertyChanged(object sender, PropertyChangedEventArgs e)
-            {
-                if (e.PropertyName != nameof(ItemSelectionInfo.IsSelected) || sender is not ItemSelectionInfo itemInfo)
-                    return;
-
-                if (itemInfo.IsSelected)
-                    selectedItems.Add(itemInfo);
-                else
-                    selectedItems.Remove(itemInfo);
-            }
-
-            SelectedItems = selectedItems.Connect()
-                .Transform(itemInfo => itemInfo.Item)
-                .AsObservableList();
-            this.WhenActivated(() => new[]
-            {
-                _selectedItemInfo
-                    .Connect()
-                    .ObserveOn(RxApp.TaskpoolScheduler)
-                    .Filter(this.WhenAnyValue(vm=>vm.Filter)
-                        .Select<Func<Item,bool>,Func<ItemSelectionInfo, bool>>(
-                            filter=>
-                                info=>
-                                    filter(info.Item))
-                        .Throttle(SettingsHelper.FilterThrottleSpan)
-                        .ObserveOn(RxApp.TaskpoolScheduler))
-                    .Sort(itemInfo => itemInfo.ThumbnailViewer.Item.Name.Value)
-                    .OnItemAdded(item=>item.PropertyChanged +=ItemOnPropertyChanged)
-                    .OnItemRemoved(item=>item.PropertyChanged -=ItemOnPropertyChanged)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Bind(out _items)
-                    .Subscribe(),
-
-                this.WhenAnyValue(vm=>vm.Filter)
-                    .Subscribe(filter =>
-                    {
-                        selectedItems.Items
-                            .Where(info => !filter(info.Item))
-                            .ToArray()
-                            .ForEach(item=>item.IsSelected = false);
-                    }),
-
-            });
-        }
-        public ViewModelActivator Activator { get; } = new();
-        private IObservableList<ItemSelectionInfo> _selectedItemInfo { get; }
-        public IObservableList<Item> SelectedItems { get; }
-
-        [Reactive]
-        public Func<Item, bool> Filter { get; set; } = _ => true;
-
-        private ItemSelectionInfo _itemInfoByItem (Item item)
-            => Items.FirstOrDefault(itemInfo => itemInfo.Item == item);
-        public void Deselect(Item item)
-            => _itemInfoByItem(item).IsSelected = false;
-
-        public void Select(Item item)
-            => _itemInfoByItem(item).IsSelected = true;
-
-        public void Dispose()
-            => _disposables.Dispose();
-
-        public void OnItemClicked(ItemSelectionInfo itemInfo, MouseButtonEventArgs e)
-        {
-            var curItem = itemInfo;
-            var prevItem = _previouslyClickedItem;
-            var isCtrlPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Control);
-            var isShiftPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Shift);
-            var isAltPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Alt);
-
-            if (isAltPressed)
+            if (e.PropertyName != nameof(ItemSelectionInfo.IsSelected) || sender is not ItemSelectionInfo itemInfo)
                 return;
-            if (isCtrlPressed)
-                _toggleSelection(curItem);
-            else if (isShiftPressed)
-            {
-                var section =
-                    Items
-                        .Subsection(curItem, prevItem)
-                        .ToArray();
 
-                if (section.Any(item => !item.IsSelected))
-                    _selectItem(section);
-                else
-                    _deselectItems(section);
-            }
+            if (itemInfo.IsSelected)
+                selectedItems.Add(itemInfo);
             else
-            {
-                var otherItems = _selectedItemInfo.Items.Where(itemInfo => itemInfo != curItem).ToArray();
-                otherItems.ForEach(item => item.IsSelected = false);
-                curItem.IsSelected = true;
-            }
-
-            e.Handled = true;
-            _previouslyClickedItem = curItem;
+                selectedItems.Remove(itemInfo);
         }
 
-        private void _toggleSelection(ItemSelectionInfo item)
+        SelectedItems = selectedItems.Connect()
+            .Transform(itemInfo => itemInfo.Item)
+            .AsObservableList();
+        this.WhenActivated(() => new[]
         {
-            item.IsSelected = !item.IsSelected;
-        }
+            _selectedItemInfo
+                .Connect()
+                .ObserveOn(RxApp.TaskpoolScheduler)
+                .Filter(this.WhenAnyValue(vm => vm.Filter)
+                    .Select<Func<Item, bool>, Func<ItemSelectionInfo, bool>>(
+                        filter =>
+                            info =>
+                                filter(info.Item))
+                    .Throttle(SettingsHelper.FilterThrottleSpan)
+                    .ObserveOn(RxApp.TaskpoolScheduler))
+                .Sort(itemInfo => itemInfo.ThumbnailViewer.Item.Name.Value)
+                .OnItemAdded(item => item.PropertyChanged += ItemOnPropertyChanged)
+                .OnItemRemoved(item => item.PropertyChanged -= ItemOnPropertyChanged)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Bind(out _items)
+                .Subscribe(),
 
-        private void _selectItem(params ItemSelectionInfo[] items)
+            this.WhenAnyValue(vm => vm.Filter)
+                .Subscribe(filter =>
+                {
+                    selectedItems.Items
+                        .Where(info => !filter(info.Item))
+                        .ToArray()
+                        .ForEach(item => item.IsSelected = false);
+                }),
+        });
+    }
+
+    public ViewModelActivator Activator { get; } = new();
+    private IObservableList<ItemSelectionInfo> _selectedItemInfo { get; }
+    public IObservableList<Item> SelectedItems { get; }
+
+    [Reactive]
+    public Func<Item, bool> Filter { get; set; } = _ => true;
+
+    private ItemSelectionInfo _itemInfoByItem(Item item)
+        => Items.FirstOrDefault(itemInfo => itemInfo.Item == item);
+
+    public void Deselect(Item item)
+        => _itemInfoByItem(item).IsSelected = false;
+
+    public void Select(Item item)
+        => _itemInfoByItem(item).IsSelected = true;
+
+    public void Dispose()
+        => _disposables.Dispose();
+
+    public void OnItemClicked(ItemSelectionInfo itemInfo, MouseButtonEventArgs e)
+    {
+        var curItem = itemInfo;
+        var prevItem = _previouslyClickedItem;
+        var isCtrlPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Control);
+        var isShiftPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Shift);
+        var isAltPressed = KeyboardHelper.IsKeyPressed(ModifierKeys.Alt);
+
+        if (isAltPressed)
+            return;
+        if (isCtrlPressed)
+            _toggleSelection(curItem);
+        else if (isShiftPressed)
         {
-            items.ToList().ForEach(item => item.IsSelected = true);
-        }
+            var section =
+                Items
+                    .Subsection(curItem, prevItem)
+                    .ToArray();
 
-        private void _deselectItems(params ItemSelectionInfo[] items)
+            if (section.Any(item => !item.IsSelected))
+                _selectItem(section);
+            else
+                _deselectItems(section);
+        }
+        else
         {
-            items.ToList().ForEach(item => item.IsSelected = false);
+            var otherItems = _selectedItemInfo.Items.Where(itemInfo => itemInfo != curItem).ToArray();
+            otherItems.ForEach(item => item.IsSelected = false);
+            curItem.IsSelected = true;
         }
 
-        public void InitiateDrag(DependencyObject source)
-        {
-            var files = this.SelectedItems.Items
-                .Select(item=>item.FileKey3d)
-                .Select(_fileRepository.SingleByHashKey)
-                .Select(file=>file?.Path?.Value)
-                .Where(x => x != null)
-                .ToStringCollection();
+        e.Handled = true;
+        _previouslyClickedItem = curItem;
+    }
 
-            DataObject dragData = new DataObject();
-            dragData.SetFileDropList(files);
-            DragDrop.DoDragDrop(source, dragData, DragDropEffects.Move);
-        }
+    private void _toggleSelection(ItemSelectionInfo item)
+    {
+        item.IsSelected = !item.IsSelected;
+    }
+
+    private void _selectItem(params ItemSelectionInfo[] items)
+    {
+        items.ToList().ForEach(item => item.IsSelected = true);
+    }
+
+    private void _deselectItems(params ItemSelectionInfo[] items)
+    {
+        items.ToList().ForEach(item => item.IsSelected = false);
+    }
+
+    public void InitiateDrag(DependencyObject source)
+    {
+        var files = this.SelectedItems.Items
+            .Select(item => item.FileKey3d)
+            .Select(_fileRepository.SingleByHashKey)
+            .Select(file => file?.Path?.Value)
+            .Where(x => x != null)
+            .ToStringCollection();
+
+        DataObject dragData = new DataObject();
+        dragData.SetFileDropList(files);
+        DragDrop.DoDragDrop(source, dragData, DragDropEffects.Move);
     }
 }

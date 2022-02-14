@@ -1,22 +1,21 @@
 ﻿using ReactiveUI;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 
-namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views
+namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views;
+
+/// <summary>
+///     Interaction logic for ItemModelViewerV.xaml
+/// </summary>
+public partial class ItemModelViewerV : ReactiveUserControl<ItemModelViewerVm>
 {
-    /// <summary>
-    ///     Interaction logic for ItemModelViewerV.xaml
-    /// </summary>
-    public partial class ItemModelViewerV : ReactiveUserControl<ItemModelViewerVm>
+    public ItemModelViewerV()
     {
-        public ItemModelViewerV()
+        InitializeComponent();
+        this.WhenActivated(() => new[]
         {
-            InitializeComponent();
-            this.WhenActivated(() => new[]
-            {
-                this.Bind(ViewModel,
-                    vm => vm.ModelViewer,
-                    v => v.ModelViewer.ViewModel)
-            });
-        }
+            this.Bind(ViewModel,
+                vm => vm.ModelViewer,
+                v => v.ModelViewer.ViewModel)
+        });
     }
 }

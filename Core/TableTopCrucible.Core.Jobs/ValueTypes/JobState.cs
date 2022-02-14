@@ -1,9 +1,8 @@
-﻿namespace TableTopCrucible.Core.Jobs.ValueTypes
+﻿namespace TableTopCrucible.Core.Jobs.ValueTypes;
+
+public enum JobState
 {
-    public enum JobState
-    {
-        ToDo,
-        InProgress,
-        Done
-    }
+    ToDo,
+    InProgress,
+    Done
 }

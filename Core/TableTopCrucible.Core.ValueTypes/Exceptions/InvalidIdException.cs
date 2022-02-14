@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace TableTopCrucible.Core.ValueTypes.Exceptions
+namespace TableTopCrucible.Core.ValueTypes.Exceptions;
+
+public class InvalidIdException : Exception
 {
-    public class InvalidIdException : Exception
+    public InvalidIdException(string message) : base(message)
     {
-        public InvalidIdException(string message) : base(message)
-        {
-        }
     }
 }

@@ -16,6 +16,6 @@
             <hx:DefaultLights />
             <ModelVisual3D x:Name="ContainerVisual" />
         </hx:HelixViewport3D>
-        <uc:LoadingScreen x:Name="LoadingScreen"/>
+        <uc:LoadingScreen x:Name="LoadingScreen" />
     </Grid>
 </rxui:ReactiveUserControl>

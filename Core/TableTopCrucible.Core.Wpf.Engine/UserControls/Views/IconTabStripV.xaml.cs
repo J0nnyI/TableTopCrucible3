@@ -1,38 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using ReactiveUI;
 
-using ReactiveUI;
+namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views;
 
-using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
-
-namespace TableTopCrucible.Core.Wpf.Engine.UserControls.Views
+/// <summary>
+/// Interaction logic for IconTabStripV.xaml
+/// </summary>
+public partial class IconTabStripV
 {
-    /// <summary>
-    /// Interaction logic for IconTabStripV.xaml
-    /// </summary>
-    public partial class IconTabStripV
+    public IconTabStripV()
     {
-        public IconTabStripV()
+        InitializeComponent();
+        this.WhenActivated(() => new[]
         {
-            InitializeComponent();
-            this.WhenActivated(() => new[]
-            {
-                this.OneWayBind(ViewModel,
-                    vm=>vm.Tabs,
-                    v=>v.TabItems.ItemsSource)
-            });
-        }
+            this.OneWayBind(ViewModel,
+                vm => vm.Tabs,
+                v => v.TabItems.ItemsSource)
+        });
     }
 }

@@ -1,15 +1,14 @@
 ﻿using System.Windows;
 
-namespace TableTopCrucible.Domain.Library.Wpf
+namespace TableTopCrucible.Domain.Library.Wpf;
+
+/// <summary>
+///     Interaction logic for DummyApp.xaml
+/// </summary>
+internal partial class DummyApp : Application
 {
-    /// <summary>
-    ///     Interaction logic for DummyApp.xaml
-    /// </summary>
-    internal partial class DummyApp : Application
+    public DummyApp()
     {
-        public DummyApp()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

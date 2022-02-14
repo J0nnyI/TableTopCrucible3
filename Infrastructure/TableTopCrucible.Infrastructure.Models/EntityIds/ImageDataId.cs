@@ -1,6 +1,5 @@
-﻿namespace TableTopCrucible.Infrastructure.Models.EntityIds
+﻿namespace TableTopCrucible.Infrastructure.Models.EntityIds;
+
+public class ImageDataId : DataIdBase<ImageDataId>
 {
-    public class ImageDataId : DataIdBase<ImageDataId>
-    {
-    }
 }

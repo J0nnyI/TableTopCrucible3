@@ -1,69 +1,55 @@
-﻿using System;
-using System.Linq;
-using System.Reactive;
+﻿using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows;
-using System.Windows.Media.Imaging;
-
 using HelixToolkit.Wpf;
-
 using ReactiveUI;
-
-using Splat;
-
-using TableTopCrucible.Core.Engine.Services;
-using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.ValueTypes;
-using TableTopCrucible.Core.Wpf.Helper;
-using TableTopCrucible.Infrastructure.Repositories.Services;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.Views
+namespace TableTopCrucible.Shared.Wpf.UserControls.Views;
+
+/// <summary>
+///     Interaction logic for ModelViewerV.xaml
+/// </summary>
+public partial class ModelViewerV : ReactiveUserControl<ModelViewerVm>
 {
-    /// <summary>
-    ///     Interaction logic for ModelViewerV.xaml
-    /// </summary>
-    public partial class ModelViewerV : ReactiveUserControl<ModelViewerVm>
+    public ModelViewerV()
     {
-        public ModelViewerV()
+        InitializeComponent();
+        this.WhenActivated(() => new[]
         {
-            InitializeComponent();
-            this.WhenActivated(() => new[]
+            // interactions
+            ViewModel!.BringIntoView.RegisterHandler(context =>
             {
-                // interactions
-                ViewModel!.BringIntoView.RegisterHandler(context =>
+                var bounds = ViewModel.ViewportContent.Bounds;
+                Viewport.Camera.ZoomExtents(Viewport.Viewport, bounds);
+                context.SetOutput(Unit.Default);
+            }),
+
+            // bindings
+            this.WhenAnyValue(v => v.ViewModel.PlaceholderText)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .BindTo(this, v => v.LoadingScreen.Text),
+
+            this.WhenAnyValue(vm => vm.ViewModel.IsLoading)
+                .Select(loading =>
+                    loading
+                        ? Visibility.Visible
+                        : Visibility.Collapsed)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .BindTo(this,
+                    v => v.LoadingScreen.Visibility),
+
+            this.WhenAnyValue(v => v.ViewModel.ViewportContent)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .BindTo(this, v => v.ContainerVisual.Content),
+            new ActOnLifecycle(
+                () => ViewModel.Viewport = Viewport,
+                () =>
                 {
-                    var bounds = ViewModel.ViewportContent.Bounds;
-                    Viewport.Camera.ZoomExtents(Viewport.Viewport, bounds);
-                    context.SetOutput(Unit.Default);
-                }),
-
-                // bindings
-                this.WhenAnyValue(v => v.ViewModel.PlaceholderText)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, v => v.LoadingScreen.Text),
-
-                this.WhenAnyValue(vm => vm.ViewModel.IsLoading)
-                    .Select(loading =>
-                        loading
-                            ? Visibility.Visible
-                            : Visibility.Collapsed)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this,
-                        v => v.LoadingScreen.Visibility),
-
-                this.WhenAnyValue(v => v.ViewModel.ViewportContent)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, v => v.ContainerVisual.Content),
-                new ActOnLifecycle(
-                    () => ViewModel.Viewport = Viewport,
-                    () =>
-                    {
-                        ViewModel.Viewport = null;
-                        ContainerVisual.Content = null;
-                    })
-            });
-        }
+                    ViewModel.Viewport = null;
+                    ContainerVisual.Content = null;
+                })
+        });
     }
 }

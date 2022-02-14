@@ -20,23 +20,23 @@
         <StackPanel Margin="8">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Item Actions"
                            Style="{StaticResource SidebarTitle}"
                            VerticalAlignment="Center"
-                           HorizontalAlignment="Right"/>
+                           HorizontalAlignment="Right" />
                 <Button Content="{md:PackIcon LightningBolt}"
                         Command="{x:Static md:DrawerHost.CloseDrawerCommand}"
                         CommandParameter="{x:Static Dock.Right}"
                         Style="{StaticResource MaterialDesignIconButton}"
-                        Grid.Column="1"/>
+                        Grid.Column="1" />
             </Grid>
             <Button x:Name="GenerateThumbnails"
                     Content="Create Thumbnails" />
             <Button x:Name="AddImages"
-                    Content="Add Images"/>
+                    Content="Add Images" />
             <Button x:Name="StartSync" Content="Start Sync" />
             <Button x:Name="DeleteAllData" Content="DeleteAllData"
                     ToolTip="deletes all data except directory setups" />

@@ -1,14 +1,13 @@
-﻿namespace TableTopCrucible.Core.ValueTypes
+﻿namespace TableTopCrucible.Core.ValueTypes;
+
+public enum FileType
 {
-    public enum FileType
-    {
-        Model,
-        Image,
-        Library,
-        Table,
-        Other,
-        SlicerProject,
-        Archive,
-        SlicedFile
-    }
+    Model,
+    Image,
+    Library,
+    Table,
+    Other,
+    SlicerProject,
+    Archive,
+    SlicedFile
 }

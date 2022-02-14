@@ -1,10 +1,9 @@
-﻿namespace TableTopCrucible.Shared.ItemSync.Models
+﻿namespace TableTopCrucible.Shared.ItemSync.Models;
+
+internal enum FileUpdateSource
 {
-    internal enum FileUpdateSource
-    {
-        New,
-        Deleted,
-        Updated,
-        Unchanged
-    }
+    New,
+    Deleted,
+    Updated,
+    Unchanged
 }

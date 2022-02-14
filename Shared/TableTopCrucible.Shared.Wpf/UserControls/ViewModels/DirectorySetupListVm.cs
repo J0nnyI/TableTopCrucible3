@@ -16,105 +16,104 @@ using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
-namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
+namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
+
+[Transient]
+public interface IDirectorySetupList
 {
-    [Transient]
-    public interface IDirectorySetupList
+}
+
+public class DirectorySetupListVm : ReactiveValidationObject, IActivatableViewModel, IDirectorySetupList
+{
+    private readonly IDirectorySetupRepository _directorySetupRepository;
+    private readonly INotificationService _notificationService;
+
+    public DirectorySetupListVm(IDirectorySetupRepository directorySetupRepository,
+        INotificationService notificationService)
     {
+        _directorySetupRepository = directorySetupRepository;
+        _notificationService = notificationService;
+
+        HintOpacity =
+            this.WhenAnyValue(vm => vm.Directories.Count)
+                .Select(c => c == 0)
+                .DistinctUntilChanged()
+                // causes ui lags
+                //.Select(show =>
+                //    ObservableHelper.AnimateValue(0, 1)
+                //        .Select(opacity => show ? opacity : 1 - opacity) // invert animation direction depending on the toggle
+                //)
+                //.Switch()
+                .Select(show => show
+                    ? 1.0
+                    : 0.0);
+
+        this.WhenActivated(disposables => new[]
+        {
+            _directorySetupRepository
+                .Data
+                .Connect()
+                .Transform(dir =>
+                {
+                    var card = Locator.Current.GetService<IDirectorySetupCard>();
+                    card.DirectorySetup = dir;
+                    return card;
+                })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Bind(Directories)
+                .Subscribe(),
+
+            _initCommands()
+        });
     }
 
-    public class DirectorySetupListVm : ReactiveValidationObject, IActivatableViewModel, IDirectorySetupList
+    public Interaction<Unit, DirectoryPath> GetDirectoryDialog { get; } = new();
+
+    public ICommand CreateDirectory { get; private set; }
+    public IObservable<double> HintOpacity { get; }
+
+    public ObservableCollectionExtended<IDirectorySetupCard> Directories { get; } = new();
+    public ViewModelActivator Activator { get; } = new();
+
+    private IDisposable _initCommands()
     {
-        private readonly IDirectorySetupRepository _directorySetupRepository;
-        private readonly INotificationService _notificationService;
-
-        public DirectorySetupListVm(IDirectorySetupRepository directorySetupRepository,
-            INotificationService notificationService)
-        {
-            _directorySetupRepository = directorySetupRepository;
-            _notificationService = notificationService;
-
-            HintOpacity =
-                this.WhenAnyValue(vm => vm.Directories.Count)
-                    .Select(c => c == 0)
-                    .DistinctUntilChanged()
-                    // causes ui lags
-                    //.Select(show =>
-                    //    ObservableHelper.AnimateValue(0, 1)
-                    //        .Select(opacity => show ? opacity : 1 - opacity) // invert animation direction depending on the toggle
-                    //)
-                    //.Switch()
-                    .Select(show => show
-                        ? 1.0
-                        : 0.0);
-
-            this.WhenActivated(disposables => new[]
+        var disposables = new CompositeDisposable();
+        CreateDirectory =
+            ReactiveCommand.Create(async () =>
             {
-                _directorySetupRepository
-                    .Data
-                    .Connect()
-                    .Transform(dir =>
-                    {
-                        var card = Locator.Current.GetService<IDirectorySetupCard>();
-                        card.DirectorySetup = dir;
-                        return card;
-                    })
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Bind(Directories)
-                    .Subscribe(),
-
-                _initCommands()
-            });
-        }
-
-        public Interaction<Unit, DirectoryPath> GetDirectoryDialog { get; } = new();
-
-        public ICommand CreateDirectory { get; private set; }
-        public IObservable<double> HintOpacity { get; }
-
-        public ObservableCollectionExtended<IDirectorySetupCard> Directories { get; } = new();
-        public ViewModelActivator Activator { get; } = new();
-
-        private IDisposable _initCommands()
-        {
-            var disposables = new CompositeDisposable();
-            CreateDirectory =
-                ReactiveCommand.Create(async () =>
+                try
                 {
-                    try
+                    var path = await GetDirectoryDialog.Handle(Unit.Default);
+                    if (path == null)
+                        return;
+                    var takenItem = _directorySetupRepository[path];
+                    if (takenItem == null)
                     {
-                        var path = await GetDirectoryDialog.Handle(Unit.Default);
-                        if (path == null)
-                            return;
-                        var takenItem = _directorySetupRepository[path];
-                        if (takenItem == null)
-                        {
-                            var directorySetup = new DirectorySetup(path);
-                            _directorySetupRepository.Add(directorySetup);
-                            _notificationService.AddNotification(
-                                (Name)"Directory added successfully",
-                                (Description)
-                                $"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
-                                NotificationType.Confirmation);
-                        }
-                        else
-                        {
-                            _notificationService.AddNotification(
-                                (Name)"Directory has already been added",
-                                (Description)
-                                $"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
-                                NotificationType.Info);
-                        }
+                        var directorySetup = new DirectorySetup(path);
+                        _directorySetupRepository.Add(directorySetup);
+                        _notificationService.AddNotification(
+                            (Name)"Directory added successfully",
+                            (Description)
+                            $"The directory '{directorySetup.Path}' has been added as '{directorySetup.Name}'",
+                            NotificationType.Confirmation);
                     }
-                    catch (Exception e)
+                    else
                     {
                         _notificationService.AddNotification(
-                            (Name)"Directory could not be added",
-                            (Description)("The Directory could not be added:" + Environment.NewLine + e),
-                            NotificationType.Error);
+                            (Name)"Directory has already been added",
+                            (Description)
+                            $"The directory '{takenItem.Path.Value}' has already been added as '{takenItem.Name.Value}'",
+                            NotificationType.Info);
                     }
-                });
-            return disposables;
-        }
+                }
+                catch (Exception e)
+                {
+                    _notificationService.AddNotification(
+                        (Name)"Directory could not be added",
+                        (Description)("The Directory could not be added:" + Environment.NewLine + e),
+                        NotificationType.Error);
+                }
+            });
+        return disposables;
     }
 }

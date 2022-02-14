@@ -7,7 +7,6 @@
                           xmlns:rxui="http://reactiveui.net"
                           xmlns:vm="clr-namespace:TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels"
                           xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-                          xmlns:uc="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls;assembly=TableTopCrucible.Shared.Wpf"
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800"
                           d:DataContext="{d:DesignInstance vm:LibraryPageVm}">
@@ -28,7 +27,7 @@
     <md:DrawerHost>
         <md:DrawerHost.LeftDrawerContent>
             <rxui:ViewModelViewHost x:Name="Filter"
-                                        Width="500" />
+                                    Width="500" />
         </md:DrawerHost.LeftDrawerContent>
         <md:DrawerHost.RightDrawerContent>
             <rxui:ViewModelViewHost x:Name="Actions"
@@ -49,7 +48,7 @@
                 <rxui:ViewModelViewHost x:Name="ListHeader"
                                         Margin="4 4 12 4"
                                         Grid.Row="0"
-                                        Grid.Column="0"/>
+                                        Grid.Column="0" />
                 <rxui:ViewModelViewHost x:Name="ItemList"
                                         Margin="4 4 12 4"
                                         Grid.Column="0"
@@ -66,7 +65,7 @@
                                         Margin="4 4 12 4"
                                         Grid.Column="1"
                                         Grid.Row="0"
-                                        Grid.RowSpan="2"/>
+                                        Grid.RowSpan="2" />
 
             </Grid>
 

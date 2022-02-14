@@ -1,8 +1,7 @@
-﻿namespace TableTopCrucible.Infrastructure.Models.Automation.Enums
+﻿namespace TableTopCrucible.Infrastructure.Models.Automation.Enums;
+
+public enum CaseMatchType
 {
-    public enum CaseMatchType
-    {
-        RespectCase,
-        IgnoreCase
-    }
+    RespectCase,
+    IgnoreCase
 }

@@ -18,7 +18,7 @@
                 Command="{x:Static md:DrawerHost.OpenDrawerCommand}"
                 CommandParameter="{x:Static Dock.Left}"
                 Style="{StaticResource MaterialDesignIconButton}"
-                Grid.Column="0"/>
+                Grid.Column="0" />
         <TextBlock Text="List Header"
                    VerticalAlignment="Center"
                    Style="{StaticResource SidebarTitle}"

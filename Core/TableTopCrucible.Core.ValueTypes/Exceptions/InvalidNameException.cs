@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace TableTopCrucible.Core.ValueTypes.Exceptions
+namespace TableTopCrucible.Core.ValueTypes.Exceptions;
+
+public class InvalidNameException : Exception
 {
-    public class InvalidNameException : Exception
+    public InvalidNameException(string message) : base(message)
     {
-        public InvalidNameException(string message) : base(message)
-        {
-        }
     }
 }

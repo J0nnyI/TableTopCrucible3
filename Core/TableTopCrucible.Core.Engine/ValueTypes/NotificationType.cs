@@ -1,10 +1,9 @@
-﻿namespace TableTopCrucible.Core.Engine.ValueTypes
+﻿namespace TableTopCrucible.Core.Engine.ValueTypes;
+
+public enum NotificationType
 {
-    public enum NotificationType
-    {
-        Error,
-        Warning,
-        Info,
-        Confirmation
-    }
+    Error,
+    Warning,
+    Info,
+    Confirmation
 }

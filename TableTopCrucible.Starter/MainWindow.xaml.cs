@@ -8,33 +8,32 @@ using TableTopCrucible.Domain.Library.Wpf.Pages.ViewModels;
 using TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels;
 using TableTopCrucible.Infrastructure.Repositories.Services;
 
-namespace TableTopCrucible.Starter
+namespace TableTopCrucible.Starter;
+
+/// <summary>
+///     Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
-    /// <summary>
-    ///     Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        public MainWindow()
+        InitializeComponent();
+        MainPageContainer.ViewModel = Locator.Current.GetService<IMainPage>();
+
+
+        var navigationService = Locator.Current.GetService<INavigationService>();
+        var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
+        try
         {
-            InitializeComponent();
-            MainPageContainer.ViewModel = Locator.Current.GetService<IMainPage>();
-
-
-            var navigationService = Locator.Current.GetService<INavigationService>();
-            var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
-            try
-            {
-                if (directorySetupRepository.Data.Items.Count() == 0)
-                    navigationService.ActiveWorkArea = Locator.Current.GetService<IDirectorySetupPage>();
-                else
-                    navigationService.ActiveWorkArea = Locator.Current.GetService<ILibraryPage>();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            if (directorySetupRepository.Data.Items.Count() == 0)
+                navigationService.ActiveWorkArea = Locator.Current.GetService<IDirectorySetupPage>();
+            else
+                navigationService.ActiveWorkArea = Locator.Current.GetService<ILibraryPage>();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

@@ -1,3 +1,1 @@
-﻿namespace TableTopCrucible.Core.DependencyInjection.Attributes
-{
-}
+﻿namespace TableTopCrucible.Core.DependencyInjection.Attributes;
