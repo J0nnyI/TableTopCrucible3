@@ -52,4 +52,7 @@ public static class ReactiveCommandHelper
         resultWriter!.Invoke(res);
         return res;
     }
+
+    public static ReactiveCommand<T, Unit> ToCommand<T>(Action<T> action, IObservable<bool> canExecute, IScheduler outputScheduler = null, IScheduler canExecuteScheduler = null)
+        => ReactiveCommand.Create(action,canExecute,canExecuteScheduler, outputScheduler);
 }

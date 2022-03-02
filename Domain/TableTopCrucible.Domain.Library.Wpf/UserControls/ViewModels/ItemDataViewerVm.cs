@@ -21,8 +21,7 @@ public class ItemDataViewerVm : ReactiveObject, IItemDataViewer, IActivatableVie
     public ITagEditor TagEditor { get; }
     public ViewModelActivator Activator { get; } = new();
 
-    public ItemDataViewerVm(ITagEditor tagEditor, ILibraryService libraryService,
-        IMultiSourceTagEditor multiSourceTagEditor)
+    public ItemDataViewerVm(ITagEditor tagEditor, ILibraryService libraryService)
     {
         TagEditor = tagEditor;
         _isSelectable = libraryService
@@ -33,14 +32,13 @@ public class ItemDataViewerVm : ReactiveObject, IItemDataViewer, IActivatableVie
 
         this.WhenActivated(() =>
         {
-            var provider = new MultiItemTagSource(libraryService.SelectedItems);
-
-            multiSourceTagEditor.Init(provider);
+            var provider = new MultiTagSource(libraryService.SelectedItems);
+            
             return new[]
             {
                 libraryService.SingleSelectedItemChanges
                     .Select(item => item?.Tags)
-                    .BindTo(this, vm => vm.TagEditor.TagSource),
+                    .BindTo(this, vm => vm.TagEditor.SelectedTags),
                 provider
             };
         });

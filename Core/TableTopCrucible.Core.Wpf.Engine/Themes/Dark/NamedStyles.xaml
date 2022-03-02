@@ -13,7 +13,9 @@
     <SolidColorBrush x:Key="WorkspaceBackground" Color="#3d3b39" />
     <SolidColorBrush x:Key="PlaceholderBackgroundBack" Color="red" />
     <SolidColorBrush x:Key="PlaceholderBackgroundFront" Color="blue" />
-    <SolidColorBrush x:Key="ForegroundPrimary" Color="Orange" />
+    <SolidColorBrush x:Key="BackgroundProgressBar" Color="#704400"/>
+    <!-- brush documentation https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Brush-Names-->
+    <!--PrimaryHueDarkBrush-->
 
     <sys:Double x:Key="SidebarTitleFontSize">20</sys:Double>
     <sys:Double x:Key="SidebarSubTitleFontSize">16</sys:Double>

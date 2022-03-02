@@ -50,6 +50,7 @@ internal class CompositeTracker : ICompositeTracker, ITrackingViewer, IDisposabl
                                     targetFraction; // how much of the composite progress is from this tracker?
 
                                 // catch over / under / miss fill
+                                // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
                                 switch (state)
                                 {
                                     case JobState.ToDo:

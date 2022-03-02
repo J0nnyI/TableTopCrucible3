@@ -4,114 +4,34 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Text;
+
 using DynamicData;
 using DynamicData.Binding;
+
 using MoreLinq;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
+
+using Splat;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence;
+using TableTopCrucible.Infrastructure.Models.Controller;
 using TableTopCrucible.Infrastructure.Views.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
-public class TagEditorTagController : ReactiveValidationObject, IDisposable
-{
-    private readonly Action<Tag, string> _editTag;
-    private readonly CompositeDisposable _disposables = new();
-    public void Dispose() => _disposables.Dispose();
-    public ObservableCollectionExtended<Tag> AvailableTags { get; } = new();
-
-    public TagEditorTagController(
-        Tag sourceTag,
-        Action<Tag, string> editTag,
-        IObservableList<Tag> takenTags,
-        IObservableList<Tag> availableTags,
-        bool addMode = false,
-        bool editModeEnabled = false)
-    {
-        _editTag = editTag;
-        SourceTag = sourceTag;
-        AddMode = addMode;
-        EditModeEnabled = editModeEnabled;
-        EditTag = sourceTag?.Value ?? string.Empty;
-
-        this.ValidationRule(
-                vm => vm.EditTag,
-                tag => !string.IsNullOrWhiteSpace(tag),
-                "The tag must not be empty")
-            .DisposeWith(_disposables);
-
-        this.ValidationRule(
-                vm => vm.EditTag,
-                this.WhenAnyValue(vm => vm.EditTag)
-                    .CombineLatest(
-                        takenTags?.Connect().ToCollection() ?? Observable.Empty<IReadOnlyCollection<Tag>>(),
-                        (tag, tags) =>
-                        {
-                            return tags.Count(t => t.Value == tag) < (
-                                WasNew
-                                    ? 1
-                                    : 2);
-                        }).StartWith(true),
-                "The tag has already been added")
-            .DisposeWith(_disposables);
-
-        this.WhenAnyValue(vm => vm.EditModeEnabled)
-            .Select(editMode => editMode
-                ? availableTags.Connect()
-                : Observable.Empty<IChangeSet<Tag>>())
-            .Switch()
-            .Filter(this.WhenAnyValue(vm => vm.EditTag).Select(filter =>
-                new Func<Tag, bool>(tag => tag.Value.ToLower().Contains(filter.ToLower()))))
-            .Top(SettingsHelper.MaxTagCountInDropDown)
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Bind(AvailableTags)
-            .Subscribe()
-            .DisposeWith(_disposables);
-    }
-
-    public Tag SourceTag { get; }
-
-    [Reactive]
-    public string EditTag { get; set; }
-
-    [Reactive]
-    public bool EditModeEnabled { get; set; }
-
-    [Reactive]
-    public bool AddMode { get; set; }
-
-    public bool WasNew => SourceTag is null;
-
-    public void Revert()
-    {
-        EditTag = SourceTag?.Value ?? string.Empty;
-        EditModeEnabled = false;
-        AddMode = WasNew;
-    }
-
-    public bool Confirm()
-    {
-        if (HasErrors)
-            return false;
-        _editTag(SourceTag, EditTag);
-
-        EditTag = SourceTag?.Value ?? string.Empty;
-        EditModeEnabled = false;
-        AddMode = WasNew;
-        return true;
-    }
-}
 
 [Transient]
 public interface ITagEditor
 {
-    ISourceList<Tag> TagSource { get; set; }
+    ITagCollection SelectedTags { get; set; }
     public bool FluentModeEnabled { get; set; }
 }
 
@@ -121,7 +41,7 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
     public ViewModelActivator Activator { get; } = new();
 
     [Reactive]
-    public ISourceList<Tag> TagSource { get; set; }
+    public ITagCollection SelectedTags { get; set; }
 
     [Reactive]
     public bool FluentModeEnabled { get; set; } = true;
@@ -130,61 +50,55 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
     public bool TagDeletionEnabled { get; set; } = true;
 
     [Reactive] //if true, the next tag will be opened in edit mode
-    public bool FluentMode { get; set; } = false;
+    public bool FluentModeActive { get; set; } = false;
 
-    public ReactiveCommand<TagEditorTagController, Unit> RemoveTagCommand { get; }
-
-    public ObservableCollectionExtended<TagEditorTagController> TagList { get; } = new();
+    public ObservableCollectionExtended<ITagEditorChip> TagList { get; } = new();
 
     public TagEditorVm(IStorageController storageController, ITagView tagView)
     {
         _storageController = storageController;
-        this.RemoveTagCommand = ReactiveCommand.Create<TagEditorTagController>(RemoveTag);
 
-        this.WhenActivated(() => new[]
+        this.WhenActivated(() =>
         {
-            this.WhenAnyValue(vm => vm.TagSource)
-                .Select(tags => tags?.Connect() ?? Observable.Never(ChangeSet<Tag>.Empty))
-                .Switch()
-                .Transform(tag => new TagEditorTagController(tag, EditTag, TagSource, tagView.Data))
-                .DisposeMany()
-                .StartWithEmpty()
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Bind(TagList)
-                .Subscribe(_ =>
-                {
-                    TagList.RemoveWhere(tag => tag.WasNew)
-                        .ForEach(tag => tag.Dispose());
-                    TagList.Add(new TagEditorTagController(null, EditTag, TagSource, tagView.Data, !FluentMode,
-                        FluentMode));
-                    FluentMode = false;
-                }),
+            // this appends the + button
+            var addChip = Locator.Current.GetService<ITagEditorChip>()!;
+            addChip.Init(null, SelectedTags, tagView.Data, !FluentModeActive, FluentModeActive, TagDeletionEnabled);
+            addChip.TagAdded.Take(1).Subscribe(_ => FluentModeActive = FluentModeEnabled);
+            TagList.Add(addChip);
+            FluentModeActive = false;
+            var appendList = new SourceList<ITagEditorChip>();
+            appendList.Add(addChip);
+            return new[]
+            {
+                this.WhenAnyValue(vm => vm.SelectedTags)
+                    .Select(tags => tags?.Connect() ?? Observable.Never(ChangeSet<Tag>.Empty))
+                    .Switch()
+                    .Transform(tag =>
+                    {
+                        // this converts existing tags to a vm
+                        var chip = Locator.Current.GetService<ITagEditorChip>()!;
+                        chip.Init(tag, SelectedTags, tagView.Data, false, false, TagDeletionEnabled);
+                        return chip;
+                    })
+                    .Or(appendList.Connect())
+                    .DisposeMany()
+                    .StartWithEmpty()
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Bind(TagList)
+                    .Subscribe(_ =>
+                    {
+                        // this appends the + button
+                        //var chip = Locator.Current.GetService<ITagEditorChip>()!;
+                        //chip.Init(null, SelectedTags, tagView.Data, !FluentModeActive,FluentModeActive, TagDeletionEnabled);
+                        //chip.TagAdded.Take(1).Subscribe(_=>FluentModeActive = FluentModeEnabled);
+                        //TagList.Add(chip);
+                        //FluentModeActive = false;
+                    }),
 
-            new ActOnLifecycle(null, () => TagList.Clear())
+                new ActOnLifecycle(null, () => TagList.Clear()),
+                appendList
+            };
         });
     }
 
-    public void RemoveTag(TagEditorTagController tagEditorTagController)
-    {
-        if (tagEditorTagController.WasNew || tagEditorTagController.EditModeEnabled)
-            tagEditorTagController.Revert();
-        else
-        {
-            TagSource!.Remove(tagEditorTagController.SourceTag);
-            _storageController.AutoSave();
-        }
-    }
-
-    public void EditTag(Tag oldTag, string newTag)
-    {
-        if (oldTag is null)
-        {
-            FluentMode = FluentModeEnabled;
-            TagSource.Add((Tag)newTag);
-        }
-        else
-            TagSource!.Replace(oldTag, (Tag)newTag);
-
-        _storageController.AutoSave();
-    }
 }

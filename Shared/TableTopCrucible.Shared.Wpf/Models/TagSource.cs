@@ -8,11 +8,11 @@ public interface ITagSourceProvider
     public ITagCollection Tags { get; }
 }
 
-public class ItemTagSource : ITagSourceProvider
+public class TagSource : ITagSourceProvider
 {
     public ITagCollection Tags { get; }
 
-    public ItemTagSource(Item item)
+    public TagSource(Item item)
     {
         Tags = item.Tags;
     }

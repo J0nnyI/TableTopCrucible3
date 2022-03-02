@@ -45,8 +45,8 @@
                         </Button>
                         <Rectangle
                             Visibility="{Binding Mode=OneWay, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
-                            Stroke="{DynamicResource ForegroundPrimary}"
-                            Fill="{DynamicResource ForegroundPrimary}"
+                            Stroke="{DynamicResource PrimaryHueDarkBrush}"
+                            Fill="{DynamicResource PrimaryHueDarkBrush}"
                             Height="2"
                             Margin="0 -4 0 0">
                             <Rectangle.RadiusX>1</Rectangle.RadiusX>

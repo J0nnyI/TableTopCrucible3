@@ -74,7 +74,7 @@
                     <Grid>
                         <rx:ViewModelViewHost x:Name="MainContainer" />
                         <rx:ViewModelViewHost x:Name="NotificationList"
-                                              VerticalAlignment="Top"
+                                              VerticalAlignment="Bottom"
                                               HorizontalAlignment="Right"
                                               Margin="0 16 0 0"
                                               MinWidth="700"

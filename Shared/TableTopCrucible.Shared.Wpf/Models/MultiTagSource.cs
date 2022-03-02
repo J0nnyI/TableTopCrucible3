@@ -11,7 +11,7 @@ public interface ITagMultiSourceProvider
     public IObservableList<ITagSourceProvider> SubProviders { get; }
 }
 
-public class MultiItemTagSource : ITagMultiSourceProvider, IDisposable
+public class MultiTagSource : ITagMultiSourceProvider, IDisposable
 {
     public IObservableList<ITagSourceProvider> SubProviders { get; }
     private CompositeDisposable _disposables = new();
@@ -19,11 +19,11 @@ public class MultiItemTagSource : ITagMultiSourceProvider, IDisposable
     public void Dispose()
         => _disposables.Dispose();
 
-    public MultiItemTagSource(IObservableList<Item> items)
+    public MultiTagSource(IObservableList<Item> items)
     {
         SubProviders = items
             .Connect()
-            .Transform(item => new ItemTagSource(item) as ITagSourceProvider)
+            .Transform(item => new TagSource(item) as ITagSourceProvider)
             .AsObservableList()
             .DisposeWith(_disposables);
     }

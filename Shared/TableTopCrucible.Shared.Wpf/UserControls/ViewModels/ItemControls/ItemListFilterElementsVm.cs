@@ -42,7 +42,7 @@ public class ItemListFilterElementsVm : ReactiveObject, IActivatableViewModel, I
         // Consider Case                            FormatLetterCase
         TagEditor = tagEditor;
         tagEditor.FluentModeEnabled = false;
-        tagEditor.TagSource = TagCollection;
+        tagEditor.SelectedTags = SelectedTags;
         FilterChanges = this.WhenAnyValue(
                 vm => vm.NameTextMatchType,
                 vm => vm.NameCaseMatchType,
@@ -51,7 +51,7 @@ public class ItemListFilterElementsVm : ReactiveObject, IActivatableViewModel, I
                 (textMatchType, caseMatchType, filterText, filterMode) =>
                     new { textMatchType, caseMatchType, filterText, filterMode })
             .CombineLatest(
-                TagCollection.Connect().StartWithEmpty().ToCollection(),
+                SelectedTags.Connect().StartWithEmpty().ToCollection(),
                 (propertyFilter, tags) =>
                 {
                     var nameFilterText = propertyFilter.filterText;
@@ -103,7 +103,7 @@ public class ItemListFilterElementsVm : ReactiveObject, IActivatableViewModel, I
     [Reactive]
     public string NameFilter { get; set; }
 
-    public ITagCollection TagCollection { get; } = new TagCollection();
+    public ITagCollection SelectedTags { get; } = new TagCollection();
 
     [Reactive]
     public FilterMode FilterMode { get; set; } = FilterMode.Include;

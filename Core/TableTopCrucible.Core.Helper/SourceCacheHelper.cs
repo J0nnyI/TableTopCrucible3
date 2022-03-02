@@ -119,35 +119,5 @@ public static class SourceCacheHelper
         updater.Remove(items.Select(kv => kv.Key));
         return items.Select(kv => kv.Value);
     }
-
-    public static IDisposable SynchronizeWith<T>(this IObservableList<T> src, ISourceList<T> target,
-        Action<T> srcAddAction, Action<T> srcRemoveAction)
-    {
-        CompositeDisposable _disposables = new();
-        src.Connect()
-            .OnItemAdded(item =>
-            {
-                if (!target.Items.Contains(item))
-                    target.Add(item);
-            })
-            .OnItemRemoved(item =>
-            {
-                if (target.Items.Contains(item))
-                    target.Remove(item);
-            }).Subscribe()
-            .DisposeWith(_disposables);
-        target.Connect()
-            .OnItemAdded(item =>
-            {
-                if (!src.Items.Contains(item))
-                    srcAddAction(item);
-            })
-            .OnItemRemoved(item =>
-            {
-                if (src.Items.Contains(item))
-                    srcRemoveAction(item);
-            }).Subscribe()
-            .DisposeWith(_disposables);
-        return _disposables;
-    }
+    
 }

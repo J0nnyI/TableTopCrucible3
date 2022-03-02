@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Disposables;
+using DynamicData;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -38,7 +39,7 @@ public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage
         ItemActions = itemActions;
         ItemViewer = itemViewer;
 
-        itemList.SelectedItems.SynchronizeWith(libraryService.SelectedItems, itemList.Select, itemList.Deselect);
+        itemList.SelectedItems.Connect().PopulateInto(libraryService.SelectedItems);
 
         this.WhenActivated(() => new[]
         {

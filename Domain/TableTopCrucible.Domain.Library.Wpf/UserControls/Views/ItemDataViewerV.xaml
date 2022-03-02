@@ -13,7 +13,7 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <rxui:ViewModelViewHost x:Name="TagEditor"
-                                Margin="8 0"
+                                Margin="8"
                                 Grid.Row="0" />
     </Grid>
 </rxui:ReactiveUserControl>

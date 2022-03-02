@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -162,7 +164,7 @@ public class DirectorySetupCardVm : ReactiveValidationObject, IActivatableViewMo
                     _storageController.AutoSave();
                 }, c => changePathCommand = c)
             },
-            vm => vm.DirectorySetup
+            nameof(DirectorySetup).AsArray()
         );
     }
 
