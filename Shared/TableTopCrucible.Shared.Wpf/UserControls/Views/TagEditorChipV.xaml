@@ -145,6 +145,7 @@
                     </TextBox>
                     <Button x:Name="ToggleDropDown"
                             Content="{md:PackIcon Kind=ExpandMore}"
+                            ToolTip="Toggle List"
                             Foreground="{DynamicResource MaterialDesignDarkForeground}"
                             BorderThickness="0"
                             VerticalAlignment="Center"
@@ -152,7 +153,10 @@
                             Style="{StaticResource RotatingIcon}"/>
                     <!---23-->
                     <md:PopupEx x:Name="Dropdown"
+                                PreviewKeyDown="Dropdown_PreviewKeyDown"
                                 PlacementTarget="{Binding ElementName=TextEditor}"
+                                md:ShadowAssist.ShadowDepth="Depth3"
+                                Margin="3"
                                 Style="{x:Null}"
                                 Placement="Bottom"
                                 MinHeight="10"
@@ -166,11 +170,15 @@
                                 Padding="4">
                             <Grid>
                                 <ListView  x:Name="SuggestedTags"
-                                           SelectedItem="{Binding SelectedTag}"
-                                           ItemsSource="{Binding AvailableTags}"
                                            SelectionMode="Single"
                                            ItemContainerStyle="{StaticResource ImprovedSelectionBackground}"
-                                           />
+                                           >
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}"/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
                                 <TextBlock x:Name="EmptyPlaceholder"
                                            Text="There are no tags like this"/>
                             </Grid>
@@ -178,8 +186,10 @@
                     </md:PopupEx>
                     <!--confirm-->
                     <Button Name="Confirm"
+                            ToolTip="Confirm Changes"
                             Style="{StaticResource ChipButton}"
                             Content="{md:PackIcon Check}"
+                            IsDefault="True"
                             Margin="2 0" />
                 </StackPanel>
                 <!--delete/revert-->

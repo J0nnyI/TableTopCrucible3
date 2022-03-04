@@ -189,6 +189,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             EditTag();
             EditedTag = SourceTag?.Value ?? string.Empty;
             WorkMode = TagEditorWorkMode.View;
+            IsDropDownOpen = false;
             _unfocusEditor();
         }
 

@@ -38,6 +38,12 @@ public partial class TagEditorChipV
                 // prevent memory leak of inifinitly growing dispose list
                 _disposables = new CompositeDisposable();
             }),
+            this.Bind(ViewModel,
+                vm=>vm.SelectedTag,
+                v=>v.SuggestedTags.SelectedItem),
+            this.OneWayBind(ViewModel,
+                vm=>vm.AvailableTags,
+                v=>v.SuggestedTags.ItemsSource),
             this.BindCommand(ViewModel,
                 vm=>vm.ToggleDropDown,
                 v=>v.ToggleDropDown),
@@ -140,6 +146,16 @@ public partial class TagEditorChipV
                     ? Visibility.Visible
                     : Visibility.Collapsed)
                 .BindTo(this, v=>v.RevertDelete.Visibility),
+            this.WhenAnyValue(
+                v=>v.ViewModel.DisplayMode,
+                v=>v.ViewModel.WorkMode,
+                (displayMode, workMode)=>
+                    displayMode == TagEditorDisplayMode.New
+                    ? "Cancel new Tag"
+                    : workMode == TagEditorWorkMode.Edit
+                    ? "Revert Changes"
+                    : "Delete Tag")
+                .BindTo(this, v=>v.RevertDelete.ToolTip),
             #endregion
             #region interactions
             ViewModel!.FocusEditorInteraction.RegisterAutoCompleteHandler(focusTextBox),
@@ -152,31 +168,6 @@ public partial class TagEditorChipV
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (e.Key)
         {
-            case Key.Enter:
-                if (ViewModel.SelectedTag is not null
-                    && ViewModel.SelectedTag.ToLower() != ViewModel.EditedTag.ToLower()
-                    && ViewModel.IsDropDownOpen)
-                // copy tag to textbox
-                {
-                    ViewModel.EditedTag = ViewModel.SelectedTag;
-                    TextEditor.MoveCaretToEnd();
-                    if (KeyboardHelper.IsKeyPressed(ModifierKeys.Control))
-                        ViewModel!.Confirm();
-                }
-                else // confirm changes
-                    ViewModel!.Confirm();
-                break;
-            case Key.Escape:
-                if (ViewModel.SelectedTag is not null
-                    && ViewModel.SelectedTag != ViewModel.EditedTag
-                    && ViewModel.IsDropDownOpen) 
-                { 
-                    ViewModel.SelectedTag = null;
-                    ViewModel.IsDropDownOpen = false;
-                }
-                else
-                    ViewModel!.Revert();
-                break;
             case Key.Down:
                 ViewModel.IsDropDownOpen = true;
                 SuggestedTags.SelectNext();
@@ -186,6 +177,7 @@ public partial class TagEditorChipV
                 SuggestedTags.SelectPrevious();
                 break;
         }
+        handleEnterEscape(e.Key);
     }
 
     private void Chip_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -220,7 +212,31 @@ public partial class TagEditorChipV
         if (sender is not ListViewItem item || item.IsSelected == false)
             return;
         ViewModel.EditedTag = ViewModel.SelectedTag;
-        if (KeyboardHelper.IsKeyPressed(ModifierKeys.Control))
-            ViewModel!.Confirm();
+        ViewModel!.Confirm();
     }
+    private void handleEnterEscape(Key key)
+    {
+        switch (key)
+        {
+            case Key.Enter:
+                if (ViewModel.SelectedTag is not null
+                    && ViewModel.IsDropDownOpen)
+                    ViewModel.EditedTag = ViewModel.SelectedTag;
+                ViewModel!.Confirm();
+                break;
+            case Key.Escape:
+                if (ViewModel.SelectedTag is not null
+                    && ViewModel.SelectedTag != ViewModel.EditedTag
+                    && ViewModel.IsDropDownOpen)
+                {
+                    ViewModel.SelectedTag = null;
+                    ViewModel.IsDropDownOpen = false;
+                }
+                else
+                    ViewModel!.Revert();
+                break;
+        }
+    }
+    private void Dropdown_PreviewKeyDown(object sender, KeyEventArgs e)
+        => handleEnterEscape(e.Key);
 }
