@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
@@ -9,6 +10,8 @@ using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
+using TableTopCrucible.Infrastructure.Models.Controller;
+using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels;
 
@@ -23,7 +26,12 @@ public class DevAssistVm : IDevAssist, IActivatableViewModel
     public ICommand AddTrackerCommand { get; }
 
 
-    public DevAssistVm(INotificationService notificationService, IProgressTrackingService progressTrackingService)
+    public DevAssistVm(
+        INotificationService notificationService,
+        IProgressTrackingService progressTrackingService,
+        ITagEditorChip editChip,
+        ITagEditorChip addChip,
+        ITagEditor editor)
     {
         AddNotificationsCommand = ReactiveCommand.Create(() =>
         {
@@ -39,6 +47,38 @@ public class DevAssistVm : IDevAssist, IActivatableViewModel
         {
             progressTrackingService.CreateSourceTracker("test job", (TargetProgress)3).Increment();
         });
+
+
+
+        TagCollection availableTags = new();
+        TagCollection selectedTags = new();
+        availableTags.Edit(editor =>
+        {
+            editor.AddRange(new[]
+            {
+                "first tag",
+                "second tag",
+                "third tag",
+                "edit tag",
+                "anotherTag"
+            }.Select(Tag.From));
+        });
+        selectedTags.Edit(editor =>
+        {
+            editor.AddRange(new[]
+            {
+                "edit tag",
+                "anotherTag"
+            }.Select(Tag.From));
+        });
+        EditChip = editChip;
+        EditChip.Init((Tag)"edit tag", selectedTags, availableTags, TagEditorWorkMode.View, true);
+
+        AddChip = addChip;
+        AddChip.Init(null, selectedTags, availableTags, TagEditorWorkMode.View, true);
+
+        Editor = editor;
+        Editor.SelectedTags = selectedTags;
     }
 
     public PackIconKind? Icon => PackIconKind.DevTo;
@@ -46,4 +86,7 @@ public class DevAssistVm : IDevAssist, IActivatableViewModel
     public NavigationPageLocation PageLocation => NavigationPageLocation.Lower;
     public SortingOrder Position => (SortingOrder)6;
     public ViewModelActivator Activator { get; } = new();
+    public ITagEditorChip EditChip { get; }
+    public ITagEditorChip AddChip { get; }
+    public ITagEditor Editor { get; }
 }

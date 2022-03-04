@@ -2,7 +2,7 @@
 
 namespace TableTopCrucible.Core.ValueTypes;
 
-public class Tag : ValueType<string, Tag>
+public class Tag : ComparableValueType<string, Tag>
 {
     protected override void Validate(string value)
     {

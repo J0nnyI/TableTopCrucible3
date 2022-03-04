@@ -11,15 +11,25 @@
                           d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="8 0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" /> <!--count-->
-            <ColumnDefinition x:Name="NameColumnDefinition" /> <!--name, multiSelect ? * : auto -->
-            <ColumnDefinition Width="Auto" /> <!--name edit actions-->
-            <ColumnDefinition x:Name="SpacerColumnDefinition" /> <!--spacer, multiSelect ? 0 : * -->
-            <ColumnDefinition Width="Auto" /> <!--tab strip-->
-            <ColumnDefinition Width="Auto" /> <!--actions-->
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
-        <!--count-->
-        <Border x:Name="ItemCountBorder"
+        <Grid x:Name="LeftGrid"
+              Grid.Column="0"><!--left-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition x:Name="NameColumn"
+                                  Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="SensorLeft" 
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"/>
+            <Border x:Name="SensorRight"
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"/>
+            <!--count-->
+            <Border x:Name="ItemCountBorder"
                 ToolTip="Number of Selected Items"
                 Background="{StaticResource MaterialDesignDarkBackground}"
                 MinWidth="42"
@@ -28,46 +38,55 @@
                 Margin="0 0 8 0"
                 Padding="8"
                 Grid.Column="0">
-            <TextBlock x:Name="ItemCount"
+                <TextBlock x:Name="ItemCount"
                        Style="{StaticResource SidebarTitle}"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center" />
-        </Border>
-        <!--name-->
-        <TextBox Name="NameEditor"
+            </Border>
+            <!--name-->
+            <TextBox Name="NameEditor"
                  VerticalAlignment="Center"
                  Grid.Column="1" />
-        <TextBlock Name="NameDisplay"
+            <TextBlock Name="NameDisplay"
                    Style="{StaticResource SidebarTitle}"
                    TextTrimming="CharacterEllipsis"
                    VerticalAlignment="Center"
                    Grid.Column="1" />
-        <!--edit actions-->
-        <StackPanel Grid.Column="2"
+            <!--edit actions-->
+            <StackPanel Grid.Column="2"
                     Orientation="Horizontal"
                     Name="EditorButtonContainer">
-            <Button x:Name="EditName"
+                <Button x:Name="EditName"
                     Content="{md:PackIcon Edit}"
                     Style="{StaticResource MaterialDesignIconButton}" />
-            <Button x:Name="SaveName"
+                <Button x:Name="SaveName"
                     Content="{md:PackIcon ContentSave}"
                     Style="{StaticResource MaterialDesignIconButton}" />
-            <Button x:Name="RevertName"
+                <Button x:Name="RevertName"
                     Content="{md:PackIcon Undo}"
                     Style="{StaticResource MaterialDesignIconButton}" />
-        </StackPanel>
-        <!--tab strip-->
-        <rxui:ViewModelViewHost Name="TabStrip"
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Column="1"><!--right-->
+            <!--left-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <!--tab strip-->
+            <rxui:ViewModelViewHost Name="TabStrip"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Right"
                                 Margin="0 0 24 0"
-                                Grid.Column="4" />
-        <!--actions-->
-        <Button Content="{md:PackIcon LightningBoltOutline}"
+                                Grid.Column="0" />
+            <!--actions-->
+            <Button Content="{md:PackIcon LightningBoltOutline}"
                 Command="{x:Static md:DrawerHost.OpenDrawerCommand}"
                 CommandParameter="{x:Static Dock.Right}"
                 ToolTip="Actions Sidebar"
                 Style="{StaticResource MaterialDesignIconButton}"
-                Grid.Column="5" />
+                Grid.Column="1" />
+        </Grid>
+
     </Grid>
 </rxui:ReactiveUserControl>

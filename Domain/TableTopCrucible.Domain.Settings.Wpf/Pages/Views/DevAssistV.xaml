@@ -1,10 +1,10 @@
-﻿<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:DevAssistVm"
+﻿<rxui:ReactiveUserControl x:TypeArguments="viewModels:DevAssistVm"
                                 x:Class="TableTopCrucible.Domain.Settings.Wpf.Pages.Views.DevAssistV"
                                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:rxui="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels"
                                 mc:Ignorable="d"
                                 d:DesignHeight="450" d:DesignWidth="800">
@@ -15,9 +15,16 @@
     </UserControl.Resources>
     <StackPanel Margin="20"
                 MaxWidth="400">
-        <Button Content="Show Notifications"
+        <StackPanel>
+            <Button Content="Show Notifications"
                 Name="AddNotifications" />
-        <Button Content="Add Tracker"
+            <Button Content="Add Tracker"
                 Name="AddTracker" />
+        </StackPanel>
+        <StackPanel>
+            <rxui:ViewModelViewHost Name="EditChip"/>
+            <rxui:ViewModelViewHost Name="AddChip"/>
+            <rxui:ViewModelViewHost Name="Editor"/>
+        </StackPanel>
     </StackPanel>
-</reactiveUi:ReactiveUserControl>
+</rxui:ReactiveUserControl>

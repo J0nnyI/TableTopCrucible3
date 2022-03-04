@@ -1,6 +1,8 @@
 ﻿using System.Reactive.Linq;
 using System.Windows;
+
 using ReactiveUI;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 
@@ -11,15 +13,24 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.Views;
 /// </summary>
 public partial class ItemViewerHeaderV : ReactiveUserControl<ItemViewerHeaderVm>
 {
-    private static readonly GridLength GridLengthStar = new(1, GridUnitType.Star);
-    private static readonly GridLength GridLengthAuto = GridLength.Auto;
-    private static readonly GridLength GridLengthZero = new(0);
+    private static double nameSpacingBuffer = 4;
 
     public ItemViewerHeaderV()
     {
         InitializeComponent();
         this.WhenActivated(() => new[]
         {
+            this.WhenAnyValue(
+                v=>v.SensorLeft.ActualWidth,
+                v=>v.SensorRight.ActualWidth,
+                v=>v.LeftGrid.ActualWidth,
+                (left, right, total)=>
+                    (total-left-right-nameSpacingBuffer) .Min(5))
+                .BindTo(this, v=>v.NameColumn.MaxWidth),
+            this.ViewModel.TitleTooltipChanges
+                .Do(x=>{})
+                .BindTo(this, v=>v.NameDisplay.ToolTip),
+
             ViewModel!.SelectionCountChanges
                 .Select(count => count.ToString())
                 .BindTo(this, vm => vm.ItemCount.Text),
@@ -32,25 +43,13 @@ public partial class ItemViewerHeaderV : ReactiveUserControl<ItemViewerHeaderVm>
                 vm => vm.TabStrip,
                 v => v.TabStrip.ViewModel),
 
-            /* name edit bindings */
-            ViewModel.SelectionCountChanges
-                .Select(count =>
-                    count > 1
-                        ? GridLengthStar
-                        : GridLengthAuto)
-                .BindTo(this, v => v.NameColumnDefinition.Width),
-
-            ViewModel.SelectionCountChanges
-                .Select(count =>
-                    count > 1
-                        ? GridLengthZero
-                        : GridLengthStar)
-                .BindTo(this, v => v.SpacerColumnDefinition.Width),
-
             //editMode = true
             this.Bind(ViewModel,
                 vm => vm.EditedName,
                 v => v.NameEditor.Text),
+            this.Bind(ViewModel,
+                vm => vm.EditedName,
+                v => v.NameEditor.ToolTip),
             this.ViewModel
                 .EditModeChanges
                 .Select(editMode => editMode

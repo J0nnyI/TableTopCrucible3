@@ -7,6 +7,7 @@ using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Engine.UserControls.ViewModels;
 using TableTopCrucible.Domain.Library.Wpf.Services;
 
@@ -34,6 +35,7 @@ public class ItemViewerHeaderVm : ReactiveObject, IItemViewerHeader, IActivatabl
 
     [Reactive]
     public string EditedName { get; set; } = string.Empty;
+    public IObservable<string> TitleTooltipChanges { get; }
 
     public ItemViewerHeaderVm(ILibraryService libraryService, IIconTabStrip tabStrip)
     {
@@ -52,6 +54,18 @@ public class ItemViewerHeaderVm : ReactiveObject, IItemViewerHeader, IActivatabl
             .Select(item => item is not null)
             .StartWith(false);
 
+        TitleTooltipChanges = libraryService
+            .SelectedItems
+            .Connect()
+            .ToCollection()
+            .Select(items =>
+                string.Join(
+                    Environment.NewLine,
+                    items.Take(10).Select(item => item.Name.Value)
+                ) + (
+                    items.Count > 10
+                    ? Environment.NewLine + "..."
+                    : string.Empty));
         this.WhenActivated(() => new[]
         {
             libraryService

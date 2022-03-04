@@ -10,4 +10,6 @@ public static class TextBoxHelper
         var rect = textBox.GetRectFromCharacterIndex(textBox.CaretIndex);
         textBox.ScrollToHorizontalOffset(rect.Right);
     }
+    public static void MoveCaretToEnd(this TextBox textBox)
+        => textBox.CaretIndex = textBox.Text.Length - 1;
 }

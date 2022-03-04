@@ -1,18 +1,29 @@
 ﻿<rxui:ReactiveUserControl x:TypeArguments="vm:TagEditorChipVm"
-                                x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.TagEditorItemV"
-                                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                                xmlns:local="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.Views"
-                                xmlns:rxui="http://reactiveui.net"
-                                xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
-                                xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-                                xmlns:c="clr-namespace:TableTopCrucible.Core.Wpf.Helper.Converter;assembly=TableTopCrucible.Core.Wpf.Helper"
-                                mc:Ignorable="d" 
-                                d:DesignHeight="450" d:DesignWidth="800">
+                          x:Class="TableTopCrucible.Shared.Wpf.UserControls.Views.TagEditorChipV"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                          xmlns:rxui="http://reactiveui.net"
+                          xmlns:vm="clr-namespace:TableTopCrucible.Shared.Wpf.UserControls.ViewModels"
+                          xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                          xmlns:helper="clr-namespace:TableTopCrucible.Core.Helper;assembly=TableTopCrucible.Core.Helper"
+                          mc:Ignorable="d" 
+                          d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-
+        <Style x:Key="ImprovedSelectionBackground"
+               TargetType="ListBoxItem" 
+               BasedOn="{StaticResource MaterialDesignListBoxItem}">
+            <EventSetter Event="PreviewMouseUp"
+                            Handler="ListBoxItem_PreviewMouseUp"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}"
+                                Value="true">
+                    <Setter Property="Background"
+                            Value="#15FFFFFF"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <Style TargetType="Button"
                x:Key="ChipButton"
                BasedOn="{StaticResource MaterialDesignIconForegroundButton}">
@@ -34,6 +45,26 @@
                             Value="2" />
                 </Style>
             </Style.Resources>
+        </Style>
+        <Style BasedOn="{StaticResource ChipButton}"
+               x:Key="RotatingIcon"
+               TargetType="Button">
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <RotateTransform Angle="0" />
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDropDownOpen}" Value="true">
+                    <DataTrigger.Setters>
+                        <Setter Property="LayoutTransform">
+                            <Setter.Value>
+                                <RotateTransform Angle="180" />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger.Setters>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <md:Chip MouseDoubleClick="Chip_OnMouseDoubleClick">
@@ -64,14 +95,16 @@
                         </Grid.OpacityMask>
 
                         <!-- Any content -->
-                        <ProgressBar Height="NaN"  
+                        <ProgressBar x:Name="ProgressBar"
+                                     Value="{Binding BackgroundProgress.Value}"
+                                     Height="NaN"  
                                      Style="{x:Null}"
                                      Background="Transparent"
                                      Foreground="#1b2327"
                                      BorderThickness="0"
                                      UseLayoutRounding="True"
                                      Margin="0 0 0 0"
-                                     Value="70"
+                                     Maximum="1"
                                      ClipToBounds="False"
                                      />
 
@@ -81,47 +114,80 @@
 
             </Border>
             <StackPanel Orientation="Horizontal">
-                <!--add content-->
+                <!--new && view-->
                 <Button Name="AddTag"
                         Content="{md:PackIcon Plus}"
                         Margin="-8 0"
                         Style="{StaticResource ChipButton}"
                         ToolTip="Add Tag"/>
-                <!--read/edit content-->
+                <!--existing && view-->
+                <TextBlock x:Name="TextViewer"
+                           VerticalAlignment="Center" />
+                <!--edit-->
                 <StackPanel Name="ContentContainer"
                             Orientation="Horizontal"
                             Loaded="FrameworkElement_OnLoaded">
-                    <!--read only text-->
-                    <TextBlock x:Name="TextViewer"
-                               VerticalAlignment="Center" />
                     <!--write only text-->
-                    <ComboBox x:Name="TextEditor"
-                              Style="{StaticResource MaterialDesignComboBox}"
-                              IsEditable="True"
-                              KeyDown="TextBox_OnKeyDown"
-                              StaysOpenOnEdit="True"
-                              Padding="4"
-                              VerticalAlignment="Center"
-                              VerticalContentAlignment="Center"
-                              Margin="0" >
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    <TextBox x:Name="TextEditor" 
+                                PreviewKeyDown="TextBox_OnKeyDown"
+                             md:TextFieldAssist.HasTrailingIcon="True"
+                             >
+                        <TextBox.Style>
+                            <Style TargetType="TextBox"
+                                   BasedOn="{StaticResource MaterialDesignTextBox}">
+                                <Style.Resources>
+                                    <Style TargetType="md:PackIcon">
+                                        <Setter Property="Foreground" Value="Transparent"/>
+                                    </Style>
+                                </Style.Resources>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <Button x:Name="ToggleDropDown"
+                            Content="{md:PackIcon Kind=ExpandMore}"
+                            Foreground="{DynamicResource MaterialDesignDarkForeground}"
+                            BorderThickness="0"
+                            VerticalAlignment="Center"
+                            Margin="-23 0 0 0"
+                            Style="{StaticResource RotatingIcon}"/>
+                    <!---23-->
+                    <md:PopupEx x:Name="Dropdown"
+                                PlacementTarget="{Binding ElementName=TextEditor}"
+                                Style="{x:Null}"
+                                Placement="Bottom"
+                                MinHeight="10"
+                                AllowsTransparency="True"
+                                MinWidth="{Binding ElementName=TextEditor, Path=ActualWidth}"
+                                MaxHeight="300"
+                                >
+                        <Border BorderThickness="1"
+                                Background="{DynamicResource MaterialDesignDarkBackground}"
+                                BorderBrush="{DynamicResource MaterialDesignDarkSeparatorBackground}"
+                                Padding="4">
+                            <Grid>
+                                <ListView  x:Name="SuggestedTags"
+                                           SelectedItem="{Binding SelectedTag}"
+                                           ItemsSource="{Binding AvailableTags}"
+                                           SelectionMode="Single"
+                                           ItemContainerStyle="{StaticResource ImprovedSelectionBackground}"
+                                           />
+                                <TextBlock x:Name="EmptyPlaceholder"
+                                           Text="There are no tags like this"/>
+                            </Grid>
+                        </Border>
+                    </md:PopupEx>
                     <!--confirm-->
                     <Button Name="Confirm"
                             Style="{StaticResource ChipButton}"
                             Content="{md:PackIcon Check}"
                             Margin="2 0" />
-                    <!--delete/revert-->
-                    <Button Name="RevertDelete"
+                </StackPanel>
+                <!--delete/revert-->
+                <Button Name="RevertDelete"
                             Style="{StaticResource ChipButton}"
                             Margin="0 0 -8 0">
-                        <md:PackIcon x:Name="RevertDeleteIcon"/>
-                    </Button>
-                </StackPanel>
+                    <md:PackIcon x:Name="RevertDeleteIcon"/>
+                </Button>
             </StackPanel>
         </Grid>
     </md:Chip>

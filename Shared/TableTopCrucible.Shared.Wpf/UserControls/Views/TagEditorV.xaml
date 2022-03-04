@@ -15,11 +15,19 @@
     <UserControl.Resources>
         <system:Double x:Key="CornerRadius">10</system:Double>
     </UserControl.Resources>
-    <ItemsControl x:Name="TagList">
+    <!--negative margin is used to counter top/bottom margin of tag elements below-->
+    <ItemsControl x:Name="TagList" 
+                  Margin="-4">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <WrapPanel />
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <rxui:ViewModelViewHost ViewModel="{Binding}"
+                                        Margin="4"/>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
     </ItemsControl>
 </rxui:ReactiveUserControl>

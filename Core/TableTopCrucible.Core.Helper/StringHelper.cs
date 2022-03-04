@@ -8,4 +8,9 @@ public static class StringHelper
 
     private static string WildcardToRegex(string pattern) =>
         "^" + Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".") + "$";
+
+    public static bool IsNullOrWhitespace(this string str)
+        => string.IsNullOrWhiteSpace(str);
+    public static bool IsNullOrEmpty(this string str)
+        => string.IsNullOrEmpty(str);
 }

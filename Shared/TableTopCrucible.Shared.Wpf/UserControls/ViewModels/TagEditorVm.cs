@@ -27,7 +27,6 @@ using TableTopCrucible.Infrastructure.Views.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
-
 [Transient]
 public interface ITagEditor
 {
@@ -58,16 +57,18 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
     {
         _storageController = storageController;
 
+
         this.WhenActivated(() =>
         {
+            var appendList = new SourceList<ITagEditorChip>();
             // this appends the + button
             var addChip = Locator.Current.GetService<ITagEditorChip>()!;
-            addChip.Init(null, SelectedTags, tagView.Data, !FluentModeActive, FluentModeActive, TagDeletionEnabled);
+            addChip.Init(null, SelectedTags, tagView.Data, FluentModeActive?TagEditorWorkMode.Edit:TagEditorWorkMode.View, TagDeletionEnabled);
             addChip.TagAdded.Take(1).Subscribe(_ => FluentModeActive = FluentModeEnabled);
-            TagList.Add(addChip);
-            FluentModeActive = false;
-            var appendList = new SourceList<ITagEditorChip>();
             appendList.Add(addChip);
+
+            FluentModeActive = false;            
+            
             return new[]
             {
                 this.WhenAnyValue(vm => vm.SelectedTags)
@@ -77,10 +78,18 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
                     {
                         // this converts existing tags to a vm
                         var chip = Locator.Current.GetService<ITagEditorChip>()!;
-                        chip.Init(tag, SelectedTags, tagView.Data, false, false, TagDeletionEnabled);
+                        chip.Init(tag, SelectedTags, tagView.Data, TagEditorWorkMode.View, TagDeletionEnabled);
                         return chip;
                     })
                     .Or(appendList.Connect())
+                    .Sort((chipA, chipB) =>
+                    {
+                        if(chipA.DisplayMode == TagEditorDisplayMode.New)
+                            return 1;
+                        if(chipB.DisplayMode == TagEditorDisplayMode.New)
+                            return -1;
+                        return chipA.SourceTag.CompareTo(chipB.SourceTag);
+                    })
                     .DisposeMany()
                     .StartWithEmpty()
                     .ObserveOn(RxApp.MainThreadScheduler)
@@ -92,7 +101,7 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
                         //chip.Init(null, SelectedTags, tagView.Data, !FluentModeActive,FluentModeActive, TagDeletionEnabled);
                         //chip.TagAdded.Take(1).Subscribe(_=>FluentModeActive = FluentModeEnabled);
                         //TagList.Add(chip);
-                        //FluentModeActive = false;
+                        //FluentModeActive = false;.subs
                     }),
 
                 new ActOnLifecycle(null, () => TagList.Clear()),

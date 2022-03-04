@@ -25,10 +25,15 @@ public partial class MainWindow : Window
         var directorySetupRepository = Locator.Current.GetService<IDirectorySetupRepository>();
         try
         {
+#if DEBUG
+            navigationService.ActiveWorkArea = Locator.Current.GetService<IDevAssist>();
+                return;
+#else
             if (directorySetupRepository.Data.Items.Count() == 0)
                 navigationService.ActiveWorkArea = Locator.Current.GetService<IDirectorySetupPage>();
             else
                 navigationService.ActiveWorkArea = Locator.Current.GetService<ILibraryPage>();
+#endif
         }
         catch (Exception e)
         {

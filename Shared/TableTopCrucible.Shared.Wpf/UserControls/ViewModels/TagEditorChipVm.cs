@@ -19,21 +19,32 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Models.Controller;
 using TableTopCrucible.Core.Wpf.Helper;
+using TableTopCrucible.Shared.Wpf.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
+    public enum TagEditorDisplayMode
+    {
+        New,
+        Existing
+    }
+    public enum TagEditorWorkMode
+    {
+        Edit,
+        View
+    }
     [Transient]
     public interface ITagEditorChip
     {
         IObservable<Tag> TagAdded { get; }
-        bool IsNew { get; }
+        TagEditorDisplayMode DisplayMode { get; }
+        public Tag SourceTag { get; }
 
         void Init(
             Tag sourceTag,
             ITagCollection selectedTags,
             IObservableList<Tag> availableTags,
-            bool addMode = false,
-            bool editModeEnabled = false,
+            TagEditorWorkMode workMode,
             bool deletionEnabled = true);
     }
     public class TagEditorChipVm : ReactiveValidationObject, IActivatableViewModel, ITagEditorChip
@@ -45,116 +56,145 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         private IObservableList<Tag> _availableTagsSource;
         private ReadOnlyObservableCollection<string> _availableTags;
         public ReadOnlyObservableCollection<string> AvailableTags => _availableTags;
+        public IObservable<bool> AreTagsAvailableChanges { get; private set; }
         private readonly Subject<Tag> _tagAdded = new();
         public IObservable<Tag> TagAdded => _tagAdded.AsObservable();
         public bool DeletionEnabled { get; private set; }
+        [Reactive]
+        public bool IsDropDownOpen{ get; set; } = false;
         public ReactiveCommand<Unit, Unit> RemoveCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> AddTagCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> ToggleDropDown { get; private set; }
         public Interaction<Unit, Unit> FocusEditorInteraction { get; } = new();
         public Interaction<Unit, Unit> UnfocusEditorInteraction { get; } = new();
+
+        public Tag SourceTag { get; private set; }
+
+        [Reactive]
+        public string EditedTag { get; set; }
+        [Reactive]
+        public string SelectedTag { get; set; }
+        [Reactive]
+        public TagEditorWorkMode WorkMode { get; set; }
+        [Reactive]
+        public Fraction BackgroundProgress { get; set; }//= (Fraction).5;
+
+        public TagEditorDisplayMode DisplayMode
+            => SourceTag is null
+            ? TagEditorDisplayMode.New
+            : TagEditorDisplayMode.Existing;
 
         public TagEditorChipVm(IStorageController storageController)
         {
             _storageController = storageController;
 
-            this.WhenActivated(() => new[]
+            this.WhenActivated(() =>
             {
-                this.ValidationRule(
-                        vm => vm.EditedTag,
-                        tag => !string.IsNullOrWhiteSpace(tag),
-                        "The tag must not be empty"),
-
-                this.ValidationRule(
-                vm => vm.EditedTag,
-                this.WhenAnyValue(vm => vm.EditedTag)
-                    .CombineLatest(
-                        _selectedTags?.Connect().ToCollection() ?? Observable.Empty<IReadOnlyCollection<Tag>>(),
-                        (tag, tags) =>
-                        {
-                            return tags.Count(t => t.Value == tag) < (
-                                IsNew
-                                    ? 1
-                                    : 2);
-                        }).StartWith(true),
-                "The tag has already been added"),
-
-                this.WhenAnyValue(vm => vm.EditModeEnabled)
-                    .Select(editMode => editMode
+                var availableTags = this.WhenAnyValue(vm => vm.WorkMode)
+                    .Select(editMode => editMode == TagEditorWorkMode.Edit
                         ? _availableTagsSource?.Connect()
                         : Observable.Empty<IChangeSet<Tag>>())
                     .Switch()
                     .Filter(this.WhenAnyValue(vm => vm.EditedTag).Select(filter =>
-                        new Func<Tag, bool>(tag => tag.Value.ToLower().Contains(filter.ToLower()))))
-                    .Top(SettingsHelper.MaxTagCountInDropDown)
-                    .Transform(tag=>tag.Value)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Bind(out _availableTags)
-                    .Subscribe(),
-                RemoveCommand = ReactiveCommand.Create(Remove),
-                SaveCommand = ReactiveCommand.Create(
-                    Confirm,
-                    this.NoErrorsChanges()),
-                AddTagCommand = ReactiveCommand.Create(() =>
+                        new Func<Tag, bool>(tag => tag.Value.ToLower().Contains(filter.ToLower()))));
+                this.AreTagsAvailableChanges = availableTags
+                    .Top(1)
+                    .ToCollection()
+                    .Select(x => x.Count > 0);
+                return new[]
                 {
-                    AddMode = false;
-                    EditModeEnabled = false;
-                    FocusEditorInteraction.Handle().Take(1).Subscribe();
-                }),
+                    this.WhenAnyValue(vm=>vm.WorkMode)
+                        .Subscribe(workMode =>
+                            this.IsDropDownOpen = (WorkMode == TagEditorWorkMode.Edit)),
+                    this.ToggleDropDown = ReactiveCommand.Create(
+                        () => { IsDropDownOpen =!IsDropDownOpen; },// remove return type
+                        this.WhenAnyValue(v=>v.WorkMode)
+                            .Select(workMode=>workMode == TagEditorWorkMode.Edit)),
+
+                    // validation
+                    this.ValidationRule(
+                            vm => vm.EditedTag,
+                            tag => !string.IsNullOrWhiteSpace(tag),
+                            "The tag must not be empty"),
+
+                    this.ValidationRule(
+                        vm => vm.EditedTag,
+                        this.WhenAnyValue(vm => vm.EditedTag)
+                            .CombineLatest(
+                                _selectedTags?.Connect().ToCollection() ?? Observable.Empty<IReadOnlyCollection<Tag>>(),
+                                (tag, tags) =>
+                                {
+                                    return tags.Count(t => t.Value == tag) < (
+                                        DisplayMode == TagEditorDisplayMode.New
+                                            ? 1
+                                            : 2);
+                                }).StartWith(true),
+                        "The tag has already been added"),
+
+                    // bind tag suggestions
+                    availableTags
+                        .Transform(tag=>tag.Value)
+                        .Sort((tagA, tagB) => // move the sourcetag to the top of the list
+                        {
+                            if((Tag)tagA == this.SourceTag)
+                                return -1;
+                            if((Tag)tagB == this.SourceTag)
+                                return 1;
+                            return tagA.CompareTo(tagB);
+                        })
+                        .Top(SettingsHelper.MaxTagCountInDropDown)
+                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .Bind(out _availableTags)
+                        .Subscribe(),
+
+                    // commands
+                    RemoveCommand = ReactiveCommand.Create(Remove),
+                    SaveCommand = ReactiveCommand.Create(
+                        Confirm,
+                        this.NoErrorsChanges()),
+                    AddTagCommand = ReactiveCommand.Create(() =>
+                    {
+                        WorkMode = TagEditorWorkMode.Edit;
+                        FocusEditorInteraction.Handle().Take(1).Subscribe();
+                    }),
+                };
             });
         }
         public void Init(
             Tag sourceTag,
             ITagCollection selectedTags,
             IObservableList<Tag> availableTags,
-            bool addMode = false,
-            bool editModeEnabled = false,
+            TagEditorWorkMode workMode,
             bool deletionEnabled = true)
         {
             _selectedTags = selectedTags;
             _availableTagsSource = availableTags;
             DeletionEnabled = deletionEnabled;
             SourceTag = sourceTag;
-            AddMode = addMode;
-            EditModeEnabled = editModeEnabled;
-            EditedTag = sourceTag?.Value ?? string.Empty;
-
+            WorkMode = workMode;
+            SelectedTag = EditedTag = sourceTag?.Value ?? string.Empty;
         }
-
-        public Tag SourceTag { get; private set; }
-
-        [Reactive]
-        public string EditedTag { get; set; }
-
-        [Reactive]
-        public bool EditModeEnabled { get; set; }
-
-        [Reactive]
-        public bool AddMode { get; set; }
-
-        public bool IsNew => SourceTag is null;
 
         public void Revert()
         {
             EditedTag = SourceTag?.Value ?? string.Empty;
-            EditModeEnabled = false;
-            AddMode = IsNew;
+            WorkMode = TagEditorWorkMode.View;
         }
 
         public void Confirm()
         {
             if (HasErrors)
-                return ;
+                return;
             EditTag();
             EditedTag = SourceTag?.Value ?? string.Empty;
-            EditModeEnabled = false;
-            AddMode = IsNew;
+            WorkMode = TagEditorWorkMode.View;
             _unfocusEditor();
         }
 
         public void Remove()
         {
-            if (IsNew || EditModeEnabled)
+            if (DisplayMode == TagEditorDisplayMode.New || WorkMode == TagEditorWorkMode.Edit)
                 Revert();
             else
             {
@@ -166,22 +206,24 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
         public void EditTag()
         {
-            if (IsNew)
+            if (DisplayMode == TagEditorDisplayMode.New)
             {
                 _selectedTags.Add((Tag)EditedTag);
                 _tagAdded.OnNext((Tag)EditedTag);
             }
             else
+            {
                 _selectedTags.Replace(SourceTag, (Tag)EditedTag);
+            }
 
             _storageController.AutoSave();
         }
 
         public void EnterEditMode()
         {
-            if (EditModeEnabled)
+            if (WorkMode == TagEditorWorkMode.Edit)
                 return;
-            EditModeEnabled = true;
+            WorkMode = TagEditorWorkMode.Edit;
             _focusEditor();
         }
 
