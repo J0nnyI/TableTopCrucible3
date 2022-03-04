@@ -11,5 +11,5 @@ public static class TextBoxHelper
         textBox.ScrollToHorizontalOffset(rect.Right);
     }
     public static void MoveCaretToEnd(this TextBox textBox)
-        => textBox.CaretIndex = textBox.Text.Length - 1;
+        => textBox.CaretIndex = textBox.Text.Length;
 }
