@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Windows.Media.TextFormatting;
 using DynamicData;
 
 namespace TableTopCrucible.Core.Helper;
@@ -47,9 +48,53 @@ public static class IEnumerableHelper
             : default;
     }
 
+    public static bool ContainsNot<T>(this IEnumerable<T> list, T compare)
+        => list.Contains(compare) is false;
+    /// <summary>
+    /// list=[1,2,3]<br/>
+    /// compare=[2,3]<br/>
+    /// returns: true<br/>
+    /// <br/>
+    /// list=[1,2,3]<br/>
+    /// compare=[2,3,<b>4</b>]<br/>
+    /// returns: false
+    /// </summary>
+    /// <param name="list"></param>
+    /// <param name="compare"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static bool ContainsAll<T>(this IEnumerable<T> list, IEnumerable<T> compare)
         => compare.All(list.Contains);
 
+    /// <summary>
+    /// list=[1,2,3]<br/>
+    /// compare=[4,5]<br/>
+    /// returns: true<br/>
+    /// <br/>
+    /// list=[1,2,<b>3</b>]<br/>
+    /// compare=[<b>3</b>,4,5]<br/>
+    /// returns: false
+    /// </summary>
+    /// <param name="list"></param>
+    /// <param name="compare"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static bool ContainsNone<T>(this IEnumerable<T> list, IEnumerable<T> compare)
+        => !list.ContainsAll(compare);
+
+    /// <summary>
+    /// list=[1,2,3]<br/>
+    /// compare=[4,5]<br/>
+    /// returns: false<br/>
+    /// <br/>
+    /// list=[1,2,<b>3</b>]<br/>
+    /// compare=[<b>3</b>,4,5]<br/>
+    /// returns: true
+    /// </summary>
+    /// <param name="list"></param>
+    /// <param name="compare"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static bool ContainsAny<T>(this IEnumerable<T> list, IEnumerable<T> compare)
         => compare.Any(list.Contains);
 
@@ -61,4 +106,17 @@ public static class IEnumerableHelper
         list.Remove(items);
         return items;
     }
+    private class OrderHelper<T>:IComparer<T>
+    {
+        private readonly Func<T?, T?, int> _comparer;
+
+        public OrderHelper(Func<T?,T?,int> comparer)
+            => _comparer = comparer;
+
+        public int Compare(T? x, T? y) => _comparer(x, y);
+    }
+    public static IEnumerable<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> list,Func<TSource,TKey> keySelector,  Func<TKey, TKey, int> sorter)
+        => list.OrderBy(keySelector,new OrderHelper<TKey>(sorter));
+    public static IEnumerable<T> OrderBy<T>(this IEnumerable<T> list,  Func<T, T, int> sorter)
+        => list.OrderBy(x=>x,sorter);
 }

@@ -51,7 +51,7 @@ public class DevAssistVm : IDevAssist, IActivatableViewModel
 
 
         TagCollection availableTags = new();
-        TagCollection selectedTags = new();
+        ITagManager selectedTags = new CollectionTagManager();
         availableTags.Edit(editor =>
         {
             editor.AddRange(new[]
@@ -63,14 +63,8 @@ public class DevAssistVm : IDevAssist, IActivatableViewModel
                 "anotherTag"
             }.Select(Tag.From));
         });
-        selectedTags.Edit(editor =>
-        {
-            editor.AddRange(new[]
-            {
-                "edit tag",
-                "anotherTag"
-            }.Select(Tag.From));
-        });
+        selectedTags.Add("edit tag");
+        selectedTags.Add("anotherTag");
         EditChip = editChip;
         EditChip.Init((Tag)"edit tag", selectedTags, availableTags, TagEditorWorkMode.View, true);
 
@@ -78,7 +72,7 @@ public class DevAssistVm : IDevAssist, IActivatableViewModel
         AddChip.Init(null, selectedTags, availableTags, TagEditorWorkMode.View, true);
 
         Editor = editor;
-        Editor.SelectedTags = selectedTags;
+        Editor.TagManager = selectedTags;
     }
 
     public PackIconKind? Icon => PackIconKind.DevTo;

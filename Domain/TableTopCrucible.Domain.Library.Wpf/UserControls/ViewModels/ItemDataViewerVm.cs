@@ -1,4 +1,10 @@
-﻿using System.Reactive.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
+
+using DynamicData;
+
 using MaterialDesignThemes.Wpf;
 using ReactiveUI;
 using TableTopCrucible.Core.DependencyInjection.Attributes;
@@ -6,8 +12,10 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Domain.Library.Wpf.Services;
+using TableTopCrucible.Infrastructure.Models.EntityIds;
 using TableTopCrucible.Shared.Wpf.Models;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
+using TableTopCrucible.Shared.Wpf.ValueTypes;
 
 namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 
@@ -15,7 +23,6 @@ namespace TableTopCrucible.Domain.Library.Wpf.UserControls.ViewModels;
 public interface IItemDataViewer : ITabPage
 {
 }
-
 public class ItemDataViewerVm : ReactiveObject, IItemDataViewer, IActivatableViewModel
 {
     public ITagEditor TagEditor { get; }
@@ -33,12 +40,12 @@ public class ItemDataViewerVm : ReactiveObject, IItemDataViewer, IActivatableVie
         this.WhenActivated(() =>
         {
             var provider = new MultiTagSource(libraryService.SelectedItems);
+
+            TagEditor.TagManager = new MultiItemTagManager(libraryService.SelectedItems);
             
-            return new[]
+            return new IDisposable[]
             {
-                libraryService.SingleSelectedItemChanges
-                    .Select(item => item?.Tags)
-                    .BindTo(this, vm => vm.TagEditor.SelectedTags),
+                TagEditor.TagManager,
                 provider
             };
         });

@@ -10,4 +10,6 @@ public class Tag : ComparableValueType<string, Tag>
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidValueException("a tag must not be empty");
     }
+    public static implicit operator Tag(string value)
+        => From(value);
 }

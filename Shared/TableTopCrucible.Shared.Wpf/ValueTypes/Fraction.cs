@@ -15,6 +15,6 @@ public class Fraction:ValueType<double, Fraction>
     {
         base.Validate(value);
         if (value < 0 || value > 1)
-            throw new InvalidValueException($"value must be between 0 and 0, got {value}");
+            throw new InvalidValueException($"value must be between 0 and 1, got {value}");
     }
 }

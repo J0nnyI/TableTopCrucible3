@@ -38,11 +38,11 @@ public class ItemListFilterElementsVm : ReactiveObject, IActivatableViewModel, I
         // ends with    FormatLetterEndsWith        ContainEnd
         // Contains                                 Contain
         // Equals       FormatLetterMatches         Equal
-        // Ignore Case
-        // Consider Case                            FormatLetterCase
+        // Ignore Case                              FormatLetterCase
+        // Match Case                               FormatLetterCaseUpper
         TagEditor = tagEditor;
         tagEditor.FluentModeEnabled = false;
-        tagEditor.SelectedTags = SelectedTags;
+        tagEditor.TagManager = SelectedTags;
         FilterChanges = this.WhenAnyValue(
                 vm => vm.NameTextMatchType,
                 vm => vm.NameCaseMatchType,
@@ -51,7 +51,7 @@ public class ItemListFilterElementsVm : ReactiveObject, IActivatableViewModel, I
                 (textMatchType, caseMatchType, filterText, filterMode) =>
                     new { textMatchType, caseMatchType, filterText, filterMode })
             .CombineLatest(
-                SelectedTags.Connect().StartWithEmpty().ToCollection(),
+                SelectedTags.TagCollection.Connect().StartWithEmpty().ToCollection(),
                 (propertyFilter, tags) =>
                 {
                     var nameFilterText = propertyFilter.filterText;
@@ -101,9 +101,10 @@ public class ItemListFilterElementsVm : ReactiveObject, IActivatableViewModel, I
     public CaseMatchType NameCaseMatchType { get; set; } = CaseMatchType.IgnoreCase;
 
     [Reactive]
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string NameFilter { get; set; }
 
-    public ITagCollection SelectedTags { get; } = new TagCollection();
+    public CollectionTagManager SelectedTags { get; } = new CollectionTagManager();
 
     [Reactive]
     public FilterMode FilterMode { get; set; } = FilterMode.Include;

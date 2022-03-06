@@ -25,8 +25,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
     public enum TagEditorDisplayMode
     {
+        /// <summary>
+        /// the + button to add a tag
+        /// </summary>
         New,
-        Existing
+        /// <summary>
+        /// the simple view without progress bar, i.e. for single items
+        /// </summary>
+        Simple,
+        /// <summary>
+        /// the complex view with progress bar, i.e. for multiSelection
+        /// </summary>
+        Fraction
     }
     public enum TagEditorWorkMode
     {
@@ -39,20 +49,22 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         IObservable<Tag> TagAdded { get; }
         TagEditorDisplayMode DisplayMode { get; }
         public Tag SourceTag { get; }
+        public Fraction Distribution { get; set; }
 
         void Init(
             Tag sourceTag,
-            ITagCollection selectedTags,
+            ITagManager tagManager,
             IObservableList<Tag> availableTags,
             TagEditorWorkMode workMode,
-            bool deletionEnabled = true);
+            bool deletionEnabled = true,
+            Fraction distribution = null);
     }
     public class TagEditorChipVm : ReactiveValidationObject, IActivatableViewModel, ITagEditorChip
     {
         private readonly IStorageController _storageController;
         public ViewModelActivator Activator { get; } = new();
 
-        private ITagCollection _selectedTags;
+        private ITagManager _tagManager;
         private IObservableList<Tag> _availableTagsSource;
         private ReadOnlyObservableCollection<string> _availableTags;
         public ReadOnlyObservableCollection<string> AvailableTags => _availableTags;
@@ -77,13 +89,17 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public string SelectedTag { get; set; }
         [Reactive]
         public TagEditorWorkMode WorkMode { get; set; }
+        /// <summary>
+        /// used for complex view, determines the fill state of the background
+        /// </summary>
         [Reactive]
-        public Fraction BackgroundProgress { get; set; }//= (Fraction).5;
+        public Fraction Distribution { get; set; }//= (Fraction).5;
+
 
         public TagEditorDisplayMode DisplayMode
             => SourceTag is null
             ? TagEditorDisplayMode.New
-            : TagEditorDisplayMode.Existing;
+            : TagEditorDisplayMode.Simple;
 
         public TagEditorChipVm(IStorageController storageController)
         {
@@ -96,8 +112,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         ? _availableTagsSource?.Connect()
                         : Observable.Empty<IChangeSet<Tag>>())
                     .Switch()
-                    .Filter(this.WhenAnyValue(vm => vm.EditedTag).Select(filter =>
-                        new Func<Tag, bool>(tag => tag.Value.ToLower().Contains(filter.ToLower()))));
+                    .Filter(
+                        this.WhenAnyValue(vm => vm.EditedTag)
+                            .Select(filter =>
+                                new Func<Tag, bool>(tag => 
+                                    tag.Value.ToLower()
+                                        .Contains(filter.ToLower()))
+                            )
+                    );
                 this.AreTagsAvailableChanges = availableTags
                     .Top(1)
                     .ToCollection()
@@ -122,14 +144,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         vm => vm.EditedTag,
                         this.WhenAnyValue(vm => vm.EditedTag)
                             .CombineLatest(
-                                _selectedTags?.Connect().ToCollection() ?? Observable.Empty<IReadOnlyCollection<Tag>>(),
+                                _tagManager?.Tags ,
                                 (tag, tags) =>
                                 {
-                                    return tags.Count(t => t.Value == tag) < (
+                                    return tags.Count(t => t.Tag.Value.ToLower() == tag.ToLower()) < (
                                         DisplayMode == TagEditorDisplayMode.New
                                             ? 1
                                             : 2);
-                                }).StartWith(true),
+                                })
+                            .StartWith(true),
                         "The tag has already been added"),
 
                     // bind tag suggestions
@@ -161,19 +184,22 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 };
             });
         }
+        
         public void Init(
             Tag sourceTag,
-            ITagCollection selectedTags,
+            ITagManager tagManager,
             IObservableList<Tag> availableTags,
             TagEditorWorkMode workMode,
-            bool deletionEnabled = true)
+            bool deletionEnabled = true,
+            Fraction distribution = null)
         {
-            _selectedTags = selectedTags;
+            _tagManager = tagManager ?? throw new ArgumentException(nameof(tagManager) + " must not be null");
             _availableTagsSource = availableTags;
             DeletionEnabled = deletionEnabled;
             SourceTag = sourceTag;
             WorkMode = workMode;
             SelectedTag = EditedTag = sourceTag?.Value ?? string.Empty;
+            this.Distribution = distribution;
         }
 
         public void Revert()
@@ -199,7 +225,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 Revert();
             else
             {
-                _selectedTags!.Remove(SourceTag);
+                _tagManager!.Remove(SourceTag);
                 _storageController.AutoSave();
             }
             _unfocusEditor();
@@ -209,12 +235,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         {
             if (DisplayMode == TagEditorDisplayMode.New)
             {
-                _selectedTags.Add((Tag)EditedTag);
+                _tagManager.Add((Tag)EditedTag);
                 _tagAdded.OnNext((Tag)EditedTag);
             }
             else
             {
-                _selectedTags.Replace(SourceTag, (Tag)EditedTag);
+                _tagManager.Replace(SourceTag, (Tag)EditedTag);
             }
 
             _storageController.AutoSave();

@@ -15,10 +15,11 @@
                TargetType="ListBoxItem" 
                BasedOn="{StaticResource MaterialDesignListBoxItem}">
             <EventSetter Event="PreviewMouseUp"
-                            Handler="ListBoxItem_PreviewMouseUp"/>
+                         Handler="ListBoxItem_PreviewMouseUp"/>
             <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}"
-                                Value="true">
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, 
+                             Path=IsSelected}"
+                             Value="true">
                     <Setter Property="Background"
                             Value="#15FFFFFF"/>
                 </DataTrigger>
@@ -96,7 +97,6 @@
 
                         <!-- Any content -->
                         <ProgressBar x:Name="ProgressBar"
-                                     Value="{Binding BackgroundProgress.Value}"
                                      Height="NaN"  
                                      Style="{x:Null}"
                                      Background="Transparent"

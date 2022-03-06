@@ -17,6 +17,7 @@ using ReactiveUI;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
+using TableTopCrucible.Shared.Wpf.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.Views;
 
@@ -38,6 +39,10 @@ public partial class TagEditorChipV
                 // prevent memory leak of inifinitly growing dispose list
                 _disposables = new CompositeDisposable();
             }),
+            this.OneWayBind(ViewModel,
+                vm=>vm.Distribution,
+                v=>v.ProgressBar.Value,
+                (Fraction dis)=>dis?.Value ?? 0),
             this.Bind(ViewModel,
                 vm=>vm.SelectedTag,
                 v=>v.SuggestedTags.SelectedItem),
@@ -85,7 +90,7 @@ public partial class TagEditorChipV
                 v=>v.ViewModel.DisplayMode,
                 v=>v.ViewModel.WorkMode,
                 (displayMode, workMode)=>
-                    displayMode == TagEditorDisplayMode.Existing
+                    displayMode == TagEditorDisplayMode.Simple
                     && workMode == TagEditorWorkMode.View
                     ? Visibility.Visible
                     : Visibility.Collapsed)
@@ -141,7 +146,7 @@ public partial class TagEditorChipV
                 v=>v.ViewModel.DisplayMode,
                 v=>v.ViewModel.WorkMode,
                 (displayMode, workMode)=>
-                    displayMode == TagEditorDisplayMode.Existing
+                    displayMode == TagEditorDisplayMode.Simple
                     ||  workMode == TagEditorWorkMode.Edit
                     ? Visibility.Visible
                     : Visibility.Collapsed)

@@ -83,8 +83,8 @@ public class ItemModelViewerVm : ReactiveObject, IItemModelViewer, IActivatableV
     #region ITabPage
 
     public Name Title => (Name)"Model Viewer";
-    public PackIconKind SelectedIcon => PackIconKind.Rotate3d;
-    public PackIconKind UnselectedIcon => PackIconKind.Rotate3dVariant;
+    public PackIconKind SelectedIcon => PackIconKind.Cube;
+    public PackIconKind UnselectedIcon => PackIconKind.CubeOutline;
 
 
     private readonly ObservableAsPropertyHelper<bool> _isSelectable;

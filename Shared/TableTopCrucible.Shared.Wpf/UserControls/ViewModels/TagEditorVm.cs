@@ -1,28 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-
 using DynamicData;
-using DynamicData.Binding;
-
-using MoreLinq;
-
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
-
 using Splat;
-
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Helper;
-using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence;
-using TableTopCrucible.Infrastructure.Models.Controller;
 using TableTopCrucible.Infrastructure.Views.Services;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
@@ -30,17 +16,19 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 [Transient]
 public interface ITagEditor
 {
-    ITagCollection SelectedTags { get; set; }
-    public bool FluentModeEnabled { get; set; }
+    ITagManager TagManager { get; set; }
+    bool FluentModeEnabled { get; set; }
+    bool TagDeletionEnabled { get; set; }
 }
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
 {
     private readonly IStorageController _storageController;
     public ViewModelActivator Activator { get; } = new();
 
     [Reactive]
-    public ITagCollection SelectedTags { get; set; }
+    public ITagManager TagManager { get; set; }
 
     [Reactive]
     public bool FluentModeEnabled { get; set; } = true;
@@ -49,65 +37,76 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
     public bool TagDeletionEnabled { get; set; } = true;
 
     [Reactive] //if true, the next tag will be opened in edit mode
-    public bool FluentModeActive { get; set; } = false;
+    internal bool FluentModeActive { get; set; }
 
-    public ObservableCollectionExtended<ITagEditorChip> TagList { get; } = new();
+    internal ObservableCollection<ITagEditorChip> ChipList { get; } = new();
 
     public TagEditorVm(IStorageController storageController, ITagView tagView)
     {
         _storageController = storageController;
 
-
+        ITagEditorChip addChip = null;
         this.WhenActivated(() =>
         {
-            var appendList = new SourceList<ITagEditorChip>();
             // this appends the + button
-            var addChip = Locator.Current.GetService<ITagEditorChip>()!;
-            addChip.Init(null, SelectedTags, tagView.Data, FluentModeActive?TagEditorWorkMode.Edit:TagEditorWorkMode.View, TagDeletionEnabled);
-            addChip.TagAdded.Take(1).Subscribe(_ => FluentModeActive = FluentModeEnabled);
-            appendList.Add(addChip);
-
-            FluentModeActive = false;            
             
+            if(addChip is null){
+                addChip = Locator.Current.GetService<ITagEditorChip>()!;
+                addChip.Init(null, TagManager, tagView.Data, FluentModeActive
+                    ? TagEditorWorkMode.Edit
+                    : TagEditorWorkMode.View, TagDeletionEnabled);
+                addChip.TagAdded.Take(1).Subscribe(_ => FluentModeActive = FluentModeEnabled);
+                ChipList.Add(addChip);
+            }
+
+            FluentModeActive = false;
+
             return new[]
             {
-                this.WhenAnyValue(vm => vm.SelectedTags)
-                    .Select(tags => tags?.Connect() ?? Observable.Never(ChangeSet<Tag>.Empty))
+                this.WhenAnyValue(vm => vm.TagManager)
+                    .Select(tagManager => tagManager?.Tags ?? Observable.Never(Enumerable.Empty<FractionTag>()))
                     .Switch()
-                    .Transform(tag =>
-                    {
-                        // this converts existing tags to a vm
-                        var chip = Locator.Current.GetService<ITagEditorChip>()!;
-                        chip.Init(tag, SelectedTags, tagView.Data, TagEditorWorkMode.View, TagDeletionEnabled);
-                        return chip;
-                    })
-                    .Or(appendList.Connect())
-                    .Sort((chipA, chipB) =>
-                    {
-                        if(chipA.DisplayMode == TagEditorDisplayMode.New)
-                            return 1;
-                        if(chipB.DisplayMode == TagEditorDisplayMode.New)
-                            return -1;
-                        return chipA.SourceTag.CompareTo(chipB.SourceTag);
-                    })
-                    .DisposeMany()
-                    .StartWithEmpty()
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .Bind(TagList)
-                    .Subscribe(_ =>
-                    {
-                        // this appends the + button
-                        //var chip = Locator.Current.GetService<ITagEditorChip>()!;
-                        //chip.Init(null, SelectedTags, tagView.Data, !FluentModeActive,FluentModeActive, TagDeletionEnabled);
-                        //chip.TagAdded.Take(1).Subscribe(_=>FluentModeActive = FluentModeEnabled);
-                        //TagList.Add(chip);
-                        //FluentModeActive = false;.subs
-                    }),
+                    .Subscribe(
+                        _tags =>
+                        {
+                            var tags = _tags.ToArray();
 
-                new ActOnLifecycle(null, () => TagList.Clear()),
-                appendList
+                            ChipList.RemoveWhere(chip =>
+                                chip.DisplayMode != TagEditorDisplayMode.New &&
+                                tags.Select(fTag => fTag.Tag)
+                                    .ContainsNot(chip.SourceTag));
+
+                            foreach (var fractionTag in tags)
+                            {
+                                var existingChip =
+                                    ChipList.FirstOrDefault(chip => chip.SourceTag == fractionTag.Tag);
+                                if (existingChip is not null) // just update the distribution and keep the vm
+                                    existingChip.Distribution = fractionTag.Distribution;
+                                else // create a new vm
+                                {
+                                    var chip = Locator.Current.GetService<ITagEditorChip>()!;
+                                    chip.Init(fractionTag.Tag, TagManager, tagView.Data, TagEditorWorkMode.View,
+                                        TagDeletionEnabled, fractionTag.Distribution);
+
+                                    //find the proper location without changing the original list
+                                    var newIndex = ChipList
+                                        .Append(chip)
+                                        .OrderBy((a, b) 
+                                            => a.DisplayMode == TagEditorDisplayMode.New
+                                                ? 1
+                                                : b.DisplayMode == TagEditorDisplayMode.New
+                                                ? -1
+                                                : a.SourceTag.CompareTo(b.SourceTag)
+                                        )
+                                        .IndexOf(chip);
+
+                                    //insert it into the list
+                                    ChipList.Insert(newIndex, chip);
+                                }
+                            }
+                        }),
             };
         });
     }
-
 }

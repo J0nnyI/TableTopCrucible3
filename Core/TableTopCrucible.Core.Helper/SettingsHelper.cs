@@ -41,4 +41,5 @@ public static class SettingsHelper
     ///     the autoSave (subject) is buffered by this duration to prevent excessive writing
     /// </summary>
     public static TimeSpan AutoSaveBuffer => TimeSpan.FromMinutes(1);
+    public static readonly TimeSpan DefaultThrottle = TimeSpan.FromSeconds(.5);
 }
