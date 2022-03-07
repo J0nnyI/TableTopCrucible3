@@ -70,7 +70,7 @@ public class ItemActionsVm : ReactiveObject, IItemActions, IActivatableViewModel
                     null,
                     NotificationType.Confirmation);
             }, libraryService.SingleSelectedItemChanges.Select(item => item is not null),
-            RxApp.MainThreadScheduler, RxApp.MainThreadScheduler);
+            RxApp.MainThreadScheduler);
         StartSyncCommand = fileSynchronizationService.StartScanCommand;
         DeleteAllDataCommand = ReactiveCommand.Create(() =>
         {

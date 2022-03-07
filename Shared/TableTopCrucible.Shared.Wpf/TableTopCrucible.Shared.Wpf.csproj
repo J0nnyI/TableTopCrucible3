@@ -1,12 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net6.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
+		<Nullable>warnings</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ReactiveUI.Fody" Version="16.3.10" />
+        <PackageReference Include="ReactiveUI.Fody" Version="17.1.50" />
     </ItemGroup>
 
     <ItemGroup>

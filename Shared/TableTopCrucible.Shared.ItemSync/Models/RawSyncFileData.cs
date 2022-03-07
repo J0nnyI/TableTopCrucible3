@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO.Abstractions;
 using System.Security.Cryptography;
+using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 
@@ -33,7 +34,7 @@ internal class RawSyncFileData
         if (NewHashKey != null)
             return NewHashKey;
 
-        var hash = FileHashKey.Create(FoundFile, algorithm ?? new SHA512Managed());
+        var hash = FileHashKey.Create(FoundFile, algorithm ?? HashHelper.CreateHashAlgorithm());
         NewHashKey = hash;
         return hash;
     }

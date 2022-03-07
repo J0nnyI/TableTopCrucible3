@@ -84,7 +84,7 @@ internal class GalleryService : IGalleryService
                 .Select(file => file.Path.ToImagePath())
                 .ToList();
 
-            using var hash = new SHA512Managed();
+            using var hash = HashHelper.CreateHashAlgorithm();
             var hashInfo =
                 files
                     .Except(foundFiles.Select(file => file))

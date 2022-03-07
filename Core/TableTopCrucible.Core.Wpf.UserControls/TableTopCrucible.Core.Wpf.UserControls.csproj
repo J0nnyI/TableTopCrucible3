@@ -3,7 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <AssemblyName>TableTopCrucible.Core.Wpf.UserControls</AssemblyName>
+	  <Nullable>warnings</Nullable>
+	  <AssemblyName>TableTopCrucible.Core.Wpf.UserControls</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI.Fody" Version="16.3.10" />
+    <PackageReference Include="ReactiveUI.Fody" Version="17.1.50" />
   </ItemGroup>
 
   <ItemGroup>

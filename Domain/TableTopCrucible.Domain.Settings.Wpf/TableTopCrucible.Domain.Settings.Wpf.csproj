@@ -1,20 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net6.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
+		<Nullable>warnings</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Helper\TableTopCrucible.Core.Helper.csproj" />
+        <ProjectReference Include="..\..\Core\TableTopCrucible.Core.ValueTypes\TableTopCrucible.Core.ValueTypes.csproj" />
         <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Wpf.Engine\TableTopCrucible.Core.Wpf.Engine.csproj" />
-        <ProjectReference
-            Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
+        <ProjectReference Include="..\..\Core\TableTopCrucible.Core.WPF.Packages\TableTopCrucible.Core.Wpf.Packages.csproj" />
         <ProjectReference Include="..\..\Shared\TableTopCrucible.Shared.Wpf\TableTopCrucible.Shared.Wpf.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ReactiveUI.Fody" Version="16.3.10" />
+        <PackageReference Include="ReactiveUI.Fody" Version="17.1.50" />
     </ItemGroup>
 
     <ItemGroup>

@@ -2,14 +2,15 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0-windows</TargetFramework>
-    </PropertyGroup>
+		<Nullable>warnings</Nullable>
+	</PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\TableTopCrucible.Core.Packages\TableTopCrucible.Core.Packages.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ReactiveUI.Fody" Version="16.3.10" />
+        <PackageReference Include="ReactiveUI.Fody" Version="17.1.50" />
     </ItemGroup>
 
 </Project>

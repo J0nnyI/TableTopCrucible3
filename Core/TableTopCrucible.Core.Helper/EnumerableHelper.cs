@@ -7,7 +7,7 @@ using DynamicData;
 
 namespace TableTopCrucible.Core.Helper;
 
-public static class IEnumerableHelper
+public static class EnumerableHelper
 {
     /**
          * {1,2,3,4,5} + (2,4) ==> {2,3,4}
@@ -15,15 +15,16 @@ public static class IEnumerableHelper
          */
     public static IEnumerable<T> Subsection<T>(this IEnumerable<T> list, T elementA, T elementB)
     {
-        var indexA = list.IndexOf(elementA);
-        var indexB = list.IndexOf(elementB);
+        var enumeratedList = list.ToArray();
+        var indexA = enumeratedList.IndexOf(elementA);
+        var indexB = enumeratedList.IndexOf(elementB);
         var first = indexA < indexB
             ? indexA
             : indexB;
         var last = indexA > indexB
             ? indexA
             : indexB;
-        return list.Skip(first).Take(last - first + 1);
+        return enumeratedList.Skip(first).Take(last - first + 1);
     }
 
     public static StringCollection ToStringCollection(this IEnumerable<string> list)
@@ -99,7 +100,13 @@ public static class IEnumerableHelper
         => compare.Any(list.Contains);
 
 
-    /// returns the removed items
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="list"></param>
+    /// <param name="selector"></param>
+    /// <typeparam name="TObject"></typeparam>
+    /// <returns>the removed items</returns>
     public static IEnumerable<TObject> RemoveWhere<TObject>(this IList<TObject> list, Func<TObject, bool> selector)
     {
         var items = list.Where(selector).ToArray();
