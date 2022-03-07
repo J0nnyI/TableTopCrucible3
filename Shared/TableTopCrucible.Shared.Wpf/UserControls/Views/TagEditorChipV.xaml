@@ -161,6 +161,7 @@
                                 Placement="Bottom"
                                 MinHeight="10"
                                 AllowsTransparency="True"
+                                Visibility="{Binding ElementName=TextEditor, Path=Visibility}"
                                 MinWidth="{Binding ElementName=TextEditor, Path=ActualWidth}"
                                 MaxHeight="300"
                                 >
