@@ -15,19 +15,36 @@
     <UserControl.Resources>
         <system:Double x:Key="CornerRadius">10</system:Double>
     </UserControl.Resources>
-    <!--negative margin is used to counter top/bottom margin of tag elements below-->
-    <ItemsControl x:Name="TagList" 
-                  Margin="-4">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <WrapPanel />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <rxui:ViewModelViewHost ViewModel="{Binding}"
-                                        Margin="4"/>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <Grid>
+        <!--negative margin is used to counter top/bottom margin of tag elements below-->
+        <ItemsControl x:Name="TagList" 
+                      Margin="-4">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <rxui:ViewModelViewHost ViewModel="{Binding}"
+                                            Margin="4"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Grid x:Name="BusyIndicator"
+              VerticalAlignment="Top"
+              HorizontalAlignment="Left">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <ProgressBar IsIndeterminate="True"
+                         Style="{StaticResource MaterialDesignCircularProgressBar}"
+                         ToolTip="Loading Tags"
+                         Grid.Row="0"
+                         />
+            <TextBlock Text="Loading Tags"
+                       Grid.Row="1"/>
+        </Grid>
+    </Grid>
 </rxui:ReactiveUserControl>

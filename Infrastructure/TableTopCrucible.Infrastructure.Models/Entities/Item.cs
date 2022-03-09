@@ -19,8 +19,8 @@ public sealed class Item : DataEntity<ItemId>
 
     public Item(Name name, FileHashKey fileHashKey, IEnumerable<Tag>? tags = null)
     {
-        Name = name ?? throw new NullReferenceException(nameof(name));
-        FileKey3d = fileHashKey ?? throw new NullReferenceException(nameof(fileHashKey));
+        _name = name ?? throw new NullReferenceException(nameof(name));
+        _fileKey3d = fileHashKey ?? throw new NullReferenceException(nameof(fileHashKey));
         if (tags is not null)
             Tags.AddRange(tags.ToArray());
     }

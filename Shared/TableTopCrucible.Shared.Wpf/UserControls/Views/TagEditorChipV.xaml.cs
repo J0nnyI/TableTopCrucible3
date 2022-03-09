@@ -52,7 +52,7 @@ public partial class TagEditorChipV
             this.BindCommand(ViewModel,
                 vm=>vm.ToggleDropDown,
                 v=>v.ToggleDropDown),
-            this.ViewModel
+            this.ViewModel!
                 .AreTagsAvailableChanges
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Select(tagsAvailable=>tagsAvailable
@@ -109,9 +109,6 @@ public partial class TagEditorChipV
                 editMode => editMode == TagEditorWorkMode.Edit
                     ? 100
                     : 0),
-            this.Bind(ViewModel,
-                vm => vm.EditedTag,
-                v => v.TextEditor.Text),
             #endregion
             #region confirm button
             this.OneWayBind(ViewModel,
@@ -230,9 +227,7 @@ public partial class TagEditorChipV
                 ViewModel!.Confirm();
                 break;
             case Key.Escape:
-                if (ViewModel.SelectedTag is not null
-                    && ViewModel.SelectedTag != ViewModel.EditedTag
-                    && ViewModel.IsDropDownOpen)
+                if (ViewModel.IsDropDownOpen)
                 {
                     ViewModel.SelectedTag = null;
                     ViewModel.IsDropDownOpen = false;
@@ -244,4 +239,5 @@ public partial class TagEditorChipV
     }
     private void Dropdown_PreviewKeyDown(object sender, KeyEventArgs e)
         => handleEnterEscape(e.Key);
+
 }

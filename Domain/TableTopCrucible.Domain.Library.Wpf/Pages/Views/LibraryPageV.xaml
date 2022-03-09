@@ -10,21 +10,7 @@
                           mc:Ignorable="d"
                           d:DesignHeight="450" d:DesignWidth="800"
                           d:DataContext="{d:DesignInstance vm:LibraryPageVm}">
-    <UserControl.Resources>
-        <Style TargetType="TextBlock"
-               x:Key="VerticalExpanderHeader">
-            <Setter Property="RenderTransformOrigin"
-                    Value=".5,.5" />
-            <Setter Property="LayoutTransform">
-                <Setter.Value>
-                    <RotateTransform Angle="90" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="FontSize"
-                    Value="{DynamicResource SidebarTitleFontSize}" />
-        </Style>
-    </UserControl.Resources>
-    <md:DrawerHost>
+    <md:DrawerHost x:Name="DrawerHost">
         <md:DrawerHost.LeftDrawerContent>
             <rxui:ViewModelViewHost x:Name="Filter"
                                     Width="500" />

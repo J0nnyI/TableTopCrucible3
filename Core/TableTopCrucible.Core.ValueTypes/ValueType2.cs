@@ -54,8 +54,17 @@ public abstract class ValueType<TValueA, TValueB, TThis> : ValueType<TThis>
     public override string ToString() => $"A: {ValueA} | B: {ValueB}";
 
     public override bool Equals(object? other)
-        => other is TThis otherValue &&
-           ValueA.Equals(otherValue.ValueA) && ValueB.Equals(otherValue.ValueB);
+        =>  other is not null 
+        && other is TThis otherValue  
+        && (
+                ValueA is null && otherValue.ValueA is null 
+                || ValueA?.Equals(otherValue.ValueA) is true 
+            ) &&
+            (
+                ValueB is null && otherValue.ValueB is null
+                || ValueB?.Equals(otherValue.ValueB) is true
+            );      
+        
 
     public override int GetHashCode()
         => HashCode.Combine(ValueA, ValueB);

@@ -23,9 +23,16 @@ public partial class LibraryPageV : ReactiveUserControl<LibraryPageVm>
             this.Bind(ViewModel,
                 vm => vm.ListHeader,
                 v => v.ListHeader.ViewModel),
-            this.Bind(ViewModel,
-                vm => vm.Filter,
-                v => v.Filter.ViewModel),
+
+            this.WhenAnyValue(
+                v=>v.ViewModel.Filter,
+                v=>v.DrawerHost.IsLeftDrawerOpen,
+                (content, isOpen)=>isOpen?content:null
+            ).BindTo(this, v=>v.Filter.ViewModel),
+
+            //this.Bind(ViewModel,
+            //    vm => vm.Filter,
+            //    v => v.Filter.ViewModel),
             //this.WhenAnyValue(
             //    vm=>vm.ViewModel.NoSelectionPlaceholder,
             //    vm=>vm.ViewModel.SingleItemViewer,

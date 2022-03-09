@@ -183,11 +183,13 @@ public class ItemListVm : ReactiveObject, IItemList, IActivatableViewModel, IDis
             .Select(item => item.FileKey3d)
             .Select(_fileRepository.SingleByHashKey)
             .Select(file => file?.Path?.Value)
-            .Where(x => x != null)
-            .ToStringCollection();
+            .Where(x => x != null);
+
+        if (files.None())
+            return;
 
         DataObject dragData = new DataObject();
-        dragData.SetFileDropList(files);
+        dragData.SetFileDropList(files.ToStringCollection());
         DragDrop.DoDragDrop(source, dragData, DragDropEffects.Move);
     }
 }

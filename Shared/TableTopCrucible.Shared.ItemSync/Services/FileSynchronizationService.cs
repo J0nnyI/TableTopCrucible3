@@ -64,7 +64,8 @@ public class FileSynchronizationService : IFileSynchronizationService
         StartScanCommand = ReactiveCommand.Create(
             StartScan,
             this.WhenAnyValue(s => s.ScanRunning)
-                .Select(x => !x));
+                .Select(x => !x)
+                .ObserveOn(RxApp.MainThreadScheduler));
     }
 
     [Reactive]

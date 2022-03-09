@@ -50,7 +50,7 @@ public static class EnumerableHelper
     }
 
     public static bool ContainsNot<T>(this IEnumerable<T> list, T compare)
-        => list.Contains(compare) is false;
+        => !list.Contains(compare);
     /// <summary>
     /// list=[1,2,3]<br/>
     /// compare=[2,3]<br/>

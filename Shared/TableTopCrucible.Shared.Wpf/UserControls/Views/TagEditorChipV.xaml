@@ -68,7 +68,8 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <md:Chip MouseDoubleClick="Chip_OnMouseDoubleClick">
+    <md:Chip MouseDoubleClick="Chip_OnMouseDoubleClick"
+             FocusManager.IsFocusScope="True">
         <Grid>
             <!--progress bar-->
             <Border CornerRadius="16"
@@ -76,7 +77,7 @@
                     UseLayoutRounding="True"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    Margin="-13 -5"
+                    Margin="-12 -4"
                     BorderThickness="0"
                     Visibility="Visible">
                 <Grid>
@@ -96,15 +97,15 @@
                         </Grid.OpacityMask>
 
                         <!-- Any content -->
+                        <!-- style must not be removed, since it causes a bug where a right margin will be added when the bar is at 100% -->
                         <ProgressBar x:Name="ProgressBar"
                                      Height="NaN"  
-                                     Style="{x:Null}"
                                      Background="Transparent"
                                      Foreground="#1b2327"
                                      BorderThickness="0"
                                      UseLayoutRounding="True"
                                      Margin="0 0 0 0"
-                                     Maximum="1"
+                                     Maximum="1.0"
                                      ClipToBounds="False"
                                      />
 
@@ -129,7 +130,10 @@
                             Loaded="FrameworkElement_OnLoaded">
                     <!--write only text-->
                     <TextBox x:Name="TextEditor" 
-                                PreviewKeyDown="TextBox_OnKeyDown"
+                             Text="{Binding EditedTag, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             PreviewKeyDown="TextBox_OnKeyDown"
                              md:TextFieldAssist.HasTrailingIcon="True"
                              >
                         <TextBox.Style>
@@ -162,7 +166,7 @@
                                 MinHeight="10"
                                 AllowsTransparency="True"
                                 Visibility="{Binding ElementName=TextEditor, Path=Visibility}"
-                                MinWidth="{Binding ElementName=TextEditor, Path=ActualWidth}"
+                                MinWidth="{Binding ElementName=TextEditor, Path=ActualWidth, Mode=OneWay}"
                                 MaxHeight="300"
                                 >
                         <Border BorderThickness="1"
@@ -181,7 +185,8 @@
                                     </ListView.ItemTemplate>
                                 </ListView>
                                 <TextBlock x:Name="EmptyPlaceholder"
-                                           Text="There are no tags like this"/>
+                                           Text="There are no tags like this"
+                                           Margin="4"/>
                             </Grid>
                         </Border>
                     </md:PopupEx>

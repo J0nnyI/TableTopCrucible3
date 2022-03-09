@@ -69,7 +69,9 @@ public class ItemActionsVm : ReactiveObject, IItemActions, IActivatableViewModel
                     (Name)"Images have been added successfully",
                     null,
                     NotificationType.Confirmation);
-            }, libraryService.SingleSelectedItemChanges.Select(item => item is not null),
+            }, libraryService.SingleSelectedItemChanges
+                .Select(item => item is not null)
+                .ObserveOn(RxApp.MainThreadScheduler),
             RxApp.MainThreadScheduler);
         StartSyncCommand = fileSynchronizationService.StartScanCommand;
         DeleteAllDataCommand = ReactiveCommand.Create(() =>

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 
 // ReSharper disable once CheckNamespace
 namespace ReactiveUI;
@@ -19,7 +20,7 @@ public static class ReactiveCommandHelper
         [AllowNull] IObservable<bool> canExecute,
         out ReactiveCommand<Unit, Unit> result,
         IScheduler outputScheduler = null)
-        => result = ReactiveCommand.Create(execute, canExecute, outputScheduler);
+        => result = ReactiveCommand.Create(execute, canExecute?.ObserveOn(RxApp.MainThreadScheduler), outputScheduler);
 
     public static ReactiveCommand<Unit, Unit> Create(
         Action execute,
@@ -27,7 +28,7 @@ public static class ReactiveCommandHelper
         [NotNull] Action<ReactiveCommand<Unit, Unit>> resultWriter = null,
         IScheduler outputScheduler = null)
     {
-        var result = ReactiveCommand.Create(execute, canExecute, outputScheduler);
+        var result = ReactiveCommand.Create(execute, canExecute?.ObserveOn(RxApp.MainThreadScheduler), outputScheduler);
         resultWriter!.Invoke(result);
         return result;
     }
@@ -49,5 +50,7 @@ public static class ReactiveCommandHelper
     }
 
     public static ReactiveCommand<T, Unit> ToCommand<T>(Action<T> action, IObservable<bool> canExecute, IScheduler outputScheduler = null)
-        => ReactiveCommand.Create(action,canExecute,outputScheduler);
-}
+        => ReactiveCommand.Create(action,canExecute?.ObserveOn(RxApp.MainThreadScheduler),outputScheduler);
+}            
+
+

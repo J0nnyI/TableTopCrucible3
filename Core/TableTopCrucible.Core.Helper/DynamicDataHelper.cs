@@ -69,7 +69,7 @@ public static class DynamicDataHelper
     }
 
     public static IObservable<IChangeSet<TObject>> Sort<TObject>(this IObservable<IChangeSet<TObject>> source,
-        SortDirection sortDirection = SortDirection.Ascending) where TObject : IComparable
+        SortDirection sortDirection = SortDirection.Ascending) where TObject : IComparable<TObject>
     {
         return source.Sort((a, b) => a.CompareTo(b) * (sortDirection == SortDirection.Descending
             ? -1

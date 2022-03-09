@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using DynamicData;
-
+using ReactiveUI;
+using Splat;
+using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Helper;
+using TableTopCrucible.Core.Jobs.Helper;
+using TableTopCrucible.Core.Jobs.Progression.Services;
+using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
@@ -15,6 +21,8 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 public class MultiItemTagManager : ITagManager
 {
     private readonly IObservableList<Item> _itemListChanges;
+    private readonly INotificationService _notificationService;
+    private readonly IProgressTrackingService _progressTrackingService;
 
     private class AccumulatorHelper
     {
@@ -24,53 +32,85 @@ public class MultiItemTagManager : ITagManager
 
     public MultiItemTagManager(IObservableList<Item> itemListChanges)
     {
+        _notificationService = Locator.Current.GetService<INotificationService>();
+        _progressTrackingService = Locator.Current.GetService<IProgressTrackingService>();
         _itemListChanges = itemListChanges;
         Tags = itemListChanges
             .Connect()
+            .ObserveOn(RxApp.TaskpoolScheduler)
             .TransformMany(item => item
                 .Tags
                 .Connect()
                 .Transform(tag => new { tag, item.Id })
                 .AsObservableList())
-            .Throttle(SettingsHelper.DefaultThrottle)
+            .Buffer(SettingsHelper.DefaultThrottle)
+            .FlattenBufferResult()
             .ToCollection()
             .Select(tags => {
-                var agg = Enumerable.Aggregate(tags, new AccumulatorHelper(), 
+                var agg = tags.Aggregate(new AccumulatorHelper(), 
                     (acc, itemInfo) =>
                     {
-                        if (!acc.ItemIds.Contains(itemInfo.Id))
-                            acc.ItemIds.Add(itemInfo.Id);
-
-                        if (!acc.TagCounter.TryGetValue(itemInfo.tag, out var count))
-                            acc.TagCounter.Add(itemInfo.tag, 1);
-                        else
-                            acc.TagCounter[itemInfo.tag] = ++count;
-
+                        acc.ItemIds.Add(itemInfo.Id);
+                        acc.TagCounter.AddOrUpdate(itemInfo.tag, 1, tagCount=>tagCount+1);
                         return acc;
                     },
                     acc =>
                     {
                         var itemCnt = acc.ItemIds.Count;
-                        if (acc.TagCounter.Count < itemCnt)
+                        return acc.TagCounter.Select(TagCounter =>
                         {
+                            var tagCount = TagCounter.Value;
+                            var tag = TagCounter.Key;
+                            
+                            if (tagCount > itemCnt)
+                                Debugger.Break();
 
-                        }
-                        return acc.TagCounter.Select(cnt => FractionTag.From(
-                                cnt.Key,
-                                (Fraction)((double)cnt.Value / (double)itemCnt)));
+                            return FractionTag.From(
+                                tag,
+                                (Fraction)(tagCount / (double)itemCnt));
+                        });
                     }).ToArray();
                 return agg;
             });
     }
 
     public void Add(Tag tag)
-        => _itemListChanges.Items.ToList().ForEach(item => item.Tags.Add(tag));
+    {
+        _itemListChanges.Items.ToList().ForEach(item => item.Tags.Add(tag));
+        _notificationService.AddConfirmation($"The Tag has been added",
+            $"The Tag {tag} has been added to {_itemListChanges.Count} items");
+        
+        _itemListChanges.Items.TrackedForEachAsync(
+            item=>item.Tags.Items.Contains(tag),
+            item=>item.Tags.Add(tag),
+            $"Adding Tag '{tag}' to {_itemListChanges.Count} Items",
+            $"The tag has been added",
+            $"The Tag '{tag}' has been added to {_itemListChanges.Count} items");
+    }
 
     public void Remove(Tag tag)
-        => _itemListChanges.Items.ToList().ForEach(item => item.Tags.Remove(tag));
+    {
+        _itemListChanges.Items.TrackedForEachAsync(
+            item=>item.Tags.Items.Contains(tag),
+            item=>item.Tags.Remove(tag),
+            $"Removing Tag '{tag}' from {_itemListChanges.Count} Items",
+            $"The tag has been replaced",
+            $"The Tag '{tag}' has been removed from {_itemListChanges.Count} items");
+    }
 
     public void Replace(Tag oldTag, Tag newTag)
-        => _itemListChanges.Items.ToList().ForEach(item => item.Tags.Replace(oldTag,newTag));
+    {
+        var itemsToEdit = _itemListChanges.Items
+            .Where(item => item.Tags.Items.Contains(oldTag))
+            .ToArray();
+        
+        itemsToEdit.TrackedForEachAsync(
+            item=>item.Tags.Items.Contains(oldTag),
+                item=>item.Tags.Replace(oldTag, newTag),
+                $"Replacing Tag '{oldTag}' with '{newTag}' on {itemsToEdit.Length} of {_itemListChanges.Count} Items",
+                $"The tag has been replaced",
+                $"The Tag '{oldTag}' has replaced by '{newTag}' on {_itemListChanges.Count} items");
+    }
     
     public IObservable<IEnumerable<FractionTag>> Tags { get; }
 

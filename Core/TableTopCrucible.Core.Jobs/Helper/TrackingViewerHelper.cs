@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using ReactiveUI;
+using Splat;
+using TableTopCrucible.Core.Engine.Services;
+using TableTopCrucible.Core.Engine.ValueTypes;
 using TableTopCrucible.Core.Jobs.Progression.Models;
+using TableTopCrucible.Core.Jobs.Progression.Services;
 using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 
@@ -16,7 +22,6 @@ public interface ISubscribedTrackingViewer : IDisposable, ITrackingViewer
     public TargetProgress TargetProgress { get; }
     public JobState JobState { get; }
 }
-
 
 internal class SubscribedTrackingViewer : ReactiveObject, ISubscribedTrackingViewer
 {
@@ -131,5 +136,59 @@ public static class TrackingViewerHelper
     public static IObservable<Unit> OnDone(this ITrackingViewer viewer)
     {
         return viewer.JobStateChanges.Where(x => x == JobState.Done).Select(_ => Unit.Default);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="list"></param>
+    /// <param name="action"></param>
+    /// <param name="filter">when false, the action will not be applied to this item</param>
+    /// <param name="trackerName"></param>
+    /// <param name="errorTitle"></param>
+    /// <param name="scheduler">default = taskpool</param>
+    /// <param name="successTitle"></param>
+    /// <param name="successDescription"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static ITrackingViewer TrackedForEachAsync<T>(
+        this IEnumerable<T> list,
+        Func<T,bool> filter,
+        Action<T> action,
+        Name trackerName,
+        Name successTitle = null,
+        Description successDescription = null,
+        Name errorTitle = null,
+        IScheduler scheduler = null)
+    {
+        var enumeratedList = list.ToArray();
+        var tracker = Locator.Current.GetService<IProgressTrackingService>()
+            !.CreateSourceTracker(trackerName, (TargetProgress)enumeratedList.Length);
+        var notificationService = Locator.Current.GetService<INotificationService>()!;
+        Observable.Start(() =>
+            {
+                try
+                {
+                    foreach (var entry in enumeratedList)
+                    {
+                        if(filter(entry))
+                            action(entry);
+                        tracker.Increment();
+                    }
+
+                    tracker.Complete();
+                    if (successTitle is not null)
+                        notificationService.AddConfirmation(successTitle, successDescription);
+                }
+                catch (Exception e)
+                {
+                    if (errorTitle is not null)
+                        notificationService.AddError(e, errorTitle);
+                    else
+                        throw;
+                }
+            }, scheduler ?? RxApp.TaskpoolScheduler)
+            .Take(1).Subscribe();
+        return tracker;
     }
 }
