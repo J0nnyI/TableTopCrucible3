@@ -13,7 +13,9 @@
     <SolidColorBrush x:Key="WorkspaceBackground" Color="#3d3b39" />
     <SolidColorBrush x:Key="PlaceholderBackgroundBack" Color="red" />
     <SolidColorBrush x:Key="PlaceholderBackgroundFront" Color="blue" />
-    <SolidColorBrush x:Key="BackgroundProgressBar" Color="#704400"/>
+    <SolidColorBrush x:Key="BackgroundProgressBar" Color="#2e281f"/>
+    <SolidColorBrush x:Key="MaterialDesignChipBackground" Color="#2e281f"/>
+    <SolidColorBrush x:Key="MaterialDesignChipProgress" Color="#14110D"/>
     <!-- brush documentation https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Brush-Names-->
     <!--PrimaryHueDarkBrush-->
 

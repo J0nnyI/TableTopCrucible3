@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using DynamicData;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Controller;
+using TableTopCrucible.Shared.Wpf.Models.TagEditor;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
@@ -24,6 +25,8 @@ public class CollectionTagManager : ITagManager
         .Select(tags => Enumerable.Select<Tag, FractionTag>(tags, tag=>FractionTag.From(tag,null)));
 
     public ITagCollection TagCollection { get; } = new TagCollection();
+    public IObservable<DisplayMode> DisplayModeChanges { get; } 
+        = Observable.Return<DisplayMode>(DisplayMode.Simple);
     public void Dispose()
     {
         TagCollection.Dispose();

@@ -6,14 +6,15 @@ using System.Reactive.Linq;
 using DynamicData;
 
 using MaterialDesignThemes.Wpf;
+
 using ReactiveUI;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Domain.Library.Wpf.Services;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
-using TableTopCrucible.Shared.Wpf.Models;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 using TableTopCrucible.Shared.Wpf.ValueTypes;
 
@@ -39,14 +40,11 @@ public class ItemDataViewerVm : ReactiveObject, IItemDataViewer, IActivatableVie
 
         this.WhenActivated(() =>
         {
-            var provider = new MultiTagSource(libraryService.SelectedItems);
-
             TagEditor.TagManager = new MultiItemTagManager(libraryService.SelectedItems);
-            
+
             return new IDisposable[]
             {
                 TagEditor.TagManager,
-                provider
             };
         });
     }

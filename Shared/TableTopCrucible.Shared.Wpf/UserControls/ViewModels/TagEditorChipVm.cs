@@ -21,42 +21,25 @@ using TableTopCrucible.Infrastructure.Models.Controller;
 using TableTopCrucible.Core.Wpf.Helper;
 using TableTopCrucible.Shared.Wpf.ValueTypes;
 using System.Reactive.Disposables;
+using System.ComponentModel;
+using TableTopCrucible.Shared.Wpf.Models.TagEditor;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
-    public enum TagEditorDisplayMode
-    {
-        /// <summary>
-        /// the + button to add a tag
-        /// </summary>
-        New,
-        /// <summary>
-        /// the simple view without progress bar, i.e. for single items
-        /// </summary>
-        Simple,
-        /// <summary>
-        /// the complex view with progress bar, i.e. for multiSelection
-        /// </summary>
-        Fraction
-    }
-    public enum TagEditorWorkMode
-    {
-        Edit,
-        View
-    }
     [Transient]
-    public interface ITagEditorChip:IComparable<ITagEditorChip>
+    public interface ITagEditorChip : IComparable<ITagEditorChip>,IComparable, INotifyPropertyChanged
     {
         IObservable<Tag> TagAdded { get; }
-        TagEditorDisplayMode DisplayMode { get; }
-        public Tag SourceTag { get; }
+        DisplayMode DisplayMode { get; }
+        [Reactive]
+        public Tag SourceTag { get; set; }
         public Fraction Distribution { get; set; }
 
         void Init(
             Tag sourceTag,
             ITagManager tagManager,
             IObservableList<Tag> availableTags,
-            TagEditorWorkMode workMode,
+            WorkMode workMode,
             bool deletionEnabled = true,
             Fraction distribution = null);
     }
@@ -65,8 +48,10 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         private readonly IStorageController _storageController;
         public ViewModelActivator Activator { get; } = new();
 
-        private ITagManager _tagManager;
-        private IObservableList<Tag> _availableTagsSource;
+        [Reactive]
+        private ITagManager _tagManager { get; set; }
+        [Reactive]
+        private IObservableList<Tag> _availableTagsSource { get; set; }
         private ReadOnlyObservableCollection<string> _availableTags;
         public ReadOnlyObservableCollection<string> AvailableTags => _availableTags;
         public IObservable<bool> AreTagsAvailableChanges { get; private set; }
@@ -74,7 +59,7 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public IObservable<Tag> TagAdded => _tagAdded.AsObservable();
         public bool DeletionEnabled { get; private set; }
         [Reactive]
-        public bool IsDropDownOpen{ get; set; } = false;
+        public bool IsDropDownOpen { get; set; } = false;
         public ReactiveCommand<Unit, Unit> RemoveCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> AddTagCommand { get; private set; }
@@ -82,25 +67,24 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
         public Interaction<Unit, Unit> FocusEditorInteraction { get; } = new();
         public Interaction<Unit, Unit> UnfocusEditorInteraction { get; } = new();
 
-        public Tag SourceTag { get; private set; }
+        [Reactive]
+        public Tag SourceTag { get; set; }
 
         [Reactive]
         public string EditedTag { get; set; }
         [Reactive]
         public string SelectedTag { get; set; }
         [Reactive]
-        public TagEditorWorkMode WorkMode { get; set; }
+        public WorkMode WorkMode { get; set; } = WorkMode.View;
         /// <summary>
         /// used for complex view, determines the fill state of the background
         /// </summary>
         [Reactive]
         public Fraction Distribution { get; set; }//= (Fraction).5;
 
-
-        public TagEditorDisplayMode DisplayMode
-            => SourceTag is null
-            ? TagEditorDisplayMode.New
-            : TagEditorDisplayMode.Simple;
+        //has to be set on init to be able to sort add and other displayModes
+        [Reactive]
+        public DisplayMode DisplayMode { get; private set; }
 
         public TagEditorChipVm(IStorageController storageController)
         {
@@ -111,14 +95,15 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                 this.WhenAnyValue(vm => vm.EditedTag)
                     .Subscribe(tag => SelectedTag = null);
                 var availableTags = this.WhenAnyValue(vm => vm.WorkMode)
-                    .Select(editMode => editMode == TagEditorWorkMode.Edit
-                        ? _availableTagsSource?.Connect()
+                    .Select(editMode => editMode == WorkMode.Edit
+                        && _availableTagsSource is not null
+                        ? _availableTagsSource.Connect()
                         : Observable.Empty<IChangeSet<Tag>>())
                     .Switch()
                     .Filter(
                         this.WhenAnyValue(vm => vm.EditedTag)
                             .Select(filter =>
-                                new Func<Tag, bool>(tag => 
+                                new Func<Tag, bool>(tag =>
                                     tag.Value.ToLower()
                                         .Contains(filter.ToLower()))
                             )
@@ -127,19 +112,29 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                     .Top(1)
                     .ToCollection()
                     .Select(x => x.Count > 0);
-                return new[]
+                return new IDisposable[]
                 {
-                    Disposable.Create(() => { 
+                    Disposable.Create(() => {
                         this.Revert();
                         IsDropDownOpen=false;
                     }),
+
+                    this.WhenAnyValue(
+                        vm => vm._tagManager,
+                        vm => vm.SourceTag,
+                        (tagSource, sourceTag) =>
+                            tagSource  is null || sourceTag is null
+                                ? Observable.Return(sourceTag is null? DisplayMode.New:DisplayMode.Simple)
+                                : tagSource.DisplayModeChanges)
+                        .Switch()
+                        .Subscribe(displayMode=>DisplayMode=displayMode),
                     this.WhenAnyValue(vm=>vm.WorkMode)
                         .Subscribe(workMode =>
-                            this.IsDropDownOpen = (WorkMode == TagEditorWorkMode.Edit)),
+                            this.IsDropDownOpen = (WorkMode == WorkMode.Edit)),
                     this.ToggleDropDown = ReactiveCommand.Create(
                         () => { IsDropDownOpen =!IsDropDownOpen; },// remove return type
                         this.WhenAnyValue(v=>v.WorkMode)
-                            .Select(workMode=>workMode == TagEditorWorkMode.Edit)
+                            .Select(workMode=>workMode == WorkMode.Edit)
                             .ObserveOn(RxApp.MainThreadScheduler)),
 
                     // validation
@@ -151,11 +146,11 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         vm => vm.EditedTag,
                         this.WhenAnyValue(vm => vm.EditedTag)
                             .CombineLatest(
-                                _tagManager?.Tags ,
+                                _tagManager.Tags ,
                                 (tag, tags) =>
                                 {
                                     return tags.Count(t => t.Tag.Value.ToLower() == tag.ToLower()) < (
-                                        DisplayMode == TagEditorDisplayMode.New
+                                        DisplayMode == DisplayMode.New
                                             ? 1
                                             : 2);
                                 })
@@ -185,18 +180,18 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         this.NoErrorsChanges().ObserveOn(RxApp.MainThreadScheduler)),
                     AddTagCommand = ReactiveCommand.Create(() =>
                     {
-                        WorkMode = TagEditorWorkMode.Edit;
+                        WorkMode = WorkMode.Edit;
                         FocusEditorInteraction.Handle().Take(1).Subscribe();
                     }),
                 };
             });
         }
-        
+
         public void Init(
             Tag sourceTag,
             ITagManager tagManager,
             IObservableList<Tag> availableTags,
-            TagEditorWorkMode workMode,
+            WorkMode workMode,
             bool deletionEnabled = true,
             Fraction distribution = null)
         {
@@ -206,13 +201,14 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             SourceTag = sourceTag;
             WorkMode = workMode;
             SelectedTag = EditedTag = sourceTag?.Value ?? string.Empty;
+            DisplayMode = sourceTag is null ? DisplayMode.New : DisplayMode.Simple;
             this.Distribution = distribution;
         }
 
         public void Revert()
         {
             EditedTag = SourceTag?.Value ?? string.Empty;
-            WorkMode = TagEditorWorkMode.View;
+            WorkMode = WorkMode.View;
         }
 
         public void Confirm()
@@ -220,25 +216,27 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
             if (HasErrors)
                 return;
 
-            if (DisplayMode == TagEditorDisplayMode.New)
+            if (DisplayMode == DisplayMode.New)
             {
                 _tagManager.Add((Tag)EditedTag);
                 _tagAdded.OnNext((Tag)EditedTag);
                 SelectedTag = null;
                 EditedTag = string.Empty;
             }
+            else if (SourceTag == (Tag)EditedTag
+                && DisplayMode == DisplayMode.Fraction)
+                _tagManager.Add(SourceTag);
             else
                 _tagManager.Replace(SourceTag, (Tag)EditedTag);
-
             EditedTag = SourceTag?.Value ?? string.Empty;
-            WorkMode = TagEditorWorkMode.View;
+            WorkMode = WorkMode.View;
             IsDropDownOpen = false;
             _unfocusEditor();
         }
 
         public void Remove()
         {
-            if (DisplayMode == TagEditorDisplayMode.New || WorkMode == TagEditorWorkMode.Edit)
+            if (DisplayMode == DisplayMode.New || WorkMode == WorkMode.Edit)
                 Revert();
             else
             {
@@ -250,32 +248,37 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
         public void EnterEditMode()
         {
-            if (WorkMode == TagEditorWorkMode.Edit)
+            if (WorkMode == WorkMode.Edit)
                 return;
-            WorkMode = TagEditorWorkMode.Edit;
+            WorkMode = WorkMode.Edit;
             _focusEditor();
         }
 
         private void _focusEditor()
-        {
-            FocusEditorInteraction.Handle().Take(1).Subscribe();
-        }
+            => FocusEditorInteraction.Handle().Take(1).Subscribe();
         private void _unfocusEditor()
-        {
-            UnfocusEditorInteraction.Handle().Take(1).Subscribe();
-        }
+            => UnfocusEditorInteraction.Handle().Take(1).Subscribe();
 
         public int CompareTo(ITagEditorChip? other)
         {
             if (other is null)
                 return -1;
-            if (this.DisplayMode == TagEditorDisplayMode.New)
+            if (this.DisplayMode == other.DisplayMode
+                && this.DisplayMode == DisplayMode.New)
+                return 0;
+            if (this.DisplayMode == DisplayMode.New)
                 return 1;
-            if (other.DisplayMode == TagEditorDisplayMode.New)
+            if (other.DisplayMode == DisplayMode.New)
                 return -1;
-            return this.SourceTag.CompareTo(other.SourceTag);
+            return this.DisplayMode == DisplayMode.Fraction
+                    && Distribution is not null
+                ? this.Distribution.CompareTo(other.Distribution)
+                : this.SourceTag.CompareTo(other.SourceTag);
         }
         public override string ToString()
             => $"TagChip '{SourceTag}' | {DisplayMode} | { WorkMode}";
+
+        public int CompareTo(object obj)
+            => CompareTo(obj as ITagEditorChip);
     }
 }

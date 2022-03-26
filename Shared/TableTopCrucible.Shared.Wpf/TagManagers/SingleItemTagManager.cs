@@ -7,6 +7,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
+using TableTopCrucible.Shared.Wpf.Models.TagEditor;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
@@ -45,4 +46,6 @@ public class SingleItemTagManager : ReactiveObject, ITagManager
         => CurrentItem.Tags.Replace(oldTag, newTag);
 
     public IObservable<IEnumerable<FractionTag>> Tags { get; }
+    public IObservable<DisplayMode> DisplayModeChanges { get; } 
+        = Observable.Return(DisplayMode.Simple);
 }

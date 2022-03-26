@@ -14,6 +14,7 @@ using TableTopCrucible.Core.Jobs.ValueTypes;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
+using TableTopCrucible.Shared.Wpf.Models.TagEditor;
 using TableTopCrucible.Shared.Wpf.ValueTypes;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
@@ -72,6 +73,9 @@ public class MultiItemTagManager : ITagManager
                     }).ToArray();
                 return agg;
             });
+
+        this.DisplayModeChanges = itemListChanges.CountChanged
+            .Select(count => count > 1 ? DisplayMode.Fraction : DisplayMode.Simple);
     }
 
     public void Add(Tag tag)
@@ -113,6 +117,7 @@ public class MultiItemTagManager : ITagManager
     }
     
     public IObservable<IEnumerable<FractionTag>> Tags { get; }
+    public IObservable<DisplayMode> DisplayModeChanges { get; }
 
     public void Dispose()
     {

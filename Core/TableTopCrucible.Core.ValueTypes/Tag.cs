@@ -12,4 +12,9 @@ public class Tag : ComparableValueType<string, Tag>
     }
     public static implicit operator Tag(string value)
         => From(value);
+
+    public override bool Equals(object other)
+        => other is Tag otherTag && this.Value.ToLower().Equals(otherTag.Value.ToLower());
+    public override int GetHashCode()
+        => Value.ToLower().GetHashCode();
 }

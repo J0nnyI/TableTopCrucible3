@@ -1,20 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
+using System.Windows.Data;
+
 using DynamicData;
+using DynamicData.Binding;
+using DynamicData.Kernel;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using Splat;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence;
 using TableTopCrucible.Infrastructure.Views.Services;
+using TableTopCrucible.Shared.Wpf.Models.TagEditor;
 
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
@@ -35,7 +46,7 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
     public ITagManager TagManager { get; set; }
 
     [Reactive]
-    public bool IsBusy { get; set; }
+    public bool IsBusy { get; set; } = false;//does not work
 
     [Reactive]
     public bool FluentModeEnabled { get; set; } = true;
@@ -46,39 +57,41 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
     [Reactive] //if true, the next tag will be opened in edit mode
     internal bool FluentModeActive { get; set; }
 
+    /// <summary>
+    /// represents the tags as Chip VM<br/>
+    /// this is not directly bound to the tag manager but instead filled and updated via subscription. <br/>
+    /// This is probably the cause for the sorting issues
+    /// </summary>
     private SourceList<ITagEditorChip> _chipSourceList = new();
+    /// <summary>
+    /// ItemsSource for the ChipList
+    /// </summary>
     private ReadOnlyObservableCollection<ITagEditorChip> _chipList;
+    /// <summary>
+    /// ItemsSource for the ChipList
+    /// </summary>
     internal ReadOnlyObservableCollection<ITagEditorChip> ChipList => _chipList;
     private CancellationTokenSource chipUpdateCancellationToken = new();
+    private object _updateLock = new();
 
     public TagEditorVm(IStorageController storageController, ITagView tagView, INotificationService notificationService)
     {
-        ITagEditorChip addChip = null;
         this.WhenActivated(() =>
         {
             // this appends the + button
-
-            if (addChip is null)
-            {
-                addChip = Locator.Current.GetService<ITagEditorChip>()!;
-                addChip.Init(null, TagManager, tagView.Data, FluentModeActive
-                    ? TagEditorWorkMode.Edit
-                    : TagEditorWorkMode.View, TagDeletionEnabled);
-                addChip.TagAdded.Take(1).Subscribe(_ => FluentModeActive = FluentModeEnabled);
-                _chipSourceList.Add(addChip);
-            }
 
             FluentModeActive = false;
 
             return new[]
             {
                 this.WhenAnyValue(vm => vm.TagManager)
-                    .Do(_ => IsBusy = true)
                     .ObserveOn(RxApp.TaskpoolScheduler)
                     .SubscribeOn(RxApp.TaskpoolScheduler)
                     .Select(tagManager => tagManager?.Tags ?? Observable.Never(Enumerable.Empty<FractionTag>()))
                     .Switch()
+                    .Select(tags=>tags.OrderByDescending(tag=>tag).ToArray())
                     .Retry(3)
+                    .SubscribeOn(RxApp.MainThreadScheduler)
                     .Subscribe(tags =>
                     {
                         chipUpdateCancellationToken.Cancel();
@@ -86,37 +99,66 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
 
                         try
                         {
-                            var chipsToRemove = new List<ITagEditorChip>();
-                            var chipsToAdd = new List<ITagEditorChip>();
-                            var unprocessedTags = tags.ToList();
-                            foreach (var chip in _chipSourceList.Items)
-                            {
-                                if (chip.DisplayMode == TagEditorDisplayMode.New)
-                                    continue;
-                                var fTag = unprocessedTags
-                                    .RemoveWhere(fTag => fTag.Tag == chip.SourceTag)
-                                    .FirstOrDefault();
-                                if (fTag is null)
-                                    chipsToRemove.Add(chip);
-                                else
-                                    chip.Distribution = fTag.Distribution;
-                                chipUpdateCancellationToken.Token.ThrowIfCancellationRequested();
+                            lock (_updateLock) {
+                                var removeList = new List<ITagEditorChip>();
+                                var addList = new List<ITagEditorChip>();
+                                int addChipIndex = -1;
+                                int i=0;
+                                foreach(var chip in _chipSourceList.Items)
+                                {
+                                    if(chip.SourceTag is null)
+                                    {
+                                        addChipIndex = i;
+                                        continue;
+                                    }
+                                    chipUpdateCancellationToken.Token.ThrowIfCancellationRequested();
+                                    var FractionTag = tags.ElementAtOrDefault(i);
+                                    if(FractionTag is not null)
+                                    {
+                                        chip.Distribution = FractionTag.Distribution;
+                                        chip.SourceTag = FractionTag.Tag;
+                                    }
+                                    else
+                                        removeList.Add(chip);
+                                    i++;
+                                }
+
+                                for (; i < tags.Count() - 1; i++)
+                                {
+                                    var tag = tags.ElementAt(i);
+                                    var newChip = Locator.Current.GetService<ITagEditorChip>()!;
+                                    newChip.Init(tag.Tag, TagManager, tagView.Data, WorkMode.View,
+                                        TagDeletionEnabled, tag.Distribution);
+                                    addList.Add(newChip);
+                                    chipUpdateCancellationToken.Token.ThrowIfCancellationRequested();
+                                }
+                                if(removeList.Any() && addList.Any())
+                                    throw new InvalidOperationException("this should not be possible");
+                                _chipSourceList.Edit(editor =>
+                                {
+                                    if(chipUpdateCancellationToken.Token.IsCancellationRequested)
+                                        return;
+
+                                    if(addList.Any())
+                                        editor.AddRange(addList);
+
+                                    if(addChipIndex == -1)
+                                    {
+                                        var addChip = Locator.Current.GetService<ITagEditorChip>()!;
+                                        addChip.Init(null, TagManager, tagView.Data, FluentModeActive
+                                            ? WorkMode.Edit
+                                            : WorkMode.View, TagDeletionEnabled);
+                                        addChip.TagAdded.Take(1).Subscribe(_ => FluentModeActive = FluentModeEnabled);
+                                        editor.Add(addChip);
+                                    }
+                                    else 
+                                        editor.Move(addChipIndex,editor.Count-1);
+
+
+                                    if(removeList.Any())
+                                        editor.RemoveMany(removeList);
+                                });
                             }
-
-                            chipsToAdd.AddRange(unprocessedTags.Select(fractionTag =>
-                            {
-                                var chip = Locator.Current.GetService<ITagEditorChip>()!;
-                                chip.Init(fractionTag.Tag, TagManager, tagView.Data, TagEditorWorkMode.View,
-                                    TagDeletionEnabled, fractionTag.Distribution);
-                                chipUpdateCancellationToken.Token.ThrowIfCancellationRequested();
-                                return chip;
-                            }));
-
-                            _chipSourceList.Edit(updater =>
-                            {
-                                updater.RemoveMany(chipsToRemove);
-                                updater.AddRange(chipsToAdd);
-                            });
                         }
                         catch (OperationCanceledException)
                         {
@@ -129,26 +171,10 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
                         }
                     }),
                 this._chipSourceList
-                .Connect()
-                .Sort()
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Bind(out _chipList)
-                .Subscribe(state=> IsBusy = false),
-                // .ObserveOn(RxApp.MainThreadScheduler)
-                // .SubscribeOn(RxApp.MainThreadScheduler)
-                // .Subscribe(
-                //     changes =>
-                //     {
-                //         changes.chipsToAdd
-                //             .ToList()
-                //             .ForEach(x => ChipList.Insert(x.index, x.chip));
-                //         ChipList.RemoveMany(changes.chipsToRemove);
-                //     },
-                //     e =>
-                //     {
-                //         Debugger.Break();
-                //         notificationService.AddError(e, "Tags could not be added");
-                //     }),
+                    .Connect()
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Bind(out _chipList)
+                    .Subscribe()
             };
         });
     }

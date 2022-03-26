@@ -68,143 +68,139 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <md:Chip MouseDoubleClick="Chip_OnMouseDoubleClick"
-             FocusManager.IsFocusScope="True">
-        <Grid>
-            <!--progress bar-->
-            <Border CornerRadius="16"
-                    Padding="2"
-                    UseLayoutRounding="True"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Margin="-12 -4"
-                    BorderThickness="0"
-                    Visibility="Visible">
-                <Grid>
-
-                    <!-- Rounded mask (stretches to fill Grid) -->
-                    <Border Name="Mask"
-                            Background="{DynamicResource MaterialDesignChipBackground}" 
-                            CornerRadius="16"
-                            BorderThickness="0" />
-
-                    <!-- Main content container -->
-                    <Grid>
-
-                        <!-- Use a VisualBrush of 'mask' as the opacity mask -->
-                        <Grid.OpacityMask>
-                            <VisualBrush Visual="{Binding ElementName=Mask}" />
-                        </Grid.OpacityMask>
-
-                        <!-- Any content -->
-                        <!-- style must not be removed, since it causes a bug where a right margin will be added when the bar is at 100% -->
-                        <ProgressBar x:Name="ProgressBar"
-                                     Height="NaN"  
-                                     Background="Transparent"
-                                     Foreground="#1b2327"
-                                     BorderThickness="0"
-                                     UseLayoutRounding="True"
-                                     Margin="0 0 0 0"
-                                     Maximum="1.0"
-                                     ClipToBounds="False"
-                                     />
-
-                    </Grid>
-
-                </Grid>
-
-            </Border>
-            <StackPanel Orientation="Horizontal">
-                <!--new && view-->
-                <Button Name="AddTag"
-                        Content="{md:PackIcon Plus}"
-                        Margin="-8 0"
-                        Style="{StaticResource ChipButton}"
-                        ToolTip="Add Tag"/>
-                <!--existing && view-->
-                <TextBlock x:Name="TextViewer"
-                           VerticalAlignment="Center" />
-                <!--edit-->
-                <StackPanel Name="ContentContainer"
-                            Orientation="Horizontal"
-                            Loaded="FrameworkElement_OnLoaded">
-                    <!--write only text-->
-                    <TextBox x:Name="TextEditor" 
-                             Text="{Binding EditedTag, UpdateSourceTrigger=PropertyChanged}"
-                             VerticalAlignment="Center"
-                             VerticalContentAlignment="Center"
-                             PreviewKeyDown="TextBox_OnKeyDown"
-                             md:TextFieldAssist.HasTrailingIcon="True"
-                             >
-                        <TextBox.Style>
-                            <Style TargetType="TextBox"
-                                   BasedOn="{StaticResource MaterialDesignTextBox}">
-                                <Style.Resources>
-                                    <Style TargetType="md:PackIcon">
-                                        <Setter Property="Foreground" Value="Transparent"/>
-                                    </Style>
-                                </Style.Resources>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
-                    <Button x:Name="ToggleDropDown"
-                            Content="{md:PackIcon Kind=ExpandMore}"
-                            ToolTip="Toggle List"
-                            Foreground="{DynamicResource MaterialDesignDarkForeground}"
-                            BorderThickness="0"
-                            VerticalAlignment="Center"
-                            Margin="-23 0 0 0"
-                            Style="{StaticResource RotatingIcon}"/>
-                    <!---23-->
-                    <md:PopupEx x:Name="Dropdown"
-                                PreviewKeyDown="Dropdown_PreviewKeyDown"
-                                PlacementTarget="{Binding ElementName=TextEditor}"
-                                md:ShadowAssist.ShadowDepth="Depth3"
-                                Margin="3"
-                                Style="{x:Null}"
-                                Placement="Bottom"
-                                MinHeight="10"
-                                AllowsTransparency="True"
-                                Visibility="{Binding ElementName=TextEditor, Path=Visibility}"
-                                MinWidth="{Binding ElementName=TextEditor, Path=ActualWidth, Mode=OneWay}"
-                                MaxHeight="300"
-                                >
-                        <Border BorderThickness="1"
-                                Background="{DynamicResource MaterialDesignDarkBackground}"
-                                BorderBrush="{DynamicResource MaterialDesignDarkSeparatorBackground}"
-                                Padding="4">
-                            <Grid>
-                                <ListView  x:Name="SuggestedTags"
-                                           SelectionMode="Single"
-                                           ItemContainerStyle="{StaticResource ImprovedSelectionBackground}"
-                                           >
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding}"/>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                                <TextBlock x:Name="EmptyPlaceholder"
-                                           Text="There are no tags like this"
-                                           Margin="4"/>
-                            </Grid>
-                        </Border>
-                    </md:PopupEx>
-                    <!--confirm-->
-                    <Button Name="Confirm"
-                            ToolTip="Confirm Changes"
-                            Style="{StaticResource ChipButton}"
-                            Content="{md:PackIcon Check}"
-                            IsDefault="True"
-                            Margin="2 0" />
-                </StackPanel>
-                <!--delete/revert-->
-                <Button Name="RevertDelete"
-                            Style="{StaticResource ChipButton}"
-                            Margin="0 0 -8 0">
-                    <md:PackIcon x:Name="RevertDeleteIcon"/>
-                </Button>
-            </StackPanel>
+    <Grid Height="30">
+        <Grid Name="ProgressBarContainer">
+            <Border Name="Background"
+                    Background="{DynamicResource MaterialDesignChipBackground}" 
+                    CornerRadius="15"
+                    BorderThickness="0" />
+             <!--Rounded mask (stretches to fill Grid)--> 
+            <!--Main content container-->
+            <!--Use a VisualBrush of 'mask' as the opacity mask-->
+            <!-- Any content -->
+            <!-- style must not be removed, since it causes a bug where a right margin will be added when the bar is at 100% -->
+            <ProgressBar Name="ProgressBar"
+                         Style="{x:Null}"
+                         Height="NaN"  
+                         Width="NaN"
+                         Background="Transparent"
+                         Foreground="{DynamicResource MaterialDesignChipProgress}"
+                         BorderThickness="0"
+                         UseLayoutRounding="True"
+                         Margin="2"
+                         Maximum="1.0"
+                         Value=".4"
+                         ClipToBounds="False"
+                         >
+                <ProgressBar.OpacityMask>
+                    <VisualBrush Visual="{Binding ElementName=Background}" />
+                </ProgressBar.OpacityMask>
+            </ProgressBar>
         </Grid>
-    </md:Chip>
+
+        <!--progress bar-->
+
+        <StackPanel Name="MainContent"
+                    MouseDown="Chip_OnMouseDoubleClick"
+                    VerticalAlignment="Stretch"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    >
+            <Border Width="10"/>
+            <!--existing && view-->
+            <TextBlock Name="TextViewer"
+                        VerticalAlignment="Center" />
+            <!--edit-->
+            <StackPanel Name="ContentContainer"
+                        Orientation="Horizontal"
+                        Loaded="FrameworkElement_OnLoaded">
+                <!--write only text-->
+                <TextBox x:Name="TextEditor" 
+                            Text="{Binding EditedTag, UpdateSourceTrigger=PropertyChanged}"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            PreviewKeyDown="TextBox_OnKeyDown"
+                            md:TextFieldAssist.HasTrailingIcon="True"
+                            >
+                    <TextBox.Style>
+                        <Style TargetType="TextBox"
+                                BasedOn="{StaticResource MaterialDesignTextBox}">
+                            <Style.Resources>
+                                <Style TargetType="md:PackIcon">
+                                    <Setter Property="Foreground" Value="Transparent"/>
+                                </Style>
+                            </Style.Resources>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <Button x:Name="ToggleDropDown"
+                        Content="{md:PackIcon Kind=ExpandMore}"
+                        ToolTip="Toggle List"
+                        Foreground="{DynamicResource MaterialDesignDarkForeground}"
+                        BorderThickness="0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource RotatingIcon}"/>
+                <!---popup-->
+                <md:PopupEx x:Name="Dropdown"
+                            PreviewKeyDown="Dropdown_PreviewKeyDown"
+                            PlacementTarget="{Binding ElementName=TextEditor}"
+                            md:ShadowAssist.ShadowDepth="Depth3"
+                            Margin="3"
+                            Style="{x:Null}"
+                            Placement="Bottom"
+                            MinHeight="10"
+                            AllowsTransparency="True"
+                            Visibility="{Binding ElementName=TextEditor, Path=Visibility}"
+                            MinWidth="{Binding ElementName=TextEditor, Path=ActualWidth, Mode=OneWay}"
+                            MaxHeight="300"
+                            >
+                    <Border BorderThickness="1"
+                            Background="{DynamicResource MaterialDesignDarkBackground}"
+                            BorderBrush="{DynamicResource MaterialDesignDarkSeparatorBackground}"
+                            Padding="4">
+                        <Grid>
+                            <ListView  x:Name="SuggestedTags"
+                                        SelectionMode="Single"
+                                        ItemContainerStyle="{StaticResource ImprovedSelectionBackground}"
+                                        >
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <TextBlock x:Name="EmptyPlaceholder"
+                                        Text="There are no tags like this"
+                                        Margin="4"/>
+                        </Grid>
+                    </Border>
+                </md:PopupEx>
+            </StackPanel>
+            <!--confirm-->
+            <Button Name="Confirm"
+                        ToolTip="Confirm Changes"
+                        Style="{StaticResource ChipButton}"
+                        Content="{md:PackIcon Check}"
+                        IsDefault="True"
+                        Margin="2 0" />
+            <!--delete/revert-->
+            <Button Name="RevertDelete"
+                        Style="{StaticResource ChipButton}">
+                <md:PackIcon x:Name="RevertDeleteIcon"/>
+            </Button>
+            <Border Width="4"/>
+        </StackPanel>
+        <!--new && view-->
+        <Button Name="AddTag"
+                Content="{md:PackIcon Plus}"
+                Style="{StaticResource ChipButton}"
+                ToolTip="Add Tag"/>
+
+        <!-- devInfo-->
+        <!--<StackPanel Margin="0  20  -80 -80"
+                        Orientation="Horizontal">
+            <Label Content="{Binding DisplayMode}"/>
+            <Label Content="{Binding Distribution}"/>
+        </StackPanel>-->
+    </Grid>
 </rxui:ReactiveUserControl>

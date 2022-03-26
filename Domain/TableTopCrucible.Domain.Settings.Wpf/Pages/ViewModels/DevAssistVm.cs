@@ -11,6 +11,7 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Core.Wpf.Engine.Models;
 using TableTopCrucible.Core.Wpf.Engine.ValueTypes;
 using TableTopCrucible.Infrastructure.Models.Controller;
+using TableTopCrucible.Shared.Wpf.Models.TagEditor;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 
 namespace TableTopCrucible.Domain.Settings.Wpf.Pages.ViewModels;
@@ -66,10 +67,10 @@ public class DevAssistVm : IDevAssist, IActivatableViewModel
         selectedTags.Add("edit tag");
         selectedTags.Add("anotherTag");
         EditChip = editChip;
-        EditChip.Init((Tag)"edit tag", selectedTags, availableTags, TagEditorWorkMode.View, true);
+        EditChip.Init((Tag)"edit tag", selectedTags, availableTags, WorkMode.View, true);
 
         AddChip = addChip;
-        AddChip.Init(null, selectedTags, availableTags, TagEditorWorkMode.View, true);
+        AddChip.Init(null, selectedTags, availableTags, WorkMode.View, true);
 
         Editor = editor;
         Editor.TagManager = selectedTags;

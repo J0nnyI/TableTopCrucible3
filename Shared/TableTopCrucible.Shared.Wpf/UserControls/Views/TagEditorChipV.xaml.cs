@@ -16,6 +16,7 @@ using ReactiveUI;
 
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Wpf.Helper;
+using TableTopCrucible.Shared.Wpf.Models.TagEditor;
 using TableTopCrucible.Shared.Wpf.UserControls.ViewModels;
 using TableTopCrucible.Shared.Wpf.ValueTypes;
 
@@ -39,59 +40,58 @@ public partial class TagEditorChipV
                 // prevent memory leak of inifinitly growing dispose list
                 _disposables = new CompositeDisposable();
             }),
+
+            this.OneWayBind(ViewModel,
+                vm => vm.DisplayMode,
+                v => v.MainContent.Visibility,
+                displayMode => displayMode != DisplayMode.New
+                    ? Visibility.Visible
+                    : Visibility.Collapsed
+            ),
+            this.OneWayBind(ViewModel,
+                vm => vm.DisplayMode,
+                v => v.AddTag.Visibility,
+                displayMode => displayMode == DisplayMode.New
+                    ? Visibility.Visible
+                    : Visibility.Collapsed
+            ),
+
+            #region dropdown
+            this.OneWayBind(ViewModel,
+                vm=>vm.IsDropDownOpen,
+                v=>v.Dropdown.IsOpen),
+            #endregion
+            
+            #region progress bar
+            this.WhenAnyValue(v=>v.MainContent.ActualWidth)
+                .BindTo(this, v=>v.ProgressBarContainer.Width),
+
             this.OneWayBind(ViewModel,
                 vm=>vm.Distribution,
                 v=>v.ProgressBar.Value,
                 (Fraction dis)=>dis?.Value ?? 0),
-            this.Bind(ViewModel,
-                vm=>vm.SelectedTag,
-                v=>v.SuggestedTags.SelectedItem),
-            this.OneWayBind(ViewModel,
-                vm=>vm.AvailableTags,
-                v=>v.SuggestedTags.ItemsSource),
-            this.BindCommand(ViewModel,
-                vm=>vm.ToggleDropDown,
-                v=>v.ToggleDropDown),
-            this.ViewModel!
-                .AreTagsAvailableChanges
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Select(tagsAvailable=>tagsAvailable
-                    ? Visibility.Collapsed
-                    : Visibility.Visible)
-                .BindTo(this, v=>v.EmptyPlaceholder.Visibility),
-            this.OneWayBind(ViewModel,
-                vm=>vm.IsDropDownOpen,
-                v=>v.Dropdown.IsOpen),
-            #region add button
-            this.WhenAnyValue(
-                v=>v.ViewModel.DisplayMode,
-                v=>v.ViewModel.WorkMode,
-                (displayMode, workMode)=>
-                    displayMode == TagEditorDisplayMode.New
-                    && workMode == TagEditorWorkMode.View
-                    ? Visibility.Visible
-                    : Visibility.Collapsed)
-                .BindTo(this, v=>v.AddTag.Visibility),
-            this.BindCommand(ViewModel,
-                vm => vm.AddTagCommand,
-                v => v.AddTag),
             #endregion
+
             #region edit/viewer container
             this.OneWayBind(ViewModel,
                 vm => vm.WorkMode,
                 v => v.ContentContainer.Visibility,
-                addMode => addMode == TagEditorWorkMode.Edit
+                addMode => addMode == WorkMode.Edit
                     ? Visibility.Visible
                     : Visibility.Collapsed
             ),
             #endregion
+
+            #region edit/view controls
+
+
             #region text viewer
             this.WhenAnyValue(
-                v=>v.ViewModel.DisplayMode,
-                v=>v.ViewModel.WorkMode,
+                v=>v.ViewModel!.DisplayMode,
+                v=>v.ViewModel!.WorkMode,
                 (displayMode, workMode)=>
-                    displayMode == TagEditorDisplayMode.Simple
-                    && workMode == TagEditorWorkMode.View
+                    displayMode != DisplayMode.New
+                    && workMode == WorkMode.View
                     ? Visibility.Visible
                     : Visibility.Collapsed)
                 .BindTo(this, v=>v.TextViewer.Visibility),
@@ -99,6 +99,7 @@ public partial class TagEditorChipV
                 vm => vm.EditedTag,
                 v => v.TextViewer.Text),
             #endregion
+
             #region text editor
             //this.OneWayBind(ViewModel,
             //    vm => vm.AvailableTags,
@@ -106,9 +107,48 @@ public partial class TagEditorChipV
             this.OneWayBind(ViewModel,
                 vm => vm.WorkMode,
                 v => v.TextEditor.MinWidth,
-                editMode => editMode == TagEditorWorkMode.Edit
+                editMode => editMode == WorkMode.Edit
                     ? 100
                     : 0),
+            #endregion
+            
+            #region listview
+            this.Bind(ViewModel,
+                vm=>vm.SelectedTag,
+                v=>v.SuggestedTags.SelectedItem),
+            this.OneWayBind(ViewModel,
+                vm=>vm.AvailableTags,
+                v=>v.SuggestedTags.ItemsSource),
+            this.ViewModel!
+                .AreTagsAvailableChanges
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(tagsAvailable=>tagsAvailable
+                    ? Visibility.Collapsed
+                    : Visibility.Visible)
+                .BindTo(this, v=>v.EmptyPlaceholder.Visibility),
+            #endregion
+
+            #endregion
+
+            #region buttons
+            #region toggle dropdwon button
+            this.BindCommand(ViewModel,
+                vm=>vm.ToggleDropDown,
+                v=>v.ToggleDropDown),
+            #endregion
+            #region add button
+            this.WhenAnyValue(
+                v=>v.ViewModel!.DisplayMode,
+                v=>v.ViewModel!.WorkMode,
+                (displayMode, workMode)=>
+                    displayMode == DisplayMode.New
+                    && workMode == WorkMode.View
+                    ? Visibility.Visible
+                    : Visibility.Collapsed)
+                .BindTo(this, v=>v.AddTag.Visibility),
+            this.BindCommand(ViewModel,
+                vm => vm.AddTagCommand,
+                v => v.AddTag),
             #endregion
             #region confirm button
             this.OneWayBind(ViewModel,
@@ -131,34 +171,36 @@ public partial class TagEditorChipV
                 vm=>vm.RemoveCommand,
                 v=>v.RevertDelete),
             this.WhenAnyValue(
-                v=>v.ViewModel.DisplayMode,
-                v=>v.ViewModel.WorkMode,
+                v=>v.ViewModel!.DisplayMode,
+                v=>v.ViewModel!.WorkMode,
                 (displayMode, workMode)=>
-                    displayMode == TagEditorDisplayMode.New
-                    ||  workMode == TagEditorWorkMode.View
+                    displayMode == DisplayMode.New
+                    ||  workMode == WorkMode.View
                     ? PackIconKind.Close
                     : PackIconKind.Undo)
                 .BindTo(this, v=>v.RevertDeleteIcon.Kind),
             this.WhenAnyValue(
-                v=>v.ViewModel.DisplayMode,
-                v=>v.ViewModel.WorkMode,
+                v=>v.ViewModel!.DisplayMode,
+                v=>v.ViewModel!.WorkMode,
                 (displayMode, workMode)=>
-                    displayMode == TagEditorDisplayMode.Simple
-                    ||  workMode == TagEditorWorkMode.Edit
+                    displayMode != DisplayMode.New
+                    ||  workMode == WorkMode.Edit
                     ? Visibility.Visible
                     : Visibility.Collapsed)
                 .BindTo(this, v=>v.RevertDelete.Visibility),
             this.WhenAnyValue(
-                v=>v.ViewModel.DisplayMode,
-                v=>v.ViewModel.WorkMode,
+                v=>v.ViewModel!.DisplayMode,
+                v=>v.ViewModel!.WorkMode,
                 (displayMode, workMode)=>
-                    displayMode == TagEditorDisplayMode.New
+                    displayMode == DisplayMode.New
                     ? "Cancel new Tag"
-                    : workMode == TagEditorWorkMode.Edit
+                    : workMode == WorkMode.Edit
                     ? "Revert Changes"
                     : "Delete Tag")
                 .BindTo(this, v=>v.RevertDelete.ToolTip),
             #endregion
+            #endregion
+
             #region interactions
             ViewModel!.FocusEditorInteraction.RegisterAutoCompleteHandler(focusTextBox),
             ViewModel!.UnfocusEditorInteraction.RegisterAutoCompleteHandler(UnfocusTextBox),
@@ -171,11 +213,11 @@ public partial class TagEditorChipV
         switch (e.Key)
         {
             case Key.Down:
-                ViewModel.IsDropDownOpen = true;
+                ViewModel!.IsDropDownOpen = true;
                 SuggestedTags.SelectNext();
                 break;
             case Key.Up:
-                ViewModel.IsDropDownOpen = true;
+                ViewModel!.IsDropDownOpen = true;
                 SuggestedTags.SelectPrevious();
                 break;
         }
@@ -192,7 +234,7 @@ public partial class TagEditorChipV
             if (ContentContainer.Visibility != Visibility.Visible)
                 return;
             TextEditor.Focus();
-            ViewModel.IsDropDownOpen = true; ;
+            ViewModel!.IsDropDownOpen = true; ;
         }, (DispatcherPriority)5);
     }
     private void UnfocusTextBox()
@@ -203,7 +245,7 @@ public partial class TagEditorChipV
 
     private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
     {
-        if (ViewModel!.WorkMode == TagEditorWorkMode.Edit)
+        if (ViewModel!.WorkMode == WorkMode.Edit)
             return;
 
         focusTextBox();
@@ -213,7 +255,7 @@ public partial class TagEditorChipV
     {
         if (sender is not ListViewItem item || item.IsSelected == false)
             return;
-        ViewModel.EditedTag = ViewModel.SelectedTag;
+        ViewModel!.EditedTag = ViewModel.SelectedTag;
         ViewModel!.Confirm();
     }
     private void handleEnterEscape(Key key)
@@ -221,13 +263,13 @@ public partial class TagEditorChipV
         switch (key)
         {
             case Key.Enter:
-                if (ViewModel.SelectedTag is not null
+                if (ViewModel!.SelectedTag is not null
                     && ViewModel.IsDropDownOpen)
                     ViewModel.EditedTag = ViewModel.SelectedTag;
                 ViewModel!.Confirm();
                 break;
             case Key.Escape:
-                if (ViewModel.IsDropDownOpen)
+                if (ViewModel!.IsDropDownOpen)
                 {
                     ViewModel.SelectedTag = null;
                     ViewModel.IsDropDownOpen = false;

@@ -9,7 +9,7 @@ using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Shared.Wpf.ValueTypes;
 
-public class Fraction:ValueType<double, Fraction>
+public class Fraction:ComparableValueType<double, Fraction>
 {
     protected override void Validate(double value)
     {
