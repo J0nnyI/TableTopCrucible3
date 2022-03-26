@@ -27,12 +27,12 @@ using TableTopCrucible.Shared.Wpf.Models.TagEditor;
 namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 {
     [Transient]
-    public interface ITagEditorChip : IComparable<ITagEditorChip>,IComparable, INotifyPropertyChanged
+    public interface ITagEditorChip : IComparable<ITagEditorChip>, IComparable, INotifyPropertyChanged
     {
         IObservable<Tag> TagAdded { get; }
         DisplayMode DisplayMode { get; }
-        [Reactive]
-        public Tag SourceTag { get; set; }
+        public Tag SourceTag { get; }
+        public void SetSourceTag(FractionTag tag);
         public Fraction Distribution { get; set; }
 
         void Init(
@@ -180,8 +180,13 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                         this.NoErrorsChanges().ObserveOn(RxApp.MainThreadScheduler)),
                     AddTagCommand = ReactiveCommand.Create(() =>
                     {
-                        WorkMode = WorkMode.Edit;
-                        FocusEditorInteraction.Handle().Take(1).Subscribe();
+                        if(DisplayMode == DisplayMode.Fraction)
+                            _tagManager.Add(SourceTag);
+                        else
+                        {
+                            WorkMode = WorkMode.Edit;
+                            FocusEditorInteraction.Handle().Take(1).Subscribe();
+                        }
                     }),
                 };
             });
@@ -280,5 +285,12 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
 
         public int CompareTo(object obj)
             => CompareTo(obj as ITagEditorChip);
+
+        public void SetSourceTag(FractionTag tag)
+        {
+            this.SourceTag = tag.Tag;
+            this.EditedTag = tag.Tag.Value;
+            this.Distribution = tag.Distribution;
+        }
     }
 }

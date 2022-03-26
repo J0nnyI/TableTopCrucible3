@@ -104,9 +104,9 @@
                     MouseDown="Chip_OnMouseDoubleClick"
                     VerticalAlignment="Stretch"
                     Orientation="Horizontal"
-                    HorizontalAlignment="Left"
-                    >
-            <Border Width="10"/>
+                    HorizontalAlignment="Left">
+            <!-- width addButton=4, others=10-->
+            <Border Name="LeftMargin" Width="10"/> 
             <!--existing && view-->
             <TextBlock Name="TextViewer"
                         VerticalAlignment="Center" />
@@ -176,25 +176,25 @@
                     </Border>
                 </md:PopupEx>
             </StackPanel>
-            <!--confirm-->
-            <Button Name="Confirm"
-                        ToolTip="Confirm Changes"
-                        Style="{StaticResource ChipButton}"
-                        Content="{md:PackIcon Check}"
-                        IsDefault="True"
-                        Margin="2 0" />
-            <!--delete/revert-->
-            <Button Name="RevertDelete"
-                        Style="{StaticResource ChipButton}">
-                <md:PackIcon x:Name="RevertDeleteIcon"/>
-            </Button>
-            <Border Width="4"/>
-        </StackPanel>
-        <!--new && view-->
-        <Button Name="AddTag"
+            <!--new && view || Fraction && View && Fraction != 1-->
+            <Button Name="AddTag"
                 Content="{md:PackIcon Plus}"
                 Style="{StaticResource ChipButton}"
                 ToolTip="Add Tag"/>
+            <Border Width="4"/>
+            <!--confirm-->
+            <Button Name="Confirm"
+                    ToolTip="Confirm Changes"
+                    Style="{StaticResource ChipButton}"
+                    Content="{md:PackIcon Check}"
+                    IsDefault="True"
+                    Margin="2 0" />
+            <!--delete/revert-->
+            <Button Name="RevertDelete"
+                    Style="{StaticResource ChipButton}">
+                <md:PackIcon x:Name="RevertDeleteIcon"/>
+            </Button>
+        </StackPanel>
 
         <!-- devInfo-->
         <!--<StackPanel Margin="0  20  -80 -80"

@@ -41,20 +41,24 @@ public partial class TagEditorChipV
                 _disposables = new CompositeDisposable();
             }),
 
+            //this.OneWayBind(ViewModel,
+            //    vm => vm.DisplayMode,
+            //    v => v.MainContent.Visibility,
+            //    displayMode => displayMode != DisplayMode.New
+            //        ? Visibility.Visible
+            //        : Visibility.Collapsed
+            //),
             this.OneWayBind(ViewModel,
-                vm => vm.DisplayMode,
-                v => v.MainContent.Visibility,
-                displayMode => displayMode != DisplayMode.New
-                    ? Visibility.Visible
-                    : Visibility.Collapsed
-            ),
+                vm=>vm.DisplayMode,
+                v=>v.LeftMargin.Width,
+                dm=>dm == DisplayMode.New?
+                4:10),
             this.OneWayBind(ViewModel,
-                vm => vm.DisplayMode,
-                v => v.AddTag.Visibility,
-                displayMode => displayMode == DisplayMode.New
-                    ? Visibility.Visible
-                    : Visibility.Collapsed
-            ),
+                vm=>vm.DisplayMode,
+                v=>v.ProgressBar.Visibility,
+                dm=>dm == DisplayMode.Fraction
+                ?Visibility.Visible
+                :Visibility.Collapsed),
 
             #region dropdown
             this.OneWayBind(ViewModel,
@@ -140,9 +144,14 @@ public partial class TagEditorChipV
             this.WhenAnyValue(
                 v=>v.ViewModel!.DisplayMode,
                 v=>v.ViewModel!.WorkMode,
-                (displayMode, workMode)=>
+                v=>v.ViewModel!.Distribution,
+                (displayMode, workMode, distribution)=>
                     displayMode == DisplayMode.New
+                    && workMode == WorkMode.View 
+                    ||displayMode==DisplayMode.Fraction
                     && workMode == WorkMode.View
+                    && distribution != (Fraction)1
+
                     ? Visibility.Visible
                     : Visibility.Collapsed)
                 .BindTo(this, v=>v.AddTag.Visibility),
@@ -158,6 +167,13 @@ public partial class TagEditorChipV
             this.BindCommand(ViewModel,
                 vm => vm.SaveCommand,
                 v => v.Confirm),
+            this.OneWayBind(ViewModel,
+                vm => vm.WorkMode,
+                v => v.Confirm.Visibility,
+                editMode => editMode == WorkMode.Edit
+                    ? Visibility.Visible
+                    : Visibility.Collapsed
+            ),
             #endregion
             #region delete/revert button
             this.OneWayBind(ViewModel,

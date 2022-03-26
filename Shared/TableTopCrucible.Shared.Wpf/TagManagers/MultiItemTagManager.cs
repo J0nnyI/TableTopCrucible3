@@ -80,12 +80,8 @@ public class MultiItemTagManager : ITagManager
 
     public void Add(Tag tag)
     {
-        _itemListChanges.Items.ToList().ForEach(item => item.Tags.Add(tag));
-        _notificationService.AddConfirmation($"The Tag has been added",
-            $"The Tag {tag} has been added to {_itemListChanges.Count} items");
-        
         _itemListChanges.Items.TrackedForEachAsync(
-            item=>item.Tags.Items.Contains(tag),
+            item=>!item.Tags.Items.Contains(tag),
             item=>item.Tags.Add(tag),
             $"Adding Tag '{tag}' to {_itemListChanges.Count} Items",
             $"The tag has been added",

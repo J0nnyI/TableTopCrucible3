@@ -92,6 +92,7 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
                     .Select(tags=>tags.OrderByDescending(tag=>tag).ToArray())
                     .Retry(3)
                     .SubscribeOn(RxApp.MainThreadScheduler)
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(tags =>
                     {
                         chipUpdateCancellationToken.Cancel();
@@ -100,6 +101,8 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
                         try
                         {
                             lock (_updateLock) {
+                                _chipSourceList.Edit(editor =>
+                                {
                                 var removeList = new List<ITagEditorChip>();
                                 var addList = new List<ITagEditorChip>();
                                 int addChipIndex = -1;
@@ -112,18 +115,15 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
                                         continue;
                                     }
                                     chipUpdateCancellationToken.Token.ThrowIfCancellationRequested();
-                                    var FractionTag = tags.ElementAtOrDefault(i);
-                                    if(FractionTag is not null)
-                                    {
-                                        chip.Distribution = FractionTag.Distribution;
-                                        chip.SourceTag = FractionTag.Tag;
-                                    }
+                                    var fractionTag = tags.ElementAtOrDefault(i);
+                                    if(fractionTag is not null)
+                                        chip.SetSourceTag(fractionTag);
                                     else
                                         removeList.Add(chip);
                                     i++;
                                 }
 
-                                for (; i < tags.Count() - 1; i++)
+                                for (; i < tags.Length; i++)
                                 {
                                     var tag = tags.ElementAt(i);
                                     var newChip = Locator.Current.GetService<ITagEditorChip>()!;
@@ -134,8 +134,6 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
                                 }
                                 if(removeList.Any() && addList.Any())
                                     throw new InvalidOperationException("this should not be possible");
-                                _chipSourceList.Edit(editor =>
-                                {
                                     if(chipUpdateCancellationToken.Token.IsCancellationRequested)
                                         return;
 

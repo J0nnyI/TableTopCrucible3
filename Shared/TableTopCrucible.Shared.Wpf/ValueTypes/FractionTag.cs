@@ -21,7 +21,7 @@ public class FractionTag : ValueType<Tag, Fraction, FractionTag>, IComparable<Fr
         if (other is null)
             return -1;
         return 
-            this.Distribution is not null
+            this.Distribution !=other.Distribution
                 ?this.Distribution.CompareTo(other.Distribution)
                 : this.Tag.CompareTo(other.Tag);
     }
