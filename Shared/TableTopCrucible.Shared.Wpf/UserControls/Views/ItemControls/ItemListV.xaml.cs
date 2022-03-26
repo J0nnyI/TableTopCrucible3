@@ -26,13 +26,13 @@ public partial class ItemListV
     private void ListViewItem_PreviewMouseUp(object sender, MouseButtonEventArgs e)
     {
         if (sender is ListViewItem { Content: ItemSelectionInfo itemInfo })
-            ViewModel.OnItemClicked(itemInfo, e);
+            ViewModel!.OnItemClicked(itemInfo, e);
     }
 
     private void UIElement_OnMouseLeave(object sender, MouseEventArgs e)
     {
         if (e.LeftButton == MouseButtonState.Pressed)
-            ViewModel.InitiateDrag(sender as DependencyObject);
+            ViewModel!.InitiateDrag(sender as DependencyObject);
     }
 
     private void DisableDelegation(object sender, MouseButtonEventArgs e)

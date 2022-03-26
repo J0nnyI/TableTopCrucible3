@@ -21,6 +21,7 @@ public class CollectionTagManager : ITagManager
         => TagCollection.Replace(oldTag, newTag);
     IObservable<IEnumerable<FractionTag>> ITagManager.Tags => TagCollection
         .Connect()
+        .StartWithEmpty()
         .ToCollection()
         .Select(tags => Enumerable.Select<Tag, FractionTag>(tags, tag=>FractionTag.From(tag,null)));
 

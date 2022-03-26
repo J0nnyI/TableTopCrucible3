@@ -251,17 +251,23 @@ public class FileSynchronizationService : IFileSynchronizationService
 
     private IEnumerable<Tag> GetTagsByPath(FilePath filePath)
     {
-        var dir = _directorySetupRepository
+        var dirSetup = _directorySetupRepository
             .Data
             .Items
             .Where(dir => dir.Path.ContainsFilepath(filePath))
-            .Aggregate(string.Empty, (path, dir) => dir.Path.Value.Length > path.Length
-                ? dir.Path.Value
-                : path);
+            .Aggregate(null as DirectorySetup, (aggregation, current) => aggregation == null || current.Path.Value.Length > aggregation.Path.Value.Length//maxby on pathlength
+                ? current
+                : aggregation)!;
 
-        var fileSubPath = filePath.Value.Remove(0, dir.Length);
-        return fileSubPath
+        var fileSubPath = filePath.Value.Remove(0, dirSetup.Path.Value.Length);
+        var tags = fileSubPath
             .Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)
-            .Select(Tag.From);
+            .Select(Tag.From)
+            .ToList();
+
+        tags.Remove(tags.Last());//remove filename
+        tags.Add(dirSetup.Name.Value);//add dirSetupName
+
+        return tags;
     }
 }
