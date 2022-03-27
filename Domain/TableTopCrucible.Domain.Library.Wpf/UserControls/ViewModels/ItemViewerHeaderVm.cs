@@ -77,6 +77,7 @@ public class ItemViewerHeaderVm : ReactiveObject, IItemViewerHeader, IActivatabl
                                  + (items.Count > 10
                                      ? "..."
                                      : string.Empty))
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .BindTo(this, vm => vm.EditedName),
             this.EditNameCommand = ReactiveCommand.Create(
                 () => _editMode.OnNext(true)),

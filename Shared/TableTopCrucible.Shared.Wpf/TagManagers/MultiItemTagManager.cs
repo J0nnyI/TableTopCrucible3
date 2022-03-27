@@ -100,14 +100,10 @@ public class MultiItemTagManager : ITagManager
 
     public void Replace(Tag oldTag, Tag newTag)
     {
-        var itemsToEdit = _itemListChanges.Items
-            .Where(item => item.Tags.Items.Contains(oldTag))
-            .ToArray();
-        
-        itemsToEdit.TrackedForEachAsync(
+        _itemListChanges.Items.TrackedForEachAsync(
             item=>item.Tags.Items.Contains(oldTag),
                 item=>item.Tags.Replace(oldTag, newTag),
-                $"Replacing Tag '{oldTag}' with '{newTag}' on {itemsToEdit.Length} of {_itemListChanges.Count} Items",
+                $"Replacing Tag '{oldTag}' with '{newTag}' on {_itemListChanges.Count} Items",
                 $"The tag has been replaced",
                 $"The Tag '{oldTag}' has replaced by '{newTag}' on {_itemListChanges.Count} items");
     }

@@ -46,7 +46,7 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
     public ITagManager TagManager { get; set; }
 
     [Reactive]
-    public bool IsBusy { get; set; } = false;//does not work
+    public bool IsBusy { get; set; } = false;
 
     [Reactive]
     public bool FluentModeEnabled { get; set; } = true;
@@ -56,7 +56,6 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
 
     [Reactive] //if true, the next tag will be opened in edit mode
     internal bool FluentModeActive { get; set; }
-
     /// <summary>
     /// represents the tags as Chip VM<br/>
     /// this is not directly bound to the tag manager but instead filled and updated via subscription. <br/>
@@ -91,6 +90,7 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
                     .Switch()
                     .Select(tags=>tags.OrderByDescending(tag=>tag).ToArray())
                     .Retry(3)
+                    //.Do(_=>IsBusy=true)//does not work, the subscriptionhas to be moved to the background
                     .SubscribeOn(RxApp.MainThreadScheduler)
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(tags =>
@@ -123,7 +123,7 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
                                     i++;
                                 }
 
-                                for (; i < tags.Length; i++)
+                                for (; i < tags.Length && i < SettingsHelper.MaxTagCount; i++)
                                 {
                                     var tag = tags.ElementAt(i);
                                     var newChip = Locator.Current.GetService<ITagEditorChip>()!;
@@ -155,6 +155,7 @@ public class TagEditorVm : ReactiveObject, IActivatableViewModel, ITagEditor
 
                                     if(removeList.Any())
                                         editor.RemoveMany(removeList);
+                                    IsBusy = false;
                                 });
                             }
                         }

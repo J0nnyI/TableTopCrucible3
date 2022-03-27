@@ -144,17 +144,19 @@ namespace TableTopCrucible.Shared.Wpf.UserControls.ViewModels
                             "The tag must not be empty"),
                     this.ValidationRule(
                         vm => vm.EditedTag,
-                        this.WhenAnyValue(vm => vm.EditedTag)
-                            .CombineLatest(
-                                _tagManager.Tags ,
-                                (tag, tags) =>
-                                {
-                                    return tags.Count(t => t.Tag.Value.ToLower() == tag.ToLower()) < (
+                        this.WhenAnyValue(
+                            vm => vm.EditedTag,
+                            vm=>vm.WorkMode,
+                            (tag, workMode) =>//dont do this check unti you arer in work mode, this causes massive performance issues when a lot of tags are loaded
+                                WorkMode == WorkMode.Edit
+                                ?_tagManager.Tags.Select(tags=>
+                                    tags.Count(t => t.Tag.Value.ToLower() == tag.ToLower()) < (
                                         DisplayMode == DisplayMode.New
                                             ? 1
-                                            : 2);
-                                })
-                            .StartWith(true),
+                                            : 2))
+                                :Observable.Return(true)
+                        ).Switch()
+                        .StartWith(true),
                         "The tag has already been added"),
 
                     // bind tag suggestions

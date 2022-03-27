@@ -6,6 +6,7 @@ namespace TableTopCrucible.Core.Helper;
 // todo temporary class until a proper settings repository is implemented
 public static class SettingsHelper
 {
+    public static ushort MaxTagCount = 100;
     public static bool AutoSaveEnabled = true;
     public static TimeSpan AutoSaveThrottle = new(0, 0, 0, 30);
     public static TimeSpan NotificationDelay => new(0, 0, 0, 5);

@@ -11,8 +11,11 @@
     <StackPanel>
         <TextBlock Text="Tags"
                    Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
-        <rxui:ViewModelViewHost x:Name="TagEditor"
+        <ScrollViewer MaxHeight="400px"
+                      VerticalScrollBarVisibility="Auto">
+            <rxui:ViewModelViewHost x:Name="TagEditor"
                                 Margin="8"
                                 Grid.Row="0" />
+        </ScrollViewer>
     </StackPanel>
 </rxui:ReactiveUserControl>
