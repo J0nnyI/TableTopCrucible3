@@ -27,6 +27,7 @@ public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage
         IItemList itemList,
         IFilteredListHeader listHeader,
         IItemListFilter filter,
+        IDirectoryItemBrowser directoryItemBrowser,
         //right
         IItemActions itemActions,
         IItemViewer itemViewer,
@@ -36,6 +37,7 @@ public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage
         ItemList = itemList.DisposeWith(_disposables);
         ListHeader = listHeader;
         Filter = filter;
+        DirectoryItemBrowser = directoryItemBrowser;
         ItemActions = itemActions;
         ItemViewer = itemViewer;
 
@@ -54,6 +56,7 @@ public class LibraryPageVm : ReactiveObject, IActivatableViewModel, ILibraryPage
     public IItemList ItemList { get; }
     public IFilteredListHeader ListHeader { get; }
     public IItemListFilter Filter { get; }
+    public IDirectoryItemBrowser DirectoryItemBrowser { get; }
 
     // viewer (right)
     public IItemViewer ItemViewer { get; }

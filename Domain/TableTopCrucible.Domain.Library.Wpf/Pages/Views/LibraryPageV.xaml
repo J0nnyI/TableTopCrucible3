@@ -30,15 +30,28 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-
-                <rxui:ViewModelViewHost x:Name="ListHeader"
+                <md:NavigationRailAssist.FloatingContent>
+                    <rxui:ViewModelViewHost x:Name="ListHeader"
                                         Margin="4 4 12 4"
                                         Grid.Row="0"
                                         Grid.Column="0" />
-                <rxui:ViewModelViewHost x:Name="ItemList"
-                                        Margin="4 4 12 4"
-                                        Grid.Column="0"
-                                        Grid.Row="1" />
+                </md:NavigationRailAssist.FloatingContent>
+                <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
+                            TabStripPlacement="Top"
+                            Margin="4 4 12 4"
+                            Grid.Column="0"
+                            Grid.Row="1" 
+                            Grid.RowSpan="2">
+                    <TabItem Header="Items">
+                        <rxui:ViewModelViewHost x:Name="ItemList"/>
+                    </TabItem>
+                    <TabItem Header="Groups">
+                        <rxui:ViewModelViewHost x:Name="GroupList"/>
+                    </TabItem>
+                    <TabItem Header="Directories">
+                        <rxui:ViewModelViewHost x:Name="DirectoryList"/>
+                    </TabItem>
+                </TabControl>
 
                 <GridSplitter Width="{DynamicResource GridSplitterWidth}"
                               Margin="{DynamicResource GridSplitterMargin}"
