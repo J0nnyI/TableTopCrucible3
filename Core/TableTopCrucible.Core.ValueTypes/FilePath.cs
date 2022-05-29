@@ -141,8 +141,12 @@ public class FilePath<TThis> : ValueType<string, TThis> where TThis : FilePath<T
     /// moves this file to a new location
     /// </summary>
     /// <param name="newPath"></param>
-    public void Move(FilePath<TThis> newPath)
-        => File.Move(Value, newPath?.Value ?? throw new NullReferenceException(nameof(newPath)));
+    public void Move(FilePath<TThis> newPath, bool autoCreateDirectory = true)
+    {
+        if (autoCreateDirectory)
+            newPath.GetDirectoryPath().Create();
+        File.Move(Value, newPath?.Value ?? throw new NullReferenceException(nameof(newPath)));
+    }
 
     /// <summary>
     /// returns a new FilePath with the given extension. does not change the value of the object

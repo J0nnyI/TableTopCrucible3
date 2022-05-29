@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
 namespace TableTopCrucible.Core.ValueTypes;
@@ -19,4 +20,7 @@ public class ImageFilePath : FilePath<ImageFilePath>
 
     public FilePath ToFilePath()
         => FilePath.From(Value);
+
+    public static ImageFilePath TemporaryFile(FileExtension extension) 
+        => From((DirectoryPath.GetTemporaryPath() + ((BareFileName)Guid.NewGuid().ToString() + extension)).Value);
 }

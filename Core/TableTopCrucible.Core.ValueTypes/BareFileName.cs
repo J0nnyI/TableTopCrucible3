@@ -14,7 +14,7 @@ public class BareFileName : ValueType<string, BareFileName>
         get
         {
             lock (random)
-                return (BareFileName)$"_{DateTime.Now:yyyyMMdd_HHmmssss}_${random.NextDouble()}";
+                return (BareFileName)$"_{DateTime.Now:yyyyMMdd_HHmmssss}_{random.NextDouble()}";
         }
     }
 

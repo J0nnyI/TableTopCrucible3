@@ -6,7 +6,7 @@ namespace TableTopCrucible.Core.Helper;
 // todo temporary class until a proper settings repository is implemented
 public static class SettingsHelper
 {
-    public static ushort MaxTagCount = 100;
+    public static short MaxTagCount = 100;
     public static bool AutoSaveEnabled = true;
     public static TimeSpan AutoSaveThrottle = new(0, 0, 0, 30);
     public static TimeSpan NotificationDelay => new(0, 0, 0, 5);
@@ -21,8 +21,8 @@ public static class SettingsHelper
     public static TimeSpan AnimationResolution => new TimeSpan(0, 0, 0, 1) / 10;
     public static TimeSpan AnimationTimeSpan => TimeSpan.FromMilliseconds(200);
     public static Duration AnimationDuration => new(AnimationTimeSpan);
-    public static int ThreadCount => 2;
-    public static ushort SimultaneousThumbnailWindows => 3;
+    public static int FileHashThreadCount => 2;
+    public static ushort SimultaneousThumbnailWindows => 4;
 
     public static TimeSpan PipelineBufferTime => TimeSpan.FromSeconds(5);
 
@@ -31,7 +31,7 @@ public static class SettingsHelper
     public static Size ThumbnailSize => new(200, 200);
     public static double ThumbnailHeight => ThumbnailSize.Height;
     public static double ThumbnailWidth => ThumbnailSize.Width;
-    public static bool GenerateThumbnailOnSync => false;
+    public static bool GenerateThumbnailOnSync => true;
     public static int MaxTagCountInDropDown => 30;
     public static TimeSpan FilterThrottleSpan => TimeSpan.FromMilliseconds(500);
 

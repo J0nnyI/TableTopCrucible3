@@ -30,12 +30,12 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <md:NavigationRailAssist.FloatingContent>
+                <!--<md:NavigationRailAssist.FloatingContent>-->
                     <rxui:ViewModelViewHost x:Name="ListHeader"
                                         Margin="4 4 12 4"
                                         Grid.Row="0"
                                         Grid.Column="0" />
-                </md:NavigationRailAssist.FloatingContent>
+                <!--</md:NavigationRailAssist.FloatingContent>-->
                 <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
                             TabStripPlacement="Top"
                             Margin="4 4 12 4"

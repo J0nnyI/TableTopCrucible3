@@ -10,8 +10,11 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+
 using HelixToolkit.Wpf;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
 using TableTopCrucible.Core.Jobs.Progression.Services;
@@ -51,6 +54,7 @@ internal class ThumbnailGenerationService : IWpfThumbnailGenerationService
     private readonly IDirectorySetupRepository _directorySetupRepository;
     private readonly IGalleryService _galleryService;
     private readonly IProgressTrackingService _trackingService;
+    private readonly ISettingsService _settingsService;
 
     public ThumbnailGenerationService(
         IItemRepository itemRepository,
@@ -58,7 +62,8 @@ internal class ThumbnailGenerationService : IWpfThumbnailGenerationService
         IImageRepository imageRepository,
         IDirectorySetupRepository directorySetupRepository,
         IGalleryService galleryService,
-        IProgressTrackingService trackingService)
+        IProgressTrackingService trackingService,
+        ISettingsService settingsService)
     {
         _itemRepository = itemRepository;
         _fileRepository = fileRepository;
@@ -66,6 +71,7 @@ internal class ThumbnailGenerationService : IWpfThumbnailGenerationService
         _directorySetupRepository = directorySetupRepository;
         _galleryService = galleryService;
         _trackingService = trackingService;
+        _settingsService = settingsService;
     }
 
     public ImageFilePath Generate(Item item, CameraView view)
@@ -190,14 +196,38 @@ internal class ThumbnailGenerationService : IWpfThumbnailGenerationService
         var imgLocation = ImageFilePath.From(dirSetup.ThumbnailDirectory,
             itemName.ToFileName() + BareFileName.TimeSuffix, FileExtension.UncompressedImage);
 
-        var visual = modelFile.LoadVisual(true);
+        if (UseStlThumb())
+        {
+            _generateWithStlThumb(modelFile, imgLocation);
+        }
+        else
+        {
+            var visual = modelFile.LoadVisual(true);
 
-        _generate(viewport, view, viewport is null, visual, imgLocation, autoPositionCamera);
+            _generateWithViewport(viewport, view, viewport is null, visual, imgLocation, autoPositionCamera);
+        }
+
 
         return imgLocation;
     }
+    private bool UseStlThumb()
+        => _settingsService.StlThumb.InstallationPath.Exists() && _settingsService.StlThumb.Enabled;
+    private void _generateWithStlThumb(ModelFilePath modelFile, ImageFilePath imageFile)
+    {
+        var tempFile = ImageFilePath.TemporaryFile(FileExtension.UncompressedImage);
+        var stlThumbExe = _settingsService.StlThumb.InstallationPath;
+        var material = _settingsService.StlThumb.DefaultMaterial;
+        stlThumbExe.ThrowIfNotFound();
+        var materialParameter = string.Join(" ", material.ToHexString(false), material.ToHexString(false), "ffffff");
+        var parameters = $"\"{modelFile.Value}\" \"{imageFile.Value}\" -m {materialParameter} -s {SettingsHelper.ThumbnailWidth}";
+        var process = stlThumbExe.Execute(parameters);
+        process.Start();
+        process.WaitForExit(_settingsService.StlThumb.TimeOut);
+        if (!imageFile.Exists())
+            throw new Exception("thumbnail could not be created, output file not found");
+    }
 
-    private void _generate(HelixViewport3D viewport, CameraView view, bool addDefaultLights, ModelVisual3D content,
+    private void _generateWithViewport(HelixViewport3D viewport, CameraView view, bool addDefaultLights, ModelVisual3D content,
         ImageFilePath imgPath, bool autoPositionCamera)
     {
         var usedViewport = viewport;
@@ -246,7 +276,7 @@ internal class ThumbnailGenerationService : IWpfThumbnailGenerationService
                 usedViewport.Camera.ZoomExtents(usedViewport.Viewport,
                     content?.FindBounds(content.Transform) ?? usedViewport.Children.FindBounds());
 
-            Generate(usedViewport, imgPath);
+            _generateWithViewport(usedViewport, imgPath);
         }
         finally
         {
@@ -254,7 +284,7 @@ internal class ThumbnailGenerationService : IWpfThumbnailGenerationService
         }
     }
 
-    public void Generate(HelixViewport3D viewport, ImageFilePath imgPath)
+    private void _generateWithViewport(HelixViewport3D viewport, ImageFilePath imgPath)
     {
         var source = viewport.CreateBitmap();
 

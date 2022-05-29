@@ -148,7 +148,7 @@ public class FileSynchronizationService : IFileSynchronizationService
                     // hash items and do the rest in parallel
                     filesToHash
                         .AsParallel()
-                        .WithDegreeOfParallelism(SettingsHelper.ThreadCount)
+                        .WithDegreeOfParallelism(SettingsHelper.FileHashThreadCount)
                         .ForAll(fileData =>
                         {
                             fileData.CreateNewHashKey();
