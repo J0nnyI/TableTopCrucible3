@@ -8,4 +8,5 @@ public interface ICompositeTracker : ITrackingViewer
 {
     ICompositeTracker AddComposite(Name name = null, JobWeight weight = null);
     ISourceTracker AddSingle(Name name = null, TargetProgress targetProgress = null, JobWeight weight = null);
+    ISourceTracker AddSingle(Name name=null, JobWeight weight=null) => AddSingle(name,null, weight);
 }

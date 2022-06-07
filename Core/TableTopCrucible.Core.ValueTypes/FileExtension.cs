@@ -12,7 +12,9 @@ public class FileExtension : ValueType<string, FileExtension>
     public static readonly IEnumerable<FileExtension> LibraryFile = new[] { JSonLibrary, TemporaryJSonLibrary };
     public static readonly IEnumerable<FileExtension> SlicerProject = FromList(".3mf");
     public static readonly IEnumerable<FileExtension> SlicedFile = FromList(".photon", ".gcode");
-    public static readonly IEnumerable<FileExtension> Archive = FromList(".zip");
+    public static readonly FileExtension RarArchive = (FileExtension)".rar";
+    public static readonly FileExtension ZipArchive = (FileExtension)".zip";
+    public static readonly IEnumerable<FileExtension> Archive = new[] { RarArchive, ZipArchive };
 
     public static readonly IEnumerable<FileExtension> Model = FromList(".stl", ".obj", ".off", ".objz", ".lwo",
         ".3ds");

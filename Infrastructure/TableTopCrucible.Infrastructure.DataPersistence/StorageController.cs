@@ -5,7 +5,9 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+
 using DynamicData;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
 using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Engine.ValueTypes;
@@ -14,6 +16,7 @@ using TableTopCrucible.Core.ValueTypes;
 using TableTopCrucible.Infrastructure.DataPersistence.Exceptions;
 using TableTopCrucible.Infrastructure.Models.Entities;
 using TableTopCrucible.Infrastructure.Models.EntityIds;
+
 using Version = TableTopCrucible.Core.ValueTypes.Version;
 
 namespace TableTopCrucible.Infrastructure.DataPersistence;
@@ -33,6 +36,7 @@ public interface IStorageController
     SourceCache<FileData, FileDataId> Files { get; }
     SourceCache<DirectorySetup, DirectorySetupId> DirectorySetups { get; }
     SourceCache<ItemGroup, ItemGroupId> ItemGroups { get; }
+    SourceCache<ZipMapping, ZipMappingId> ZipMappings { get; }
     void Load(LibraryFilePath file);
     void Save(LibraryFilePath file = null);
     void AutoSave();
@@ -62,6 +66,7 @@ internal class StorageController : IStorageController
     public SourceCache<FileData, FileDataId> Files { get; } = new(file => file.Id);
     public SourceCache<DirectorySetup, DirectorySetupId> DirectorySetups { get; } = new(dir => dir.Id);
     public SourceCache<ItemGroup, ItemGroupId> ItemGroups { get; } = new(group => group.Id);
+    public SourceCache<ZipMapping, ZipMappingId> ZipMappings { get; } = new(mapping => mapping.Id);
 
     public void Load(LibraryFilePath file)
     {
@@ -83,6 +88,8 @@ internal class StorageController : IStorageController
                     DirectorySetups.AddOrUpdate(newData.DirectorySetups);
                 if (newData.ItemGroups is not null)
                     ItemGroups.AddOrUpdate(newData.ItemGroups);
+                if (newData.ZipMappings is not null)
+                    ZipMappings.AddOrUpdate(newData.ZipMappings);
             }
             catch
             {
@@ -131,6 +138,7 @@ internal class StorageController : IStorageController
                     DirectorySetups = DirectorySetups.Items.ToArray(),
                     Images = Images.Items.ToArray(),
                     ItemGroups = ItemGroups.Items.ToArray(),
+                    ZipMappings = ZipMappings.Items.ToArray(),
                 });
             file.Delete();
             if (!file.Exists())
@@ -168,6 +176,7 @@ internal class StorageController : IStorageController
         Files.Clear();
         DirectorySetups.Clear();
         ItemGroups.Clear();
+        ZipMappings.Clear();
     }
 }
 
@@ -181,4 +190,5 @@ internal class StorageMasterObject
     public IEnumerable<FileData> Files { get; set; }
     public IEnumerable<DirectorySetup> DirectorySetups { get; set; }
     public IEnumerable<ItemGroup> ItemGroups { get; set; }
+    public IEnumerable<ZipMapping> ZipMappings { get; set; }
 }

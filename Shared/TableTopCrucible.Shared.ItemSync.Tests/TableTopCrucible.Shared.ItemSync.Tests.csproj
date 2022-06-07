@@ -1,22 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
+    <PackageReference Include="FluentAssertions" Version="6.7.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit.Console" Version="3.12.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="NUnit.Console" Version="3.15.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Engine\TableTopCrucible.Core.Engine.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Test.Packages\TableTopCrucible.Core.Test.Packages.csproj" />
     <ProjectReference Include="..\..\Core\TableTopCrucible.Core.TestHelper\TableTopCrucible.Core.TestHelper.csproj" />
+    <ProjectReference Include="..\..\Core\TableTopCrucible.Core.Wpf.Engine\TableTopCrucible.Core.Wpf.Engine.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\TableTopCrucible.Infrastructure.Models.Automation\TableTopCrucible.Infrastructure.Models.Automation.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\TableTopCrucible.Infrastructure.Models\TableTopCrucible.Infrastructure.Models.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\TableTopCrucible.Infrastructure.Repositories\TableTopCrucible.Infrastructure.Repositories.csproj" />
+    <ProjectReference Include="..\..\TableTopCrucible.Shared\TableTopCrucible.Shared.csproj" />
     <ProjectReference Include="..\TableTopCrucible.Shared.ItemSync\TableTopCrucible.Shared.ItemSync.csproj" />
+    <ProjectReference Include="..\TableTopCrucible.Shared.Wpf\TableTopCrucible.Shared.Wpf.csproj" />
   </ItemGroup>
 
 </Project>

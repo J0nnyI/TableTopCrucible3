@@ -47,7 +47,8 @@ public static class DiAttributeCollector
             .Select(@interface => new
             {
                 @interface,
-                @class = classes.First(@class => @class.IsAssignableTo(@interface))
+                @class = classes.FirstOrDefault(@class => @class.IsAssignableTo(@interface)) 
+                    ?? throw new InvalidOperationException($"no implementation found for interface {@interface.FullName}")
             }).Select(service =>
                 new ServiceDescriptor(service.@interface, service.@class, lifetime)
             );

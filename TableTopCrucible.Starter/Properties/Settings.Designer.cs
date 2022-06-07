@@ -70,5 +70,17 @@ namespace TableTopCrucible.Starter.Properties {
                 this["stlThumbTimeOut"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool sync_autoThumbnails {
+            get {
+                return ((bool)(this["sync_autoThumbnails"]));
+            }
+            set {
+                this["sync_autoThumbnails"] = value;
+            }
+        }
     }
 }

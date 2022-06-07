@@ -17,18 +17,20 @@ namespace TableTopCrucible.Core.Engine.Services;
 
 public interface IStlThumbSettings : IReactiveObject
 {
-    [Reactive]
     public ExecutableFilePath InstallationPath { get; set; }
-    [Reactive]
     public Color DefaultMaterial { get; set; }
-    [Reactive]
     public bool Enabled { get; set; }
-    [Reactive]
     public int TimeOut{ get; set; }
+}
+
+public interface ISynchronizationSettings : IReactiveObject
+{
+    public bool AutoGenerateThumbnail { get; set; }
 }
 
 [Singleton]
 public interface ISettingsService
 {
     public IStlThumbSettings StlThumb { get; }
+    public ISynchronizationSettings Synchronization { get; }
 }

@@ -20,11 +20,11 @@ internal class SettingsService : ISettingsService
     {
 
     }
-    private abstract class SettingsCategory:ReactiveObject
+    private abstract class SettingsCategory : ReactiveObject
     {
         protected void UpdateProperty<T>(T value,
             ref T field,
-            Action settingsUpdater, 
+            Action settingsUpdater,
             [CallerMemberName] string propertyName = "")
         {
             if (value.Equals(field))
@@ -53,7 +53,7 @@ internal class SettingsService : ISettingsService
                 ref _defaultMaterial,
                 () => Settings.Default.stl_thumb_material = value.ToDrawingColor());
         }
-        public bool _useStlThumb= Settings.Default.use_stl_thumb;
+        public bool _useStlThumb = Settings.Default.use_stl_thumb;
         public bool Enabled
         {
             get => _useStlThumb;
@@ -70,5 +70,15 @@ internal class SettingsService : ISettingsService
                 () => Settings.Default.stlThumbTimeOut = value);
         }
     }
-    public IStlThumbSettings StlThumb { get; }= new StlThumbSettings();
+    public IStlThumbSettings StlThumb { get; } = new StlThumbSettings();
+    private class SynchronizationSettings : SettingsCategory, ISynchronizationSettings
+    {
+        private bool _autoGenerateThumbnail;
+        public bool AutoGenerateThumbnail
+        {
+            get => _autoGenerateThumbnail;
+            set=> UpdateProperty(value,ref _autoGenerateThumbnail,()=>Settings.Default.sync_autoThumbnails = value);
+        }
+    }
+    public ISynchronizationSettings Synchronization { get; } = new SynchronizationSettings();
 }

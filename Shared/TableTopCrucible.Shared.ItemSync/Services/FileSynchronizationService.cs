@@ -7,11 +7,16 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
+
 using DynamicData;
+
 using MoreLinq.Extensions;
+
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+
 using TableTopCrucible.Core.DependencyInjection.Attributes;
+using TableTopCrucible.Core.Engine.Services;
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.Jobs.Helper;
 using TableTopCrucible.Core.Jobs.Progression.Models;
@@ -43,7 +48,7 @@ public class FileSynchronizationService : IFileSynchronizationService
     private readonly IProgressTrackingService _progressTrackingService;
     private readonly IThumbnailGenerationService _thumbnailGenerationService;
     private readonly IImageRepository _imageRepository;
-
+    private readonly ISettingsService _settingsService;
     private readonly object _itemUpdateLocker = new();
 
     public FileSynchronizationService(
@@ -52,7 +57,9 @@ public class FileSynchronizationService : IFileSynchronizationService
         IItemRepository itemRepository,
         IProgressTrackingService progressTrackingService,
         IThumbnailGenerationService thumbnailGenerationService,
-        IImageRepository imageRepository)
+        IImageRepository imageRepository,
+        IZipMappingService zipMappingService,
+        ISettingsService settingsService)
     {
         _directorySetupRepository = directorySetupRepository;
         _fileRepository = fileRepository;
@@ -60,7 +67,7 @@ public class FileSynchronizationService : IFileSynchronizationService
         _progressTrackingService = progressTrackingService;
         _thumbnailGenerationService = thumbnailGenerationService;
         _imageRepository = imageRepository;
-
+        this._settingsService = settingsService;
         StartScanCommand = ReactiveCommand.Create(
             StartScan,
             this.WhenAnyValue(s => s.ScanRunning)
@@ -84,11 +91,12 @@ public class FileSynchronizationService : IFileSynchronizationService
                 (Name)"File Synchronization"
             );
         var stepTracker = totalProgress.AddSingle((Name)"Total", (TargetProgress)1, (JobWeight)1);
-        var hashingTracker = totalProgress.AddSingle((Name)"hashing", null, (JobWeight)10);
-        var updateTracker = totalProgress.AddSingle((Name)"update", null, (JobWeight)3);
+        var hashingTracker = totalProgress.AddSingle((Name)"hashing", (JobWeight)10);
+        var zipMappingTracker = totalProgress.AddComposite((Name)"mapArchives", (JobWeight)10);
+        var updateTracker = totalProgress.AddSingle((Name)"update", (JobWeight)3);
         var thumbnailGenerationTracker =
-            SettingsHelper.GenerateThumbnailOnSync
-                ? totalProgress.AddSingle((Name)"Thumbnail Generation", null, (JobWeight)30)
+            _settingsService.Synchronization.AutoGenerateThumbnail
+                ? totalProgress.AddSingle((Name)"Thumbnail Generation", (JobWeight)30)
                 : null;
 
         var syncDisposables = new CompositeDisposable();
@@ -117,55 +125,55 @@ public class FileSynchronizationService : IFileSynchronizationService
                     .Concat(files.UpdatedFiles)
                     .ToArray();
 
-                if (filesToHash.Length > 0)
-                {
-                    var totalSize = filesToHash.Sum(file => file.FoundFile.Value.Length);
-                    hashingTracker.SetTarget((TargetProgress)totalSize);
-                    updateTracker.SetTarget((TargetProgress)filesToHash.Length);
-                    thumbnailGenerationTracker?.SetTarget(
-                        (TargetProgress)filesToHash
-                            .Where(file => file.UpdateSource == FileUpdateSource.New && file.FoundFile.IsModel())
-                            .Sum(file => file.FoundFile.GetSize().Value));
-
-                    var fileUpdatePipeline = new Subject<RawSyncFileData>().DisposeWith(syncDisposables);
-                    var thumbnailPipeline = new ReplaySubject<FileData>().DisposeWith(syncDisposables);
-
-                    fileUpdatePipeline
-                        .ObserveOn(RxApp.TaskpoolScheduler)
-                        .Buffer(SettingsHelper.PipelineBufferTime)
-                        .Where(buffer => buffer.Any())
-                        .TakeUntil(updateTracker.OnDone())
-                        .Subscribe(fileData =>
-                        {
-                            _handleChangedFiles(fileData.ToArray(), thumbnailPipeline);
-                            updateTracker.Increment((ProgressIncrement)fileData.Count);
-                        });
-
-                    if (SettingsHelper.GenerateThumbnailOnSync)
-                        _thumbnailGenerationService.GenerateManyAsync(thumbnailPipeline,
-                            thumbnailGenerationTracker);
-
-                    // hash items and do the rest in parallel
-                    filesToHash
-                        .AsParallel()
-                        .WithDegreeOfParallelism(SettingsHelper.FileHashThreadCount)
-                        .ForAll(fileData =>
-                        {
-                            fileData.CreateNewHashKey();
-                            hashingTracker.Increment((ProgressIncrement)fileData.FoundFile.Value.Length);
-                            lock (fileUpdatePipeline)
-                            {
-                                fileUpdatePipeline.OnNext(fileData);
-                            }
-                        });
-                }
-                else
+                if (filesToHash.Length < 0)
                 {
                     thumbnailGenerationTracker?.Complete();
                     hashingTracker.Complete();
                     updateTracker.Complete();
                     stepTracker.Complete();
+                    return;
                 }
+
+                var totalSize = filesToHash.Sum(file => file.FoundFile.Value.Length);
+                hashingTracker.SetTarget((TargetProgress)totalSize);
+                updateTracker.SetTarget((TargetProgress)filesToHash.Length);
+                thumbnailGenerationTracker?.SetTarget(
+                    (TargetProgress)filesToHash
+                        .Where(file => file.UpdateSource == FileUpdateSource.New && file.FoundFile.IsModel())
+                        .Sum(file => file.FoundFile.GetSize().Value));
+
+                var fileUpdatePipeline = new Subject<RawSyncFileData>().DisposeWith(syncDisposables);
+                var thumbnailPipeline = new ReplaySubject<FileData>().DisposeWith(syncDisposables);
+
+                fileUpdatePipeline
+                    .ObserveOn(RxApp.TaskpoolScheduler)
+                    .Buffer(SettingsHelper.PipelineBufferTime)
+                    .Where(buffer => buffer.Any())
+                    .TakeUntil(updateTracker.OnDone())
+                    .Subscribe(fileData =>
+                    {
+                        _handleChangedFiles(fileData.ToArray(), thumbnailPipeline);
+                        updateTracker.Increment((ProgressIncrement)fileData.Count);
+                    });
+
+                if (_settingsService.Synchronization.AutoGenerateThumbnail)
+                    _thumbnailGenerationService.GenerateManyAsync(thumbnailPipeline,
+                        thumbnailGenerationTracker);
+
+                // hash items and do the rest in parallel
+                filesToHash
+                    .AsParallel()
+                    .WithDegreeOfParallelism(SettingsHelper.FileHashThreadCount)
+                    .ForAll(fileData =>
+                    {
+                        fileData.CreateNewHashKey();
+                        hashingTracker.Increment((ProgressIncrement)fileData.FoundFile.Value.Length);
+                        lock (fileUpdatePipeline)
+                        {
+                            fileUpdatePipeline.OnNext(fileData);
+                        }
+                    });
+
             }
             catch (Exception e)
             {

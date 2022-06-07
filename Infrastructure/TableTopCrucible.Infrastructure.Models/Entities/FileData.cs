@@ -45,4 +45,6 @@ public sealed class FileData : DataEntity<FileDataId>
         get => _lastWrite;
         set => SetRequiredValue(ref _lastWrite, value);
     }
+    public override string ToString()
+        => $"{Path} - {LastWrite} - {HashKey}";
 }

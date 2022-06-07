@@ -31,7 +31,6 @@ public static class SettingsHelper
     public static Size ThumbnailSize => new(200, 200);
     public static double ThumbnailHeight => ThumbnailSize.Height;
     public static double ThumbnailWidth => ThumbnailSize.Width;
-    public static bool GenerateThumbnailOnSync => true;
     public static int MaxTagCountInDropDown => 30;
     public static TimeSpan FilterThrottleSpan => TimeSpan.FromMilliseconds(500);
 

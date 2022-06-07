@@ -2,7 +2,9 @@
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+
 using Newtonsoft.Json;
+
 using TableTopCrucible.Core.Helper;
 using TableTopCrucible.Core.ValueTypes.Exceptions;
 
@@ -35,7 +37,11 @@ public class FilePath<TThis> : ValueType<string, TThis> where TThis : FilePath<T
     public FileType GetFileType() => GetExtension().GetFileType();
 
     public Stream OpenRead() => FileSystemHelper.File.OpenRead(Value);
-    public Stream OpenWrite() => FileSystemHelper.File.OpenWrite(Value);
+    public Stream OpenWrite(bool autoCreateDirectory = true) {
+        if(autoCreateDirectory)
+            this.GetDirectoryPath().Create();
+        return FileSystemHelper.File.OpenWrite(Value);
+    }
 
     public void Delete()
     {
@@ -146,6 +152,25 @@ public class FilePath<TThis> : ValueType<string, TThis> where TThis : FilePath<T
         if (autoCreateDirectory)
             newPath.GetDirectoryPath().Create();
         File.Move(Value, newPath?.Value ?? throw new NullReferenceException(nameof(newPath)));
+    }
+
+    public void Write(Stream contentStream)
+    {
+        using var FileStream = this.OpenWrite();
+        contentStream.CopyTo(FileStream);
+        FileStream.Close();
+    }
+
+    /// <summary>
+    /// adds a guid to this filename so that it has a guaranteed unique name
+    /// </summary>
+    /// <returns></returns>
+    public FilePath AddGuid()
+    {
+        var dir = this.GetDirectoryPath();
+        var file = this.GetFilenameWithoutExtension() + (BareFileName)$"_{Guid.NewGuid()}";
+        var extension = this.GetExtension();
+        return dir + (file + extension);
     }
 
     /// <summary>

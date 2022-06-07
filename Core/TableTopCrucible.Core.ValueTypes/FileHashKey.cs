@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
@@ -28,4 +29,7 @@ public class FileHashKey : ValueType<string, FileHashKey>
 
     public FileSize GetFileSizeComponent()
         => (FileSize)int.Parse(Value.Split(Separator).First());
+
+    public static FileHashKey Create(FileSize fileSize, Stream fileStream, HashAlgorithm hashAlgorithm)
+        => From(fileSize, (FileHash)hashAlgorithm.ComputeHash(fileStream));
 }

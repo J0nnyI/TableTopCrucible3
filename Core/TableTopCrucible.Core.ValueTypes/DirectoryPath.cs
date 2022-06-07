@@ -127,7 +127,8 @@ public class DirectoryPath<TThis>
     {
         try
         {
-            FileSystemHelper.Directory.Delete(Value, recursive);
+            if(Exists())
+                FileSystemHelper.Directory.Delete(Value, recursive);
         }
         catch (Exception ex)
         {
